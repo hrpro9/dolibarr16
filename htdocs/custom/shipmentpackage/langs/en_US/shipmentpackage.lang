@@ -1,0 +1,90 @@
+# Copyright (C) 2021       Francis Appels          <francis.appels@z-application.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleShipmentPackageName'
+ModuleShipmentPackageName = Shipment Packages
+# Module description 'ModuleShipmentPackageDesc'
+ModuleShipmentPackageDesc = Create final shipping packages to handover to transporter.
+
+#
+# Admin page
+#
+ShipmentPackageSetup = Shipment Package setup
+Settings = Settings
+ShipmentPackageSetupPage = Shipment Package setup page
+SHIPMENTPACKAGE_MYPARAM1 = TODO add ref numbering model
+SHIPMENTPACKAGE_MYPARAM1Tooltip = My param 1 tooltip
+SHIPMENTPACKAGE_MYPARAM2= TODO add doc model
+SHIPMENTPACKAGE_MYPARAM2Tooltip=PDF model or for example external label from shipper
+SHIPMENTPACKAGE_WAP_PACKAGEVALUE=Calculate total package value from WAP
+SHIPMENTPACKAGE_WAP_PACKAGEVALUETooltip=Calculate total package value by weighted average price of products, when off calculate from product sell price.
+ShipmentPackageDocumentModules = Shipment package document models
+ShipmentPackageNumberingModules = Shipment package numbering models
+DocumentModelLabelPDF = Shipping Label PDF template
+
+#
+# About page
+#
+About = About
+ShipmentPackageAbout = About Shipment Package
+ShipmentPackageAboutPage = Shipment Package about page
+
+#
+# Sample page
+#
+ReadShipmentPackage = Read objects of Shipment Package
+WriteShipmentPackage = Create/Update objects of Shipment Package
+DeleteShipmentPackage = Delete objects of Shipment Package
+ShipmentPackage = Shipment Packages
+New_ShipmentPackage = New package
+List_ShipmentPackage = List of packages
+ValueOfPackage = Value (Price of the content, for insurance & customs)
+TransportSupplier = Shipping Supplier
+LinkToTransporter = Supplier who does transportation and invoices the shipping.
+LinkToThirparty = Customer to receive package.
+ShipmentPackageRefSupplier = Supplier shipping reference (tracking number)
+Fkparceltype = Type of parcel
+PackageParcelType = To define in package parcel type dictionary
+c_shipment_package_type = Package parcel type
+Dangerousgoods = Dangerous goods
+PackageExplosives = Explosives
+PackageFlammableGases = Flammable Gases
+PackageFlammableLiquids = Flammable solids
+PackageFlammableSolids = Flammable solids
+PackageOxidizing = Oxidizing
+PackageToxicAndInfectious = Toxic & Infectious
+PackageRadioactive = Radioactive
+PackageCorrosives = Corrosives
+PackageMiscellaneous = Miscellaneous
+Taillift = Taillift
+PackageTailLiftRequired = Tail lift is required
+ProductLotBatch = Lot/Serial
+CreatePackage = Create Package
+TrackingUrl = Tracking Url
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description
+
+#
+# doc
+#
+PdfTitle = Package

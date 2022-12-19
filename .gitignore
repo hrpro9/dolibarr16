@@ -1,0 +1,7 @@
+documents/*
+*.log
+*.cache
+*/.vscode/*
+##### Composer
+composer.phar
+/vendor/
