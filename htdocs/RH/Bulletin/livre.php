@@ -75,7 +75,6 @@ $arrayfields = array(
     'u.lastname' => array('label' => $langs->trans("Lastname"), 'checked' => 1),
     'u.firstname' => array('label' => $langs->trans("Firstname"), 'checked' => 1),
     'u.gender' => array('label' => $langs->trans("Gender"), 'checked' => 0),
-    'u.employee' => array('label' => $langs->trans("Employee"), 'checked' => ($mode == 'employee' ? 1 : 0)),
     'u.accountancy_code' => array('label' => $langs->trans("AccountancyCode"), 'checked' => 0),
     'u.email' => array('label' => $langs->trans("EMail"), 'checked' => 1),
     'u.api_key' => array('label' => $langs->trans("ApiKey"), 'checked' => 0, "enabled" => ($conf->api->enabled && $user->admin)),
@@ -235,7 +234,7 @@ $reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Not
 if ($reshook > 0) {
     $sql .= $hookmanager->resPrint;
 } else {
-    $sql .= " WHERE u.entity IN (" . getEntity('user') . ")";
+    $sql .= " WHERE u.entity IN (" . getEntity('user') . ") and u.employee =1";
 }
 if ($socid > 0) $sql .= " AND u.fk_soc = " . $socid;
 
