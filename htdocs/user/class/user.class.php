@@ -2867,6 +2867,178 @@ class User extends CommonObject
 
 		return $result;
 	}
+	public function getNomUrlRh($withpictoimg = 0, $option = '', $infologin = 0, $notooltip = 0, $maxlen = 24, $hidethirdpartylogo = 0, $mode = '', $morecss = '', $save_lastsearch_value = -1)
+	{
+		global $langs, $conf, $db, $hookmanager, $user;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
+
+		if (!$user->rights->user->user->lire && $user->id != $this->id) {
+			$option = 'nolink';
+		}
+
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) {
+			$withpictoimg = 0;
+		}
+
+		$result = ''; $label = '';
+		$companylink = '';
+
+		if (!empty($this->photo)) {
+			$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
+			$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
+		}
+
+		// Info Login
+		$label .= '<div class="centpercent">';
+		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("User").'</u>';
+		$label .= ' '.$this->getLibStatut(4);
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_string_nohtmltag($this->getFullName($langs, ''));
+		if (!empty($this->login)) {
+			$label .= '<br><b>'.$langs->trans('Login').':</b> '.dol_string_nohtmltag($this->login);
+		}
+		if (!empty($this->job)) {
+			$label .= '<br><b>'.$langs->trans("Job").':</b> '.dol_string_nohtmltag($this->job);
+		}
+		$label .= '<br><b>'.$langs->trans("Email").':</b> '.dol_string_nohtmltag($this->email);
+		if (!empty($this->office_phone) || !empty($this->office_fax) || !empty($this->fax)) {
+			$phonelist = array();
+			if ($this->office_phone) {
+				$phonelist[] = dol_print_phone($this->office_phone, $this->country_code, $this->id, 0, '', '&nbsp', 'phone');
+			}
+			if ($this->office_fax) {
+				$phonelist[] = dol_print_phone($this->office_fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
+			}
+			if ($this->user_mobile) {
+				$phonelist[] = dol_print_phone($this->user_mobile, $this->country_code, $this->id, 0, '', '&nbsp', 'mobile');
+			}
+			$label .= '<br><b>'.$langs->trans('Phone').':</b> '.implode('&nbsp;', $phonelist);
+		}
+		if (!empty($this->admin)) {
+			$label .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
+		}
+		if (!empty($this->accountancy_code) || $option == 'accountancy') {
+			$label .= '<br><b>'.$langs->trans("AccountancyCode").'</b>: '.$this->accountancy_code;
+		}
+		$company = '';
+		if (!empty($this->socid)) {	// Add thirdparty for external users
+			$thirdpartystatic = new Societe($db);
+			$thirdpartystatic->fetch($this->socid);
+			if (empty($hidethirdpartylogo)) {
+				$companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink') ? 'nolink' : '')); // picto only of company
+			}
+			$company = ' ('.$langs->trans("Company").': '.img_picto('', 'company').' '.dol_string_nohtmltag($thirdpartystatic->name).')';
+		}
+		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
+		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
+		$label .= '</div>';
+		if ($infologin > 0) {
+			$label .= '<br>';
+			$label .= '<br><u>'.$langs->trans("Session").'</u>';
+			$label .= '<br><b>'.$langs->trans("IPAddress").'</b>: '.dol_string_nohtmltag(getUserRemoteIP());
+			if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY)) {
+				$label .= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (User entity '.$this->entity.')';
+			}
+			$label .= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.dol_string_nohtmltag($_SESSION["dol_authmode"].(empty($dolibarr_main_demo) ? '' : ' (demo)'));
+			$label .= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($this->datelastlogin, "dayhour", 'tzuser');
+			$label .= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($this->datepreviouslogin, "dayhour", 'tzuser');
+			$label .= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.dol_string_nohtmltag($conf->theme);
+			$label .= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.dol_string_nohtmltag($menumanager->name);
+			$s = picto_from_langcode($langs->getDefaultLang());
+			$label .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.dol_string_nohtmltag(($s ? $s.' ' : '').$langs->getDefaultLang());
+			$label .= '<br><b>'.$langs->trans("Browser").':</b> '.dol_string_nohtmltag($conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' ('.$_SERVER['HTTP_USER_AGENT'].')');
+			$label .= '<br><b>'.$langs->trans("Layout").':</b> '.dol_string_nohtmltag($conf->browser->layout);
+			$label .= '<br><b>'.$langs->trans("Screen").':</b> '.dol_string_nohtmltag($_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight']);
+			if ($conf->browser->layout == 'phone') {
+				$label .= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
+			}
+			if (!empty($_SESSION["disablemodules"])) {
+				$label .= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.dol_string_nohtmltag(join(', ', explode(',', $_SESSION["disablemodules"])));
+			}
+		}
+		if ($infologin < 0) {
+			$label = '';
+		}
+
+		$url = DOL_URL_ROOT.'/RH/Users/card.php?id='.$this->id;
+		if ($option == 'leave') {
+			$url = DOL_URL_ROOT.'/holiday/list.php?id='.$this->id;
+		}
+
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkclose = "";
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$langs->load("users");
+				$label = $langs->trans("ShowUser");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		}
+
+		$linkstart .= $linkclose.'>';
+		$linkend = '</a>';
+
+		//if ($withpictoimg == -1) $result.='<div class="nowrap">';
+		$result .= (($option == 'nolink') ? '' : $linkstart);
+		if ($withpictoimg) {
+			$paddafterimage = '';
+			if (abs((int) $withpictoimg) == 1) {
+				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
+			}
+			// Only picto
+			if ($withpictoimg > 0) {
+				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1).'</span>';
+			} else {
+				// Picto must be a photo
+				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+			}
+			$result .= $picto;
+		}
+		if ($withpictoimg > -2 && $withpictoimg != 2) {
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$result .= '<span class="nopadding usertext'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').($morecss ? ' '.$morecss : '').'">';
+			}
+			if ($mode == 'login') {
+				$result .= dol_string_nohtmltag(dol_trunc($this->login, $maxlen));
+			} else {
+				$result .= dol_string_nohtmltag($this->getFullName($langs, '', ($mode == 'firstelselast' ? 3 : ($mode == 'firstname' ? 2 : -1)), $maxlen));
+			}
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$result .= '</span>';
+			}
+		}
+		$result .= (($option == 'nolink') ? '' : $linkend);
+		//if ($withpictoimg == -1) $result.='</div>';
+
+		$result .= $companylink;
+
+		global $action;
+		$hookmanager->initHooks(array('userdao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
+
+		return $result;
+	}
 
 	/**
 	 *  Return clickable link of login (eventualy with picto)
@@ -2991,6 +3163,42 @@ class User extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'label')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+		}
+		if ($this->email) {
+			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
+	}
+	public function getKanbanViewRh($option = '')
+	{
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+
+		$label = '';
+		if (!empty($this->photo)) {
+			//$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
+			//$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
+			$return .= $label;
+		} else {
+			$return .= img_picto('', $this->picto);
+		}
+
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrlRh() : $this->ref).'</span>';
 		if (property_exists($this, 'label')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
 		}

@@ -206,28 +206,28 @@ function user_prepare_head_rh(User $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/user/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("User");
+	$head[$h][0] = DOL_URL_ROOT.'/RH/Users/card.php?id='.$object->id;
+	$head[$h][1] = 'Employé';
 	$head[$h][2] = 'user';
 	$h++;
 
 	if ((!empty($conf->ldap->enabled) && !empty($conf->global->LDAP_SYNCHRO_ACTIVE))
 		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || !empty($user->admin))) {
 		$langs->load("ldap");
-		$head[$h][0] = DOL_URL_ROOT.'/user/ldap.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/RH/Users/ldap.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("LDAPCard");
 		$head[$h][2] = 'ldap';
 		$h++;
 	}
 
-	if ($canreadperms) {
-		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Rights").(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($object->nb_rights).'</span>' : '');
-		$head[$h][2] = 'rights';
-		$h++;
-	}
+	// if ($canreadperms) {
+	// 	$head[$h][0] = DOL_URL_ROOT.'/RH/Users/perms.php?id='.$object->id;
+	// 	$head[$h][1] = $langs->trans("Rights").(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($object->nb_rights).'</span>' : '');
+	// 	$head[$h][2] = 'rights';
+	// 	$h++;
+	// }
 
-	$head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/RH/Users/param_ihm.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("UserGUISetup");
 	$head[$h][2] = 'guisetup';
 	$h++;
@@ -253,14 +253,14 @@ function user_prepare_head_rh(User $object)
 			}
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/RH/Users/agenda_extsites.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("ExtSites").($nbagenda ? '<span class="badge marginleftonlyshort">'.$nbagenda.'</span>' : '');
 		$head[$h][2] = 'extsites';
 		$h++;
 	}
 
 	if (!empty($conf->clicktodial->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/RH/Users/clicktodial.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("ClickToDial");
 		$head[$h][2] = 'clicktodial';
 		$h++;
@@ -286,7 +286,7 @@ function user_prepare_head_rh(User $object)
 		}
 
 		$langs->load("mails");
-		$head[$h][0] = DOL_URL_ROOT.'/user/notify/card.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/RH/Users/notify/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("NotificationsAuto");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -307,8 +307,8 @@ function user_prepare_head_rh(User $object)
 		|| (!empty($conf->holiday->enabled) && !empty($user->rights->holiday->read) && ($user->id == $object->id || $user->rights->holiday->readall))
 		) {
 		// Bank
-		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("HRAndBank");
+		$head[$h][0] = DOL_URL_ROOT.'/RH/Users/bank.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Employee");
 		$head[$h][2] = 'bank';
 		$h++;
 	}
@@ -320,7 +320,7 @@ function user_prepare_head_rh(User $object)
 		if (!empty($object->note)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/RH/Users/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Note");
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -334,7 +334,7 @@ function user_prepare_head_rh(User $object)
 		$upload_dir = $conf->user->dir_output."/".$object->id;
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $object->element, $object->id);
-		$head[$h][0] = DOL_URL_ROOT.'/user/document.php?userid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/RH/Users/document.php?userid='.$object->id;
 		$head[$h][1] = $langs->trans("Documents");
 		if (($nbFiles + $nbLinks) > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -342,7 +342,7 @@ function user_prepare_head_rh(User $object)
 		$head[$h][2] = 'document';
 		$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/RH/Users/info.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Info");
 		$head[$h][2] = 'info';
 		$h++;

@@ -332,11 +332,7 @@ $user2 = new User($db);
 $now = dol_now();
 
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
-if ($contextpage == 'employeelist' && $search_employee == 1) {
-	$title = $langs->trans("Employees");
-} else {
-	$title = $langs->trans("Users");
-}
+$title = $langs->trans("Employees");
 $morejs = array();
 $morecss = array();
 $morehtmlright = "";
@@ -502,7 +498,7 @@ $num = $db->num_rows($resql);
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".DOL_URL_ROOT.'/user/card.php?id='.$id);
+	header("Location: ".DOL_URL_ROOT.'/RH/Users/card.php?id='.$id);
 	exit;
 }
 
@@ -607,14 +603,14 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-$url = DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=';
+$url = DOL_URL_ROOT.'/RH/Users/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=';
 if (!empty($socid)) {
 	$url .= '&socid='.urlencode($socid);
 }
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/RH/Users/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/RH/Users/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
@@ -935,7 +931,7 @@ while ($i < $imaxinloop) {
 	$object->employee = $obj->employee;
 	$object->photo = $obj->photo;
 
-	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
+	$li = $object->getNomUrlRh(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
 	$canreadhrmdata = 0;
 	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read) && in_array($obj->rowid, $childids))
@@ -955,7 +951,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Output Kanban
-		print $object->getKanbanView('');
+		print $object->getKanbanViewRh('');
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
