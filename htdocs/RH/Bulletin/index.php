@@ -9,11 +9,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-
-
 if (!$user->rights->salaries->read) {
     accessforbidden("you don't have right for this page");
 }
@@ -352,7 +347,7 @@ $reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Not
 if ($reshook > 0) {
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql .= " WHERE u.entity IN (".getEntity('user').") and u.employee = 1";
+	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
 if ($socid > 0) {
 	$sql .= " AND u.fk_soc = ".((int) $socid);
@@ -803,9 +798,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$userstatic->employee = $obj->employee;
 	$userstatic->photo = $obj->photo;
 
-    $sql1 = "SELECT s.fk_user FROM llx_payment_salary as s WHERE s.fk_user=" . $obj->rowid . " AND year(datep)=" . $prev_year . " AND month(datep)=" . $prev_month;
+    $sql1 = "SELECT s.fk_user FROM llx_payment_salary as s WHERE s.fk_user=" . $obj->rowid . " AND year(datep)=" . $year . " AND month(datep)=" . $month;
     $res1 = $db->query($sql1);
-    if ((strtotime($obj->dateemploymentend) < strtotime(date("d") . '-' . $prev_month . '-' . $prev_year) && $obj->dateemploymentend != '') || $obj->dateemployment == '' || (strtotime($obj->dateemployment) > strtotime(date("t", strtotime('01-' . $prev_month . '-' . $prev_year)) . '-' . $prev_month . '-' . $prev_year) && $obj->dateemployment != '')) {
+    if ((strtotime($obj->dateemploymentend) < strtotime(date("d") . '-' . $month . '-' . $year) && $obj->dateemploymentend != '') || $obj->dateemployment == '' || (strtotime($obj->dateemployment) > strtotime(date("t", strtotime('01-' . $month . '-' . $year)) . '-' . $month . '-' . $year) && $obj->dateemployment != '')) {
         $i++;
         continue;
     }
@@ -1135,25 +1130,13 @@ if ($action == 'changeWorkingDays') {
 
 if ($action == 'confirmeWorkingDays') {
     $action = '';
-    //Create table for month declaration
-    $sql = "CREATE TABLE IF NOT EXISTS llx_Paie_MonthDeclaration(userid int, year int, month int, workingDays float, workingHours int, salaireBrut float, salaireNet float, netImposable float, ir float, arrondi float, cloture int, joursferie int, PRIMARY KEY (userid, year, month));";
-    $res = $db->query($sql);
-    if ($res);
-    else print("<br>fail ERR: " . $sql);
-
-
-    //Create table for insert the extra hours
-    $sql = "CREATE TABLE IF NOT EXISTS llx_Paie_HourSuppDeclaration(userid int, rub int, year int, month int, nhours int, PRIMARY KEY (userid, rub, year, month));";
-    $res = $db->query($sql);
-    if ($res);
-    else print("<br>fail ERR: " . $sql);
 
     foreach ($users as $user) {
         $workingdays = (int)GETPOST("workingdays_$user->rowid", "float");
         $workingHours = (int)GETPOST("workingHours_$user->rowid", "float");
         $joursferie = (int)GETPOST("joursferie_$user->rowid", "float");
         //change the working days
-        $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours, joursferie) VALUES($user->rowid, $prev_year, $prev_month, $workingdays, $workingHours, $joursferie);";
+        $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours, joursferie) VALUES($user->rowid, $year, $month, $workingdays, $workingHours, $joursferie);";
         $res = $db->query($sql);
         if ($res);
         else print("<br>fail ERR: " . $sql);
@@ -1164,7 +1147,7 @@ if ($action == 'confirmeWorkingDays') {
             while ($row = $res->fetch_assoc()) {
                 $nhours = (int)GETPOST("hoursupp_" . $row["rub"] . "_$user->rowid", "int");
 
-                $sqlh = "REPLACE INTO llx_Paie_HourSuppDeclaration(userid, rub, year, month, nhours) VALUES($user->rowid, " . $row["rub"] . ", $prev_year, $prev_month, $nhours);";
+                $sqlh = "REPLACE INTO llx_Paie_HourSuppDeclaration(userid, rub, year, month, nhours) VALUES($user->rowid, " . $row["rub"] . ", $year, $month, $nhours);";
                 $resh = $db->query($sqlh);
                 if ($resh);
                 else {
@@ -1231,34 +1214,32 @@ function GenerateDocuments()
 }
 function ShowDocuments()
 {
-    global $db, $object, $conf, $month, $year, $societe, $showAll, $prev_month, $prev_year;
+    global $db, $object, $conf, $month, $year, $societe;
     print '<div class="fichecenter"><div class="fichehalfleft">';
     $formfile = new FormFile($db);
 
 
     $subdir = get_exdir($object->id, 2, 0, 0, $object, 'RH');
-    $filedir = DOL_DATA_ROOT . '/grh/BulletinDePaie' . '/' . $subdir;
-
+    $filedir = DOL_DATA_ROOT . '/grh/BulletinDePaie';
     $urlsource = $_SERVER['PHP_SELF'] . '';
     $genallowed = 0;
     $delallowed = 1;
     $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
 
-    if (!$showAll) {
-        $_SESSION["filterDoc"] = $prev_month . "-" . $prev_year;
-    }
+	$_SESSION["filterDoc"] = $month . "-" . $year;
+
 
     print $formfile->showdocuments('BulletinDePaie', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, 'remonth=' . $month . '&amp;reyear=' . $year, '', '', $societe->default_lang);
     $somethingshown = $formfile->numoffiles;
 
-    $_SESSION["filterDoc"] = null;
+    // $_SESSION["filterDoc"] = null;
     // Show links to link elements
     //$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
 }
 
 function changeWorkingDays()
 {
-    global $db, $day, $month, $year, $prev_month, $prev_year, $users;
+    global $db, $day, $month, $year, $users;
 
     $sql = "SELECT rub, designation FROM llx_Paie_HourSupp";
     $res = $db->query($sql);
@@ -1306,7 +1287,7 @@ function changeWorkingDays()
         if ($type == 'mensuel') //Mensuel
         {
             $workingdays = 26;
-            $sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$prev_month AND year = $prev_year";
+            $sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
             $res = $db->query($sql);
             if (((object)$res)->num_rows > 0) {
                 $row = ((object)$res)->fetch_assoc();
@@ -1324,7 +1305,7 @@ function changeWorkingDays()
         } else if ($type == 'horaire') //Journalier or Horaire
         {
             $workingHours = 0;
-            $sql = "SELECT workingHours, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$prev_month AND year = $prev_year";
+            $sql = "SELECT workingHours, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
             $res = $db->query($sql);
             if (((object)$res)->num_rows > 0) {
                 $row = ((object)$res)->fetch_assoc();
@@ -1341,7 +1322,7 @@ function changeWorkingDays()
                 <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
         }
         foreach ((array)$hrs as $hr) {
-            $sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$prev_month AND year = $prev_year";
+            $sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
             $resh = $db->query($sqlh);
             if ($resh->num_rows > 0) {
                 $nhours = $resh->fetch_assoc()["nhours"];
