@@ -293,14 +293,14 @@ class pdf_EtatMensuelIR extends ModelePDFUser
 				$pdf->MultiCell(200, 3, 'Etat Mensuel Impôt sur les Revenus (I.R.) Mois de ' . $french_months[$prev_month - 1] . ' ' . $prev_year, 0, 'C');
 
 				$salarais = array();
-				$sql = "SELECT * FROM IG_Paie_MonthDeclaration WHERE month=$prev_month AND year=$prev_year AND cloture=1";
+				$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclaration WHERE month=$prev_month AND year=$prev_year AND cloture=1";
 				$res = $db->query($sql);
 				if (((object)$res)->num_rows > 0) {
 					while ($u = ((object)$res)->fetch_assoc()) {
 						$id = $u["userid"];
 
 						//get nom & prenom
-						$sql1 = "SELECT firstname, lastname FROM IG_user WHERE rowid=$id";
+						$sql1 = "SELECT firstname, lastname FROM " . MAIN_DB_PREFIX . "user WHERE rowid=$id";
 						$res1 = $db->query($sql1);
 						if (((object)$res1)->num_rows > 0) {
 							$row1 = ((object)$res1)->fetch_assoc();
@@ -393,7 +393,7 @@ class pdf_EtatMensuelIR extends ModelePDFUser
 					</tr>';
 				}
 
-				$table.='<tr><td></td><td></td><td></td><td></td></tr>';
+				$table .= '<tr><td></td><td></td><td></td><td></td></tr>';
 				$table .= '<tr class="row-bordered row-content">
 					<td><b>Total général :</b></td>
 					<td class="center-td">' . array_sum(array_column($salarais, 'workingDays')) . '</td>

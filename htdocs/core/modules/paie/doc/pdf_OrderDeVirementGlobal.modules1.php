@@ -245,7 +245,7 @@ class pdf_OrderDeVirementGlobal extends ModelePDFUser
 				}
 
 				// get salary net
-				$sql = "SELECT salaireNet FROM IG_Paie_MonthDeclaration WHERE userid=$id AND year=$year AND month=$month";
+				$sql = "SELECT salaireNet FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclaration WHERE userid=$id AND year=$year AND month=$month";
 				$res = $this->db->query($sql);
 				if ($res) {
 					$row = $res->fetch_assoc();

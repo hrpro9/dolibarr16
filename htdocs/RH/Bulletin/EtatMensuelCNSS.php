@@ -124,7 +124,7 @@ $next_day   = 1;
 
 if ($action == "saveRubs") {
     //Create table for rubs of etats
-    $sql = "CREATE TABLE IF NOT EXISTS llx_Paie_EtatRubs(id INT PRIMARY KEY, cnssSalariale float, cnssPatronale float, amoSalariale float, amoPatronale float);";
+    $sql = "CREATE TABLE IF NOT EXISTS  " . MAIN_DB_PREFIX . "Paie_EtatRubs(id INT PRIMARY KEY, cnssSalariale float, cnssPatronale float, amoSalariale float, amoPatronale float);";
     $res = $db->query($sql);
     if ($res);
     else print("<br>fail ERR: " . $sql);

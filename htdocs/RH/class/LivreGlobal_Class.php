@@ -48,7 +48,7 @@ for ($j = $start; $j < $start + 6; $j++) {
         $congeDays = 0;
 
         $obj = $db->fetch_object($result);
-        //$sql2="SELECT ex.name from IG_extrafields as ex LEFT JOIN IG_user_extrafields as eu on ex.rowid=eu.fk"
+        //$sql2="SELECT ex.name FROM " . MAIN_DB_PREFIX . "extrafields as ex LEFT JOIN " . MAIN_DB_PREFIX . "user_extrafields as eu on ex.rowid=eu.fk"
 
         $userstatic->id = $obj->rowid;
         $userstatic->admin = $obj->admin;
@@ -65,7 +65,7 @@ for ($j = $start; $j < $start + 6; $j++) {
 
         $object->fetch($obj->rowid);
 
-        $sql1 = "SELECT fk_user FROM IG_payment_salary WHERE fk_user=" . $obj->rowid . " AND year(datep)=" . $prev_year . " AND month(datep)=" . $prev_month;
+        $sql1 = "SELECT fk_user FROM " . MAIN_DB_PREFIX . "payment_salary WHERE fk_user=" . $obj->rowid . " AND year(datep)=" . $prev_year . " AND month(datep)=" . $prev_month;
         $res1 = $db->query($sql1);
         if ($res1->num_rows == 0) {
             $i++;
@@ -74,7 +74,7 @@ for ($j = $start; $j < $start + 6; $j++) {
 
         // see if it's clotured
         $cloture = 0;
-        $sql1 = "SELECT cloture FROM IG_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$prev_year AND month=$prev_month";
+        $sql1 = "SELECT cloture FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$prev_year AND month=$prev_month";
         $res1 = $db->query($sql1);
         if ($res1) {
             $row1 = $res1->fetch_assoc();
@@ -91,7 +91,7 @@ for ($j = $start; $j < $start + 6; $j++) {
          */
 
         //Get Parameters from database
-        $sql = "SELECT * FROM IG_Paie_bdpParameters";
+        $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_bdpParameters";
         $res = $db->query($sql);
         $params = ((object)($res))->fetch_assoc();
 
@@ -101,7 +101,7 @@ for ($j = $start; $j < $start + 6; $j++) {
         if ($res->num_rows > 0)
             $extrafields = ((object)($res))->fetch_assoc();
 
-        $sql = "SELECT * FROM  IG_Paie_MonthDeclaration m, IG_Paie_MonthDeclarationRubs r WHERE r.userid=m.userid AND r.month=m.month AND r.year = m.year AND m.userid=$object->id AND m.month=$prev_month AND m.year = $prev_year";
+        $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclaration m, " . MAIN_DB_PREFIX . "Paie_MonthDeclarationRubs r WHERE r.userid=m.userid AND r.month=m.month AND r.year = m.year AND m.userid=$object->id AND m.month=$prev_month AND m.year = $prev_year";
         $res = $db->query($sql);
         if (((object)$res)->num_rows > 0) {
             $row = $res->fetch_assoc();
@@ -131,7 +131,7 @@ for ($j = $start; $j < $start + 6; $j++) {
             foreach (explode(";", $rubs) as $r) {
                 //print $rub."<br>";
                 $rub = explode(":", $r);
-                $sql = "SELECT * FROM IG_Paie_Rub WHERE rub=" . $rub[0];
+                $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_Rub WHERE rub=" . $rub[0];
                 $res = $db->query($sql);
                 if ($rub[1] == "brutGlobal") {
                     $brutGlobal = $rub[2];
@@ -150,11 +150,11 @@ for ($j = $start; $j < $start + 6; $j++) {
                     $chargeFamilleTot += $chargeFamille;
                 }
                 if ($res->num_rows == 0) {
-                    $sql = "SELECT * FROM IG_Paie_HourSupp WHERE rub=" . $rub[0];
+                    $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_HourSupp WHERE rub=" . $rub[0];
                     $res = $db->query($sql);
                 }
                 if ($res->num_rows == 0) {
-                    $sql = "SELECT * FROM IG_Paie_Rubriques WHERE rub=" . $rub[0];
+                    $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_Rubriques WHERE rub=" . $rub[0];
                     $res = $db->query($sql);
                 }
                 if ($res->num_rows > 0 && $rub[2] != 0) {

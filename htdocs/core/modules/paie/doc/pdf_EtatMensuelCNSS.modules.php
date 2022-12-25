@@ -289,14 +289,14 @@ class pdf_EtatMensuelCNSS extends ModelePDFUser
 
 
 				$salarais = array();
-				$sql = "SELECT * FROM IG_Paie_MonthDeclaration WHERE month=$prev_month AND year=$prev_year AND cloture=1";
+				$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclaration WHERE month=$prev_month AND year=$prev_year AND cloture=1";
 				$res = $db->query($sql);
 				if (((object)$res)->num_rows > 0) {
 					while ($u = ((object)$res)->fetch_assoc()) {
 						$id = $u["userid"];
 
 						//get nom & prenom
-						$sql1 = "SELECT firstname, lastname FROM IG_user WHERE rowid=$id";
+						$sql1 = "SELECT firstname, lastname FROM " . MAIN_DB_PREFIX . "user WHERE rowid=$id";
 						$res1 = $db->query($sql1);
 						if (((object)$res1)->num_rows > 0) {
 							$row1 = ((object)$res1)->fetch_assoc();
@@ -305,7 +305,7 @@ class pdf_EtatMensuelCNSS extends ModelePDFUser
 						}
 
 						//get N°cnss
-						$sql1 = "SELECT cnss FROM IG_Paie_UserInfo WHERE userid=$id";
+						$sql1 = "SELECT cnss FROM " . MAIN_DB_PREFIX . "Paie_UserInfo WHERE userid=$id";
 						$res1 = $db->query($sql1);
 						if (((object)$res1)->num_rows > 0) {
 							$row1 = ((object)$res1)->fetch_assoc();
@@ -313,7 +313,7 @@ class pdf_EtatMensuelCNSS extends ModelePDFUser
 						}
 
 						//Get retenue cnss
-						$sql1 = "SELECT rubs FROM IG_Paie_MonthDeclarationRubs WHERE userid=$id AND month=$prev_month AND year = $prev_year";
+						$sql1 = "SELECT rubs FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclarationRubs WHERE userid=$id AND month=$prev_month AND year = $prev_year";
 						$res1 = $db->query($sql1);
 						if (((object)$res1)->num_rows > 0) {
 							$row1 = ((object)$res1)->fetch_assoc();

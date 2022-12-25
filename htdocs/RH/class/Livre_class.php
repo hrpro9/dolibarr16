@@ -20,14 +20,14 @@ for ($j = $start; $j < $start + 6; $j++) {
     $arrondi  = 0;
     $totalNet = 0;
 
-    $sql1 = "SELECT fk_user FROM IG_payment_salary WHERE fk_user=" . $object->id . " AND year(datep)=" . $prev_year . " AND month(datep)=" . $prev_month;
+    $sql1 = "SELECT fk_user FROM " . MAIN_DB_PREFIX . "payment_salary WHERE fk_user=" . $object->id . " AND year(datep)=" . $prev_year . " AND month(datep)=" . $prev_month;
     $res1 = $db->query($sql1);
     if ($res1->num_rows == 0) {
         continue;
     }
     // see if it's clotured
     $cloture = 0;
-    $sql1 = "SELECT cloture FROM IG_Paie_MonthDeclaration WHERE userid=$object->id AND year=$prev_year AND month=$prev_month";
+    $sql1 = "SELECT cloture FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclaration WHERE userid=$object->id AND year=$prev_year AND month=$prev_month";
     $res1 = $db->query($sql1);
     if ($res1) {
         $row1 = $res1->fetch_assoc();
@@ -38,7 +38,7 @@ for ($j = $start; $j < $start + 6; $j++) {
     }
 
     //Get Parameters from database
-    $sql = "SELECT * FROM IG_Paie_bdpParameters";
+    $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_bdpParameters";
     $res = $db->query($sql);
     $params = ((object)($res))->fetch_assoc();
 
@@ -49,13 +49,13 @@ for ($j = $start; $j < $start + 6; $j++) {
 
     $cnss = "";
     //Get user salaire informations from database
-    $sql = "SELECT cnss from IG_Paie_UserInfo WHERE userid=" . $object->id;
+    $sql = "SELECT cnss FROM " . MAIN_DB_PREFIX . "Paie_UserInfo WHERE userid=" . $object->id;
     $res = $db->query($sql);
     if (((object)$res)->num_rows > 0) {
         $cnss = ((object)$res)->fetch_assoc()["cnss"];
     }
 
-    $sql = "SELECT * FROM  IG_Paie_MonthDeclaration m, IG_Paie_MonthDeclarationRubs r 
+    $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclaration m, " . MAIN_DB_PREFIX . "Paie_MonthDeclarationRubs r 
                 WHERE r.userid=m.userid AND r.month=m.month AND r.year = m.year 
                 AND m.userid=$object->id AND m.month=$prev_month AND m.year = $prev_year";
     $res = $db->query($sql);
@@ -81,7 +81,7 @@ for ($j = $start; $j < $start + 6; $j++) {
         foreach (explode(";", $rubs) as $r) {
             //print $rub."<br>";
             $rub = explode(":", $r);
-            $sql = "SELECT * FROM IG_Paie_Rub WHERE rub=" . $rub[0];
+            $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_Rub WHERE rub=" . $rub[0];
             $res = $db->query($sql);
             if ($rub[1] == "brutGlobal") {
                 $brutGlobal = $rub[2];
@@ -97,11 +97,11 @@ for ($j = $start; $j < $start + 6; $j++) {
             }
 
             if ($res->num_rows == 0) {
-                $sql = "SELECT * FROM IG_Paie_HourSupp WHERE rub=" . $rub[0];
+                $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_HourSupp WHERE rub=" . $rub[0];
                 $res = $db->query($sql);
             }
             if ($res->num_rows == 0) {
-                $sql = "SELECT * FROM IG_Paie_Rubriques WHERE rub=" . $rub[0];
+                $sql = "SELECT * FROM " . MAIN_DB_PREFIX . "Paie_Rubriques WHERE rub=" . $rub[0];
                 $res = $db->query($sql);
             }
             if ($res->num_rows > 0 && $rub[2] != 0) {

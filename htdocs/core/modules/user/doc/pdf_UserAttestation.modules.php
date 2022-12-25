@@ -227,7 +227,7 @@ class pdf_UserAttestation extends ModelePDFUser
 			$object->fetch_thirdparty();
 
 			//create table for saving attestations info
-			$sql = "CREATE TABLE IF NOT EXISTS llx_UserAttestation(`numero` int(4) AUTO_INCREMENT primary key, `matricule` varchar(20), `user` int, `date` datetime, `idUserCrée` int)";
+			$sql = "CREATE TABLE IF NOT EXISTS  " . MAIN_DB_PREFIX . "UserAttestation(`numero` int(4) AUTO_INCREMENT primary key, `matricule` varchar(20), `user` int, `date` datetime, `idUserCrée` int)";
 			$res = $db->query($sql);
 			if (!$res) {
 				print "ERROR : can't create table llx_UserAttestation.";
