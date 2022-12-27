@@ -1,7 +1,11 @@
 documents/*
+htdocs/conf/conf.php
 *.log
 *.cache
 */.vscode/*
 ##### Composer
 composer.phar
 /vendor/
+
+## other
+.DS_Store
