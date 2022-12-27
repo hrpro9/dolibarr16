@@ -728,7 +728,7 @@ function ShowDocuments()
     $formfile = new FormFile($db);
 
 
-    $subdir = get_exdir($object->id, 2, 0, 0, $object, 'RH');
+    $subdir = '';
     $filedir = DOL_DATA_ROOT . '/grh/LivreDePaie' . '/' . $subdir;
 
     $urlsource = $_SERVER['PHP_SELF'] . '';

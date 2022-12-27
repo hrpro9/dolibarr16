@@ -255,7 +255,7 @@ function ShowDocuments()
 
     $name = sprintf("%02d", $prev_month) . "-$prev_year";
 
-    $subdir = get_exdir($object->id, 2, 0, 0, $object, 'RH');
+    $subdir = '';
     $filedir = DOL_DATA_ROOT . '/grh/LivreGlobalMois' . '/' . $subdir;
 
     $urlsource = $_SERVER['PHP_SELF'] . '';

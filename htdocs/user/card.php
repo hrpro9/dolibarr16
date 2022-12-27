@@ -1081,19 +1081,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 		}
 
-		// Show tabs
-		if ($mode == 'employee') { // For HRM module development
-			$title = $langs->trans("Employee");
-			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-		} else {
-			$title = $langs->trans("User");
-			$linkback = '';
-
-			if ($user->rights->user->user->lire || $user->admin) {
-				$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-			}
-		}
-
+		$title = $langs->trans("User");
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		
 		$head = user_prepare_head($object);
 
 		/*

@@ -252,7 +252,7 @@ function ShowDocuments()
 
     $name = ($start == 1) ? "01-$prev_year" : "02-$prev_year";
 
-    $subdir = get_exdir($object->id, 2, 0, 0, $object, 'RH');
+    $subdir = '';
     $filedir = DOL_DATA_ROOT . '/grh/LivreGlobal' . '/' . $subdir;
 
     $urlsource = $_SERVER['PHP_SELF'] . '';

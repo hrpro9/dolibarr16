@@ -2646,6 +2646,31 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>'.(dol_textishtml($object->note_private) ? $object->note_private : dol_nl2br($object->note_private, 1, true)).'</td></tr>'."\n";
 				print '<!-- End show Note --> '."\n";
 			}
+			// min max achat
+			$minBuyPrice = 0;
+			$maxBuyPrice = 0;
+			$sql = "SELECT MIN(subprice) as min, MAX(subprice) as max FROM llx_commande_fournisseurdet WHERE fk_product = $id and product_type = 0 and fk_commande in (select rowid from llx_commande_fournisseur WHERE fk_statut in (4,5)) ORDER BY subprice DESC";
+			$resql = $db->query($sql);
+			if($resql){
+				$result = ((object)$resql)->fetch_assoc();
+				$minBuyPrice = $result['min'];
+				$maxBuyPrice = $result['max'];
+			}
+			print "<tr><td class='valignmiddle'>Prix d'achat</td><td>Min : $minBuyPrice / Max : $maxBuyPrice</td></tr>";
+			
+			// min max vendre
+			// $minSellPrice = 0;
+			// $maxSellPrice = 0;
+			// $sql = "SELECT MIN(subprice) as min, MAX(subprice) as max FROM llx_commandedet WHERE fk_product = $id and product_type = 0 and fk_commande in (select rowid from llx_commande WHERE fk_statut in (4,5)) ORDER BY subprice DESC";
+			// $resql = $db->query($sql);
+			// if($resql){
+			// 	$result = ((object)$resql)->fetch_assoc();
+			// 	$minBuyPrice = $result['min'];
+			// 	$maxBuyPrice = $result['max'];
+			// }
+			// print "<tr><td class='valignmiddle'>Prix de vendre</td><td>Min : $minSellPrice / Max : $maxSellPrice</td></tr>";
+
+
 
 			print "</table>\n";
 			print '</div>';

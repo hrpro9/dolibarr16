@@ -393,6 +393,7 @@ if ($action == 'addList') {
                                         $errorMsg = "RIB error";
                                     }
                                 }else{
+
                                     $db->rollback();
                                     $errorMsg = "(matricule, cin, ou categorie) error";
                                 }

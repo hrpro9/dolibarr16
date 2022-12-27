@@ -174,28 +174,22 @@ if ($mode == 'employee' && !GETPOSTISSET('search_employee')) {
 }
 
 // Define value to know what current user can do on users
-$permissiontoadd = (!empty($user->admin) || $user->rights->user->user->creer);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
-$canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
-$candisableuser = (!empty($user->admin) || $user->rights->user->user->supprimer);
+$permissiontoadd = (!empty($user->admin) || $user->rights->salaries->read);
+$canreaduser = (!empty($user->admin) || $user->rights->salaries->read);
+$canedituser = (!empty($user->admin) || $user->rights->salaries->read);
+$candisableuser = (!empty($user->admin) || $user->rights->salaries->read);
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadgroup = (!empty($user->admin) || $user->rights->user->group_advance->read);
-	$caneditgroup = (!empty($user->admin) || $user->rights->user->group_advance->write);
+	$canreadgroup = false;
+	$caneditgroup = false;
 }
 
 $error = 0;
 
 // Permission to list
-if ($mode == 'employee') {
-	if (empty($user->rights->salaries->read)) {
-		accessforbidden();
-	}
-} else {
-	if (empty($user->rights->user->user->lire) && empty($user->admin)) {
-		accessforbidden();
-	}
+if (empty($user->rights->salaries->read)) {
+	accessforbidden();
 }
 
 $childids = $user->getAllChildIds(1);
