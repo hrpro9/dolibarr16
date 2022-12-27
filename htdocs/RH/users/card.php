@@ -76,10 +76,10 @@ $dateendvalidity = dol_mktime(0, 0, 0, GETPOST('dateendvaliditymonth', 'int'), G
 $dateofbirth = dol_mktime(0, 0, 0, GETPOST('dateofbirthmonth', 'int'), GETPOST('dateofbirthday', 'int'), GETPOST('dateofbirthyear', 'int'));
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
-$canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
-$candisableuser = (!empty($user->admin) || $user->rights->user->user->supprimer);
+$canadduser = (!empty($user->admin) || $user->rights->salaries->read);
+$canreaduser = (!empty($user->admin) || $user->rights->salaries->read);
+$canedituser = (!empty($user->admin) || $user->rights->salaries->read);
+$candisableuser = (!empty($user->admin) || $user->rights->salaries->read);
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
@@ -92,7 +92,7 @@ $childids = $user->getAllChildIds(1);	// For later, test on salary visibility
 // Define value to know what current user can do on properties of edited user
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
-	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer) || (($user->id != $id) && $user->rights->user->user->creer));
+	$caneditfield = ($user->rights->salaries->read);
 	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password) || (($user->id != $id) && $user->rights->user->user->password));
 }
 
@@ -102,11 +102,12 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 $feature2 = 'user';
-$result = restrictedArea($user, 'user', $id, 'user', $feature2);
+// $result = restrictedArea($user, 'user', $id, 'user', $feature2);
 
-if ($user->id != $id && !$canreaduser) {
+if ($user->id != $id && empty($user->rights->salaries->read)) {
 	accessforbidden();
 }
+
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
@@ -411,7 +412,6 @@ if (empty($reshook)) {
 				$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
 				$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
 				$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
-				$object->employee = GETPOST('employee', 'int');
 
 				// $object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 				// $object->thm = price2num($object->thm);
@@ -1186,18 +1186,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 		}
 
-		// Show tabs
-		if ($mode == 'employee') { // For HRM module development
-			$title = $langs->trans("Employee");
-			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-		} else {
-			$title = $langs->trans("User");
-			$linkback = '';
-
-			if ($user->rights->user->user->lire || $user->admin) {
-				$linkback = '<a href="'.DOL_URL_ROOT.'/RH/Users/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-			}
-		}
+		$title = $langs->trans("User");
+		$linkback = '<a href="'.DOL_URL_ROOT.'/RH/Users/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$head = user_prepare_head_rh($object);
 
@@ -1289,13 +1279,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if ($object->gender) print $langs->trans("Gender" . $object->gender);
 			print '</td></tr>';
 
-			// Employee
-			print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-			print '<input type="checkbox" disabled name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
-			//print yn($object->employee);
-			print '</td></tr>'."\n";
 
-			// TODO This is also available into the tab RH
 
 			// Hierarchy
 			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
@@ -1494,7 +1478,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle', '', $canSendMail, $params);
 				}
 
-				if ($caneditfield && (empty($conf->multicompany->enabled) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1))) {
+				if ($user->rights->salaries->read) {
 					$params = array(
 						'attr' => array(
 							'title' => '',
@@ -1836,21 +1820,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td></tr>';
 
-			// Employee
-			print '<tr>';
-			print '<td>'.$form->editfieldkey('Employee', 'employee', '', $object, 0).'</td><td>';
-			if ($caneditfield) {
-				print '<input type="checkbox" name="employee" value="1"'.($object->employee ? ' checked="checked"' : '').'>';
-				//print $form->selectyesno("employee", $object->employee, 1);
-			} else {
-				print '<input type="checkbox" name="employee" disabled value="1"'.($object->employee ? ' checked="checked"' : '').'>';
-				/*if ($object->employee) {
-					print $langs->trans("Yes");
-				} else {
-					print $langs->trans("No");
-				}*/
-			}
-			print '</td></tr>';
 
 			// Hierarchy
 			print '<tr><td class="titlefield">'.$langs->trans("HierarchicalResponsible").'</td>';

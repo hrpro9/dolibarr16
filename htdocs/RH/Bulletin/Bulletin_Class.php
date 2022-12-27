@@ -86,7 +86,6 @@ if ($cloture == 0) {
         ////////////////////
         $dt = date("Y-m-d",$object->dateemployment);
         $dateemployment = explode('-', $dt)[2].'-'.explode('-', $dt)[1].'-'. explode('-', $dt)[0];
-        print "$year-$month-1";
         $diff = date_diff(date_create($dateemployment), date_create("$year-$month-1"));
         $workingYears = $diff->format("%a") / 365;
 
