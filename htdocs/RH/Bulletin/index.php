@@ -244,7 +244,7 @@ if ($action == "reset") {
         $res = $db->query($sql);
         if ($res);
         else print("<br>fail ERR: " . $sql);
-        header("Refresh:0, url=" . $_SERVER["PHP_SELF"] . "?remonth=" . $month . "&reyear=" . $year);
+        header("Refresh:0, url=" . $_SERVER["PHP_SELF"] . "?month=" . $month . "&year=" . $year . "&limit=" . $limit);
     }
     
 }
@@ -524,8 +524,17 @@ $arrayofmassactions['disable'] = img_picto('', 'close_title', 'class="pictofixed
 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-
-
+if ($user->admin) {
+	print '<form id="frmReset" name="filter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	print '<input type="hidden" name="action" value="reset">';
+	print '<input type="hidden" name="day" value="' . $day . '">';
+	print '<input type="hidden" name="month" value="' . $month . '">';
+	print '<input type="hidden" name="year" value="' . $year . '">';
+	print '<input type="hidden" name="limit" value="' . $limit . '">';
+	print '<input type="submit" class="butActionDelete" value="reset"/><br>';
+	print '</form>';
+}
 
 
 
@@ -540,16 +549,7 @@ print '<input type="hidden" name="year" value="' . $year . '">';
 print '<input type="hidden" name="month" value="' . $month . '">';
 print '<input type="hidden" name="action" value="view">';
 
-if ($user->admin) {
-	print '<form id="frmReset" name="filter" action="' . $_SERVER["PHP_SELF"] . '" method="POST" style="display:none">';
-	print '<input type="hidden" name="token" value="' . newToken() . '">';
-	print '<input type="hidden" name="action" value="reset">';
-	print '<input type="hidden" name="day" value="' . $day . '">';
-	print '<input type="hidden" name="remonth" value="' . $month . '">';
-	print '<input type="hidden" name="reyear" value="' . $year . '">';
-	print '<input type="submit" class="butActionDelete" value="reset"/><br>';
-	print '</form>';
-}
+
 
 $moreparam = array('morecss'=>'marginleftonly');
 $morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap paddingleft', DOL_URL_ROOT.'/RH/Users/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
@@ -1180,6 +1180,7 @@ if ($action == 'confirmeWorkingDays') {
             }
         }
     }
+
 }
 
 
@@ -1192,7 +1193,7 @@ ShowDocuments();
 
 function GenerateDocuments()
 {
-    global $day, $month, $year;
+    global $day, $month, $year, $limit;
     print '<form id="frmgen" name="generateDocs" method="post">';
     print '<input type="hidden" name="token" value="' . newToken() . '">';
     print '<input type="hidden" name="action" value="generateDocs">';
@@ -1200,6 +1201,7 @@ function GenerateDocuments()
     print '<input type="hidden" name="day" value="' . $day . '">';
     print '<input type="hidden" name="month" value="' . $month . '">';
     print '<input type="hidden" name="year" value="' . $year . '">';
+    print '<input type="hidden" name="limit" value="' . $limit . '">';
     print '<div class=""  style="margin-bottom: 0px; margin-left: 5%;"><input type="button" id="btngen" class="button" name="save" value="génerer"></div>';
 
     print "<script>
@@ -1232,6 +1234,7 @@ function GenerateDocuments()
     print '<input type="hidden" name="day" value="' . $day . '">';
     print '<input type="hidden" name="month" value="' . $month . '">';
     print '<input type="hidden" name="year" value="' . $year . '">';
+    print '<input type="hidden" name="limit" value="' . $limit . '">';
     print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="butActionDelete" value="Changer les jours travaillé">';
     print '</form>';
 }
@@ -1262,19 +1265,21 @@ function ShowDocuments()
 
 function changeWorkingDays()
 {
-    global $db, $day, $month, $year, $users;
+    global $db, $day, $month, $year, $users, $limit;
 
     $sql = "SELECT rub, designation FROM llx_Paie_HourSupp";
     $res = $db->query($sql);
     if ($res->num_rows > 0) {
         $hrs = $res->fetch_all();
     }
-    print '<form  action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+    print '<form  action="' . $_SERVER["PHP_SELF"] . '" method="post" style="margin-top:15px;">';
     print '<input type="hidden" name="token" value="' . newToken() . '">';
     print '<input type="hidden" name="action" value="confirmeWorkingDays">';
     print '<input type="hidden" name="day" value="' . $day . '">';
-    print '<input type="hidden" name="remonth" value="' . $month . '">';
-    print '<input type="hidden" name="reyear" value="' . $year . '">';
+    print '<input type="hidden" name="month" value="' . $month . '">';
+    print '<input type="hidden" name="year" value="' . $year . '">';
+	print '<input type="hidden" name="limit" value="' . $limit . '">';
+
 
     print ' <style>
                 .small-td input{
@@ -1285,8 +1290,7 @@ function changeWorkingDays()
     <thead>
         <tr class="liste_titre">
             <th class="titlefield wordbreak">Login</th>
-            <th class="titlefield wordbreak">Nom</th>
-            <th class="titlefield wordbreak">Prénom</th>
+            <th class="titlefield wordbreak">Nom Complet</th>
             <th class="titlefield wordbreak">Nombre des jours travaillé</th>
             <th class="titlefield wordbreak">Nombre des Hours travaillé (horaire)</th>
             <th class="titlefield wordbreak">Jours férié</th>';
@@ -1320,8 +1324,7 @@ function changeWorkingDays()
 
             print "<tr>
                 <td>$user->login</td>
-                <td>$user->firstname</td>
-                <td>$user->lastname</td>
+                <td>$user->lastname $user->firstname</td>
                 <td><input type='number' name='workingdays_$user->rowid' value='$workingdays'></td>
                 <td>---</td>
                 <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
@@ -1338,8 +1341,7 @@ function changeWorkingDays()
 
             print "<tr>
                 <td>$user->login</td>
-                <td>$user->firstname</td>
-                <td>$user->lastname</td>
+                <td>$user->lastname $user->firstname</td>
                 <td>---</td>
                 <td><input type='number' name='workingHours_$user->rowid' value='$workingHours'></td>
                 <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
@@ -1367,7 +1369,7 @@ function changeWorkingDays()
 
 function ShowBulletin($id)
 {
-    global $db, $object, $prev_month, $prev_year, $year, $month;
+    global $db, $object, $year, $month;
 
     $object->fetch($id);
 
@@ -1474,13 +1476,31 @@ function ShowBulletin($id)
 
     if ($irNet > 0) {
         $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-        <tr class="row-content"><td>' . getRebrique("ir") . '</td><td>IR</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($irNet, 0, '', 1, 1,2) . ' </td></tr>';
+        <tr><td>' . getRebrique("ir") . '</td><td>IR</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($irNet, 0, '', 1, 1,2) . ' </td></tr>';
     }
-
+    // if ($avanceSurSalaire > 0) {
+    //     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    //     <tr><td>802</td><td>RETENUE SUR AVANCE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($avanceSurSalaire, 0, '', 1, 1,2) . ' </td></tr>';
+    // }
+    // if ($primePanier > 0) {
+    //     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    //     <tr class="row-content"><td>512</td><td>PRIME DE PANIER</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>' . price($primePanier, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr>';
+    // }
+	// if ($primeAdha > 0) {
+    //     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    //     <tr class="row-content"><td>513</td><td>PRIME AID ADHA</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>' . price($primeAdha, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr>';
+    // }
+    // if ($primeScolarite > 0) {
+    //     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    //     <tr class="row-content"><td>514</td><td>PRIME DE SCOLARITE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>' . price($primeScolarite, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr>';
+    // }
+    
     foreach ((array)$pasEnBruts as $pasEnBrut) {
         $base = $pasEnBrut["base"] > 0 ? price($pasEnBrut["base"], 0, '', 1, 1,2) : "";
         $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
-        $bulttin .= '<tr class="row-content"><td>' . $pasEnBrut["rub"] . '</td><td>' . $pasEnBrut["designation"] . '</td><td>' . price($pasEnBrut["number"], 0, '', 1, 1,2) . '</td><td>' . $base . '</td><td>' . $pasEnBrut["taux"] . '</td><td> ' . price($pasEnBrut["apayer"], 0, '', 1, 1,2) . ' </td><td>' . $pasEnBrut["aretenu"] > 0 ? price($pasEnBrut["aretenu"], 0, '', 1, 1,2) : '' . '</td></tr>';
+		$bulttin .= '<tr class="row-content"><td>'. $pasEnBrut["rub"] .'</td><td>' . $pasEnBrut["designation"] . '</td><td>&nbsp;</td><td>' . price($pasEnBrut["nombre"], 0, '', 1, 1,2) . '</td><td>'.$base.'</td><td>' . price($pasEnBrut["apayer"], 0, '', 1, 1,2) . '</td><td>' . price($pasEnBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
+
+        // $bulttin .= '<tr class="row-content"><td>' . $pasEnBrut["rub"] . '</td><td>' . $pasEnBrut["designation"] . '</td><td>' . price($pasEnBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
     }
 
     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
@@ -1603,7 +1623,15 @@ print "
         $(document).ready(function(){
             $('#date').val('" . $year . "-" . $month . "');	
         });
-    </script>";
+    </script>
+	<style>
+	@media only screen and (min-width: 977px) {
+		div.div-table-responsive {
+			width: calc(100vw - 285px);
+			overflow-x: scroll;
+		}
+	}
+	</style>";
 
 
 

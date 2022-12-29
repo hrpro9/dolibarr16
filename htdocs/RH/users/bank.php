@@ -243,21 +243,49 @@ if ($action == 'updateSalary' && !$cancel && $permissiontoaddbankaccount) {
 
 	if ($resr->num_rows > 0) {
 		while ($row = $resr->fetch_assoc()) {
-			if ($row["calcule"] == 1 || $row["cotisation"] == 1) {
-				$checked = (GETPOST($row["rub"], 'float') == "on") ? 1 : 0;
-				$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, " . $row['rub'] . ", $checked);";
-				$res = $db->query($sql);
-				if ($res);
-				else print("<br>fail ERR: " . $sql);
-			} else {
-				$amount = (float)GETPOST($row["rub"], 'float');
-				$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, amount) values ($object->id, " . $row['rub'] . ", $amount);";
-				$res = $db->query($sql);
-				if ($res);
-				else print("<br>fail ERR: " . $sql);
+			if ($row["rub"] != '711'|| $row["rub"] != '713' || $row["rub"] != '711'|| $row["rub"] != '713'){
+				if ($row["calcule"] == 1 || $row["cotisation"] == 1) {
+					$checked = (GETPOST($row["rub"], 'float') == "on") ? 1 : 0;
+					$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, " . $row['rub'] . ", $checked);";
+					$res = $db->query($sql);
+					if ($res);
+					else print("<br>fail ERR: " . $sql);
+				} else {
+					$amount = (float)GETPOST($row["rub"], 'float');
+					$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, amount) values ($object->id, " . $row['rub'] . ", $amount);";
+					$res = $db->query($sql);
+					if ($res);
+					else print("<br>fail ERR: " . $sql);
+				}
 			}
 		}
 	}
+	$cimrChecked = GETPOST('cimr', 'int');
+	$sql = "";
+	if ($cimrChecked == '710'){
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 1 where userid = $object->id and rub = 710;";
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 1 where userid = $object->id and rub = 711;";
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 712;";
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 713";
+	}else if ($cimrChecked == '712'){
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 710;";
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 711;";
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 1 where userid = $object->id and rub = 712;";
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 1 where userid = $object->id and rub = 713";
+	}else{
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 710;";
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 711;";
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 712;";
+		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 713";
+	}
+	$requests = explode(';', $sql);
+	foreach ($requests as $request) {
+		$res = $db->query($request);
+		if ($res);
+		else print("<br>fail ERR: " . $request.'cool');
+	}
+
+
 
 	if (!$res) {
 		setEventMessages($account->error, $account->errors, 'errors');
@@ -429,18 +457,26 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 	print '<tr><td class="nowrap"> N° CIMR </td>';
 	print '<td>' . ($salaireInfo["mutuelle"] == "" ? "-" : $salaireInfo["cimr"]) . '</td></tr>';
 
-	$sql = "SELECT r.designation, r.calcule, r.auFiche, r.cotisation, s.amount, s.checked FROM llx_Paie_Rub r, llx_Paie_UserParameters s WHERE r.rub=s.rub AND s.userid=$object->id";
+	$sql = "SELECT r.rub, r.designation, r.calcule, r.auFiche, r.cotisation, s.amount, s.checked FROM llx_Paie_Rub r, llx_Paie_UserParameters s WHERE r.rub=s.rub AND s.userid=$object->id";
 	$res = $db->query($sql);
 	if ($res->num_rows > 0) {
 		while ($row = $res->fetch_assoc()) {
-			print '<tr><td class="nowrap"> ' . $row["designation"] . ' </td>';
-			if ($row["calcule"] == 1 || ($row["cotisation"] == 1 && $row["auFiche"] == 1)) {
+			if($row["rub"] == '710'|| $row["rub"] == '711'|| $row["rub"] == '712'|| $row["rub"] == '713'){
+				if ($row["rub"] == '710' && $row["checked"] == 1){
+					print '<tr><td class="nowrap"> ' . $row["designation"] . ' </td><td colspan="4"><input type="checkbox" checked disabled></td></tr>';
+				}else if ($row["rub"] == '712' && $row["checked"] == 1){
+					print '<tr><td class="nowrap"> ' . $row["designation"] . ' </td><td colspan="4"><input type="checkbox" checked disabled></td></tr>';
+				}
+			}
+			else if ($row["calcule"] == 1 || ($row["cotisation"] == 1 && $row["auFiche"] == 1)) {
+				print '<tr><td class="nowrap"> ' . $row["designation"] . ' </td>';
 				$checked = '';
 				if ($row["checked"] == 1) {
 					$checked = 'checked';
 				}
 				print '<td colspan="4"><input type="checkbox" name="' . $row["rub"] . '" ' . $checked . ' disabled></td></tr>';
 			} else {
+				print '<tr><td class="nowrap"> ' . $row["designation"] . ' </td>';
 				print '<td>' . $row["amount"] . '</td></tr>';
 			}
 		}
@@ -791,30 +827,58 @@ if ($action == 'editSalary') {
 	//Get les rubriques
 	$sql = "SELECT * FROM llx_Paie_Rub WHERE auFiche=1";
 	$res = $db->query($sql);
+	$rubSelected = '0';
 
 	if ($res->num_rows > 0) {
 		while ($row = $res->fetch_assoc()) {
-			//Get value
-			$sql = "SELECT * from llx_Paie_UserParameters WHERE userid=" . $object->id . " AND rub=" . $row["rub"];
-			$res1 = $db->query($sql);
-			if ($res1->num_rows > 0) {
-				$salaire = $res1->fetch_assoc();
-				$amount =  $salaire["amount"];
-				$checked = $salaire["checked"];
-			}else{
-				$amount = "";
-				$checked = '';
-			}
-			print '<tr><td class="titlefield fieldrequired"> ' . $row["designation"] . ' </td>';
-			if ($row["calcule"] == 1 || $row["cotisation"] == 1) {
-				if ($checked == 1) {
-					$checked = 'checked';
+			if ($row["rub"] == '711'|| $row["rub"] == '713'){
+
+			}else if ($row["rub"] == '710'|| $row["rub"] == '712'){
+				//Get value
+				$sql = "SELECT * from llx_Paie_UserParameters WHERE userid=" . $object->id . " AND rub=" . $row["rub"];
+				$res1 = $db->query($sql);
+				if ($res1->num_rows > 0) {
+					$salaire = $res1->fetch_assoc();
+					$amount =  $salaire["amount"];
+					$checked = $salaire["checked"];
+				}else{
+					$amount = "";
+					$checked = '';
 				}
-				print '<td colspan="4"><input type="checkbox" name="' . $row["rub"] . '" ' . $checked . '></td></tr>';
-			} else {
-				print '<td colspan="4"><input size="30" type="text" name="' . $row["rub"] . '" value="' . $amount . '"></td></tr>';
+				if ($checked == 1) {
+					$rubSelected = $row["rub"];
+				}
+			}else{
+				//Get value
+				$sql = "SELECT * from llx_Paie_UserParameters WHERE userid=" . $object->id . " AND rub=" . $row["rub"];
+				$res1 = $db->query($sql);
+				if ($res1->num_rows > 0) {
+					$salaire = $res1->fetch_assoc();
+					$amount =  $salaire["amount"];
+					$checked = $salaire["checked"];
+				}else{
+					$amount = "";
+					$checked = '';
+				}
+				print '<tr><td class="titlefield fieldrequired"> ' . $row["designation"] . ' </td>';
+				if ($row["calcule"] == 1 || $row["cotisation"] == 1) {
+					if ($checked == 1) {
+						$checked = 'checked';
+					}
+					print '<td colspan="4"><input type="checkbox" name="' . $row["rub"] . '" ' . $checked . '></td></tr>';
+				} else {
+					print '<td colspan="4"><input size="30" type="text" name="' . $row["rub"] . '" value="' . $amount . '"></td></tr>';
+				}
 			}
 		}
+		print '
+			<tr><td class="titlefield fieldrequired">COTISATION CIMR</td><td>
+				<select name="cimr">	
+					<option value="0" ' . ($rubSelected == '0' ? 'selected' : '' ).'></option>
+					<option value="710" ' . ($rubSelected == '710' ? 'selected' : '' ).'>3%</option>
+					<option value="712" ' . ($rubSelected == '712' ? 'selected' : '' ).'>6%</option>
+				</select></td>
+			</tr>';
 	}
 	print '</table>';
 	print '<hr>';
