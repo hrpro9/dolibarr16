@@ -232,6 +232,7 @@ if ($cloture == 0) {
     $totalRetenu = 0;
     $retenueFromBrut = 0;
 
+
     //Get les rubriques en brut global
     $sql = "SELECT * FROM llx_Paie_Rub WHERE enBrut=1";
     $res = $db->query($sql);
@@ -435,7 +436,7 @@ if ($cloture == 0) {
     $irNet = $irNet / ($params["workingDays"] * 12) * ($comulWorkingDays + $workingdaysdeclaré);
     $irNet = $irNet - $comulIR;
 
-    $totalRetenu += $irNet;
+    $totalRetenu += $irNet + $avanceSurSalaire;
     $totalBrut = $brutGlobal;
 
     //Get les rubriques pas en brut global et non imposable
@@ -475,8 +476,15 @@ if ($cloture == 0) {
                         }
                     }
                     if ($fiche["checked"] == 1 || $fiche["amount"] > 0) {
-                        $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => $apayer, "aretenu" => "", "surbulletin" => $param["surBulletin"]);
-                        $rubs .= $param["rub"] . ":pasEnBrut:$apayer" . ";";
+                        if ($param["rub"] == '802'){
+                            $aretenu = $apayer;
+                            $apayer = 0;
+                            $rubs .= $param["rub"] . ":pasEnBrut:$aretenu" . ";";
+                            $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $aretenu, "surbulletin" => $param["surBulletin"]);
+                        }else{
+                            $rubs .= $param["rub"] . ":pasEnBrut:$apayer" . ";";
+                            $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => $apayer, "aretenu" => "", "surbulletin" => $param["surBulletin"]);
+                        }
                     }
                 }
             } else {
@@ -497,25 +505,6 @@ if ($cloture == 0) {
         }
     }
 
-    //Get arrondi of previous month
-    // $sql = "SELECT arrondi FROM llx_Paie_MonthDeclaration WHERE userid=$object->id AND year=" . $prev_year . " AND month=MONTH(DATE_ADD('" . $prev_year . "-" . $prev_month . "-01', INTERVAL -1 MONTH))";
-    // $res = $db->query($sql);
-    // if ($res) {
-    //     $prev_arrondi = $res->fetch_assoc()["arrondi"];
-    //     if ($prev_month == 1)
-    //         $prev_arrondi = 0;
-    // }
-
-    //$prev_arrondi=0;
-    //Total
-    // $totalRetenu += $prev_arrondi;
-
-    // $arrondi = 1 - (float)("0." . explode(".", $totalBrut - $totalRetenu)[1]);
-    // $totalBrut = $totalBrut + $arrondi;
-
-
-    // $rubs .= getRebrique("arrondiEnCours") . ":arrondiEnCours:" . $arrondi . ";";
-    // $rubs .= getRebrique("arrondiPrecdent") . ":arrondiPrecdent:" . ($prev_arrondi * -1) . ";";
 
 
     $totalNet = $totalBrut - $totalRetenu;
