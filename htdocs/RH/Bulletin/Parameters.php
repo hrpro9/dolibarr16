@@ -57,18 +57,20 @@ if ($action == 'editRub') {
     $auFiche = (GETPOST("auFiche", 'alpha') == "oui") ? "1" : "0";
     $surBulletin = (GETPOST("surBulletin", 'alpha') == "oui") ? "1" : "0";
     $enNetImposable = (GETPOST("enNetImposable", 'alpha') == "oui") ? "1" : "0";
-    $sql = "UPDATE llx_Paie_Rub SET cotisation='$cotisation', calcule='$calcule', base='$base', percentage='$percentage', enNetImposable='$enNetImposable', surBulletin=$surBulletin, plafonne='$plafonne', plafond='$plafond', auFiche='$auFiche', enBrut='$enBrut', enJours='$enJours', avecConge='$avecConge', imposable='$imposable', partiel='$partiel', maxFree='$maxFree', designation='$designation', codeComptable='$codeComptable', rub='$newRub' where rub = $rub";
+    $reset = (GETPOST("reset", 'alpha') == "oui") ? "1" : "0";
+    $importable = (GETPOST("importable", 'alpha') == "oui") ? "1" : "0";
+    $sql = "UPDATE llx_Paie_Rub SET cotisation='$cotisation', calcule='$calcule', base='$base', percentage='$percentage', enNetImposable='$enNetImposable', surBulletin=$surBulletin, plafonne='$plafonne', plafond='$plafond', auFiche='$auFiche', enBrut='$enBrut', enJours='$enJours', avecConge='$avecConge', imposable='$imposable', partiel='$partiel', maxFree='$maxFree', designation='$designation', codeComptable='$codeComptable', reset='$reset', importable='$importable', rub='$newRub' where rub = $rub";
     $res = $db->query($sql);
     if ($res);
     else print("<br>fail ERR: " . $sql);
 }
 if ($action == 'addRub') {
-    $sql = "CREATE TABLE IF NOT EXISTS llx_Paie_Rub(rub INT PRIMARY KEY, designation VARCHAR(50), codeComptable INT, cotisation BOOLEAN, calcule BOOLEAN, base varchar(50), percentage float,
-                imposable BOOLEAN, partiel BOOLEAN, maxFree float, plafonne BOOLEAN, plafond float, enBrut BOOLEAN, enJours BOOLEAN, avecConge BOOLEAN, auFiche BOOLEAN, surBulletin BOOLEAN, 
-                enNetImposable BOOLEAN);";
-    $res = $db->query($sql);
-    if ($res);
-    else print("<br>fail ERR: " . $sql);
+    // $sql = "CREATE TABLE IF NOT EXISTS llx_Paie_Rub(rub INT PRIMARY KEY, designation VARCHAR(50), codeComptable INT, cotisation BOOLEAN, calcule BOOLEAN, base varchar(50), percentage float,
+    //             imposable BOOLEAN, partiel BOOLEAN, maxFree float, plafonne BOOLEAN, plafond float, enBrut BOOLEAN, enJours BOOLEAN, avecConge BOOLEAN, auFiche BOOLEAN, surBulletin BOOLEAN, 
+    //             enNetImposable BOOLEAN);";
+    // $res = $db->query($sql);
+    // if ($res);
+    // else print("<br>fail ERR: " . $sql);
     $rubrique = GETPOST("rubrique", 'int');
     $designation = GETPOST("designation", 'alpha');
     $codeComptable = GETPOST("codeComptable", 'int');
@@ -87,7 +89,9 @@ if ($action == 'addRub') {
     $auFiche = (GETPOST("auFiche", 'alpha') == "oui") ? "1" : "0";
     $surBulletin = (GETPOST("surBulletin", 'alpha') == "oui") ? "1" : "0";
     $enNetImposable = (GETPOST("enNetImposable", 'alpha') == "oui") ? "1" : "0";
-    $sql = "INSERT INTO llx_Paie_Rub (rub, cotisation, calcule, base, percentage, enNetImposable, surBulletin, plafonne, plafond, enBrut, enJours, avecConge, imposable, partiel, maxFree, designation, codeComptable, auFiche) VALUES ('$rubrique', '$cotisation', '$calcule', '$base', '$percentage', '$enNetImposable', '$surBulletin', '$plafonne', '$plafond', '$enBrut', '$enJours', '$avecConge', '$imposable', '$partiel', '$maxFree', '$designation', '$codeComptable', '$auFiche');";
+    $reset = (GETPOST("reset", 'alpha') == "oui") ? "1" : "0";
+    $importable = (GETPOST("importable", 'alpha') == "oui") ? "1" : "0";
+    $sql = "INSERT INTO llx_Paie_Rub (rub, cotisation, calcule, base, percentage, enNetImposable, surBulletin, plafonne, plafond, enBrut, enJours, avecConge, imposable, partiel, maxFree, designation, codeComptable, auFiche, reset, importable) VALUES ('$rubrique', '$cotisation', '$calcule', '$base', '$percentage', '$enNetImposable', '$surBulletin', '$plafonne', '$plafond', '$enBrut', '$enJours', '$avecConge', '$imposable', '$partiel', '$maxFree', '$designation', '$codeComptable', '$auFiche', '$reset', '$importable');";
     $res = $db->query($sql);
     if ($res);
     else print("<br>fail ERR: " . $sql);
@@ -679,7 +683,7 @@ if ($res->num_rows) {
                 <div><label>'. $row["rub"] .'</label></div>
                 <div><label>'. $row["designation"] .'</label></div>
                 <div style="text-align: center;"><label>'. $row["codeComptable"] .'</label></div>
-                <div style="text-align:center;"><button type="button" class="editButton btnEdit" value="Modifier" onclick="editRub('.$row["rub"].',\''.$row["designation"].'\',\''.$row["codeComptable"].'\',\''.$row["cotisation"].'\',\''.$row["calcule"].'\', \''.$row["base"].'\''.', \''.$row["percentage"].'\',\''. $row["enNetImposable"].'\',\''.$row["surBulletin"].'\',\''.$row["plafonne"].'\',\''.$row["plafond"].'\',\''.$row["auFiche"].'\',\''.$row["enBrut"].'\',\''.$row["enJours"].'\',\''.$row["avecConge"].'\',\''.$row["imposable"].'\',\''.$row["partiel"].'\',\''.$row["maxFree"].'\')"><i class="fas fa-edit"></i></button></div>
+                <div style="text-align:center;"><button type="button" class="editButton btnEdit" value="Modifier" onclick="editRub('.$row["rub"].',\''.$row["designation"].'\',\''.$row["codeComptable"].'\',\''.$row["cotisation"].'\',\''.$row["calcule"].'\', \''.$row["base"].'\''.', \''.$row["percentage"].'\',\''. $row["enNetImposable"].'\',\''.$row["surBulletin"].'\',\''.$row["plafonne"].'\',\''.$row["plafond"].'\',\''.$row["auFiche"].'\',\''.$row["enBrut"].'\',\''.$row["enJours"].'\',\''.$row["avecConge"].'\',\''.$row["imposable"].'\',\''.$row["partiel"].'\',\''.$row["maxFree"].'\',\''.$row["reset"].'\',\''.$row["importable"].'\')"><i class="fas fa-edit"></i></button></div>
             </div>';
     }
 }
@@ -775,6 +779,12 @@ print '
                     <input type="checkbox" name="auFiche" id="auFich" value="oui">
                 </div>
             </div>  
+            <div class="form-group">
+                <div class="form-control">
+                    <label for="importable" class="titre">importable</label>
+                    <input type="checkbox" name="importable" id="importable" value="oui">
+                </div>
+            </div>
         </div>
         <div>
             <div class="form-group">
@@ -822,10 +832,15 @@ print '
                 </div>
             </div>
             <div class="form-group">
-
                 <div class="form-control">
                     <label for="enNetImposable" class="titre">En Net Imposable</label>
                     <input type="checkbox" name="enNetImposable" id="enNetImposable" value="oui">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-control">
+                    <label for="reset" class="titre">Remis à 0</label>
+                    <input type="checkbox" name="reset" id="reset" value="oui">
                 </div>
             </div>
         </div>
@@ -909,6 +924,12 @@ print '
                         <input type="checkbox" name="auFiche" id="auFichAdded" value="oui">
                     </div>
                 </div>  
+                <div class="form-group">
+                    <div class="form-control">
+                        <label for="importableAdded" class="titre">importable</label>
+                        <input type="checkbox" name="importable" id="importableAdded" value="oui">
+                    </div>
+                </div>
             </div>
             <div>
                 <div class="form-group">
@@ -955,10 +976,15 @@ print '
                     </div>
                 </div>
                 <div class="form-group">
-
                     <div class="form-control">
                         <label for="enNetImposableAdded" class="titre">En Net Imposable</label>
                         <input type="checkbox" name="enNetImposable" id="enNetImposableAdded" value="oui">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-control">
+                        <label for="resetAdded" class="titre">Remis à 0</label>
+                        <input type="checkbox" name="reset" id="resetAdded" value="oui">
                     </div>
                 </div>
             </div>
@@ -1008,7 +1034,7 @@ print '
         $("#frmDelete").submit();
     });
 
-    function editRub(id,designation, codeComptable, cotisation, calcule, base, percentage, enNetImposable, surBulletin, plafonne, plafond, auFich, enBrut, enJours, avecConge, imposable, partiel, maxFree) {
+    function editRub(id,designation, codeComptable, cotisation, calcule, base, percentage, enNetImposable, surBulletin, plafonne, plafond, auFich, enBrut, enJours, avecConge, imposable, partiel, maxFree, reset, importable) {
         $("#editModal").css("display", "grid");
         $("#overflow").css("display", "block");
         $('html, body').css({
@@ -1044,6 +1070,16 @@ print '
             $("#enNetImposable").prop('checked', true);
         }else{
             $("#enNetImposable").prop('checked', false);
+        }
+        if(reset == 1){
+            $("#reset").prop('checked', true);
+        }else{
+            $("#reset").prop('checked', false);
+        }
+        if(importable == 1){
+            $("#importable").prop('checked', true);
+        }else{
+            $("#importable").prop('checked', false);
         }
         if(surBulletin == 1){
             $("#surBulletin").prop('checked', true);

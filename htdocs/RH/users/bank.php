@@ -86,8 +86,7 @@ if ($res->num_rows > 0) {
 
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_personal_information->read);
-$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
+$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write));
 
 // Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $object->id, 'user&user', $feature2);
@@ -113,7 +112,7 @@ if (!$ok) {
  *	Actions
  */
 
-if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
+if ($action == 'add' && !$cancel) {
 	$account->userid          = $object->id;
 
 	$account->bank            = GETPOST('bank', 'alpha');
@@ -140,7 +139,7 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	}
 }
 
-if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
+if ($action == 'update' && !$cancel) {
 	$account->userid = $object->id;
 
 	/*
@@ -210,7 +209,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	}
 }
 
-if ($action == 'updateSalary' && !$cancel && $permissiontoaddbankaccount) {
+if ($action == 'updateSalary' && !$cancel) {
 	$error = 0;
 	$mode_paie = GETPOST('modePaiement', 'alpha');
 	$type = $db->escape(GETPOST('type', 'alpha'));
@@ -263,26 +262,26 @@ if ($action == 'updateSalary' && !$cancel && $permissiontoaddbankaccount) {
 	$cimrChecked = GETPOST('cimr', 'int');
 	$sql = "";
 	if ($cimrChecked == '710'){
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 1 where userid = $object->id and rub = 710;";
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 1 where userid = $object->id and rub = 711;";
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 712;";
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 713";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '710', 1);";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '711', 1);";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '712', 0);";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '713', 0)";
 	}else if ($cimrChecked == '712'){
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 710;";
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 711;";
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 1 where userid = $object->id and rub = 712;";
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 1 where userid = $object->id and rub = 713";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '710', 0);";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '711', 0);";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '712', 1);";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '713', 1)";
 	}else{
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 710;";
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 711;";
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 712;";
-		$sql .= "UPDATE llx_Paie_UserParameters set checked = 0 where userid = $object->id and rub = 713";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '710', 0);";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '711', 0);";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '712', 0);";
+		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '713', 0)";
 	}
 	$requests = explode(';', $sql);
 	foreach ($requests as $request) {
 		$res = $db->query($request);
 		if ($res);
-		else print("<br>fail ERR: " . $request.'cool');
+		else print("<br>fail ERR: " . $request);
 	}
 
 
@@ -296,70 +295,6 @@ if ($action == 'updateSalary' && !$cancel && $permissiontoaddbankaccount) {
 	}
 }
 
-// update birth
-if ($action == 'setbirth' && $canadduser && !$cancel) {
-	$object->birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
-// update personal email
-if ($action == 'setpersonal_email' && $canadduser && !$cancel) {
-	$object->personal_email = (string) GETPOST('personal_email', 'alphanohtml');
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
-// update personal mobile
-if ($action == 'setpersonal_mobile' && $canadduser && !$cancel) {
-	$object->personal_mobile = (string) GETPOST('personal_mobile', 'alphanohtml');
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
-// update ref_employee
-if ($action == 'setref_employee' && $canadduser && !$cancel) {
-	$object->ref_employee = (string) GETPOST('ref_employee', 'alphanohtml');
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
-// update national_registration_number
-if ($action == 'setnational_registration_number' && $canadduser && !$cancel) {
-	$object->national_registration_number = (string) GETPOST('national_registration_number', 'alphanohtml');
-	$result = $object->update($user);
-	if ($result < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
-if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
-	// update default_c_exp_tax_cat
-	if ($action == 'setdefault_c_exp_tax_cat' && $canadduser) {
-		$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
-		$result = $object->update($user);
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-
-	// update default range
-	if ($action == 'setdefault_range' && $canadduser) {
-		$object->default_range = GETPOST('default_range', 'int');
-		$result = $object->update($user);
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-}
 
 
 /*
@@ -374,20 +309,20 @@ llxHeader(null, $langs->trans("BankAccounts"));
 
 $head = user_prepare_head_rh($object);
 
-if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write)) {
+if ($id && $bankid && $action == 'edit') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && $user->rights->user->user->creer) {
+if ($id && $action == 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'editSalary' && $user->rights->user->user->creer) {
+if ($id && $action == 'editSalary') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updateSalary">';
@@ -792,13 +727,14 @@ if ($action == 'editSalary') {
 	$types[$salaireInfo["type"]] = 'selected';
 
 	print '<tr><td class="titlefield fieldrequired"> Type de Salaire </td>';
-	print '<td colspan="4"><select name="type" id="types">
-			<option value="mensuel" ' . $types["mensuel"] . '>Mensuel</option>
-			<option value="hebdomadaire" ' . $types["hebdomadaire"] . '>Hebdomadaire</option>
-			<option value="jornalier" ' . $types["jornalier"] . '>Jornalier</option>
-			<option value="horaire" ' . $types["horaire"] . '>Horaire</option>
-			<option value="tache" ' . $types["tache"] . '>Par Tache</option>
-	</select></td></tr>';
+	print '<td colspan="4">
+			<select name="type" id="types">
+				<option value="mensuel" ' . $types["mensuel"] . '>Mensuel</option>
+				<option value="horaire" ' . $types["horaire"] . '>Horaire</option>
+			</select></td></tr>';
+			// <option value="hebdomadaire" ' . $types["hebdomadaire"] . '>Hebdomadaire</option>
+			// <option value="jornalier" ' . $types["jornalier"] . '>Jornalier</option>
+			// <option value="tache" ' . $types["tache"] . '>Par Tache</option>
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Salary").'</td>
 		<td colspan="4"><input size="30" type="text" name="salaire" value="' . (str_replace(" ","",price($object->salary))) . '"></td>';
@@ -895,7 +831,7 @@ if ($action == 'editSalary') {
 
 
 // Edit
-if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->user->creer) {
+if ($id && ($action == 'edit' || $action == 'create') ) {
 	$title = $langs->trans("User");
 	print dol_get_fiche_head($head, 'bank', $title, 0, 'user');
 
@@ -969,14 +905,14 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 	print $form->buttonsSaveCancel("Modify");
 }
 
-if ($id && $action == 'edit' && $user->rights->user->user->creer) {
+if ($id && $action == 'edit') {
 	print '</form>';
 }
 
-if ($id && $action == 'create' && $user->rights->user->user->creer) {
+if ($id && $action == 'create') {
 	print '</form>';
 }
-if ($id && $action == 'updateSalary' && $user->rights->user->user->creer) {
+if ($id && $action == 'updateSalary') {
 	print '</form>';
 }
 

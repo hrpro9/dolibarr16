@@ -9,11 +9,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-
-
 if (!$user->rights->salaries->read) {
     accessforbidden("you don't have right for this page");
 }
@@ -116,8 +111,10 @@ $arrayfields = array(
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		if ($key != 'matricule'){
+			if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+				$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		}
 	}
 }
 
@@ -128,6 +125,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
+$search_options_matricule = GETPOST('search_options_matricule', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
 $search_gender = GETPOST('search_gender', 'alpha');
@@ -173,6 +171,8 @@ if (empty($reshook)) {
 		$search_date_update = "";
 		$search_array_options = array();
 		$search_categ = 0;
+		$search_options_matricule = '0';
+
 	}
 }
 
@@ -202,6 +202,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_update = "";
 	$search_array_options = array();
 	$search_categ = 0;
+	$search_options_matricule = '0';
 }
 
 
@@ -215,40 +216,71 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 //get date filter
 //get date filter
 $mydate = getdate(date("U"));
-$month = (GETPOST('month') != '') ? GETPOST('month') : $mydate['mon'];
-$year = (GETPOST('year') != '') ? GETPOST('year') : $mydate['year'];
+$month =$mydate['mon'];
+$year = $mydate['year'];
+$day = $mydate['mday'];
 
 
-if ($action == 'filter') {
-	$dateFiltre = GETPOST('date');
-	$year = explode('-', $dateFiltre)[0];
-	$month = explode('-', $dateFiltre)[1];
+// if ($action == 'filter') {
+// 	$dateFiltre = GETPOST('date');
+// 	$year = explode('-', $dateFiltre)[0];
+// 	$month = explode('-', $dateFiltre)[1];
+// }
+
+// $startdayarray = dol_get_prev_month($month, $year);
+
+// $prev = $startdayarray;
+// $prev_year  = $prev['year'];
+// $prev_month = $prev['month'];
+// $prev_day   = 1;
+
+// //Save date to use in generate module
+// $_SESSION['dateg'] = $month . "-" . $year;
+
+// $next = dol_get_next_month($month, $year);
+// $next_year  = $next['year'];
+// $next_month = $next['month'];
+// $next_day   = 1;
+
+
+if ($action == "reset") {
+    //Cloturé le moi
+    // if ($user->admin) {
+    //     $sql = "UPDATE llx_Paie_MonthDeclaration SET cloture=0 WHERE year=$year AND month=$month;";
+    //     $res = $db->query($sql);
+    //     if ($res);
+    //     else print("<br>fail ERR: " . $sql);
+    //     header("Refresh:0, url=" . $_SERVER["PHP_SELF"] . "?month=" . $month . "&year=" . $year . "&limit=" . $limit);
+    // }
+    
+}
+if ($action == "generateAvance") {
+    $users = GETPOST('id');
+    foreach (explode(',', $users) as $userid) {
+        $sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='802' AND userid=$userid";
+        $res = $db->query($sql);
+        $avance = 0;
+        if (((object)$res)->num_rows > 0) {
+            $avance = ((object)$res)->fetch_assoc()['amount'];
+        }
+        $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, avance, cloture) VALUES($userid, $year, $month, $avance, 0);";
+        $res = $db->query($sql);
+        if ($res);
+        else print("<br>fail ERR: " . $sql);
+    }
+    
+    
 }
 
-$startdayarray = dol_get_prev_month($month, $year);
-
-$prev = $startdayarray;
-$prev_year  = $prev['year'];
-$prev_month = $prev['month'];
-$prev_day   = 1;
-
-//Save date to use in generate module
-$_SESSION['dateg'] = $prev_month . "-" . $prev_year;
-
-$next = dol_get_next_month($month, $year);
-$next_year  = $next['year'];
-$next_month = $next['month'];
-$next_day   = 1;
 
 
 
 
 
-
-llxHeader("", "Bulletin de Paie");
+llxHeader("", "Avance Sur Salaire");
 
 //add filter by date
-datefilter();
+// datefilter();
 
 print '
 	<style>
@@ -292,6 +324,16 @@ print '
 	</style>';
 
 
+// Actions to build doc
+$action = GETPOST('action', 'aZ09');
+
+$upload_dir = DOL_DATA_ROOT . '/grh/BulletinDePaie';
+$permissiontoadd = 1;
+$donotredirect = 1;
+include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
+
+
+$_SESSION['dateg'] = null;
 
 
 /*
@@ -303,13 +345,13 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
 
-$text = "Bulletin de Paie";
+$text = "Avance Sur Salaire";
 $french_months = array('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre');
 
 
 $user2 = new User($db);
 
-$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
+$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,u.dateemploymentend, u.dateemployment,";
 $sql .= " u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.ldap_sid, u.statut, u.entity,";
 $sql .= " u.tms as date_update, u.datec as date_creation,";
@@ -341,7 +383,7 @@ $reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Not
 if ($reshook > 0) {
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql .= " WHERE u.entity IN (".getEntity('user').") and u.employee = 1";
+	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
 if ($socid > 0) {
 	$sql .= " AND u.fk_soc = ".((int) $socid);
@@ -358,6 +400,9 @@ if ($search_warehouse > 0) {
 }
 if ($search_login != '') {
 	$sql .= natural_search("u.login", $search_login);
+}
+if ($search_options_matricule != '') {
+	$sql .= natural_search("ef.matricule", $search_options_matricule);
 }
 if ($search_lastname != '') {
 	$sql .= natural_search("u.lastname", $search_lastname);
@@ -505,8 +550,17 @@ $arrayofmassactions['disable'] = img_picto('', 'close_title', 'class="pictofixed
 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-
-
+if ($user->admin) {
+	print '<form id="frmReset" name="filter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	print '<input type="hidden" name="action" value="reset">';
+	print '<input type="hidden" name="day" value="' . $day . '">';
+	print '<input type="hidden" name="month" value="' . $month . '">';
+	print '<input type="hidden" name="year" value="' . $year . '">';
+	print '<input type="hidden" name="limit" value="' . $limit . '">';
+	print '<input type="submit" class="butActionDelete" value="reset"/><br>';
+	print '</form>';
+}
 
 
 
@@ -520,6 +574,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="year" value="' . $year . '">';
 print '<input type="hidden" name="month" value="' . $month . '">';
 print '<input type="hidden" name="action" value="view">';
+
 
 
 $moreparam = array('morecss'=>'marginleftonly');
@@ -598,6 +653,7 @@ print '<td class="liste_titre maxwidthsearch">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
+print '<td class="liste_titre"><input type="text" name="search_options_matricule" class="maxwidth50" value="'.$search_options_matricule.'"></td>';
 
 if (!empty($arrayfields['u.login']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
@@ -680,6 +736,7 @@ print '</tr>';
 print '<tr class="liste_titre">';
 // Action column
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+print_liste_field_titre("Matricule", $_SERVER['PHP_SELF'], "ef.matricule", $param, "", "", $sortfield, $sortorder);
 
 if (!empty($arrayfields['u.login']['checked'])) {
 	print_liste_field_titre("Login", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
@@ -792,12 +849,21 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$userstatic->employee = $obj->employee;
 	$userstatic->photo = $obj->photo;
 
+    $res1 = $db->query($sql1);
+    if ((strtotime($obj->dateemploymentend) < strtotime(date("d") . '-' . $month . '-' . $year) && $obj->dateemploymentend != '') || $obj->dateemployment == '' || (strtotime($obj->dateemployment) > strtotime(date("t", strtotime('01-' . $month . '-' . $year)) . '-' . $month . '-' . $year) && $obj->dateemployment != '')) {
+        $i++;
+        continue;
+    }
 
-	
+    // see if it's clotured
+    $sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month";
+    $res1 = $db->query($sql1);
+    if ($res1->num_rows > 0) {
+        $i++;
+        continue;
+    }
 
-
-
-    $users[$i] = $obj;
+	$users[$i] = $obj;
     $li = '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $userstatic->id . '&action=show&year=' . $year . '&month=' . $month . '">' . $userstatic->login . '</a>';
 
 
@@ -823,8 +889,11 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 	print '</td>';
 	
-
-
+	// matricule
+	print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->options_matricule).'">'.dol_escape_htmltag($obj->options_matricule).'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 	// Login
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print '<td class="nowraponall tdoverflowmax150"><a href="/RH/Users/card.php?id='.$obj->rowid.'">';
@@ -1042,8 +1111,17 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 
-	print '<td> <input type="hidden" name="idCell" value="' . $obj->rowid . '"></td>';
-print '<td> <input type="hidden" name="salaryCell" value="' . $obj->salary . '"></td>';
+	$sql = "SELECT fk_user, bank, number FROM llx_user_rib WHERE fk_user=" . $obj->rowid;
+    $res = $db->query($sql);
+    $data = ((object)($res))->fetch_assoc();
+
+    print '<td> <input type="hidden" name="idCell" value="' . $obj->rowid . '"></td>';
+    print '<td> <input type="hidden" name="salaryCell" value="' . $obj->salary . '"></td>';
+    $bank = $data["bank"];
+    $bank .= "  / RIB: ";
+    $bank .= $data["number"];
+    print '<td> <input type="hidden" name="bankCell" value="' . $bank . '"></td>';
+
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
@@ -1085,151 +1163,107 @@ print '</table>
 
 
 
-if ($action == 'changeWorkingDays') {
-    changeWorkingDays();
+if ($action == 'voirAvance') {
+    displayAvance();
 } else {
     GenerateDocuments();
 }
 
-if ($action == 'confirmeWorkingDays') {
+if ($action == 'updateAvance') {
     $action = '';
-    //Create table for month declaration
-    $sql = "CREATE TABLE IF NOT EXISTS llx_Paie_MonthDeclaration(userid int, year int, month int, workingDays float, workingHours int, salaireBrut float, salaireNet float, netImposable float, ir float, arrondi float, cloture int, joursferie int, PRIMARY KEY (userid, year, month));";
-    $res = $db->query($sql);
-    if ($res);
-    else print("<br>fail ERR: " . $sql);
+    // foreach ($users as $user) {
+    //     $sql = '';
+    //     $avance = (int)GETPOST("avance_$user->rowid", "float");
+	// 	$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, amount) values ($user->rowid, '802', '$avance');";
+    //     $res = $db->query($sql);
+    //     if ($res);
+    //     else print("<br>fail ERR: " . $sql);
+    // }
 
-
-    //Create table for insert the extra hours
-    $sql = "CREATE TABLE IF NOT EXISTS llx_Paie_HourSuppDeclaration(userid int, rub int, year int, month int, nhours int, PRIMARY KEY (userid, rub, year, month));";
-    $res = $db->query($sql);
-    if ($res);
-    else print("<br>fail ERR: " . $sql);
-
-    foreach ($users as $user) {
-        $workingdays = (int)GETPOST("workingdays_$user->rowid", "float");
-        $workingHours = (int)GETPOST("workingHours_$user->rowid", "float");
-        $joursferie = (int)GETPOST("joursferie_$user->rowid", "float");
-        //change the working days
-        $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours, joursferie) VALUES($user->rowid, $prev_year, $prev_month, $workingdays, $workingHours, $joursferie);";
-        $res = $db->query($sql);
-        if ($res);
-        else print("<br>fail ERR: " . $sql);
-
-        $sql = "SELECT rub FROM llx_Paie_HourSupp";
-        $res = $db->query($sql);
-        if ($res->num_rows > 0) {
-            while ($row = $res->fetch_assoc()) {
-                $nhours = (int)GETPOST("hoursupp_" . $row["rub"] . "_$user->rowid", "int");
-
-                $sqlh = "REPLACE INTO llx_Paie_HourSuppDeclaration(userid, rub, year, month, nhours) VALUES($user->rowid, " . $row["rub"] . ", $prev_year, $prev_month, $nhours);";
-                $resh = $db->query($sqlh);
-                if ($resh);
-                else {
-                    print("<br>fail ERR: " . $sqlh);
-                    exit;
-                }
-            }
-        }
-    }
-    echo "<script>window.location='" . $_SERVER["PHP_SELF"] . "?reyear=" . $year . "&remonth=" . $month . "'</script>";
 }
 
 
-$action = GETPOST('action');
-$id = GETPOST('id', 'int');
-if ($id && $action == 'show') {
-    ShowBulletin($id);
-}
-ShowDocuments();
+// $action = GETPOST('action');
+// $id = GETPOST('id', 'int');
+// if ($id && $action == 'show') {
+//     ShowBulletin($id);
+// }
+// ShowDocuments();
 
 function GenerateDocuments()
 {
-    global $day, $month, $year;
-    print '<form id="frmgen" name="generateDocs" method="post">';
+    global $day, $month, $year, $limit;
+    print '<form id="frmgen" name="generateAvance" method="post" style="margin-top:20px;">';
     print '<input type="hidden" name="token" value="' . newToken() . '">';
-    print '<input type="hidden" name="action" value="generateDocs">';
-    print '<input type="hidden" name="model" value="BulletinDePaie">';
+    print '<input type="hidden" name="action" value="generateAvance">';
+    // print '<input type="hidden" name="model" value="BulletinDePaie">';
     print '<input type="hidden" name="day" value="' . $day . '">';
-    print '<input type="hidden" name="remonth" value="' . $month . '">';
-    print '<input type="hidden" name="reyear" value="' . $year . '">';
-    print '<div class=""  style="margin-bottom: 0px; margin-left: 5%;"><input type="button" id="btngen" class="button" name="save" value="génerer"></div>';
+    print '<input type="hidden" name="month" value="' . $month . '">';
+    print '<input type="hidden" name="year" value="' . $year . '">';
+    print '<input type="hidden" name="limit" value="' . $limit . '">';
+    print '<div style="margin-bottom: 0px; margin-left: 5%;"><input type="button" id="btngen" class="button" name="save" value="Calculer"></div>';
 
     print "<script>
         $('#btngen').click(function(){
             var i=1;
+            var id = '';
             $('#tblUsers  input:checkbox.checkforselect:checked').each(function () {
-				var id = $(this).closest('tr').find('input[name=idCell]').val();
-                var salary = $(this).closest('tr').find('input[name=salaryCell]').val();
-                var b = $(this).closest('tr').find('input[name=bankCell]').val();
-                var nom = $(this).closest('tr').find('td:eq(2)').val();
-                $('input[name=id]').remove();
-                $('<input type=\"hidden\" name=\"id\" value=\"'+id+'\" >').appendTo('#frmgen');
-				$.ajax({
-					url: '" . $_SERVER["PHP_SELF"] . "',
-					type: 'post',
-					data:$('#frmgen').serialize(),
-					success:function(){			
-					}
-				});
+                id += $(this).closest('tr').find('input[name=idCell]').val()+',';
             });
-			location.reload(true);
+            id = id.slice(0,-1);
+            $('<input type=\"hidden\" name=\"id\" value=\"'+id+'\" >').appendTo('#frmgen');
+			$('#frmgen').submit();
 	        
         });
     </script>";
     print '</form>';
-    print '<hr>';
     print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
     print '<input type="hidden" name="token" value="' . newToken() . '">';
-    print '<input type="hidden" name="action" value="changeWorkingDays">';
+    print '<input type="hidden" name="action" value="voirAvance">';
     print '<input type="hidden" name="day" value="' . $day . '">';
-    print '<input type="hidden" name="remonth" value="' . $month . '">';
-    print '<input type="hidden" name="reyear" value="' . $year . '">';
-    print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="butActionDelete" value="Changer les jours travaillé">';
+    print '<input type="hidden" name="month" value="' . $month . '">';
+    print '<input type="hidden" name="year" value="' . $year . '">';
+    print '<input type="hidden" name="limit" value="' . $limit . '">';
+    print '<div class="right"  style="margin-right: 5%;"><input type="submit" class="butActionDelete" value="affichage Valeur D\'avance">';
     print '</form>';
 }
-function ShowDocuments()
+// function ShowDocuments()
+// {
+//     global $db, $object, $conf, $month, $year, $societe;
+//     print '<div class="fichecenter"><div class="fichehalfleft">';
+//     $formfile = new FormFile($db);
+
+
+//     $subdir = '';
+//     $filedir = DOL_DATA_ROOT . '/grh/BulletinDePaie';
+//     $urlsource = $_SERVER['PHP_SELF'] . '';
+//     $genallowed = 0;
+//     $delallowed = 1;
+//     $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
+
+// 	$_SESSION["filterDoc"] = $month . "-" . $year;
+
+
+//     print $formfile->showdocuments('BulletinDePaie', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, 'remonth=' . $month . '&amp;reyear=' . $year, '', '', $societe->default_lang);
+//     $somethingshown = $formfile->numoffiles;
+
+//     // $_SESSION["filterDoc"] = null;
+//     // Show links to link elements
+//     //$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
+// }
+
+function displayAvance()
 {
-    global $db, $object, $conf, $month, $year, $societe, $showAll, $prev_month, $prev_year;
-    print '<div class="fichecenter"><div class="fichehalfleft">';
-    $formfile = new FormFile($db);
+    global $db, $day, $month, $year, $users, $limit;
 
-
-    $subdir = get_exdir($object->id, 2, 0, 0, $object, 'RH');
-    $filedir = DOL_DATA_ROOT . '/grh/BulletinDePaie' . '/' . $subdir;
-
-    $urlsource = $_SERVER['PHP_SELF'] . '';
-    $genallowed = 0;
-    $delallowed = 1;
-    $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
-
-    if (!$showAll) {
-        $_SESSION["filterDoc"] = $prev_month . "-" . $prev_year;
-    }
-
-    print $formfile->showdocuments('BulletinDePaie', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, 'remonth=' . $month . '&amp;reyear=' . $year, '', '', $societe->default_lang);
-    $somethingshown = $formfile->numoffiles;
-
-    $_SESSION["filterDoc"] = null;
-    // Show links to link elements
-    //$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
-}
-
-function changeWorkingDays()
-{
-    global $db, $day, $month, $year, $prev_month, $prev_year, $users;
-
-    $sql = "SELECT rub, designation FROM llx_Paie_HourSupp";
-    $res = $db->query($sql);
-    if ($res->num_rows > 0) {
-        $hrs = $res->fetch_all();
-    }
-    print '<form  action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+    print '<form  action="' . $_SERVER["PHP_SELF"] . '" method="post" style="margin-top:15px;">';
     print '<input type="hidden" name="token" value="' . newToken() . '">';
-    print '<input type="hidden" name="action" value="confirmeWorkingDays">';
+    print '<input type="hidden" name="action" value="updateAvance">';
     print '<input type="hidden" name="day" value="' . $day . '">';
-    print '<input type="hidden" name="remonth" value="' . $month . '">';
-    print '<input type="hidden" name="reyear" value="' . $year . '">';
+    print '<input type="hidden" name="month" value="' . $month . '">';
+    print '<input type="hidden" name="year" value="' . $year . '">';
+	print '<input type="hidden" name="limit" value="' . $limit . '">';
+
 
     print ' <style>
                 .small-td input{
@@ -1239,15 +1273,9 @@ function changeWorkingDays()
         <table class="noborder editmode" style="width:100%">
     <thead>
         <tr class="liste_titre">
-            <th class="titlefield wordbreak">Login</th>
-            <th class="titlefield wordbreak">Nom</th>
-            <th class="titlefield wordbreak">Prénom</th>
-            <th class="titlefield wordbreak">Nombre des jours travaillé</th>
-            <th class="titlefield wordbreak">Nombre des Hours travaillé (horaire)</th>
-            <th class="titlefield wordbreak">Jours férié</th>';
-    foreach ((array)$hrs as $hr) {
-        print '<th class="titlefield wordbreak">' . $hr[1] . '</th>';
-    }
+            <th class="titlefield wordbreak">Matricule</th>
+            <th class="titlefield wordbreak">Nom Complet</th>
+            <th class="titlefield wordbreak">Avance</th';
     print '</tr>
     </thead>
     <tbody>';
@@ -1255,58 +1283,19 @@ function changeWorkingDays()
 
         $salaireParams = "";
         //Get user salaire informations from database
-        $sql = "SELECT type from llx_Paie_UserInfo WHERE userid=" . $user->rowid;
+        $sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='802' AND userid=$user->rowid";
         $res = $db->query($sql);
         if (((object)$res)->num_rows > 0) {
-            $salaireParams = ((object)$res)->fetch_assoc();
+            $avance = ((object)$res)->fetch_assoc()['amount'];
+        }else{
+            $avance = 0;
         }
-        $type = $salaireParams["type"];
-
-        if ($type == 'mensuel') //Mensuel
-        {
-            $workingdays = 26;
-            $sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$prev_month AND year = $prev_year";
-            $res = $db->query($sql);
-            if (((object)$res)->num_rows > 0) {
-                $row = ((object)$res)->fetch_assoc();
-                $workingdays = (int)$row["workingDays"];
-                $joursferie = (int)$row["joursferie"];
-            }
-
-            print "<tr>
-                <td>$user->login</td>
-                <td>$user->firstname</td>
-                <td>$user->lastname</td>
-                <td><input type='number' name='workingdays_$user->rowid' value='$workingdays'></td>
-                <td>---</td>
-                <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
-        } else if ($type == 'horaire') //Journalier or Horaire
-        {
-            $workingHours = 0;
-            $sql = "SELECT workingHours, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$prev_month AND year = $prev_year";
-            $res = $db->query($sql);
-            if (((object)$res)->num_rows > 0) {
-                $row = ((object)$res)->fetch_assoc();
-                $workingHours = (int)$row["workingHours"];
-                $joursferie = (int)$row["joursferie"];
-            }
-
-            print "<tr>
-                <td>$user->login</td>
-                <td>$user->firstname</td>
-                <td>$user->lastname</td>
-                <td>---</td>
-                <td><input type='number' name='workingHours_$user->rowid' value='$workingHours'></td>
-                <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
-        }
-        foreach ((array)$hrs as $hr) {
-            $sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$prev_month AND year = $prev_year";
-            $resh = $db->query($sqlh);
-            if ($resh->num_rows > 0) {
-                $nhours = $resh->fetch_assoc()["nhours"];
-            }
-            print "<td class='small-td'><input type='number' name='hoursupp_$hr[0]_$user->rowid' value='$nhours'></td>";
-        }
+        print "
+            <tr>
+                <td>$user->options_matricule</td>
+                <td>$user->lastname $user->firstname</td>
+                <td>$avance</td>
+            </t>";
     }
 
     print '</tbody>
@@ -1314,151 +1303,144 @@ function changeWorkingDays()
 
 
 
-    print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="button" value="valider">';
+    print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="button" value="Annuler">';
 
     print '</form>';
 }
 
 
-function ShowBulletin($id)
-{
-    global $db, $object, $prev_month, $prev_year, $year, $month;
+// function ShowBulletin($id)
+// {
+//     global $db, $object, $year, $month;
 
-    $object->fetch($id);
+//     $object->fetch($id);
 
-    include 'Bulletin_Class.php';
+//     include 'Bulletin_Class.php';
 
-    $bulttin = '<style type="text/css">
-        table.tableizer-table {
-            font-size: 11px;
-            margin:auto;
-            border-bottom:1px solid #000;
-            border-collapse: collapse;
-        } 
-        .tableizer-table td {
-            padding: 4px;
-            margin: 3px;
-            border-left: 1px solid #000;
-            border-right: 1px solid #000;
-        }
-        .tableizer-table th {
-            background-color: #104E8B; 
-            color: #FFF;
-            font-weight: bold;
-        }
-        .row-bordered{
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-        }
-        .row-content{
-            background-color: rgb(214, 214, 214);
-        }
-        .importent-cell{
-            background-color: rgb(122, 166, 202);
-            font-weight: bold;
-        }
-        .white-cell{
-            background-color: white;
-            font-weight: bold;
-        }
-        </style>
-            <table class="tableizer-table">
-                <thead><tr class="tableizer-firstrow"><th colspan="7">BULLETIN DE PAIE</th></tr></thead>
-                <tbody>
-                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Nom</td><td class="white-cell">' . $object->lastname . ' ' . $object->firstname . '</td><td>Date de naissance</td><td class="white-cell" colspan="2">' . date("d/m/Y", $object->birth) . '</td></tr>
-                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° CNSS</td><td class="white-cell">' . $salaireParams["cnss"] . '</td><td>Fonction</td><td class="white-cell" colspan="2">' . $object->job . '</td></tr>
-                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° Mutuelle</td><td class="white-cell">' . $salaireParams["mutuelle"] . '</td><td>N° CIMR</td><td class="white-cell" colspan="2">' . $salaireParams["cimr"] . '</td></tr>
-                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Periode</td><td class="white-cell">' . $periode . '</td><td>adresse</td><td class="white-cell" colspan="2">' . $object->address . '</td></tr>
-                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Situation familiale</td><td class="white-cell">' . $situation . '</td><td>nombre d\'enfants</td><td class="white-cell" colspan="2">' . $enfants . '</td></tr>
-                <tr class="importent-cell row-bordered"><td rowspan="2">Rub</td><td rowspan="2">Désignation</td><td rowspan="2">Nombre</td><td rowspan="2">Base</td><td colspan="3">Part salariale</td></tr>
-                <tr class="importent-cell row-bordered"><td>Taux</td><td>A payer</td><td>A retenues</td></tr>
-    ';
+//     $bulttin = '<style type="text/css">
+//         table.tableizer-table {
+//             font-size: 11px;
+//             margin:auto;
+//             border-bottom:1px solid #000;
+//             border-collapse: collapse;
+//         } 
+//         .tableizer-table td {
+//             padding: 4px;
+//             margin: 3px;
+//             border-left: 1px solid #000;
+//             border-right: 1px solid #000;
+//         }
+//         .tableizer-table th {
+//             background-color: #104E8B; 
+//             color: #FFF;
+//             font-weight: bold;
+//         }
+//         .row-bordered{
+//             border-top: 1px solid #000;
+//             border-bottom: 1px solid #000;
+//         }
+//         .row-content{
+//             background-color: rgb(214, 214, 214);
+//         }
+//         .importent-cell{
+//             background-color: rgb(122, 166, 202);
+//             font-weight: bold;
+//         }
+//         .white-cell{
+//             background-color: white;
+//             font-weight: bold;
+//         }
+//         </style>
+//             <table class="tableizer-table">
+//                 <thead><tr class="tableizer-firstrow"><th colspan="7">BULLETIN DE PAIE</th></tr></thead>
+//                 <tbody>
+//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Nom</td><td class="white-cell">' . $object->lastname . ' ' . $object->firstname . '</td><td>Date de naissance</td><td class="white-cell" colspan="2">' . date("d/m/Y", $object->birth) . '</td></tr>
+//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° CNSS</td><td class="white-cell">' . $salaireParams["cnss"] . '</td><td>Fonction</td><td class="white-cell" colspan="2">' . $object->job . '</td></tr>
+//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° Mutuelle</td><td class="white-cell">' . $salaireParams["mutuelle"] . '</td><td>N° CIMR</td><td class="white-cell" colspan="2">' . $salaireParams["cimr"] . '</td></tr>
+//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Periode</td><td class="white-cell">' . $periode . '</td><td>adresse</td><td class="white-cell" colspan="2">' . $object->address . '</td></tr>
+//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Situation familiale</td><td class="white-cell">' . $situation . '</td><td>nombre d\'enfants</td><td class="white-cell" colspan="2">' . $enfants . '</td></tr>
+//                 <tr class="importent-cell row-bordered"><td rowspan="2">Rub</td><td rowspan="2">Désignation</td><td rowspan="2">Nombre</td><td rowspan="2">Base</td><td colspan="3">Part salariale</td></tr>
+//                 <tr class="importent-cell row-bordered"><td>Taux</td><td>A payer</td><td>A retenues</td></tr>
+//     ';
 
-    if ($type == "mensuel") {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireMensuel") . '</td><td>SALAIRE MENSUEL</td><td></td><td>' . price($bases["salaire de base"]) . '</td><td> ' . $Taux . ' </td><td> ' . price($bases["salaire mensuel"]) . ' </td><td>&nbsp;</td></tr>';
-    }
+//     if ($type == "mensuel") {
+//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireMensuel") . '</td><td>SALAIRE MENSUEL</td><td></td><td>' . price($bases["salaire de base"], 0, '', 1, 1,2) . '</td><td> ' . $Taux . ' </td><td> ' . price($bases["salaire mensuel"]) . ' </td><td>&nbsp;</td></tr>';
+//     }
 
-    if ($type == "horaire") {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireHoraire") . '</td><td>SALAIRE HORAIRE</td><td>' . $workingHours . '</td><td>' . price($salaireHoraire) . '</td><td>  </td><td> ' . price($bases["salaire mensuel"]) . ' </td><td>&nbsp;</td></tr>';
-    }
+//     if ($type == "horaire") {
+//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireHoraire") . '</td><td>SALAIRE HORAIRE</td><td>' . $workingHours . '</td><td>' . price($salaireHoraire, 0, '', 1, 1,2) . '</td><td>  </td><td> ' . price($bases["salaire mensuel"], 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
+//     }
 
-    if ($primeDancien > 0) {
-        $bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases["salaire mensuel"]) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien) . '</td><td>&nbsp;</td></tr> ';
-    }
+//     if ($primeDancien > 0) {
+//         $bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases["salaire mensuel"], 0, '', 1, 1,2) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr> ';
+//     }
 
-    if ($soldeConge > 0) {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("congePaye") . '</td><td>CONGE PAYE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"]) . '</td><td>' . $congeDays . '</td><td> ' . price($soldeConge) . ' </td><td>&nbsp;</td></tr>';
-    }
+//     if ($soldeConge > 0) {
+//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("congePaye") . '</td><td>CONGE PAYE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1,2) . '</td><td>' . $congeDays . '</td><td> ' . price($soldeConge, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
+//     }
 
-    if ($soldeferie > 0) {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>LES JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"]) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie) . ' </td><td>&nbsp;</td></tr>';
-    }
+//     if ($soldeferie > 0) {
+//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>LES JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1,2) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
+//     }
 
-    foreach ((array)$hrs as $hr) {
-        $bulttin .= '<tr class="row-content"><td>' . $hr["rub"] . '</td><td>' . $hr["designation"] . '</td><td>' . $hr["nombre"] . '</td><td>' . price($hr["base"]) . '</td><td>' . $hr["taux"] . '%</td><td> ' . price($hr["apayer"]) . ' </td><td>' . $hr["aretenu"] . '</td></tr>';
-    }
+//     foreach ((array)$hrs as $hr) {
+//         $bulttin .= '<tr class="row-content"><td>' . $hr["rub"] . '</td><td>' . $hr["designation"] . '</td><td>' . price($hr["nombre"], 0, '', 1, 1,2) . '</td><td>' . price($hr["base"], 0, '', 1, 1,2) . '</td><td>' . $hr["taux"] . '%</td><td> ' . price($hr["apayer"], 0, '', 1, 1,2) . ' </td><td>' . price($hr["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
+//     }
 
-    foreach ((array)$enBruts as $enBrut) {
-        $base = $enBrut["base"] > 0 ? price($enBrut["base"]) : "";
-        $bulttin .= '<tr class="row-content"><td>' . $enBrut["rub"] . '</td><td>' . $enBrut["designation"] . '</td><td>' . $enBrut["nombre"] . '</td><td>' . $base . '</td><td>' . $enBrut["taux"] . '</td><td> ' . price($enBrut["apayer"]) . ' </td><td>' . $enBrut["aretenu"] . '</td></tr>';
-    }
+//     foreach ((array)$enBruts as $enBrut) {
+//         $base = $enBrut["base"] > 0 ? price($enBrut["base"], 0, '', 1, 1,2) : "";
+//         $bulttin .= '<tr class="row-content"><td>' . $enBrut["rub"] . '</td><td>' . $enBrut["designation"] . '</td><td>' . $enBrut["nombre"] . '</td><td>' . $base . '</td><td>' . $enBrut["taux"] . '</td><td> ' . price($enBrut["apayer"], 0, '', 1, 1,2) . ' </td><td>' . price($enBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
+//     }
 
-    if ($primeCommercial > 0) {
-        $base = $CA > 0 ? price($CA) : "";
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("primeCommercial") . '</td><td>PRIME COMMERCIAL</td><td></td><td>' . $base . '</td><td>' . $percent . '%</td><td> ' . price($primeCommercial) . ' </td><td>&nbsp;</td></tr>';
-    }
+//     if ($primeCommercial > 0) {
+//         $base = $CA > 0 ? price($CA, 0, '', 1, 1,2) : "";
+//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("primeCommercial") . '</td><td>PRIME COMMERCIAL</td><td></td><td>' . $base . '</td><td>' . $percent . '%</td><td> ' . price($primeCommercial, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
+//     }
 
-    $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr class="row-content"><td></td><td>SALAIRE BRUT</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($brutGlobal) . ' </td><td>&nbsp;</td></tr>
-             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+//              <tr class="row-content"><td></td><td>SALAIRE BRUT</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($brutGlobal, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>
+//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-    foreach ((array)$cotisations as $cotisation) {
-        $base = $cotisation["base"] > 0 ? price($cotisation["base"]) : "";
-        $bulttin .= '<tr class=""><td>' . $cotisation["rub"] . '</td><td>' . $cotisation["designation"] . '</td><td>' . price($cotisation["nombre"]) . '</td><td>' . $base . '</td><td>' . $cotisation["taux"] . '</td><td>  </td><td>' . price($cotisation["aretenu"]) . '</td></tr>';
-    }
+//     foreach ((array)$cotisations as $cotisation) {
+//         $base = $cotisation["base"] > 0 ? price($cotisation["base"], 0, '', 1, 1,2) : "";
+//         $bulttin .= '<tr class=""><td>' . $cotisation["rub"] . '</td><td>' . $cotisation["designation"] . '</td><td>' . price($cotisation["nombre"], 0, '', 1, 1,2) . '</td><td>' . $base . '</td><td>' . $cotisation["taux"] . '</td><td>  </td><td>' . price($cotisation["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
+//     }
 
-    $bulttin .= ' <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr class="row-content"><td>' . getRebrique("netImposable") . '</td><td>SALAIRE NET IMPOSABLE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($netImposable) . ' </td><td>&nbsp;</td></tr>
-             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+//     $bulttin .= ' <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+//              <tr class="row-content"><td>' . getRebrique("netImposable") . '</td><td>SALAIRE NET IMPOSABLE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($netImposable, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>
+//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-    if ($chargeFamille != 0) {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("chargefamille") . '</td><td>CHARGE DE FAMILLE</td><td>&nbsp;</td><td>&nbsp;</td><td>' . $chargeFamilleTaux . '</td><td>' . $chargeFamille . '</td><td>&nbsp;</td></tr>';
-    }
+//     if ($chargeFamille != 0) {
+//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("chargefamille") . '</td><td>CHARGE DE FAMILLE</td><td>&nbsp;</td><td>&nbsp;</td><td>' . $chargeFamilleTaux . '</td><td>' . price($chargeFamille, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr>';
+//     }
 
-    if ($irNet > 0) {
-        $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-        <tr class="row-content"><td>' . getRebrique("ir") . '</td><td>IR</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($irNet) . ' </td></tr>';
-    }
+//     if ($irNet > 0) {
+//         $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+//         <tr><td>' . getRebrique("ir") . '</td><td>IR</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($irNet, 0, '', 1, 1,2) . ' </td></tr>';
+//     }
+    
+//     foreach ((array)$pasEnBruts as $pasEnBrut) {
+//         $base = $pasEnBrut["base"] > 0 ? price($pasEnBrut["base"], 0, '', 1, 1,2) : "";
+//         $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+// 		$bulttin .= '<tr class="row-content"><td>'. $pasEnBrut["rub"] .'</td><td>' . $pasEnBrut["designation"] . '</td><td>&nbsp;</td><td>' . price($pasEnBrut["nombre"], 0, '', 1, 1,2) . '</td><td>'.$base.'</td><td>' . price($pasEnBrut["apayer"], 0, '', 1, 1,2) . '</td><td>' . price($pasEnBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
 
-    foreach ((array)$pasEnBruts as $pasEnBrut) {
-        $base = $pasEnBrut["base"] > 0 ? price($pasEnBrut["base"]) : "";
-        $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
-        $bulttin .= '<tr class="row-content"><td>' . $pasEnBrut["rub"] . '</td><td>' . $pasEnBrut["designation"] . '</td><td>' . $pasEnBrut["number"] . '</td><td>' . $base . '</td><td>' . $pasEnBrut["taux"] . '</td><td> ' . price($pasEnBrut["apayer"]) . ' </td><td>' . $pasEnBrut["aretenu"] . '</td></tr>';
-    }
-    if ($prev_arrondi != 0) {
-        $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr class="row-content"><td>' . getRebrique("arrondiPrecdent") . '</td><td>ARRONDI PRÉCÉDENTE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td></td><td>' . price($prev_arrondi) . '</td></tr>';
-    }
+//         // $bulttin .= '<tr class="row-content"><td>' . $pasEnBrut["rub"] . '</td><td>' . $pasEnBrut["designation"] . '</td><td>' . price($pasEnBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
+//     }
 
-    if ($arrondi != 0) {
-        $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr class="row-content"><td>' . getRebrique("arrondiEnCours") . '</td><td>ARRONDI EN COUR </td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>' . price($arrondi) . '</td><td></td></tr>';
-    }
+//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td></td><td class="importent-cell row-bordered"> ' . price($totalBrut, 0, '', 1, 1,2) . ' </td><td class="importent-cell row-bordered"> ' . price($totalRetenu + $retenueFromBrut, 0, '', 1, 1,2) . ' </td></tr>
+//              <tr ><td></td><td>&nbsp;</td><td class="importent-cell row-bordered" colspan="3">Net a payer</td><td class="importent-cell row-bordered" colspan="2"> ' . price($totalNet, 0, '', 1, 1,2) . ' </td></tr>
 
-    $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td></td><td class="importent-cell row-bordered"> ' . price($totalBrut) . ' </td><td class="importent-cell row-bordered"> ' . price($totalRetenu + $retenueFromBrut) . ' </td></tr>
-             <tr ><td></td><td>&nbsp;</td><td class="importent-cell row-bordered" colspan="3">Net a payer</td><td class="importent-cell row-bordered" colspan="2"> ' . price($totalNet) . ' </td></tr>
+//              <tr><td></td><td>&nbsp;</td><td>Jours travaillés</td><td>Brut imposable</td><td>Net imposable</td><td>Retenue I.R.</td></tr>
+//              <tr class="row-bordered row-content"><td></td><td>Mensuel</td><td>' . ($workingdaysdeclaré) . '</td><td>' . price($brutImposable) . '</td><td>' . price($netImposable, 0, '', 1, 1,2) . '</td><td>' . price($irNet, 0, '', 1, 1,2) . '</td></tr>
+//              <tr class="row-bordered row-content"><td></td><td>Annuel</td><td>' . ($comulWorkingDays + $workingdaysdeclaré) . '</td><td>' . price($comulsalaireBrut + $brutImposable, 0, '', 1, 1,2) . '</td><td>' . price($comulnetImposable + $netImposable, 0, '', 1, 1,2) . '</td><td>' . price($comulIR + $irNet, 0, '', 1, 1,2) . '</td></tr>
+//        </tbody>
+//     </table>';
 
-             <tr><td></td><td>&nbsp;</td><td>Jours travaillés</td><td>Brut imposable</td><td>Net imposable</td><td>Retenue I.R.</td></tr>
-             <tr class="row-bordered row-content"><td></td><td>Mensuel</td><td>' . ($workingdaysdeclaré) . '</td><td>' . price($brutImposable) . '</td><td>' . price($netImposable) . '</td><td>' . price($irNet) . '</td></tr>
-             <tr class="row-bordered row-content"><td></td><td>Annuel</td><td>' . ($comulWorkingDays + $workingdaysdeclaré) . '</td><td>' . price($comulsalaireBrut + $brutImposable) . '</td><td>' . price($comulnetImposable + $netImposable) . '</td><td>' . price($comulIR + $irNet) . '</td></tr>
-       </tbody>
-    </table>';
-
-    print $bulttin;
-}
+//     print $bulttin;
+// }
 
 // style
 print'
@@ -1540,34 +1522,43 @@ print'
 
 
 //filter by date
-function datefilter()
-{
-    print '<div class="center">';
-    print '<form id="frmfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="filter">';
+// function datefilter()
+// {
+//     print '<div class="center">';
+//     print '<form id="frmfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+//     print '<input type="hidden" name="token" value="'.newToken().'">';
+//     print '<input type="hidden" name="action" value="filter">';
 
-    // Show navigation bar
-	$nav = '<div class="date-container">
-				<div class="inp-wrapper">
-					<div class="date-wrapper">
-						<input type="month" id="date" name="date">
-					</div>
-					<button style="cursor:pointer;" type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>
-				</div>
-			</div>';
-    print $nav;
+//     // Show navigation bar
+// 	$nav = '<div class="date-container">
+// 				<div class="inp-wrapper">
+// 					<div class="date-wrapper">
+// 						<input type="month" id="date" name="date">
+						
+// 					</div>
+// 					<button style="cursor:pointer;" type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>
+// 				</div>
+// 			</div>';
+//     print $nav;
 
-    print '</form>';
-    print '</div>';
-}
+//     print '</form>';
+//     print '</div>';
+// }
 
 print "
     <script>
         $(document).ready(function(){
             $('#date').val('" . $year . "-" . $month . "');	
         });
-    </script>";
+    </script>
+	<style>
+	@media only screen and (min-width: 977px) {
+		div.div-table-responsive {
+			width: calc(100vw - 285px);
+			overflow-x: scroll;
+		}
+	}
+	</style>";
 
 
 

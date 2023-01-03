@@ -2673,7 +2673,7 @@ class User extends CommonObject
 	 */
 	public function getPhotoUrl($width, $height, $cssclass = '', $imagesize = '')
 	{
-		$result = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+		$result = '<a href="'.DOL_URL_ROOT.'/RH/Users/card.php?id='.$this->id.'">';
 		$result .= Form::showphoto('userphoto', $this, $width, $height, 0, $cssclass, $imagesize);
 		$result .= '</a>';
 
@@ -3055,7 +3055,7 @@ class User extends CommonObject
 
 		$result = '';
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/RH/Users/card.php?id='.$this->id.'">';
 		$linkend = '</a>';
 
 		//Check user's rights to see an other user
@@ -3064,7 +3064,7 @@ class User extends CommonObject
 		}
 
 		if ($option == 'xxx') {
-			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
+			$linkstart = '<a href="'.DOL_URL_ROOT.'/RH/Users/card.php?id='.$this->id.'">';
 			$linkend = '</a>';
 		}
 
@@ -3692,7 +3692,93 @@ class User extends CommonObject
 		if ($reshook > 0) {
 			$sql .= $hookmanager->resPrint;
 		} else {
-			$sql .= " WHERE u.entity IN (".getEntity('user').")";
+			$sql .= " WHERE u.entity IN (".getEntity('user').") and u.employee = 0";
+		}
+		if ($filter) {
+			$sql .= " AND ".$filter;
+		}
+
+		dol_syslog(get_class($this)."::get_full_tree get user list", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$i = 0;
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->users[$obj->rowid]['rowid'] = $obj->rowid;
+				$this->users[$obj->rowid]['id'] = $obj->rowid;
+				$this->users[$obj->rowid]['fk_user'] = $obj->fk_user;
+				$this->users[$obj->rowid]['fk_soc'] = $obj->fk_soc;
+				$this->users[$obj->rowid]['firstname'] = $obj->firstname;
+				$this->users[$obj->rowid]['lastname'] = $obj->lastname;
+				$this->users[$obj->rowid]['login'] = $obj->login;
+				$this->users[$obj->rowid]['statut'] = $obj->statut;
+				$this->users[$obj->rowid]['entity'] = $obj->entity;
+				$this->users[$obj->rowid]['email'] = $obj->email;
+				$this->users[$obj->rowid]['gender'] = $obj->gender;
+				$this->users[$obj->rowid]['admin'] = $obj->admin;
+				$this->users[$obj->rowid]['photo'] = $obj->photo;
+				$i++;
+			}
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+
+		// We add the fullpath property to each elements of first level (no parent exists)
+		dol_syslog(get_class($this)."::get_full_tree call to build_path_from_id_user", LOG_DEBUG);
+		foreach ($this->users as $key => $val) {
+			$result = $this->build_path_from_id_user($key, 0); // Process a branch from the root user key (this user has no parent)
+			if ($result < 0) {
+				$this->error = 'ErrorLoopInHierarchy';
+				return -1;
+			}
+		}
+
+		// Exclude leaf including $deleteafterid from tree
+		if ($deleteafterid) {
+			//print "Look to discard user ".$deleteafterid."\n";
+			$keyfilter1 = '^'.$deleteafterid.'$';
+			$keyfilter2 = '_'.$deleteafterid.'$';
+			$keyfilter3 = '^'.$deleteafterid.'_';
+			$keyfilter4 = '_'.$deleteafterid.'_';
+			foreach ($this->users as $key => $val) {
+				if (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
+					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath'])) {
+						unset($this->users[$key]);
+				}
+			}
+		}
+
+		dol_syslog(get_class($this)."::get_full_tree dol_sort_array", LOG_DEBUG);
+		$this->users = dol_sort_array($this->users, 'fullname', 'asc', true, false);
+
+		//var_dump($this->users);
+
+		return $this->users;
+	}
+	public function get_full_tree_rh($deleteafterid = 0, $filter = '')
+	{
+		// phpcs:enable
+		global $conf, $user;
+		global $hookmanager;
+
+		// Actions hooked (by external module)
+		$hookmanager->initHooks(array('userdao'));
+
+		$this->users = array();
+
+		// Init this->parentof that is array(id_son=>id_parent, ...)
+		$this->loadParentOf();
+
+		// Init $this->users array
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity"; // Distinct reduce pb with old tables with duplicates
+		$sql .= " FROM ".$this->db->prefix()."user as u";
+		// Add fields from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$sql .= $hookmanager->resPrint;
+		} else {
+			$sql .= " WHERE u.entity IN (".getEntity('user').") and u.employee = 1";
 		}
 		if ($filter) {
 			$sql .= " AND ".$filter;
