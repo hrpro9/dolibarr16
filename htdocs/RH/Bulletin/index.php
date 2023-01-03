@@ -111,8 +111,10 @@ $arrayfields = array(
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		if ($key != 'matricule'){
+			if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+				$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		}
 	}
 }
 
@@ -123,6 +125,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
+$search_options_matricule = GETPOST('search_options_matricule', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
 $search_gender = GETPOST('search_gender', 'alpha');
@@ -168,6 +171,8 @@ if (empty($reshook)) {
 		$search_date_update = "";
 		$search_array_options = array();
 		$search_categ = 0;
+		$search_options_matricule = '0';
+
 	}
 }
 
@@ -197,6 +202,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_update = "";
 	$search_array_options = array();
 	$search_categ = 0;
+	$search_options_matricule = '0';
 }
 
 
@@ -377,6 +383,9 @@ if ($search_warehouse > 0) {
 }
 if ($search_login != '') {
 	$sql .= natural_search("u.login", $search_login);
+}
+if ($search_options_matricule != '') {
+	$sql .= natural_search("ef.matricule", $search_options_matricule);
 }
 if ($search_lastname != '') {
 	$sql .= natural_search("u.lastname", $search_lastname);
@@ -627,6 +636,7 @@ print '<td class="liste_titre maxwidthsearch">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
+print '<td class="liste_titre"><input type="text" name="search_options_matricule" class="maxwidth50" value="'.$search_options_matricule.'"></td>';
 
 if (!empty($arrayfields['u.login']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
@@ -709,6 +719,7 @@ print '</tr>';
 print '<tr class="liste_titre">';
 // Action column
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+print_liste_field_titre("Matricule", $_SERVER['PHP_SELF'], "ef.matricule", $param, "", "", $sortfield, $sortorder);
 
 if (!empty($arrayfields['u.login']['checked'])) {
 	print_liste_field_titre("Login", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
@@ -841,14 +852,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
         continue;
     }
 
-    $users[$i] = $obj;
-
-
-	
-
-
-
-    $users[$i] = $obj;
+	$users[$i] = $obj;
     $li = '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $userstatic->id . '&action=show&year=' . $year . '&month=' . $month . '">' . $userstatic->login . '</a>';
 
 
@@ -874,8 +878,11 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 	print '</td>';
 	
-
-
+	// matricule
+	print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->options_matricule).'">'.dol_escape_htmltag($obj->options_matricule).'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 	// Login
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print '<td class="nowraponall tdoverflowmax150"><a href="/RH/Users/card.php?id='.$obj->rowid.'">';
@@ -1269,8 +1276,8 @@ function changeWorkingDays()
 
     $sql = "SELECT rub, designation FROM llx_Paie_HourSupp";
     $res = $db->query($sql);
-    if ($res->num_rows > 0) {
-        $hrs = $res->fetch_all();
+    if (((object)$res)->num_rows > 0) {
+        $hrs = ((object)$res)->fetch_all();
     }
     print '<form  action="' . $_SERVER["PHP_SELF"] . '" method="post" style="margin-top:15px;">';
     print '<input type="hidden" name="token" value="' . newToken() . '">';
@@ -1349,8 +1356,8 @@ function changeWorkingDays()
         foreach ((array)$hrs as $hr) {
             $sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
             $resh = $db->query($sqlh);
-            if ($resh->num_rows > 0) {
-                $nhours = $resh->fetch_assoc()["nhours"];
+            if (((object)$resh)->num_rows > 0) {
+                $nhours = ((object)$resh)->fetch_assoc()["nhours"];
             }
             print "<td class='small-td'><input type='number' name='hoursupp_$hr[0]_$user->rowid' value='$nhours'></td>";
         }
@@ -1608,6 +1615,7 @@ function datefilter()
 				<div class="inp-wrapper">
 					<div class="date-wrapper">
 						<input type="month" id="date" name="date">
+						
 					</div>
 					<button style="cursor:pointer;" type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>
 				</div>

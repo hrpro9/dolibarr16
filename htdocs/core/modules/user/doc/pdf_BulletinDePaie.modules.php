@@ -522,6 +522,11 @@ class pdf_BulletinDePaie extends ModelePDFUser
 				if ($res);
 				else print("<br>fail ERR: " . $sql);
 
+				$sql2 = "update llx_Paie_UserParameters set amount = '0' where userid=$object->id and  rub in (select rub from llx_Paie_Rub where reset = 1)";
+				$res = $db->query($sql2);
+				if ($res);
+				else print("<br>fail ERR: " . $sql2);
+
 				return 1; // No error
 			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
