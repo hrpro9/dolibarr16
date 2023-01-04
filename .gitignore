@@ -1,5 +1,4 @@
 documents/*
-htdocs/conf/conf.php
 *.log
 *.cache
 */.vscode/*
@@ -9,3 +8,4 @@ composer.phar
 
 ## other
 .DS_Store
+htdocs/conf/conf.php

@@ -1,5 +1,15 @@
 <?php
 global $year, $month;
+
+// les jours ferie
+$joursFerie = 0;
+$sql = "SELECT c.code as country_code, a.day, a.month, a.year, a.active FROM " . MAIN_DB_PREFIX . "c_hrm_public_holiday as a LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON a.fk_country=c.rowid AND c.active=1 WHERE c.code='MA' AND a.month=$month";
+$res = $db->query($sql);
+while ($row = $res->fetch_assoc()) {
+    if ($row['active'])
+        $joursFerie++;
+}
+
 //Get Parameters from database
 $sql = "SELECT * FROM llx_Paie_bdpParameters";
 $res = $db->query($sql);
@@ -37,23 +47,23 @@ if ($cloture == 0) {
 
     //Get working time on this month
     $Hours = 0;
-    $sql = "SELECT e.time as ts, s.time as te FROM P_Valide v, P_ENTRER e, P_SORTIE s WHERE v.Cloturé=2 and e.id=v.IdE and s.id=v.IdS and e.userid=" . $extrafields["idpointage"] . " and MONTH(e.time)=MONTH('" . $year . "-" . $month . "-01')";
-    $res = $db->query($sql);
+    // $sql = "SELECT e.time as ts, s.time as te FROM P_Valide v, P_ENTRER e, P_SORTIE s WHERE v.Cloturé=2 and e.id=v.IdE and s.id=v.IdS and e.userid=" . $extrafields["idpointage"] . " and MONTH(e.time)=MONTH('" . $year . "-" . $month . "-01')";
+    // $res = $db->query($sql);
 
-    if (((object)$res)->num_rows > 0) {
-        while ($row = ((object)$res)->fetch_assoc()) {
-            $t1 = strtotime($row['ts']);
-            $t2 = strtotime($row['te']);
-            $h1 = (int)date("H", $t1);
-            $h2 = (int)date("H", $t2);
-            $m1 = (int)date("i", $t1);
-            $m2 = (int)date("i", $t2);
-            $h = $h2 - $h1;
-            $m = $m2 - $m1;
-            $Hours += $h + $m / 60;
-        }
-    }
-    $Hours = round($Hours, 0);
+    // if (((object)$res)->num_rows > 0) {
+    //     while ($row = ((object)$res)->fetch_assoc()) {
+    //         $t1 = strtotime($row['ts']);
+    //         $t2 = strtotime($row['te']);
+    //         $h1 = (int)date("H", $t1);
+    //         $h2 = (int)date("H", $t2);
+    //         $m1 = (int)date("i", $t1);
+    //         $m2 = (int)date("i", $t2);
+    //         $h = $h2 - $h1;
+    //         $m = $m2 - $m1;
+    //         $Hours += $h + $m / 60;
+    //     }
+    // }
+    // $Hours = round($Hours, 0);
 
     $situation = ($extrafields["situation"] == '1') ? "MARIE" : (($extrafields["situation"] == '2') ? "CELEBATAIRE" : "DIVORCE");
     $enfants = $extrafields["enfants"] > $params["maxChildrens"] ? $params["maxChildrens"] : (int)$extrafields["enfants"];
@@ -74,7 +84,6 @@ if ($cloture == 0) {
         //$congeDays = date("d", strtotime($fin) - strtotime($debut));
         $congeDays = num_open_day(strtotime($row["date_debut"]), strtotime($row["date_fin"]), 0, 1, $row["halfday"]);
     }
-    $joursFerie = 0;
 
     $workingHours = 0;
     if ($type == 'mensuel') //Mensuel
@@ -84,8 +93,8 @@ if ($cloture == 0) {
 
         $bases["salaire de base"] = (float)$object->salary;
         ////////////////////
-        $dt = date("Y-m-d",$object->dateemployment);
-        $dateemployment = explode('-', $dt)[2].'-'.explode('-', $dt)[1].'-'. explode('-', $dt)[0];
+        $dt = date("Y-m-d", $object->dateemployment);
+        $dateemployment = explode('-', $dt)[2] . '-' . explode('-', $dt)[1] . '-' . explode('-', $dt)[0];
         $diff = date_diff(date_create($dateemployment), date_create("$year-$month-1"));
         $workingYears = $diff->format("%a") / 365;
 
@@ -95,8 +104,8 @@ if ($cloture == 0) {
         $res = $db->query($sql);
         if (((object)$res)->num_rows > 0) {
             $row = ((object)$res)->fetch_assoc();
-            $Taux = (int)$row["workingDays"];
-            $joursFerie = (int)$row["joursferie"];
+            $Taux = (float)$row["workingDays"];
+            // $joursFerie = (int)$row["joursferie"];
         }
 
         if ($Taux > ($params["workingDays"] - $congeDays - $joursFerie)) {
@@ -111,7 +120,7 @@ if ($cloture == 0) {
         $bases["salaire mensuel"] = (float)(($object->salary / $params["workingDays"]) * $workingdays);
         // $bases["salaire mensuel"] = 884.69;
 
-        $salaireHoraire = (float)($object->salary / $params["hoursMonsuele"]);
+        $salaireHoraire = (float)($bases["salaire de base"] / $params["hoursMonsuele"]);
 
         $rubs .= getRebrique("salaireMensuel") . ":enBrut:" . $bases["salaire mensuel"] . ";";
     } else if ($type == 'horaire') //Journalier or Horaire
@@ -149,7 +158,7 @@ if ($cloture == 0) {
         if (((object)$res)->num_rows > 0) {
             $row = ((object)$res)->fetch_assoc();
             $Taux = (int)$row["workingHours"];
-            $joursFerie = (int)$row["joursferie"];
+            // $joursFerie = (int)$row["joursferie"];
         }
         if (($Taux + ($congeDays * ($params["hoursMonsuele"] / $params["workingDays"])) + ($joursFerie * ($params["hoursMonsuele"] / $params["workingDays"]))) > $params["hoursMonsuele"]) {
             $Taux = (int) ($params["hoursMonsuele"] - ($congeDays * ($params["hoursMonsuele"] / $params["workingDays"])) - ($joursFerie * ($params["hoursMonsuele"] / $params["workingDays"])));
@@ -186,10 +195,6 @@ if ($cloture == 0) {
         $primeDancienPercentage = ((object)($res))->fetch_assoc()["percentPrimDancien"];
     }
 
-    //PRIME D'ANCIEN
-    $primeDancien = $primeDancienPercentage * $bases["salaire mensuel"] / 100;
-    $rubs .= getRebrique("primeDancien") . ":enBrut:" . $primeDancien . ";";
-
     //CONGE
     $soldeConge = ($bases["salaire de base"] / $params["workingDays"]) * $congeDays;
     $soldeConge += $soldeConge * ($primeDancienPercentage / 100);
@@ -197,14 +202,11 @@ if ($cloture == 0) {
 
     //Jours Férie
     $soldeferie = ($bases["salaire de base"] / $params["workingDays"]) * $joursFerie;
-    $soldeferie += $soldeferie * ($primeDancienPercentage / 100);
     $rubs .= getRebrique("joursferie") . ":enBrut:" . $soldeferie . ";";
 
-    //Les Bruts
-    $brutGlobal = $bases["salaire mensuel"] + $primeDancien + $soldeConge + $soldeferie;
-    $brutImposable = $brutGlobal;
 
     //Les hours supp
+    $soldeHoursSup = 0;
     $hrs = array();
     $sql = "SELECT h.rub, h.designation, h.percentHourSupp, d.nhours FROM llx_Paie_HourSupp h, llx_Paie_HourSuppDeclaration d WHERE h.rub=d.rub AND d.userid=$object->id AND d.year=$year AND d.month=$month";
     $res = $db->query($sql);
@@ -215,17 +217,25 @@ if ($cloture == 0) {
             $percentage = $hr["percentHourSupp"] + 100;
             $nhours = $hr["nhours"];
             $apayer = $salaireHoraire * $nhours * $percentage / 100;
-            $apayer += $apayer * ($primeDancienPercentage / 100);
 
-            $brutGlobal += $apayer;
-            $brutImposable += $apayer;
+            $soldeHoursSup += $apayer;
 
             if ($apayer > 0) {
-                $hrs = array("rub" => $rub, "designation" => $designation, "nombre" => $nhours, "base" => $salaireHoraire, "taux" => $percentage, "apayer" => $apayer, "aretenu" => "");
+                $hrs[] = array("rub" => $rub, "designation" => $designation, "nombre" => $nhours, "base" => $salaireHoraire, "taux" => $percentage, "apayer" => $apayer, "aretenu" => "");
                 $rubs .= "$rub:enBrut:$apayer" . ";";
             }
         }
     }
+
+    //PRIME D'ANCIEN
+    $bases['primeDancien'] = $bases["salaire mensuel"] + $soldeConge + $soldeferie + $soldeHoursSup;
+    $primeDancien = $primeDancienPercentage * $bases['primeDancien'] / 100;
+    $rubs .= getRebrique("primeDancien") . ":enBrut:" . $primeDancien . ";";
+
+    //Les Bruts
+    $brutGlobal = $bases["salaire mensuel"] + $primeDancien + $soldeConge + $soldeferie + $soldeHoursSup;
+    $brutImposable = $brutGlobal;
+
     //print sizeof($hrs);
 
     $enBruts = array();
@@ -285,8 +295,6 @@ if ($cloture == 0) {
                             $rubs .= $param["rub"] . ":enBrut:$apayer" . ";";
                         }
                         $enBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => $apayer, "aretenu" => $aretenu, "surbulletin" => $param["surBulletin"]);
-
-                        
                     }
                 }
             } else {
@@ -371,6 +379,7 @@ if ($cloture == 0) {
     $netImposable = $brutImposable;
 
     $cotisations = array();
+    $totalCotisations = 0;
     //Get les rubriques cotisations
     $sql = "SELECT * FROM llx_Paie_Rub WHERE cotisation=1";
     $res = $db->query($sql);
@@ -378,7 +387,7 @@ if ($cloture == 0) {
         while ($param = ((object)($res))->fetch_assoc()) {
 
             if ($param["auFiche"]  == 1) {
-                $sql1 = "SELECT checked FROM llx_Paie_UserParameters WHERE rub=" . $param["rub"]." AND userid=".$object->id;
+                $sql1 = "SELECT checked FROM llx_Paie_UserParameters WHERE rub=" . $param["rub"] . " AND userid=" . $object->id;
                 $res1 = $db->query($sql1);
                 $checked = ((object)($res1))->fetch_assoc()["checked"];
                 if ($checked != 1)
@@ -393,6 +402,7 @@ if ($cloture == 0) {
                 $base = ($aretenu > $param["plafond"]) ? $param["plafond"] / $param["percentage"] * 100 : $base;
             }
             $aretenu = (float)($base * $param["percentage"] / 100);
+            $totalCotisations += $aretenu;
 
             $cotisations[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => $brutImposable, "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $aretenu, "surbulletin" => $param["surBulletin"]);
             $rubs .= $param["rub"] . ":cotisation:" . ($aretenu * -1) . ";";
@@ -413,7 +423,7 @@ if ($cloture == 0) {
     $res = $db->query($sql);
     if ($res) {
         $row = $res->fetch_assoc();
-        $comulWorkingDays = (int)$row["workingDays"];
+        $comulWorkingDays = (float)$row["workingDays"];
         $comulnetImposable = (float)$row["netImposable"];
         $comulsalaireBrut = (float)$row["salaireBrut"];
         $comulIR = (float)$row["ir"];
@@ -441,6 +451,7 @@ if ($cloture == 0) {
 
     //Get les rubriques pas en brut global et non imposable
     $pasEnBruts = array();
+    $aretenu=0;
     $sql = "SELECT * FROM llx_Paie_Rub WHERE enBrut!=1 AND cotisation!=1 AND imposable!=1";
     $res = $db->query($sql);
     if ($res->num_rows > 0) {
@@ -476,12 +487,12 @@ if ($cloture == 0) {
                         }
                     }
                     if ($fiche["checked"] == 1 || $fiche["amount"] > 0) {
-                        if ($param["rub"] == '802'){
+                        if ($param["rub"] == '802') {
                             $aretenu = $apayer;
                             $apayer = 0;
                             $rubs .= $param["rub"] . ":pasEnBrut:$aretenu" . ";";
                             $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $aretenu, "surbulletin" => $param["surBulletin"]);
-                        }else{
+                        } else {
                             $rubs .= $param["rub"] . ":pasEnBrut:$apayer" . ";";
                             $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => $apayer, "aretenu" => "", "surbulletin" => $param["surBulletin"]);
                         }
@@ -502,6 +513,7 @@ if ($cloture == 0) {
                 }
             }
             $totalBrut += $apayer;
+            $totalRetenu += $aretenu;
         }
     }
 
