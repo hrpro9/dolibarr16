@@ -392,7 +392,7 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 	print '<tr><td class="nowrap"> N° CIMR </td>';
 	print '<td>' . ($salaireInfo["mutuelle"] == "" ? "-" : $salaireInfo["cimr"]) . '</td></tr>';
 
-	$sql = "SELECT r.rub, r.designation, r.calcule, r.auFiche, r.cotisation, s.amount, s.checked FROM llx_Paie_Rub r, llx_Paie_UserParameters s WHERE r.rub=s.rub AND s.userid=$object->id";
+	$sql = "SELECT r.rub, r.designation, r.calcule, r.auFiche, r.cotisation, s.amount, s.checked FROM llx_Paie_Rub r, llx_Paie_UserParameters s WHERE r.rub=s.rub AND s.userid=$object->id and r.reset = 0";
 	$res = $db->query($sql);
 	if ($res->num_rows > 0) {
 		while ($row = $res->fetch_assoc()) {
@@ -761,7 +761,7 @@ if ($action == 'editSalary') {
 		<td colspan="4"><input size="30" type="text" name="cimr" value="' . $salaireInfo["cimr"] . '"></td>';
 
 	//Get les rubriques
-	$sql = "SELECT * FROM llx_Paie_Rub WHERE auFiche=1";
+	$sql = "SELECT * FROM llx_Paie_Rub WHERE auFiche=1 and reset = 0";
 	$res = $db->query($sql);
 	$rubSelected = '0';
 

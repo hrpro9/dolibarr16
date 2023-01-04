@@ -855,16 +855,29 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
         continue;
     }
 
+	$sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='802' AND userid=$obj->rowid";
+	$res = $db->query($sql);
+	$avance = 0;
+	if (((object)$res)->num_rows > 0) {
+		$avance = ((object)$res)->fetch_assoc()['amount'];
+	}
+	if ($avance < 1){
+		$i++;
+        continue;
+	}
+	
     // see if it's clotured
-    $sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month";
+    $sql1 = "SELECT avance FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and avance > 0";
     $res1 = $db->query($sql1);
     if ($res1->num_rows > 0) {
-        $i++;
-        continue;
+		$i++;
+		continue;
     }
 
+	
+
 	$users[$i] = $obj;
-    $li = '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $userstatic->id . '&action=show&year=' . $year . '&month=' . $month . '">' . $userstatic->login . '</a>';
+    $li = '<a href="/RH/Users/card.php?id=' . $userstatic->id . '">' . $userstatic->login . '</a>';
 
 
 	$canreadhrmdata = 0;
