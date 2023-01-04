@@ -243,24 +243,13 @@ $next_month = $next['month'];
 $next_day   = 1;
 
 
-if ($action == "reset") {
-    //Cloturé le moi
-    if ($user->admin) {
-        $sql = "UPDATE llx_Paie_MonthDeclaration SET cloture=0 WHERE year=$year AND month=$month;";
-        $res = $db->query($sql);
-        if ($res);
-        else print("<br>fail ERR: " . $sql);
-        header("Refresh:0, url=" . $_SERVER["PHP_SELF"] . "?month=" . $month . "&year=" . $year . "&limit=" . $limit);
-    }
-    
-}
 
 
 
 
 
 
-llxHeader("", "Bulletin de Paie");
+llxHeader("", "Consulter Bulletin de Paie");
 
 //add filter by date
 datefilter();
@@ -328,7 +317,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
 
-$text = "Bulletin de Paie";
+$text = "Consulter Bulletin de Paie";
 $french_months = array('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre');
 
 
@@ -532,18 +521,6 @@ $arrayofmassactions = array();
 $arrayofmassactions['disable'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("DisableUser");
 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
-
-if ($user->admin) {
-	print '<form id="frmReset" name="filter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-	print '<input type="hidden" name="token" value="' . newToken() . '">';
-	print '<input type="hidden" name="action" value="reset">';
-	print '<input type="hidden" name="day" value="' . $day . '">';
-	print '<input type="hidden" name="month" value="' . $month . '">';
-	print '<input type="hidden" name="year" value="' . $year . '">';
-	print '<input type="hidden" name="limit" value="' . $limit . '">';
-	print '<input type="submit" class="butActionDelete" value="reset"/><br>';
-	print '</form>';
-}
 
 
 
@@ -1152,12 +1129,11 @@ print '</table>
 
 
 
-// if ($action == 'changeWorkingDays') {
-//     changeWorkingDays();
-// } else {
-//     GenerateDocuments();
-// }
-GenerateDocuments();
+if ($action == 'changeWorkingDays') {
+    changeWorkingDays();
+} else {
+    GenerateDocuments();
+}
 
 if ($action == 'confirmeWorkingDays') {
     $action = '';
@@ -1197,184 +1173,184 @@ $id = GETPOST('id', 'int');
 if ($id && $action == 'show') {
     ShowBulletin($id);
 }
-ShowDocuments();
+// ShowDocuments();
 
 function GenerateDocuments()
 {
     global $day, $month, $year, $limit;
-    print '<form id="frmgen" name="generateDocs" method="post">';
-    print '<input type="hidden" name="token" value="' . newToken() . '">';
-    print '<input type="hidden" name="action" value="generateDocs">';
-    print '<input type="hidden" name="model" value="BulletinDePaie">';
-    print '<input type="hidden" name="day" value="' . $day . '">';
-    print '<input type="hidden" name="month" value="' . $month . '">';
-    print '<input type="hidden" name="year" value="' . $year . '">';
-    print '<input type="hidden" name="limit" value="' . $limit . '">';
-    print '<div class=""  style="margin-bottom: 0px; margin-left: 5%;"><input type="button" id="btngen" class="button" name="save" value="génerer"></div>';
-
-    print "<script>
-        $('#btngen').click(function(){
-            var i=1;
-            $('#tblUsers  input:checkbox.checkforselect:checked').each(function () {
-                var id = $(this).closest('tr').find('input[name=idCell]').val();
-                var salary = $(this).closest('tr').find('input[name=salaryCell]').val();
-                var b = $(this).closest('tr').find('input[name=bankCell]').val();
-                var nom = $(this).closest('tr').find('td:eq(2)').val();
-                $('input[name=id]').remove();
-                $('<input type=\"hidden\" name=\"id\" value=\"'+id+'\" >').appendTo('#frmgen');
-				$.ajax({
-					url: '" . $_SERVER["PHP_SELF"] . "',
-					type: 'post',
-					data:$('#frmgen').serialize(),
-					success:function(){			
-					}
-				});
-            });
-			location.reload(true);
-	        
-        });
-    </script>";
-    print '</form>';
-    // print '<hr>';
-    // print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+    // print '<form id="frmgen" name="generateDocs" method="post">';
     // print '<input type="hidden" name="token" value="' . newToken() . '">';
-    // print '<input type="hidden" name="action" value="changeWorkingDays">';
+    // print '<input type="hidden" name="action" value="generateDocs">';
+    // print '<input type="hidden" name="model" value="BulletinDePaie">';
     // print '<input type="hidden" name="day" value="' . $day . '">';
     // print '<input type="hidden" name="month" value="' . $month . '">';
     // print '<input type="hidden" name="year" value="' . $year . '">';
     // print '<input type="hidden" name="limit" value="' . $limit . '">';
-    // print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="butActionDelete" value="Changer les jours travaillé">';
-    // print '</form>';
+    // print '<div class=""  style="margin-bottom: 0px; margin-left: 5%;"><input type="button" id="btngen" class="button" name="save" value="génerer"></div>';
+
+    // print "<script>
+    //     $('#btngen').click(function(){
+    //         var i=1;
+    //         $('#tblUsers  input:checkbox.checkforselect:checked').each(function () {
+    //             var id = $(this).closest('tr').find('input[name=idCell]').val();
+    //             var salary = $(this).closest('tr').find('input[name=salaryCell]').val();
+    //             var b = $(this).closest('tr').find('input[name=bankCell]').val();
+    //             var nom = $(this).closest('tr').find('td:eq(2)').val();
+    //             $('input[name=id]').remove();
+    //             $('<input type=\"hidden\" name=\"id\" value=\"'+id+'\" >').appendTo('#frmgen');
+	// 			$.ajax({
+	// 				url: '" . $_SERVER["PHP_SELF"] . "',
+	// 				type: 'post',
+	// 				data:$('#frmgen').serialize(),
+	// 				success:function(){			
+	// 				}
+	// 			});
+    //         });
+	// 		location.reload(true);
+	        
+    //     });
+    // </script>";
+    print '</form>';
+    print '<hr>';
+    print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+    print '<input type="hidden" name="token" value="' . newToken() . '">';
+    print '<input type="hidden" name="action" value="changeWorkingDays">';
+    print '<input type="hidden" name="day" value="' . $day . '">';
+    print '<input type="hidden" name="month" value="' . $month . '">';
+    print '<input type="hidden" name="year" value="' . $year . '">';
+    print '<input type="hidden" name="limit" value="' . $limit . '">';
+    print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="butActionDelete" value="Changer les jours travaillé">';
+    print '</form>';
 }
-function ShowDocuments()
-{
-    global $db, $object, $conf, $month, $year, $societe;
-    print '<div class="fichecenter"><div class="fichehalfleft">';
-    $formfile = new FormFile($db);
-
-
-    $subdir = '';
-    $filedir = DOL_DATA_ROOT . '/grh/BulletinDePaie';
-    $urlsource = $_SERVER['PHP_SELF'] . '';
-    $genallowed = 0;
-    $delallowed = 1;
-    $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
-
-	$_SESSION["filterDoc"] = $month . "-" . $year;
-
-
-    print $formfile->showdocuments('BulletinDePaie', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, 'remonth=' . $month . '&amp;reyear=' . $year, '', '', $societe->default_lang);
-    $somethingshown = $formfile->numoffiles;
-
-    // $_SESSION["filterDoc"] = null;
-    // Show links to link elements
-    //$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
-}
-
-// function changeWorkingDays()
+// function ShowDocuments()
 // {
-//     global $db, $day, $month, $year, $users, $limit;
-
-//     $sql = "SELECT rub, designation FROM llx_Paie_HourSupp";
-//     $res = $db->query($sql);
-//     if (((object)$res)->num_rows > 0) {
-//         $hrs = ((object)$res)->fetch_all();
-//     }
-//     print '<form  action="' . $_SERVER["PHP_SELF"] . '" method="post" style="margin-top:15px;">';
-//     print '<input type="hidden" name="token" value="' . newToken() . '">';
-//     print '<input type="hidden" name="action" value="confirmeWorkingDays">';
-//     print '<input type="hidden" name="day" value="' . $day . '">';
-//     print '<input type="hidden" name="month" value="' . $month . '">';
-//     print '<input type="hidden" name="year" value="' . $year . '">';
-// 	print '<input type="hidden" name="limit" value="' . $limit . '">';
+//     global $db, $object, $conf, $month, $year, $societe;
+//     print '<div class="fichecenter"><div class="fichehalfleft">';
+//     $formfile = new FormFile($db);
 
 
-//     print ' <style>
-//                 .small-td input{
-//                     width:90%;
-//                 }
-//             </style>
-//         <table class="noborder editmode" style="width:100%">
-//     <thead>
-//         <tr class="liste_titre">
-//             <th class="titlefield wordbreak">Login</th>
-//             <th class="titlefield wordbreak">Nom Complet</th>
-//             <th class="titlefield wordbreak">Nombre des jours travaillé</th>
-//             <th class="titlefield wordbreak">Nombre des Hours travaillé (horaire)</th>
-//             <th class="titlefield wordbreak">Jours férié</th>
-//             <th class="titlefield wordbreak">Jours de congé férié</th>';
-//     foreach ((array)$hrs as $hr) {
-//         print '<th class="titlefield wordbreak">' . $hr[1] . '</th>';
-//     }
-//     print '</tr>
-//     </thead>
-//     <tbody>';
-//     foreach ($users as $user) {
+//     $subdir = '';
+//     $filedir = DOL_DATA_ROOT . '/grh/BulletinDePaie';
+//     $urlsource = $_SERVER['PHP_SELF'] . '';
+//     $genallowed = 0;
+//     $delallowed = 1;
+//     $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
 
-//         $salaireParams = "";
-//         //Get user salaire informations from database
-//         $sql = "SELECT type from llx_Paie_UserInfo WHERE userid=" . $user->rowid;
-//         $res = $db->query($sql);
-//         if (((object)$res)->num_rows > 0) {
-//             $salaireParams = ((object)$res)->fetch_assoc();
-//         }
-//         $type = $salaireParams["type"];
-// 		$conge = 0;
-// 		$sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
+// 	$_SESSION["filterDoc"] = $month . "-" . $year;
 
 
-//         if ($type == 'mensuel') //Mensuel
-//         {
-//             $workingdays = 26;
-//             $sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
-//             $res = $db->query($sql);
-//             if (((object)$res)->num_rows > 0) {
-//                 $row = ((object)$res)->fetch_assoc();
-//                 $workingdays = (int)$row["workingDays"];
-//                 $joursferie = (int)$row["joursferie"];
-//             }
+//     print $formfile->showdocuments('BulletinDePaie', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, 'remonth=' . $month . '&amp;reyear=' . $year, '', '', $societe->default_lang);
+//     $somethingshown = $formfile->numoffiles;
 
-//             print "<tr>
-//                 <td>$user->login</td>
-//                 <td>$user->lastname $user->firstname</td>
-//                 <td><input type='number' onkeypress='return event.charCode >= 48 && event.charCode <= 57' name='workingdays_$user->rowid' value='$workingdays'></td>
-//                 <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
-//         } else if ($type == 'horaire') //Journalier or Horaire
-//         {
-//             $workingHours = 0;
-//             $sql = "SELECT workingHours, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
-//             $res = $db->query($sql);
-//             if (((object)$res)->num_rows > 0) {
-//                 $row = ((object)$res)->fetch_assoc();
-//                 $workingHours = (int)$row["workingHours"];
-//                 $joursferie = (int)$row["joursferie"];
-//             }
-
-//             print "<tr>
-//                 <td>$user->login</td>
-//                 <td>$user->lastname $user->firstname</td>
-//                 <td><input type='number'  name='workingHours_$user->rowid' value='$workingHours'></td>
-//                 <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
-//         }
-//         foreach ((array)$hrs as $hr) {
-//             $sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
-//             $resh = $db->query($sqlh);
-//             if (((object)$resh)->num_rows > 0) {
-//                 $nhours = ((object)$resh)->fetch_assoc()["nhours"];
-//             }
-//             print "<td class='small-td'><input type='number' name='hoursupp_$hr[0]_$user->rowid' value='$nhours'></td>";
-//         }
-//     }
-
-//     print '</tbody>
-//     </table>';
-
-
-
-//     print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="button" value="valider">';
-
-//     print '</form>';
+//     // $_SESSION["filterDoc"] = null;
+//     // Show links to link elements
+//     //$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
 // }
+
+function changeWorkingDays()
+{
+    global $db, $day, $month, $year, $users, $limit;
+
+    $sql = "SELECT rub, designation FROM llx_Paie_HourSupp";
+    $res = $db->query($sql);
+    if (((object)$res)->num_rows > 0) {
+        $hrs = ((object)$res)->fetch_all();
+    }
+    print '<form  action="' . $_SERVER["PHP_SELF"] . '" method="post" style="margin-top:15px;">';
+    print '<input type="hidden" name="token" value="' . newToken() . '">';
+    print '<input type="hidden" name="action" value="confirmeWorkingDays">';
+    print '<input type="hidden" name="day" value="' . $day . '">';
+    print '<input type="hidden" name="month" value="' . $month . '">';
+    print '<input type="hidden" name="year" value="' . $year . '">';
+	print '<input type="hidden" name="limit" value="' . $limit . '">';
+
+
+    print ' <style>
+                .small-td input{
+                    width:90%;
+                }
+            </style>
+        <table class="noborder editmode" style="width:100%">
+    <thead>
+        <tr class="liste_titre">
+            <th class="titlefield wordbreak">Login</th>
+            <th class="titlefield wordbreak">Nom Complet</th>
+            <th class="titlefield wordbreak">Nombre des jours travaillé</th>
+            <th class="titlefield wordbreak">Nombre des Hours travaillé (horaire)</th>
+            <th class="titlefield wordbreak">Jours férié</th>
+            <th class="titlefield wordbreak">Jours de congé férié</th>';
+    foreach ((array)$hrs as $hr) {
+        print '<th class="titlefield wordbreak">' . $hr[1] . '</th>';
+    }
+    print '</tr>
+    </thead>
+    <tbody>';
+    foreach ($users as $user) {
+
+        $salaireParams = "";
+        //Get user salaire informations from database
+        $sql = "SELECT type from llx_Paie_UserInfo WHERE userid=" . $user->rowid;
+        $res = $db->query($sql);
+        if (((object)$res)->num_rows > 0) {
+            $salaireParams = ((object)$res)->fetch_assoc();
+        }
+        $type = $salaireParams["type"];
+		$conge = 0;
+		$sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
+
+
+        if ($type == 'mensuel') //Mensuel
+        {
+            $workingdays = 26;
+            $sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
+            $res = $db->query($sql);
+            if (((object)$res)->num_rows > 0) {
+                $row = ((object)$res)->fetch_assoc();
+                $workingdays = (int)$row["workingDays"];
+                $joursferie = (int)$row["joursferie"];
+            }
+
+            print "<tr>
+                <td>$user->login</td>
+                <td>$user->lastname $user->firstname</td>
+                <td><input type='number' onkeypress='return event.charCode >= 48 && event.charCode <= 57' name='workingdays_$user->rowid' value='$workingdays'></td>
+                <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
+        } else if ($type == 'horaire') //Journalier or Horaire
+        {
+            $workingHours = 0;
+            $sql = "SELECT workingHours, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
+            $res = $db->query($sql);
+            if (((object)$res)->num_rows > 0) {
+                $row = ((object)$res)->fetch_assoc();
+                $workingHours = (int)$row["workingHours"];
+                $joursferie = (int)$row["joursferie"];
+            }
+
+            print "<tr>
+                <td>$user->login</td>
+                <td>$user->lastname $user->firstname</td>
+                <td><input type='number'  name='workingHours_$user->rowid' value='$workingHours'></td>
+                <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
+        }
+        foreach ((array)$hrs as $hr) {
+            $sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
+            $resh = $db->query($sqlh);
+            if (((object)$resh)->num_rows > 0) {
+                $nhours = ((object)$resh)->fetch_assoc()["nhours"];
+            }
+            print "<td class='small-td'><input type='number' name='hoursupp_$hr[0]_$user->rowid' value='$nhours'></td>";
+        }
+    }
+
+    print '</tbody>
+    </table>';
+
+
+
+    print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="button" value="valider">';
+
+    print '</form>';
+}
 
 
 function ShowBulletin($id)
@@ -1630,12 +1606,12 @@ function datefilter()
 }
 
 print "
-    <script>
-        $(document).ready(function(){
-            $('#date').val('" . $year . "-" . $month . "');	
-        });
-    </script>
-	<style>
+<style>
+	<script>
+		$(document).ready(function(){
+			$('#date').val('" . $year . "-" . $month . "');	
+		});
+	</script>
 	@media only screen and (min-width: 977px) {
 		div.div-table-responsive {
 			width: calc(100vw - 285px);

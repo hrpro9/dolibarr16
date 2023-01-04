@@ -1,45 +1,34 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
-/**
- *	\file       grh/grhindex.php
- *	\ingroup    grh
- *	\brief      Home page of grh top menu
- */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once '../../vendor/autoload.php';
+
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx; 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
+
 
 if (!$user->rights->salaries->read) {
-	accessforbidden();
+    accessforbidden("you don't have right for this page");
 }
 
 
-// Load translation files required by page
-$langs->loadLangs(array('users', 'companies', 'hrm'));
 
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userlist'; // To manage different context of search
+
+$action = GETPOST('action', 'aZ09'); // The action 'add', 'create', 'edit', 'update', 'view', ...
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userlist'; // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
+
 
 // Security check (for external users)
 $socid = 0;
@@ -47,34 +36,45 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-// Load mode employee
-$mode = GETPOST("mode", 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$page = 0;
-}
+}     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "u.login";
-if (!$sortorder) $sortorder = "ASC";
-
-// Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new User($db);
-$hookmanager->initHooks(array('userlist'));
 $extrafields = new ExtraFields($db);
+$diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('userlist'));
 
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+
+if (!$sortfield) {
+	$sortfield = "u.login";
+}
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+
+// Initialize array of search criterias
+$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search = array();
+foreach ($object->fields as $key => $val) {
+	if (GETPOST('search_'.$key, 'alpha') !== '') {
+		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	}
+}
 
 $userstatic = new User($db);
 $companystatic = new Societe($db);
@@ -82,12 +82,14 @@ $form = new Form($db);
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'u.login' => "Login",
-	'u.lastname' => "Lastname",
-	'u.firstname' => "Firstname",
-	'u.accountancy_code' => "AccountancyCode",
-	'u.email' => "EMail",
-	'u.note' => "Note",
+	'u.login'=>"Login",
+	'u.lastname'=>"Lastname",
+	'u.firstname'=>"Firstname",
+	'u.accountancy_code'=>"AccountancyCode",
+	'u.office_phone'=>"PhonePro",
+	'u.user_mobile'=>"PhoneMobile",
+	'u.email'=>"EMail",
+	'u.note'=>"Note",
 );
 if (!empty($conf->api->enabled)) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";
@@ -95,23 +97,34 @@ if (!empty($conf->api->enabled)) {
 
 // Definition of fields for list
 $arrayfields = array(
-	'u.login' => array('label' => $langs->trans("Login"), 'checked' => 1),
-	'u.lastname' => array('label' => $langs->trans("Lastname"), 'checked' => 1),
-	'u.firstname' => array('label' => $langs->trans("Firstname"), 'checked' => 1),
-	'u.gender' => array('label' => $langs->trans("Gender"), 'checked' => 0),
-	'u.employee' => array('label' => $langs->trans("Employee"), 'checked' => ($mode == 'employee' ? 1 : 0)),
-	'u.accountancy_code' => array('label' => $langs->trans("AccountancyCode"), 'checked' => 0),
-	'u.email' => array('label' => $langs->trans("EMail"), 'checked' => 1),
-	'u.api_key' => array('label' => $langs->trans("ApiKey"), 'checked' => 0, "enabled" => ($conf->api->enabled && $user->admin)),
-	'u.fk_soc' => array('label' => $langs->trans("Company"), 'checked' => 1),
-	'u.entity' => array('label' => $langs->trans("Entity"), 'checked' => 1, 'enabled' => (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
-	'u.fk_user' => array('label' => $langs->trans("HierarchicalResponsible"), 'checked' => 1),
-	'u.datelastlogin' => array('label' => $langs->trans("LastConnexion"), 'checked' => 1, 'position' => 100),
-	'u.datepreviouslogin' => array('label' => $langs->trans("PreviousConnexion"), 'checked' => 0, 'position' => 110),
-	'u.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'u.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'u.statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
+	'u.login'=>array('label'=>"Login", 'checked'=>1, 'position'=>10),
+	'u.lastname'=>array('label'=>"Lastname", 'checked'=>1, 'position'=>15),
+	'u.firstname'=>array('label'=>"Firstname", 'checked'=>1, 'position'=>20),
+	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
+	'u.gender'=>array('label'=>"Gender", 'checked'=>0, 'position'=>22),
+	'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27),
+	'u.accountancy_code'=>array('label'=>"AccountancyCode", 'checked'=>0, 'position'=>30),
+	'u.office_phone'=>array('label'=>"PhonePro", 'checked'=>1, 'position'=>31),
+	'u.user_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1, 'position'=>32),
+	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
+	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(!empty($conf->api->enabled) && $user->admin)),
+	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
+	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))),
+	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
+	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
+	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'u.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'u.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
+// Extra fields
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+		if ($key != 'matricule'){
+			if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+				$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		}
+	}
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -120,37 +133,22 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
+$search_options_matricule = GETPOST('search_options_matricule', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
 $search_gender = GETPOST('search_gender', 'alpha');
-$search_employee = GETPOST('search_employee', 'alpha');
 $search_accountancy_code = GETPOST('search_accountancy_code', 'alpha');
+$search_phonepro = GETPOST('search_phonepro', 'alpha');
+$search_phonemobile = GETPOST('search_phonemobile', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
 $search_api_key = GETPOST('search_api_key', 'alphanohtml');
 $search_statut = GETPOST('search_statut', 'intcomma');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
+$search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'intcomma');
-$optioncss = GETPOST('optioncss', 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
 $catid = GETPOST('catid', 'int');
 
-// Default search
-if ($search_statut == '') $search_statut = '1';
-if ($mode == 'employee' && !GETPOSTISSET('search_employee')) $search_employee = 1;
-
-
-
-/*
- * Actions
- */
-
-if (GETPOST('cancel', 'alpha')) {
-	$action = 'list';
-	$massaction = '';
-}
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
-	$massaction = '';
-}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -181,44 +179,215 @@ if (empty($reshook)) {
 		$search_date_update = "";
 		$search_array_options = array();
 		$search_categ = 0;
+		$search_options_matricule = '0';
+
 	}
 }
 
+
+$childids = $user->getAllChildIds(1);
+
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	$search_user = "";
+	$search_login = "";
+	$search_lastname = "";
+	$search_firstname = "";
+	$search_gender = "";
+	$search_accountancy_code = "";
+	$search_phonepro = "";
+	$search_phonemobile = "";
+	$search_email = "";
+	$search_statut = "";
+	$search_thirdparty = "";
+	$search_warehouse = "";
+	$search_supervisor = "";
+	$search_api_key = "";
+	$search_datelastlogin = "";
+	$search_datepreviouslogin = "";
+	$search_date_creation = "";
+	$search_date_update = "";
+	$search_array_options = array();
+	$search_categ = 0;
+	$search_options_matricule = '0';
+}
+
+
+
+/*
+ * Actions
+ */
+
+
+
 //get date filter
+//get date filter
+
 $mydate = getdate(date("U"));
-$day = $mydate['mday'];
-$month = $mydate['mon'];
+$month =$mydate['mon'];
 $year = $mydate['year'];
-$showAll = GETPOST('showAll');
+$day = $mydate['mday'];
+$hours = $mydate['hours'];
+$minutes = $mydate['minutes'];
 
-$startdayarray = dol_get_prev_month($month, $year);
 
-$prev = $startdayarray;
-$prev_year  = $prev['year'];
-$prev_month = $prev['month'];
-$prev_day   = 1;
+// if ($action == 'filter') {
+// 	$dateFiltre = GETPOST('date');
+// 	$year = explode('-', $dateFiltre)[0];
+// 	$month = explode('-', $dateFiltre)[1];
+// }
 
-//Save date to use in generate module
-$_SESSION['dateg'] = $prev_month . "-" . $prev_year;
+// $startdayarray = dol_get_prev_month($month, $year);
 
-$next = dol_get_next_month($month, $year);
-$next_year  = $next['year'];
-$next_month = $next['month'];
-$next_day   = 1;
+// $prev = $startdayarray;
+// $prev_year  = $prev['year'];
+// $prev_month = $prev['month'];
+// $prev_day   = 1;
+
+// //Save date to use in generate module
+// $_SESSION['dateg'] = $month . "-" . $year;
+
+// $next = dol_get_next_month($month, $year);
+// $next_year  = $next['year'];
+// $next_month = $next['month'];
+// $next_day   = 1;
+
+
+if ($action == "reset") {
+    //Cloturé le moi
+    // if ($user->admin) {
+    //     $sql = "UPDATE llx_Paie_MonthDeclaration SET cloture=0 WHERE year=$year AND month=$month;";
+    //     $res = $db->query($sql);
+    //     if ($res);
+    //     else print("<br>fail ERR: " . $sql);
+    //     header("Refresh:0, url=" . $_SERVER["PHP_SELF"] . "?month=" . $month . "&year=" . $year . "&limit=" . $limit);
+    // }
+    
+}
+if ($action == "generateVirement") {
+    $users = GETPOST('ids');
+	$ids = explode(',', $users);
+	$header = ['Date', 'Nom Ste', 'Nom Clt', 'RIB Ste', 'RIB Clt', 'MT', 'Détail SIMT'];
+	$nameSte = dolibarr_get_const($db, 'MAIN_INFO_SOCIETE_NOM', $conf->entity);
+	$account = new Account($db);
+	$account->fetch(1);
+	$date = $day.'-'.$month.'-'.$year.'  ' .$hours.':'.$minutes;
+	$dateg = $month.'-'.$year;
+	$smit = 'Avance Sur Salaire';
+    $spreadsheet = new Spreadsheet();
+	$sheet = $spreadsheet->getActiveSheet();
+	for ($i = 0, $l = count($header); $i < $l; $i++) {
+		$sheet->setCellValueByColumnAndRow($i + 1, 1, $header[$i]);
+	}
+
+	$j=2;
+    for ($i = 0, $l = count($ids); $i < $l; $i++) {
+		$row = array();
+        
+		$ribClt = '';
+		$sql = "SELECT number FROM `llx_user_rib` WHERE fk_user = $ids[$i]";
+		$res = $db->query($sql);
+		if (((object)$res)->num_rows > 0) {
+			$ribClt = ((object)$res)->fetch_assoc()['number'];
+		}
+		$avance = 0;
+		// Montant de salaire
+		$mt = 0;
+		$sql1 = "SELECT avance FROM llx_Paie_MonthDeclaration WHERE userid=$ids[$i] AND year=$year AND month=$month ";
+		$res1 = $db->query($sql1);
+		if ($res1->num_rows > 0) {
+			$mt = ((object)$res1)->fetch_assoc()['avance'];
+		}
+		// nom Complete
+		$nameClt = '';
+		$sql1 = "SELECT firstname, lastname FROM llx_user WHERE rowid=$ids[$i]";
+		$res = $db->query($sql1);
+		if ($res->num_rows > 0) {
+			$row = ((object)$res)->fetch_assoc();
+			$nameClt = $row['firstname'] . ' ' . $row['lastname'];
+		}
+
+		$row = [$date, $nameSte, $nameClt, $account->number, $ribClt, $mt, $smit];
+		for ($index = 0, $k = count($row); $index < $k; $index++) {
+            $sheet->setCellValueByColumnAndRow($index + 1, $j, $row[$index]);
+        }
+
+        $j++;
+	}
+
+
+    $fileName = "_OrderDeVirementAvance_$dateg.xlsx";
+    $writer = new Xlsx($spreadsheet);
+	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+	header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
+	$writer->save('php://output');
+	exit();
+    
+    
+    
+}
+
+
+
+
+
+
+llxHeader("", "Virement Sur Avance");
+
+//add filter by date
+// datefilter();
+
+print '
+	<style>
+	.date-container .inp-wrapper {
+		display: flex;
+		gap: 1.2em;
+		justify-content: center;
+	}
+	.date-container label {
+		color: #0f1e32;
+		display: block;
+		font-weight: 600;
+	}
+	.date-container input[type="date"] {
+		font-size: 14px;
+		padding: 4px;
+		color: #242831;
+		border: 1px solid rgb(7, 108, 147);
+		outline: none;
+    	border-radius: 0.2em;
+	}
+	.date-container ::-webkit-calendar-picker-indicator {
+		background-color: #7eceee;
+		padding: 0.2em;
+		cursor: pointer;
+		border-radius: 0.1em;
+	}
+		
+	@media only screen and (min-width: 977px) {
+		div.div-table-responsive {
+			width: calc(100vw - 285px) !important;
+			overflow-x: scroll !important;
+		}
+	}
+	.dropdown ul{
+		position: absolute;
+		top: 11px;
+		left: 1px;
+		width: 175px;
+	}
+	</style>';
+
 
 // Actions to build doc
 $action = GETPOST('action', 'aZ09');
-$lenght = GETPOST('lenght', '09');
-$ids = array();
-for ($i = 0; $i < $lenght; $i++) {
-	$ids[$i] = GETPOST('id' . ($i + 1), '09');
-}
-$upload_dir = DOL_DATA_ROOT . '/grh/OrdreVirement';
+
+$upload_dir = DOL_DATA_ROOT . '/grh/BulletinDePaie';
 $permissiontoadd = 1;
 $donotredirect = 1;
-//$o=new paie($db);
-
 include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
+
 
 $_SESSION['dateg'] = null;
 
@@ -227,226 +396,353 @@ $_SESSION['dateg'] = null;
  * View
  */
 
-$htmlother = new FormOther($db);
+
+$formother = new FormOther($db);
+
+$help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
+
+$text = "Virement Sur Avance";
+$french_months = array('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre');
+
 
 $user2 = new User($db);
 
-$buttonviewhierarchy = '<form action="' . DOL_URL_ROOT . '/user/hierarchy.php' . (($search_statut != '' && $search_statut >= 0) ? '?search_statut=' . $search_statut : '') . '" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="' . dol_escape_htmltag($langs->trans("HierarchicView")) . '"></form>';
-
-$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login,  u.gender, u.photo, u.salary, u.dateemploymentend, u.dateemployment,";
-$sql .= " u.statut";
-//$sql .= " ex.name";
-
+$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,u.dateemploymentend, u.dateemployment,";
+$sql .= " u.salary, u.datelastlogin, u.datepreviouslogin,";
+$sql .= " u.ldap_sid, u.statut, u.entity,";
+$sql .= " u.tms as date_update, u.datec as date_creation,";
+$sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as statut2,";
+$sql .= " s.nom as name, s.canvas,";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef." . $key . ' as options_' . $key : '');
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
+	}
 }
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql .= " FROM " . MAIN_DB_PREFIX . "user as u";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $object->table_element . "_extrafields as ef on (u.rowid = ef.fk_object)";
+$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql = preg_replace('/,\s*$/', '', $sql);
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+if (key_exists('label', $extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (u.rowid = ef.fk_object)";
 }
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u2 ON u.fk_user = u2.rowid";
-if (!empty($search_categ) || !empty($catid)) $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . "categorie_user as cu ON u.rowid = cu.fk_user"; // We'll need this table joined to the select in order to filter by categ
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
+if (!empty($search_categ) || !empty($catid)) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_user as cu ON u.rowid = cu.fk_user"; // We'll need this table joined to the select in order to filter by categ
+}
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Note that $action and $object may have been modified by hook
 if ($reshook > 0) {
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql .= " WHERE u.entity IN (" . getEntity('user') . ")";
+	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
-if ($socid > 0) $sql .= " AND u.fk_soc = " . $socid;
-
-//specifie the status (1=Employee)
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " AND ef.status  = '1'";
+if ($socid > 0) {
+	$sql .= " AND u.fk_soc = ".((int) $socid);
 }
-
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
-if ($search_supervisor > 0)   $sql .= " AND u.fk_user IN (" . $db->escape($search_supervisor) . ")";
-if ($search_thirdparty != '') $sql .= natural_search(array('s.nom'), $search_thirdparty);
-if ($search_login != '')      $sql .= natural_search("u.login", $search_login);
-if ($search_lastname != '')   $sql .= natural_search("u.lastname", $search_lastname);
-if ($search_firstname != '')  $sql .= natural_search("u.firstname", $search_firstname);
-if ($search_gender != '' && $search_gender != '-1')     $sql .= " AND u.gender = '" . $search_gender . "'";
-if (is_numeric($search_employee) && $search_employee >= 0) {
-	$sql .= ' AND u.employee = ' . (int) $search_employee;
+if ($search_supervisor > 0) {
+	$sql .= " AND u.fk_user IN (".$db->sanitize($search_supervisor).")";
 }
-if ($search_accountancy_code != '')  $sql .= natural_search("u.accountancy_code", $search_accountancy_code);
-if ($search_email != '')             $sql .= natural_search("u.email", $search_email);
-if ($search_api_key != '')           $sql .= natural_search("u.api_key", $search_api_key);
-if ($search_statut != '' && $search_statut >= 0) $sql .= " AND u.statut IN (" . $db->escape($search_statut) . ")";
-if ($sall)                           $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-if ($catid > 0)     $sql .= " AND cu.fk_categorie = " . $catid;
-if ($catid == -2)   $sql .= " AND cu.fk_categorie IS NULL";
-if ($search_categ > 0)   $sql .= " AND cu.fk_categorie = " . $db->escape($search_categ);
-if ($search_categ == -2) $sql .= " AND cu.fk_categorie IS NULL";
+if ($search_thirdparty != '') {
+	$sql .= natural_search(array('s.nom'), $search_thirdparty);
+}
+if ($search_warehouse > 0) {
+	$sql .= natural_search(array('u.fk_warehouse'), $search_warehouse);
+}
+if ($search_login != '') {
+	$sql .= natural_search("u.login", $search_login);
+}
+if ($search_options_matricule != '') {
+	$sql .= natural_search("ef.matricule", $search_options_matricule);
+}
+if ($search_lastname != '') {
+	$sql .= natural_search("u.lastname", $search_lastname);
+}
+if ($search_firstname != '') {
+	$sql .= natural_search("u.firstname", $search_firstname);
+}
+if ($search_gender != '' && $search_gender != '-1') {
+	$sql .= " AND u.gender = '".$db->escape($search_gender)."'"; // Cannot use natural_search as looking for %man% also includes woman
+}
+if ($search_accountancy_code != '') {
+	$sql .= natural_search("u.accountancy_code", $search_accountancy_code);
+}
+if ($search_phonepro != '') {
+	$sql .= natural_search("u.office_phone", $search_phonepro);
+}
+if ($search_phonemobile != '') {
+	$sql .= natural_search("u.user_mobile", $search_phonemobile);
+}
+if ($search_email != '') {
+	$sql .= natural_search("u.email", $search_email);
+}
+if ($search_api_key != '') {
+	$sql .= natural_search("u.api_key", $search_api_key);
+}
+if ($search_statut != '' && $search_statut >= 0) {
+	$sql .= " AND u.statut IN (".$db->escape($search_statut).")";
+}
+if ($sall) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+}
+if ($catid > 0) {
+	$sql .= " AND cu.fk_categorie = ".((int) $catid);
+}
+if ($catid == -2) {
+	$sql .= " AND cu.fk_categorie IS NULL";
+}
+if ($search_categ > 0) {
+	$sql .= " AND cu.fk_categorie = ".((int) $search_categ);
+}
+if ($search_categ == -2) {
+	$sql .= " AND cu.fk_categorie IS NULL";
+}
+if ($search_warehouse > 0) {
+	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
+}
 // Add where from extra fields
-include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_sql.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= $db->order($sortfield, $sortorder);
 
-$nbtotalofrecords = 0;
-$result = $db->query($sql);
-if ($result) {
-	$nbtotalofrecords = $db->num_rows($result);
+// Count total nb of records
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+}
+// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
+	$num = $nbtotalofrecords;
+} else {
+	if ($limit) {
+		$sql .= $db->plimit($limit + 1, $offset);
+	}
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_print_error($db);
+		exit;
+	}
+
+	$num = $db->num_rows($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
 
-$result = $db->query($sql);
-if (!$result) {
-	dol_print_error($db);
-	exit;
-}
+// Output page
+// --------------------------------------------------------------------
 
-$num = $db->num_rows($result);
-
-// if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
-// 	$obj = $db->fetch_object($resql);
-// 	$id = $obj->rowid;
-// 	header("Location: " . DOL_URL_ROOT . '/user/card.php?id=' . $id);
-// 	exit;
-// }
-
-
-llxHeader("", $langs->trans("Virements"));
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&amp;contextpage=' . urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&amp;limit=' . urlencode($limit);
-if ($sall != '') $param .= '&amp;sall=' . urlencode($sall);
-if ($search_user != '') $param .= "&amp;search_user=" . urlencode($search_user);
-if ($search_login != '') $param .= "&amp;search_login=" . urlencode($search_login);
-if ($search_lastname != '') $param .= "&amp;search_lastname=" . urlencode($search_lastname);
-if ($search_firstname != '') $param .= "&amp;search_firstname=" . urlencode($search_firstname);
-if ($search_gender != '') $param .= "&amp;search_gender=" . urlencode($search_gender);
-if ($search_employee != '') $param .= "&amp;search_employee=" . urlencode($search_employee);
-if ($search_accountancy_code != '') $param .= "&amp;search_accountancy_code=" . urlencode($search_accountancy_code);
-if ($search_email != '') $param .= "&amp;search_email=" . urlencode($search_email);
-if ($search_api_key != '') $param .= "&amp;search_api_key=" . urlencode($search_api_key);
-if ($search_supervisor > 0) $param .= "&amp;search_supervisor=" . urlencode($search_supervisor);
-if ($search_statut != '') $param .= "&amp;search_statut=" . urlencode($search_statut);
-if ($optioncss != '') $param .= '&amp;optioncss=' . urlencode($optioncss);
-if ($mode != '')      $param .= '&amp;mode=' . urlencode($mode);
-if ($search_categ > 0) $param .= "&amp;search_categ=" . urlencode($search_categ);
-// Add $param from extra fields
-include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_param.tpl.php';
-
-
-$newcardbutton = '';
-if ($canadduser) {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/RH/Users/card.php?action=create' . ($mode == 'employee' ? '&employee=1' : '') . '&leftmenu=');
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&amp;contextpage='.urlencode($contextpage);
 }
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&amp;limit='.urlencode($limit);
+}
+if ($sall != '') {
+	$param .= '&amp;sall='.urlencode($sall);
+}
+if ($search_user != '') {
+	$param .= "&amp;search_user=".urlencode($search_user);
+}
+if ($search_login != '') {
+	$param .= "&amp;search_login=".urlencode($search_login);
+}
+if ($search_lastname != '') {
+	$param .= "&amp;search_lastname=".urlencode($search_lastname);
+}
+if ($search_firstname != '') {
+	$param .= "&amp;search_firstname=".urlencode($search_firstname);
+}
+if ($search_gender != '') {
+	$param .= "&amp;search_gender=".urlencode($search_gender);
+}
+if ($search_accountancy_code != '') {
+	$param .= "&amp;search_accountancy_code=".urlencode($search_accountancy_code);
+}
+if ($search_phonepro != '') {
+	$param .= "&amp;search_phonepro=".urlencode($search_phonepro);
+}
+if ($search_phonemobile != '') {
+	$param .= "&amp;search_phonemobile=".urlencode($search_phonemobile);
+}
+if ($search_email != '') {
+	$param .= "&amp;search_email=".urlencode($search_email);
+}
+if ($search_api_key != '') {
+	$param .= "&amp;search_api_key=".urlencode($search_api_key);
+}
+if ($search_supervisor > 0) {
+	$param .= "&amp;search_supervisor=".urlencode($search_supervisor);
+}
+if ($search_statut != '') {
+	$param .= "&amp;search_statut=".urlencode($search_statut);
+}
+if ($search_categ > 0) {
+	$param .= '&amp;search_categ='.urlencode($search_categ);
+}
+if ($search_warehouse > 0) {
+	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
+}
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// List of mass actions available
+$arrayofmassactions = array();
+$arrayofmassactions['disable'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("DisableUser");
+
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 
 
-print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">' . "\n";
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
-print '<input type="hidden" name="token" value="' . newToken() . '">';
+print "<div><h3>Le mois: " . $french_months[$month -1] . " </h3></div>";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
-print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
-print '<input type="hidden" name="mode" value="' . $mode . '">';
-print '<input type="hidden" name="contextpage" value="' . $contextpage . '">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="year" value="' . $year . '">';
+print '<input type="hidden" name="month" value="' . $month . '">';
+print '<input type="hidden" name="action" value="view">';
 
-$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap paddingleft', DOL_URL_ROOT . '/RH/Users/hierarchy.php' . (($search_statut != '' && $search_statut >= 0) ? '?search_statut=' . $search_statut : ''));
 
-print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'user', 0, $morehtmlright . ' ' . $newcardbutton, '', $limit, 0, 0, 1);
+
+$moreparam = array('morecss'=>'marginleftonly');
+$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap paddingleft', DOL_URL_ROOT.'/RH/Users/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
+
+print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'setup', 0, $morehtmlright.' '.$newcardbutton, '', $limit, 0, 0, 1);
+
+// Add code for pre mass action (confirmation or email presend form)
+$topicmail = "SendUserRef";
+$modelmail = "user";
+$objecttmp = new User($db);
+$trackid = 'use'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if (!empty($catid)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
-	$ways = $c->print_all_ways(' &gt; ', 'user/list.php');
-	print " &gt; " . $ways[0] . "<br>\n";
+	$ways = $c->print_all_ways(' &gt; ', 'RH/Users/list.php');
+	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
 
-if ($sall) {
-	foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
-	print '<div class="divsearchfieldfilter">' . $langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall) . '</div>';
+if ($search_all) {
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
+	}
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
 
 // Filter on categories
-if (!empty($conf->categorie->enabled)) {
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Categories') . ': ';
-	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
+	$tmptitle = $langs->trans('Category');
+	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
+	$moreforfilter .= '</div>';
+}
+// Filter on warehouse
+if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+	$formproduct = new FormProduct($db);
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->trans('Warehouse');
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
-else $moreforfilter = $hookmanager->resPrint;
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	$moreforfilter .= $hookmanager->resPrint;
+} else {
+	$moreforfilter = $hookmanager->resPrint;
+}
 
-if ($moreforfilter) {
+if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	print '</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table id="tblUsers" class="tagtable liste' . ($moreforfilter ? " listwithfilterbefore" : "") . '">' . "\n";
 
-// Search bar
+// Fields title search
+// --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 
-print '<td class="liste_titre"><input type="text" name="Check" class="maxwidth50" value="&nbsp;"></td>';
+// Action column
+print '<td class="liste_titre maxwidthsearch">';
+$searchpicto = $form->showFilterButtons();
+// print $searchpicto;
+// print '</td>';
+print '<td class="liste_titre"><input type="text" name="search_options_matricule" class="maxwidth50" value="'.$search_options_matricule.'"></td>';
+
 if (!empty($arrayfields['u.login']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="' . $search_login . '"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
 }
 if (!empty($arrayfields['u.lastname']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_lastname" class="maxwidth50" value="' . $search_lastname . '"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_lastname" class="maxwidth50" value="'.$search_lastname.'"></td>';
 }
 if (!empty($arrayfields['u.firstname']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_firstname" class="maxwidth50" value="' . $search_firstname . '"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_firstname" class="maxwidth50" value="'.$search_firstname.'"></td>';
 }
 if (!empty($arrayfields['u.gender']['checked'])) {
 	print '<td class="liste_titre">';
-	$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"));
+	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 	print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
 	print '</td>';
-}
-if (!empty($arrayfields['u.employee']['checked'])) {
-	print '<td class="liste_titre">';
-	print $form->selectyesno('search_employee', $search_employee, 1, false, 1);
-	print '</td>';
-}
-if (!empty($arrayfields['u.accountancy_code']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="' . $search_accountancy_code . '"></td>';
-}
-if (!empty($arrayfields['u.email']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="' . $search_email . '"></td>';
-}
-if (!empty($arrayfields['u.api_key']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_api_key" class="maxwidth50" value="' . $search_api_key . '"></td>';
-}
-if (!empty($arrayfields['u.fk_soc']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_thirdparty" class="maxwidth75" value="' . $search_thirdparty . '"></td>';
-}
-if (!empty($arrayfields['u.entity']['checked'])) {
-	print '<td class="liste_titre"></td>';
 }
 // Supervisor
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print '<td class="liste_titre">';
 	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth200');
 	print '</td>';
+}
+if (!empty($arrayfields['u.accountancy_code']['checked'])) {
+	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="'.$search_accountancy_code.'"></td>';
+}
+if (!empty($arrayfields['u.office_phone']['checked'])) {
+	print '<td class="liste_titre"><input type="text" name="search_phonepro" class="maxwidth50" value="'.$search_phonepro.'"></td>';
+}
+if (!empty($arrayfields['u.user_mobile']['checked'])) {
+	print '<td class="liste_titre"><input type="text" name="search_phonemobile" class="maxwidth50" value="'.$search_phonemobile.'"></td>';
+}
+if (!empty($arrayfields['u.email']['checked'])) {
+	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="'.$search_email.'"></td>';
+}
+if (!empty($arrayfields['u.api_key']['checked'])) {
+	print '<td class="liste_titre"><input type="text" name="search_api_key" class="maxwidth50" value="'.$search_api_key.'"></td>';
+}
+if (!empty($arrayfields['u.fk_soc']['checked'])) {
+	print '<td class="liste_titre"><input type="text" name="search_thirdparty" class="maxwidth75" value="'.$search_thirdparty.'"></td>';
+}
+if (!empty($arrayfields['u.entity']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['u.salary']['checked'])) {
+	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['u.datelastlogin']['checked'])) {
 	print '<td class="liste_titre"></td>';
@@ -455,10 +751,10 @@ if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 // Extra fields
-include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_input.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
-$parameters = array('arrayfields' => $arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+$parameters = array('arrayfields'=>$arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['u.datec']['checked'])) {
 	// Date creation
@@ -473,57 +769,122 @@ if (!empty($arrayfields['u.tms']['checked'])) {
 if (!empty($arrayfields['u.statut']['checked'])) {
 	// Status
 	print '<td class="liste_titre center">';
-	print $form->selectarray('search_statut', array('-1' => '', '0' => $langs->trans('Disabled'), '1' => $langs->trans('Enabled')), $search_statut);
+	print $form->selectarray('search_statut', array('-1'=>'', '0'=>$langs->trans('Disabled'), '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td>';
 }
-// Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
-print $searchpicto;
-print '</td>';
+print '</tr>';
 
-print "</tr>\n";
+
 
 
 print '<tr class="liste_titre">';
-if (!empty($arrayfields['u.login']['checked']))          print_liste_field_titre("Login", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.lastname']['checked']))       print_liste_field_titre("Lastname", $_SERVER['PHP_SELF'], "u.lastname", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.firstname']['checked']))      print_liste_field_titre("FirstName", $_SERVER['PHP_SELF'], "u.firstname", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.gender']['checked']))         print_liste_field_titre("Gender", $_SERVER['PHP_SELF'], "u.gender", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.employee']['checked']))       print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.accountancy_code']['checked'])) print_liste_field_titre("AccountancyCode", $_SERVER['PHP_SELF'], "u.accountancy_code", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.email']['checked']))          print_liste_field_titre("EMail", $_SERVER['PHP_SELF'], "u.email", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.api_key']['checked']))        print_liste_field_titre("ApiKey", $_SERVER['PHP_SELF'], "u.api_key", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.fk_soc']['checked']))         print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "u.fk_soc", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.entity']['checked']))         print_liste_field_titre("Entity", $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.fk_user']['checked']))        print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
-if (!empty($arrayfields['u.datelastlogin']['checked']))  print_liste_field_titre("LastConnexion", $_SERVER['PHP_SELF'], "u.datelastlogin", $param, "", '', $sortfield, $sortorder, 'center ');
-if (!empty($arrayfields['u.datepreviouslogin']['checked'])) print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", $param, "", '', $sortfield, $sortorder, 'center ');
+// Action column
+// print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+print_liste_field_titre("Matricule", $_SERVER['PHP_SELF'], "ef.matricule", $param, "", "", $sortfield, $sortorder);
+
+if (!empty($arrayfields['u.login']['checked'])) {
+	print_liste_field_titre("Login", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.lastname']['checked'])) {
+	print_liste_field_titre("Lastname", $_SERVER['PHP_SELF'], "u.lastname", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.firstname']['checked'])) {
+	print_liste_field_titre("FirstName", $_SERVER['PHP_SELF'], "u.firstname", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.gender']['checked'])) {
+	print_liste_field_titre("Gender", $_SERVER['PHP_SELF'], "u.gender", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.employee']['checked'])) {
+	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder, 'center ');
+}
+if (!empty($arrayfields['u.fk_user']['checked'])) {
+	print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.accountancy_code']['checked'])) {
+	print_liste_field_titre("AccountancyCode", $_SERVER['PHP_SELF'], "u.accountancy_code", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.office_phone']['checked'])) {
+	print_liste_field_titre("PhonePro", $_SERVER['PHP_SELF'], "u.office_phone", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.user_mobile']['checked'])) {
+	print_liste_field_titre("PhoneMobile", $_SERVER['PHP_SELF'], "u.user_mobile", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.email']['checked'])) {
+	print_liste_field_titre("EMail", $_SERVER['PHP_SELF'], "u.email", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.api_key']['checked'])) {
+	print_liste_field_titre("ApiKey", $_SERVER['PHP_SELF'], "u.api_key", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.fk_soc']['checked'])) {
+	print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "u.fk_soc", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.entity']['checked'])) {
+	print_liste_field_titre("Entity", $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
+}
+if (!empty($arrayfields['u.salary']['checked'])) {
+	print_liste_field_titre("Salary", $_SERVER['PHP_SELF'], "u.salary", $param, "", "", $sortfield, $sortorder, 'right ');
+}
+if (!empty($arrayfields['u.datelastlogin']['checked'])) {
+	print_liste_field_titre("LastConnexion", $_SERVER['PHP_SELF'], "u.datelastlogin", $param, "", '', $sortfield, $sortorder, 'center ');
+}
+if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
+	print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", $param, "", '', $sortfield, $sortorder, 'center ');
+}
 // Extra fields
-include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_title.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (!empty($arrayfields['u.datec']['checked']))  print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "u.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
-if (!empty($arrayfields['u.tms']['checked']))    print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "u.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
-if (!empty($arrayfields['u.statut']['checked'])) print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "u.statut", "", $param, '', $sortfield, $sortorder, 'center ');
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-print "</tr>\n";
+if (!empty($arrayfields['u.datec']['checked'])) {
+	print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "u.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
+if (!empty($arrayfields['u.tms']['checked'])) {
+	print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "u.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
+if (!empty($arrayfields['u.statut']['checked'])) {
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "u.statut", "", $param, '', $sortfield, $sortorder, 'center ');
+}
+print '</tr>'."\n";
 
 
+// Detect if we need a fetch on each output line
+$needToFetchEachLine = 0;
+if (key_exists('computed', $extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
+		if (preg_match('/\$object/', $val)) {
+			$needToFetchEachLine++; // There is at least one compute field that use $object
+		}
+	}
+}
+
+
+// Loop on record
+// --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
-while ($i < min($num, $limit)) {
-	$obj = $db->fetch_object($result);
+$totalarray['nbfield'] = 0;
+$users = array();
 
-	//$sql2="SELECT ex.name from llx_extrafields as ex LEFT JOIN llx_user_extrafields as eu on ex.rowid=eu.fk"
+$arrayofselected = is_array($toselect) ? $toselect : array();
+while ($i < ($limit ? min($num, $limit) : $num)) {
+	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
+
+	if (empty($obj->country_code)) $obj->country_code = '';		// TODO Add join in select with country table to get country_code
+
+	// Store properties in $object
+	$object->setVarsFromFetchObj($obj);
 
 	$userstatic->id = $obj->rowid;
 	$userstatic->admin = $obj->admin;
-	$userstatic->ref = $obj->label;
+	$userstatic->ref = $obj->rowid;
 	$userstatic->login = $obj->login;
 	$userstatic->statut = $obj->statut;
+	$userstatic->office_phone = $obj->office_phone;
+	$userstatic->user_mobile = $obj->user_mobile;
 	$userstatic->email = $obj->email;
 	$userstatic->gender = $obj->gender;
 	$userstatic->socid = $obj->fk_soc;
@@ -532,22 +893,30 @@ while ($i < min($num, $limit)) {
 	$userstatic->employee = $obj->employee;
 	$userstatic->photo = $obj->photo;
 
-	$sql1 = "SELECT s.fk_user FROM llx_payment_salary as s WHERE s.fk_user=" . $obj->rowid . " AND year(datep)=" . $prev_year . " AND month(datep)=" . $prev_month;
-	$res1 = $db->query($sql1);
-	if ($res1->num_rows > 0 || (strtotime($obj->dateemploymentend) < strtotime(date("d") . '-' . $prev_month . '-' . $prev_year) && $obj->dateemploymentend != '') || $obj->dateemployment == '' || (strtotime($obj->dateemployment) > strtotime(date("d") . '-' . $prev_month . '-' . $prev_year) && $obj->dateemployment != '')) {
+    $res1 = $db->query($sql1);
+    if ((strtotime($obj->dateemploymentend) < strtotime(date("d") . '-' . $month . '-' . $year) && $obj->dateemploymentend != '') || $obj->dateemployment == '' || (strtotime($obj->dateemployment) > strtotime(date("t", strtotime('01-' . $month . '-' . $year)) . '-' . $month . '-' . $year) && $obj->dateemployment != '')) {
+        $i++;
+        continue;
+    }
+
+	// see if it's clotured
+    $sql1 = "SELECT avance FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and avance > 0";
+    $res1 = $db->query($sql1);
+    if ($res1->num_rows == 0) {
 		$i++;
 		continue;
-	}
+    }
 
-	// see if it's cotured
-	$sql1 = "SELECT cloture FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$prev_year AND month=$prev_month";
+    // see if it's cotured
+	$sql1 = "SELECT number FROM llx_user_rib WHERE fk_user=$obj->rowid";
 	$res1 = $db->query($sql1);
-	$cloture = 0;
+	$rib = '';
 	if ($res1) {
 		$row = $res1->fetch_assoc();
-		$cloture = $row["cloture"] ? $row["cloture"] : 0;
+		$rib = $row["number"];
 	}
-	// see if it's cotured
+     
+
 	$mode = '';
 	$sql1 = "SELECT mode_paiement FROM llx_Paie_UserInfo WHERE userid=$obj->rowid";
 	$res1 = $db->query($sql1);
@@ -555,91 +924,92 @@ while ($i < min($num, $limit)) {
 		$row = $res1->fetch_assoc();
 		$mode = $row["mode_paiement"];
 	}
-	if ($cloture != 1)
-		continue;
 	if ($mode != 'virement')
 		continue;
+	if (strlen($rib) != 24)
+		continue;
 
-	$sql1 = "SELECT fk_user, bank, number FROM llx_user_rib WHERE fk_user=" . $obj->rowid;
-	$res1 = $db->query($sql1);
-	if ($res1->num_rows > 0) {
-		$data = $res1->fetch_assoc();
+	$users[$i] = $obj;
+    $li = '<a href="/RH/Users/card.php?id=' . $userstatic->id . '">' . $userstatic->login . '</a>';
+
+
+	$canreadhrmdata = 0;
+	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read) && in_array($obj->rowid, $childids))
+		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
+		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
+			$canreadhrmdata = 1;
+	}
+	$canreadsecretapi = 0;
+	if ($user->id == $obj->rowid || !empty($user->admin)) {	// Current user or admin
+		$canreadsecretapi = 1;
 	}
 
+	print '<tr class="oddeven">';
 
-	$li = $userstatic->getNomUrlRh(-1, '', 0, 0, 24, 1, 'login', '', 1);
-
-	print "<tr>";
+	// Action column
+	// print '<td class="nowrap center">';
+	// $selected = 0;
+	// if (in_array($object->id, $arrayofselected)) {
+	// 	$selected = 1;
+	// }
+	// print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+	// print '</td>';
+	
+	// matricule
+	print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->options_matricule).'">'.dol_escape_htmltag($obj->options_matricule).'</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+	// Login
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print '<td class="nowraponall">';
-		print $li;
+		print '<td class="nowraponall tdoverflowmax150"><a href="/RH/Users/card.php?id='.$obj->rowid.'">';
+
+		if($obj->gender == "man"){
+			print '<span class="nopadding userimg" style="margin-right: 3px;"><img class="photouserphoto userphoto" alt="" src="/public/theme/common/user_man.png"></span>';
+		}else{
+			print '<span class="nopadding userimg" style="margin-right: 3px;"><img class="photouserphoto userphoto" alt="" src="/public/theme/common/user_woman.png"></span>';
+		}
+        print $li;
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 		} elseif ($obj->admin) {
 			print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
 		}
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		print '</a></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	if (!empty($arrayfields['u.lastname']['checked'])) {
-		print '<td>' . $obj->lastname . '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	if (!empty($arrayfields['u.firstname']['checked'])) {
-		print '<td>' . $obj->firstname . '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	if (!empty($arrayfields['u.gender']['checked'])) {
 		print '<td>';
-		if ($obj->gender) print $langs->trans("Gender" . $obj->gender);
+		if ($obj->gender) {
+			print $langs->trans("Gender".$obj->gender);
+		}
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
+	// Employee yes/no
 	if (!empty($arrayfields['u.employee']['checked'])) {
-		print '<td>' . yn($obj->employee) . '</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['u.accountancy_code']['checked'])) {
-		print '<td>' . $obj->accountancy_code . '</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['u.email']['checked'])) {
-		print '<td>' . $obj->email . '</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['u.api_key']['checked'])) {
-		print '<td>' . $obj->api_key . '</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['u.fk_soc']['checked'])) {
-		print "<td>";
-		if ($obj->fk_soc) {
-			$companystatic->id = $obj->fk_soc;
-			$companystatic->name = $obj->name;
-			$companystatic->canvas = $obj->canvas;
-			print $companystatic->getNomUrl(1);
-		} elseif ($obj->ldap_sid) {
-			print $langs->trans("DomainUser");
-		} else {
-			print $langs->trans("InternalUser");
-		}
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
-	// Multicompany enabled
-	if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		if (!empty($arrayfields['u.entity']['checked'])) {
-			print '<td>';
-			if (!$obj->entity) {
-				print $langs->trans("AllEntities");
-			} else {
-				$mc->getInfo($obj->entity);
-				print $mc->label;
-			}
-			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+		print '<td class="center">'.yn($obj->employee).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
 		}
 	}
+
 	// Supervisor
 	if (!empty($arrayfields['u.fk_user']['checked'])) {
 		// Resp
@@ -652,10 +1022,12 @@ while ($i < min($num, $limit)) {
 			$user2->gender = $obj->gender2;
 			$user2->photo = $obj->photo2;
 			$user2->admin = $obj->admin2;
+			$user2->office_phone = $obj->office_phone;
+			$user2->user_mobile = $obj->user_mobile;
 			$user2->email = $obj->email2;
 			$user2->socid = $obj->fk_soc2;
 			$user2->statut = $obj->statut2;
-			print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
+			print $user2->getNomUrlRh(-1, '', 0, 0, 24, 0, '', '', 1);
 			if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2) {
 				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 			} elseif ($obj->admin2) {
@@ -663,206 +1035,265 @@ while ($i < min($num, $limit)) {
 			}
 		}
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['u.accountancy_code']['checked'])) {
+		print '<td>'.$obj->accountancy_code.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['u.office_phone']['checked'])) {
+		print '<td>'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	if (!empty($arrayfields['u.user_mobile']['checked'])) {
+		print '<td>'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	if (!empty($arrayfields['u.email']['checked'])) {
+		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 'AC_EMAIL', 0, 0, 1)."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	if (!empty($arrayfields['u.api_key']['checked'])) {
+		print '<td>';
+		if ($obj->api_key) {
+			if ($canreadsecretapi) {
+				print $obj->api_key;
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	if (!empty($arrayfields['u.fk_soc']['checked'])) {
+		print '<td class="tdoverflowmax200">';
+		if ($obj->fk_soc > 0) {
+			$companystatic->id = $obj->fk_soc;
+			$companystatic->name = $obj->name;
+			$companystatic->canvas = $obj->canvas;
+			print $companystatic->getNomUrl(1);
+		} elseif ($obj->ldap_sid) {
+			print '<span class="opacitymedium">'.$langs->trans("DomainUser").'</span>';
+		} else {
+			print '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	// Multicompany enabled
+	if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (!empty($arrayfields['u.entity']['checked'])) {
+			print '<td>';
+			if (!$obj->entity) {
+				print $langs->trans("AllEntities");
+			} else {
+				$mc->getInfo($obj->entity);
+				print $mc->label;
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+	}
+
+	// Salary
+	if (!empty($arrayfields['u.salary']['checked'])) {
+		print '<td class="nowraponall right amount">';
+		if ($obj->salary) {
+			if ($canreadhrmdata) {
+				print price($obj->salary);
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Date last login
 	if (!empty($arrayfields['u.datelastlogin']['checked'])) {
-		print '<td class="nowrap center">' . dol_print_date($db->jdate($obj->datelastlogin), "dayhour") . '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datelastlogin), "dayhour").'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	// Date previous login
 	if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
-		print '<td class="nowrap center">' . dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour") . '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Extra fields
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_print_fields.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
-	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+	$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['u.datec']['checked'])) {
 		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	// Date modification
 	if (!empty($arrayfields['u.tms']['checked'])) {
 		print '<td class="center">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	// Status
 	if (!empty($arrayfields['u.statut']['checked'])) {
 		$userstatic->statut = $obj->statut;
-		print '<td class="center">' . $userstatic->getLibStatut(5) . '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		print '<td class="center">'.$userstatic->getLibStatut(5).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
+	$sql = "SELECT fk_user, bank, number FROM llx_user_rib WHERE fk_user=" . $obj->rowid;
+    $res = $db->query($sql);
+    $data = ((object)($res))->fetch_assoc();
 
-	// get salary net
-	$sql = "SELECT salaireNet FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$prev_month";
-	$res = $db->query($sql);
-	if ($res) {
-		$row = $res->fetch_assoc();
-		$salaryNet = $row["salaireNet"];
+    print '<td> <input type="hidden" name="idCell" value="' . $obj->rowid . '"></td>';
+    print '<td> <input type="hidden" name="salaryCell" value="' . $obj->salary . '"></td>';
+    $bank = $data["bank"];
+    $bank .= "  / RIB: ";
+    $bank .= $data["number"];
+    print '<td> <input type="hidden" name="bankCell" value="' . $bank . '"></td>';
+
+	if (!$i) {
+		$totalarray['nbfield']++;
 	}
 
-	print '<td> <input type="hidden" name="idCell" value="' . $obj->rowid . '"></td>';
-	print '<td> <input type="hidden" name="salaryCell" value="' . $salaryNet . '"></td>';
-	$bank = $data["bank"];
-	$bank .= "  / RIB: ";
-	$bank .= $data["number"];
-	print '<td> <input type="hidden" name="bankCell" value="' . $bank . '"></td>';
-
-	// Action column
-	print '<td></td>';
-	if (!$i) $totalarray['nbfield']++;
-
-	print "</tr>\n";
+	print '</tr>'."\n";
 
 	$i++;
 }
 
-$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-
-print "</table>";
-print '</div>';
-print "</form>\n";
-
-/*
-* Documents generes
-*/
-
-print '<div class="fichecenter"><div class="fichehalfleft">';
-$formfile = new FormFile($db);
 
 
-$filedir = DOL_DATA_ROOT . '/grh/OrdreVirement' . '/';
+// Show total line
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-$urlsource = $_SERVER['PHP_SELF'] . '';
-$genallowed = 0;
-$delallowed = 1;
-$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
-
-if (!$showAll) {
-	$_SESSION["filterDoc"] = $prev_month . "-" . $prev_year;
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
-print $formfile->showdocuments('OrdreVirement', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, 'remonth=' . $month . '&amp;reyear=' . $year, '', '', $societe->default_lang);
-$somethingshown = $formfile->numoffiles;
-
-$_SESSION["filterDoc"] = null;
-// Show links to link elements
-//$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
 
 
-print '</div>';
 
-print '<form id="frmgen" name="generateDocs" action="' . $_SERVER["PHP_SELF"] . '?reyear=' . $year . "&remonth=" . $month . "&reday=" . $day . '" method="post">';
-print '<input type="hidden" name="token" value="' . newToken() . '">';
-print '<input type="hidden" name="action" value="generateOrderDeVerement">';
-print '<input type="hidden" name="model" value="OrderDeVirementGlobal">';
-print '<input type="hidden" name="day" value="' . $day . '">';
-print '<input type="hidden" name="remonth" value="' . $month . '">';
-print '<input type="hidden" name="reyear" value="' . $year . '">';
-print '<div class="center"><input type="button" id="btngen" class="button" name="save" value="génerer">';
+$db->free($resql);
+
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 
-print "<script>
-	function regls(){
-		var i=1;
-		$('#tblUsers input[name=idCell]').each(function () {
-			var id = $(this).closest('tr').find('input[name=idCell]').val();
-			var salary = $(this).closest('tr').find('input[name=salaryCell]').val();
-			var b = $(this).closest('tr').find('input[name=bankCell]').val();
-			var nom = $(this).closest('tr').find('td:eq(2)').val();
-			$('input[name=id]').remove();
-			$('<input type=\"hidden\" name=\"id'+i+'\" value=\"'+id+'\" >').appendTo('#frmgen');
-			i++;
-		});
-		$('<input type=\"hidden\" name=\"lenght\" value=\"'+(i-1)+'\" >').appendTo('#frmgen');
-		// $.ajax({
-		// 	url: '" . $_SERVER["PHP_SELF"] . "',
-		// 	type: 'post',
-		// 	data:$('#frmgen').serialize(),
-		// 	success:function(){			
-		// 	}
-		// });
-		$('#frmgen').submit();
-	};
-</script>";
-print '</form>';
+print '</table>
+	</div>
+</form>';
 
 
-print '<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>';
 
-$dateLastDay = date("Y-m-t", strtotime($prev_month . '/01/' . $prev_year));
-
-print '<form id="frmSalary" name="salary" action="/salaries/card.php" method="post" target="dummyframe">';
-print '<input type="hidden" name="token" value="' . newToken() . '">';
-print '<input type="hidden" name="action" value="add">';
-print '<input type="hidden" id="datep" name="datep" value="' . date("t", strtotime($dateLastDay)) . '">';
-print '<input type="hidden" name="datepday" value="' . date("t", strtotime($dateLastDay)) . '">';
-print '<input type="hidden" name="datepmonth" value="' . $prev_month . '">';
-print '<input type="hidden" name="datepyear" value="' . $prev_year . '">';
+GenerateDocuments();
 
 
-print '<input type="hidden" id="datev" name="datev" value="' . $dateLastDay . '">';
-print '<input type="hidden" name="datevday" value="' . date("t", strtotime($dateLastDay)) . '">';
-print '<input type="hidden" name="datevmonth" value="' . $prev_month . '">';
-print '<input type="hidden" name="datevyear" value="' . $prev_year . '">';
+// $action = GETPOST('action');
+// $id = GETPOST('id', 'int');
+// if ($id && $action == 'show') {
+//     ShowBulletin($id);
+// }
+// ShowDocuments();
 
-print '<input type="hidden" name="datesp" value="' . $prev_year . '-' . $prev_month . '-01">';
-print '<input type="hidden" name="datespday" value="01">';
-print '<input type="hidden" name="datespmonth" value="' . $prev_month . '">';
-print '<input type="hidden" name="datespyear" value="' . $prev_year . '">';
+function GenerateDocuments()
+{
+	global $day, $month, $year, $limit, $users;
+	$ids= '';
+	foreach ($users as $user) {
+		$ids .= $user->rowid.',';
+	}
+	$ids = substr($ids, 0, -1);
+    print '<form id="frmgen" name="generateAvance" method="post" style="margin-top:20px;">';
+    print '<input type="hidden" name="token" value="' . newToken() . '">';
+    print '<input type="hidden" name="action" value="generateVirement">';
+    // print '<input type="hidden" name="model" value="BulletinDePaie">';
+    print '<input type="hidden" name="day" value="' . $day . '">';
+    print '<input type="hidden" name="month" value="' . $month . '">';
+    print '<input type="hidden" name="year" value="' . $year . '">';
+    print '<input type="hidden" name="limit" value="' . $limit . '">';
+    print '<input type="hidden" name="ids" value="' . $ids . '">';
+    print '<div style="margin-bottom: 0px; margin-left: 5%;"><input type="submit"  class="button"  value="Generer"></div>';
+    print "<script>";
+	
+}
+// function ShowDocuments()
+// {
+//     global $db, $object, $conf, $month, $year, $societe;
+//     print '<div class="fichecenter"><div class="fichehalfleft">';
+//     $formfile = new FormFile($db);
 
-print '<input type="hidden" name="dateep" value="' . $dateLastDay . '">';
-print '<input type="hidden" name="dateepday" value="' . date("t", strtotime($dateLastDay)) . '">';
-print '<input type="hidden" name="dateepmonth" value="' . $prev_month . '">';
-print '<input type="hidden" name="dateepyear" value="' . $prev_year . '">';
 
-print '<input type="hidden" id="amount" name="amount" value="0">';
-print '<input type="hidden" id="label" name="label" value="">';
-print '<input type="hidden" name="paymenttype" value="VIR">';
-print '<input type="hidden" name="accountid" value="1">';
-print '<input type="hidden" id="fk_user" name="fk_user" value="1">';
-print '<input type="hidden" id="num_payment" name="num_payment" value="">';
+//     $subdir = '';
+//     $filedir = DOL_DATA_ROOT . '/grh/BulletinDePaie';
+//     $urlsource = $_SERVER['PHP_SELF'] . '';
+//     $genallowed = 0;
+//     $delallowed = 1;
+//     $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
 
-print '</form>';
+// 	$_SESSION["filterDoc"] = $month . "-" . $year;
 
-print "<script>
- $('#btngen').click(function(){
-	$('#tblUsers input[name=idCell]').each(function () {
-		var id = $(this).closest('tr').find('input[name=idCell]').val();
-		var salary = $(this).closest('tr').find('input[name=salaryCell]').val();
-		var b = $(this).closest('tr').find('input[name=bankCell]').val();
-		var nom = $(this).closest('tr').find('td:eq(2)').val();
-		$('#label').val(nom+'-'+Date());
-		$('#fk_user').val(id);
-		$('#amount').val(salary);
-		$('#num_payment').val(b);
-		$.ajax({
-			url: '/salaries/card.php',
-			type: 'post',
-			data:$('#frmSalary').serialize(),
-			success:function(){
-			}
-		});
-	});
-	regls();
 
-	//location.reload(true);
-});
-</script>";
+//     print $formfile->showdocuments('BulletinDePaie', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, 'remonth=' . $month . '&amp;reyear=' . $year, '', '', $societe->default_lang);
+//     $somethingshown = $formfile->numoffiles;
+
+//     // $_SESSION["filterDoc"] = null;
+//     // Show links to link elements
+//     //$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
+// }
+
+	print "<style>
+	@media only screen and (min-width: 977px) {
+		div.div-table-responsive {
+			width: calc(100vw - 285px);
+			overflow-x: scroll;
+		}
+	}
+	</style>";
+
 
 
 
