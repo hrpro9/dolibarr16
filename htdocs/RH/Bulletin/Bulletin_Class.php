@@ -451,7 +451,7 @@ if ($cloture == 0) {
 
     //Get les rubriques pas en brut global et non imposable
     $pasEnBruts = array();
-    $aretenu=0;
+    $aretenu = 0;
     $sql = "SELECT * FROM llx_Paie_Rub WHERE enBrut!=1 AND cotisation!=1 AND imposable!=1";
     $res = $db->query($sql);
     if ($res->num_rows > 0) {

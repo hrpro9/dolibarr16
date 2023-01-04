@@ -1232,17 +1232,17 @@ function GenerateDocuments()
         });
     </script>";
 
-    print '</form>';
-    // print '<hr>';
-    // print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
-    // print '<input type="hidden" name="token" value="' . newToken() . '">';
-    // print '<input type="hidden" name="action" value="changeWorkingDays">';
-    // print '<input type="hidden" name="day" value="' . $day . '">';
-    // print '<input type="hidden" name="month" value="' . $month . '">';
-    // print '<input type="hidden" name="year" value="' . $year . '">';
-    // print '<input type="hidden" name="limit" value="' . $limit . '">';
-    // print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="butActionDelete" value="Changer les jours travaillé">';
-    // print '</form>';
+	print '</form>';
+	// print '<hr>';
+	// print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+	// print '<input type="hidden" name="token" value="' . newToken() . '">';
+	// print '<input type="hidden" name="action" value="changeWorkingDays">';
+	// print '<input type="hidden" name="day" value="' . $day . '">';
+	// print '<input type="hidden" name="month" value="' . $month . '">';
+	// print '<input type="hidden" name="year" value="' . $year . '">';
+	// print '<input type="hidden" name="limit" value="' . $limit . '">';
+	// print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="butActionDelete" value="Changer les jours travaillé">';
+	// print '</form>';
 
 }
 function ShowDocuments()
