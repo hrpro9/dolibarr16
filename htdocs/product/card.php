@@ -2659,16 +2659,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print "<tr><td class='valignmiddle'>Prix d'achat</td><td>Min : $minBuyPrice / Max : $maxBuyPrice</td></tr>";
 			
 			// min max vendre
-			// $minSellPrice = 0;
-			// $maxSellPrice = 0;
-			// $sql = "SELECT MIN(subprice) as min, MAX(subprice) as max FROM llx_commandedet WHERE fk_product = $id and product_type = 0 and fk_commande in (select rowid from llx_commande WHERE fk_statut in (4,5)) ORDER BY subprice DESC";
-			// $resql = $db->query($sql);
-			// if($resql){
-			// 	$result = ((object)$resql)->fetch_assoc();
-			// 	$minBuyPrice = $result['min'];
-			// 	$maxBuyPrice = $result['max'];
-			// }
-			// print "<tr><td class='valignmiddle'>Prix de vendre</td><td>Min : $minSellPrice / Max : $maxSellPrice</td></tr>";
+			$minSellPrice = 0;
+			$maxSellPrice = 0;
+			$sql = "SELECT MIN(subprice) as min, MAX(subprice) as max FROM llx_commandedet WHERE fk_product = $id and product_type = 0 and fk_commande in (select rowid from llx_commande WHERE fk_statut = 3)";
+			$resql = $db->query($sql);
+			if($resql){
+				$result = ((object)$resql)->fetch_assoc();
+				$minBuyPrice = $result['min'];
+				$maxBuyPrice = $result['max'];
+			}
+			print "<tr><td class='valignmiddle'>Prix de vendre</td><td>Min : $minBuyPrice / Max : $maxBuyPrice</td></tr>";
 
 
 
