@@ -66,7 +66,55 @@ if ($action == 'exporter') {
 	exit();
 
 }
-llxHeader("", "Atacher list des utilisateurs");
+if ($action == 'import') {
+    $errorFormat = false;
+    $arr_file = explode('.', $_FILES['file']['name']);
+    $extension = end($arr_file);
+    if($extension == 'csv') {
+        $reader = new Csv();
+    } else if($extension == 'xls') {
+        $reader = new Xls();
+    }else if ($extension == 'xlsx'){
+        $reader = new Xlsx();
+    }else{
+        $errorFormat = true;
+    }
+    if (! $errorFormat){
+        $spreadsheet = $reader->load($_FILES['file']['tmp_name']);
+        $sheetData = $spreadsheet->getActiveSheet()->toArray();
+        $rubValues = array();
+        if (!empty($sheetData)) {
+            for ($i=1; $i<count($sheetData); $i++) {
+                $id = $sheetData[$i][1];
+                $avance  = 0;
+                for ($j= count($userInfos); $j < count(($sheetData[$i])); $j++) { 
+                    $avance  = $sheetData[$i][$j] != '' ? $sheetData[$i][$j] : 0;
+                    array_push($rubValues, [$id, $sheetData[0][$j], $avance]);
+                }
+            }
+            $sql = "REPLACE INTO llx_Paie_UserParameters (userid, rub, amount) values ";
+            foreach ($rubValues as $value) {
+                $sql .= "($value[0], $value[1], '$value[2]'),";
+            }
+            $sql = substr($sql, 0, -1);
+            $res = $db->query($sql);
+            if($res === TRUE){
+            }
+        }else{
+            $fileError = "le fichier empty";
+        }
+    }else{
+        $fileError = "le fichier non autorisé. Uniquement .csv, .xls ou .xlsx";
+    }
+    $db->close();
+    header('Location: /RH/Bulletin/importerPrimes.php');
+}
+
+$text = "Attacher Les Primes";
+
+llxHeader("", "$text");
+
+print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'setup', 0, $morehtmlright.' '.$newcardbutton, '', $limit, 0, 0, 1);
 
 
 print '
@@ -231,47 +279,7 @@ print '
     
     </style>
 ';
-if ($action == 'import') {
-    $errorFormat = false;
-    $arr_file = explode('.', $_FILES['file']['name']);
-    $extension = end($arr_file);
-    if($extension == 'csv') {
-        $reader = new Csv();
-    } else if($extension == 'xls') {
-        $reader = new Xls();
-    }else if ($extension == 'xlsx'){
-        $reader = new Xlsx();
-    }else{
-        $errorFormat = true;
-    }
-    if (! $errorFormat){
-        $spreadsheet = $reader->load($_FILES['file']['tmp_name']);
-        $sheetData = $spreadsheet->getActiveSheet()->toArray();
-        $rubValues = array();
-        if (!empty($sheetData)) {
-            for ($i=1; $i<count($sheetData); $i++) {
-                $id = $sheetData[$i][1];
-                $avance  = 0;
-                for ($j= count($userInfos); $j < count(($sheetData[$i])); $j++) { 
-                    $avance  = $sheetData[$i][$j] != '' ? $sheetData[$i][$j] : 0;
-                    array_push($rubValues, [$id, $sheetData[0][$j], $avance]);
-                }
-            }
-            $sql = "REPLACE INTO llx_Paie_UserParameters (userid, rub, amount) values ";
-            foreach ($rubValues as $value) {
-                $sql .= "($value[0], $value[1], '$value[2]'),";
-            }
-            $sql = substr($sql, 0, -1);
-            $res = $db->query($sql);
-            if($res === TRUE){}
-        }else{
-            $fileError = "le fichier empty";
-        }
-    }else{
-        $fileError = "le fichier non autorisé. Uniquement .csv, .xls ou .xlsx";
-    }
-    $db->close();
-}
+
 if ($fileError){
     print '
         <div id="overflow" style="display:block">
@@ -295,7 +303,7 @@ print "
         <input type='hidden' name='token' value='".newToken()."'>";
         foreach ($importable as $rub) {
            print "
-           <label>$rub[1]</label>
+           <label>$rub[0] : $rub[1]</label>
            <input type='checkbox' name='rubs[]' value='$rub[0]'><br>";
         }
             
@@ -319,6 +327,38 @@ print "
             <div class='fileName' style='display:none;'>file name</div>
         </label>
         <p><button type='submit'>Enregistrer</button></p>";
+
+$employees = array();
+$sql = "SELECT ef.matricule, u.firstname, u.lastname, u.rowid FROM `llx_user` as u LEFT JOIN llx_user_extrafields as ef ON u.rowid = ef.fk_object where u.employee=1";
+$res = $db->query($sql);
+if ($res->num_rows) {
+    while ($row = $res->fetch_assoc()) {
+        array_push($employees, [$row['rowid'], $row['matricule'], $row['firstname'] .' '.$row['lastname']]);
+    }
+}
+print '<table border="1" style="border-collapse: collapse;"><thead><tr style="background-color: #dfdfdf;font-weight: 600;font-size: 12px;"><td>Matricule</td><td>Nom Complet</td>';
+foreach ($importable as $rub) {
+    print "<td>$rub[1]</td>";
+}
+print "</tr></thead><tbody>";
+foreach ($employees as $employee) {
+    print "<tr><td>$employee[1]</td><td>$employee[2]</td>";
+    foreach ($importable as $rub) {
+        $sql = "SELECT amount from llx_Paie_UserParameters WHERE userid=" . $employee[0] . " AND rub=" . $rub[0];
+        $res1 = $db->query($sql);
+        $amount=0;
+        if ($res1->num_rows > 0) {
+            $amount = $res1->fetch_assoc()["amount"];
+        }
+        print "<td>$amount</td>";
+    }
+}
+print "</thead></table>";
+
+
+
+
+
 print '
     <script>
         $("#fileNotAllowed .dismiss").click(function(){
@@ -330,7 +370,14 @@ print '
             $(".fileName").css("display", "block");
         });
     </script>
+    <style>
+        td{
+            text-align: center;
+        }
+    </style>
+    
 ';
+
 
 
 ?>

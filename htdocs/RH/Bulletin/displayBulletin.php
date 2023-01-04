@@ -8,6 +8,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+
 
 if (!$user->rights->salaries->read) {
 	accessforbidden("you don't have right for this page");
@@ -218,7 +222,9 @@ $mydate = getdate(date("U"));
 $month = (GETPOST('month') != '') ? GETPOST('month') : $mydate['mon'];
 $year = (GETPOST('year') != '') ? GETPOST('year') : $mydate['year'];
 $day = $mydate['mday'];
-
+if (strlen($month) == 1){
+	$month = '0'.$month;
+}
 
 if ($action == 'filter') {
 	$dateFiltre = GETPOST('date');
@@ -1275,7 +1281,8 @@ function changeWorkingDays()
             <th class="titlefield wordbreak">Login</th>
             <th class="titlefield wordbreak">Nom Complet</th>
             <th class="titlefield wordbreak">Nombre des jours travaillé</th>
-            <th class="titlefield wordbreak">Nombre des Hours travaillé (horaire)</th>';
+            <th class="titlefield wordbreak">Nombre des Hours travaillé (horaire)</th>
+            <th class="titlefield wordbreak">Nombre des jours de congé</th>';
 	foreach ((array)$hrs as $hr) {
 		print '<th class="titlefield wordbreak">' . $hr[1] . '</th>';
 	}
@@ -1293,9 +1300,23 @@ function changeWorkingDays()
 		}
 		$type = $salaireParams["type"];
 		$conge = 0;
-		$sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
 
+		
+		$sql = "select rowid FROM llx_holiday WHERE MONTH(date_debut) = $month and YEAR(date_debut) = $year and fk_user=$user->rowid";
+		$res = $db->query($sql);
+		if (((object)$res)->num_rows > 0) {
+			while ($row = $res->fetch_assoc()) {
+				$object = new Holiday($db);
+				$object->fetch($row['rowid']);
+				if (date('m', $object->date_fin) == $month){
+					print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				}else{
+					
+				}
+				// print date('m', $object->date_debut).'____';
 
+			}
+		}
 		if ($type == 'mensuel') //Mensuel
 		{
 			$workingdays = 26;
@@ -1328,7 +1349,9 @@ function changeWorkingDays()
                 <td>$user->lastname $user->firstname</td>
                 <td>------</td>
                 <td><input type='number'  name='workingHours_$user->rowid' value='$workingHours'></td>";
-		}
+			}
+		print "<td>4</td>";
+
 		foreach ((array)$hrs as $hr) {
 			$sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
 			$resh = $db->query($sqlh);
@@ -1603,19 +1626,19 @@ function datefilter()
 }
 
 print "
+<script>
+	$(document).ready(function(){
+		$('#date').val('" . $year . "-" . $month . "');	
+	});
+</script>
 <style>
-	<script>
-		$(document).ready(function(){
-			$('#date').val('" . $year . "-" . $month . "');	
-		});
-	</script>
 	@media only screen and (min-width: 977px) {
 		div.div-table-responsive {
 			width: calc(100vw - 285px);
 			overflow-x: scroll;
 		}
 	}
-	</style>";
+</style>";
 
 
 

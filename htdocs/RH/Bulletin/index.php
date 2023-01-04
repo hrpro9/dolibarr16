@@ -218,7 +218,9 @@ $mydate = getdate(date("U"));
 $month = (GETPOST('month') != '') ? GETPOST('month') : $mydate['mon'];
 $year = (GETPOST('year') != '') ? GETPOST('year') : $mydate['year'];
 $day = $mydate['mday'];
-
+if (strlen($month) == 1){
+	$month = '0'.$month;
+}
 
 if ($action == 'filter') {
 	$dateFiltre = GETPOST('date');
