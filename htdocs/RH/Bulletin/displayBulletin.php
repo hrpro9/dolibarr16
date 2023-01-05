@@ -1486,7 +1486,7 @@ function ShowBulletin($id)
 	}
 	// if ($avanceSurSalaire > 0) {
 	//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-	//     <tr><td>802</td><td>RETENUE SUR AVANCE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($avanceSurSalaire, 0, '', 1, 1,2) . ' </td></tr>';
+	//     <tr><td>902</td><td>RETENUE SUR AVANCE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($avanceSurSalaire, 0, '', 1, 1,2) . ' </td></tr>';
 	// }
 	// if ($primePanier > 0) {
 	//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
