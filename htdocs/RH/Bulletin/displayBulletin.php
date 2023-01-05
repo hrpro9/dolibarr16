@@ -8,8 +8,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 
 
@@ -222,8 +222,8 @@ $mydate = getdate(date("U"));
 $month = (GETPOST('month') != '') ? GETPOST('month') : $mydate['mon'];
 $year = (GETPOST('year') != '') ? GETPOST('year') : $mydate['year'];
 $day = $mydate['mday'];
-if (strlen($month) == 1){
-	$month = '0'.$month;
+if (strlen($month) == 1) {
+	$month = '0' . $month;
 }
 
 if ($action == 'filter') {
@@ -1299,29 +1299,27 @@ function changeWorkingDays()
 		}
 		$type = $salaireParams["type"];
 
-		
+
 		$sql = "select rowid FROM llx_holiday WHERE ((MONTH(date_debut) = $month and YEAR(date_debut) = $year) or (MONTH(date_fin) = $month and YEAR(date_fin) = $year)) and fk_user=$user->rowid and statut=3";
 		$res = $db->query($sql);
 		$daysConge = 0;
 		if (((object)$res)->num_rows > 0) {
 			while ($row = $res->fetch_assoc()) {
-				
+
 				$object = new Holiday($db);
 				$object->fetch($row['rowid']);
-				if (date('m', $object->date_fin) == $month && date('m', $object->date_debut) == $month){
+				if (date('m', $object->date_fin) == $month && date('m', $object->date_debut) == $month) {
 					$daysConge +=  num_open_day($object->date_debut, $object->date_fin, 0, 1, $object->halfday);
-				}else{
-					if (date('m', $object->date_debut) == $month){
-						$lastDay =  cal_days_in_month(CAL_GREGORIAN, $month, $year); 
+				} else {
+					if (date('m', $object->date_debut) == $month) {
+						$lastDay =  cal_days_in_month(CAL_GREGORIAN, $month, $year);
 						$dateFinMonth = $db->jdate("$year-$month-$lastDay");
 						$daysConge += num_open_day($object->date_debut, $dateFinMonth, 0, 1, $object->halfday);
-
-					}else if (date('m', $object->date_fin) == $month){
+					} else if (date('m', $object->date_fin) == $month) {
 						$firstOfMonth =   $db->jdate("$year-$month-01");
 						$daysConge +=  num_open_day($firstOfMonth, $object->date_fin, 0, 1, '0');
 					}
 				}
-
 			}
 		}
 		if ($type == 'mensuel') //Mensuel
@@ -1358,7 +1356,7 @@ function changeWorkingDays()
                 <td>------</td>
                 <td><input type='number'  name='workingHours_$user->rowid' value='$workingHours'></td>
                 <td>$daysConge</td></tr>";
-			}
+		}
 
 		// foreach ((array)$hrs as $hr) {
 		// 	$sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
@@ -1443,10 +1441,6 @@ function ShowBulletin($id)
 		$bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireHoraire") . '</td><td>SALAIRE HORAIRE</td><td>' . $workingHours . '</td><td>' . price($salaireHoraire, 0, '', 1, 1, 2) . '</td><td>  </td><td> ' . price($bases["salaire mensuel"], 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
 	}
 
-	if ($primeDancien > 0) {
-		$bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases["salaire mensuel"], 0, '', 1, 1, 2) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien, 0, '', 1, 1, 2) . '</td><td>&nbsp;</td></tr> ';
-	}
-
 	if ($soldeConge > 0) {
 		$bulttin .= '<tr class="row-content"><td>' . getRebrique("congePaye") . '</td><td>CONGE PAYE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td>' . $congeDays . '</td><td> ' . price($soldeConge, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
 	}
@@ -1457,6 +1451,10 @@ function ShowBulletin($id)
 
 	foreach ((array)$hrs as $hr) {
 		$bulttin .= '<tr class="row-content"><td>' . $hr["rub"] . '</td><td>' . $hr["designation"] . '</td><td>' . price($hr["nombre"], 0, '', 1, 1, 2) . '</td><td>' . price($hr["base"], 0, '', 1, 1, 2) . '</td><td>' . $hr["taux"] . '%</td><td> ' . price($hr["apayer"], 0, '', 1, 1, 2) . ' </td><td>' . price($hr["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
+	}
+
+	if ($primeDancien > 0) {
+		$bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases['primeDancien'], 0, '', 1, 1, 2) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien, 0, '', 1, 1, 2) . '</td><td>&nbsp;</td></tr> ';
 	}
 
 	foreach ((array)$enBruts as $enBrut) {
