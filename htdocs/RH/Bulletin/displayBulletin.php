@@ -253,7 +253,6 @@ $next_day   = 1;
 
 
 
-
 llxHeader("", "Consulter Bulletin de Paie");
 
 //add filter by date
@@ -1254,7 +1253,7 @@ function GenerateDocuments()
 
 function changeWorkingDays()
 {
-	global $db, $day, $month, $year, $users, $limit;
+	global $db, $day, $month, $year, $users, $limit, $next_year, $next_month;
 
 	$sql = "SELECT rub, designation FROM llx_Paie_HourSupp";
 	$res = $db->query($sql);
@@ -1299,21 +1298,29 @@ function changeWorkingDays()
 			$salaireParams = ((object)$res)->fetch_assoc();
 		}
 		$type = $salaireParams["type"];
-		$conge = 0;
 
 		
-		$sql = "select rowid FROM llx_holiday WHERE MONTH(date_debut) = $month and YEAR(date_debut) = $year and fk_user=$user->rowid";
+		$sql = "select rowid FROM llx_holiday WHERE ((MONTH(date_debut) = $month and YEAR(date_debut) = $year) or (MONTH(date_fin) = $month and YEAR(date_fin) = $year)) and fk_user=$user->rowid and statut=3";
 		$res = $db->query($sql);
+		$daysConge = 0;
 		if (((object)$res)->num_rows > 0) {
 			while ($row = $res->fetch_assoc()) {
+				
 				$object = new Holiday($db);
 				$object->fetch($row['rowid']);
-				if (date('m', $object->date_fin) == $month){
-					print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+				if (date('m', $object->date_fin) == $month && date('m', $object->date_debut) == $month){
+					$daysConge +=  num_open_day($object->date_debut, $object->date_fin, 0, 1, $object->halfday);
 				}else{
-					
+					if (date('m', $object->date_debut) == $month){
+						$lastDay =  cal_days_in_month(CAL_GREGORIAN, $month, $year); 
+						$dateFinMonth = $db->jdate("$year-$month-$lastDay");
+						$daysConge += num_open_day($object->date_debut, $dateFinMonth, 0, 1, $object->halfday);
+
+					}else if (date('m', $object->date_fin) == $month){
+						$firstOfMonth =   $db->jdate("$year-$month-01");
+						$daysConge +=  num_open_day($firstOfMonth, $object->date_fin, 0, 1, '0');
+					}
 				}
-				// print date('m', $object->date_debut).'____';
 
 			}
 		}
@@ -1332,7 +1339,8 @@ function changeWorkingDays()
                 <td>$user->login</td>
                 <td>$user->lastname $user->firstname</td>
                 <td><input type='number' step='0.5' name='workingdays_$user->rowid' value='$workingdays'></td>
-                <td>------</td>";
+                <td>------</td>
+                <td>$daysConge</td></tr>";
 		} else if ($type == 'horaire') //Journalier or Horaire
 		{
 			$workingHours = 0;
@@ -1348,18 +1356,18 @@ function changeWorkingDays()
                 <td>$user->login</td>
                 <td>$user->lastname $user->firstname</td>
                 <td>------</td>
-                <td><input type='number'  name='workingHours_$user->rowid' value='$workingHours'></td>";
+                <td><input type='number'  name='workingHours_$user->rowid' value='$workingHours'></td>
+                <td>$daysConge</td></tr>";
 			}
-		print "<td>4</td>";
 
-		foreach ((array)$hrs as $hr) {
-			$sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
-			$resh = $db->query($sqlh);
-			if (((object)$resh)->num_rows > 0) {
-				$nhours = ((object)$resh)->fetch_assoc()["nhours"];
-			}
-			print "<td class='small-td'><input type='number' name='hoursupp_$hr[0]_$user->rowid' value='$nhours'></td>";
-		}
+		// foreach ((array)$hrs as $hr) {
+		// 	$sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
+		// 	$resh = $db->query($sqlh);
+		// 	if (((object)$resh)->num_rows > 0) {
+		// 		$nhours = ((object)$resh)->fetch_assoc()["nhours"];
+		// 	}
+		// 	print "<td class='small-td'><input type='number' name='hoursupp_$hr[0]_$user->rowid' value='$nhours'></td>";
+		// }
 	}
 
 	print '</tbody>
