@@ -867,7 +867,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 	
     // see if it's clotured
-    $sql1 = "SELECT avance FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and avance > 0";
+    $sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and avance > 0";
     $res1 = $db->query($sql1);
     if ($res1->num_rows > 0) {
 		$i++;

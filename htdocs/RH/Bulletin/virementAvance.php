@@ -313,6 +313,9 @@ if ($action == "generateVirement") {
             $sheet->setCellValueByColumnAndRow($index + 1, $j, $row[$index]);
         }
 
+		$sql1 = "update llx_Paie_MonthDeclaration set clotureAvance =1 WHERE userid=$ids[$i] AND year=$year AND month=$month ";
+		$res = $db->query($sql1);
+
         $j++;
 	}
 
@@ -323,6 +326,9 @@ if ($action == "generateVirement") {
 	header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
 	$writer->save('php://output');
 	exit();
+
+	
+
     
     
     
@@ -900,7 +906,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
     }
 
 	// see if it's clotured
-    $sql1 = "SELECT avance FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and avance > 0";
+    $sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and clotureAvance = '1'";
+    $res1 = $db->query($sql1);
+    if ($res1->num_rows > 0) {
+		$i++;
+		continue;
+    }
+
+	$sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and avance > 0";
     $res1 = $db->query($sql1);
     if ($res1->num_rows == 0) {
 		$i++;
