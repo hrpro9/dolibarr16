@@ -2,7 +2,7 @@
 
 require_once '../../vendor/autoload.php';
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'../user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 
 
@@ -99,6 +99,17 @@ if ($action == 'import') {
             $sql = substr($sql, 0, -1);
             $res = $db->query($sql);
             if($res === TRUE){
+                if($extension == 'csv') {
+                    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
+                } else if($extension == 'xls') {
+                    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
+                }else if ($extension == 'xlsx'){
+                    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                }
+                $now = date("Y_m_d_H-i-s");
+                $userId = $user->id;
+                $template = DOL_DATA_ROOT . "/import/rubriques/".$userId."-".$now.".".$extension; 
+                $writer->save("$template");
             }
         }else{
             $fileError = "le fichier empty";

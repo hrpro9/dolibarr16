@@ -2647,28 +2647,28 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<!-- End show Note --> '."\n";
 			}
 			// min max achat
+			$sql = "SELECT TRUNCATE(MIN(subprice), 2) as min, TRUNCATE(MAX(subprice), 2) as max FROM llx_commande_fournisseurdet WHERE fk_product = $id and product_type = 0 and fk_commande in (select rowid from llx_commande_fournisseur WHERE fk_statut in (4,5))";
+			$resql = $db->query($sql);
 			$minBuyPrice = 0;
 			$maxBuyPrice = 0;
-			$sql = "SELECT MIN(subprice) as min, MAX(subprice) as max FROM llx_commande_fournisseurdet WHERE fk_product = $id and product_type = 0 and fk_commande in (select rowid from llx_commande_fournisseur WHERE fk_statut in (4,5)) ORDER BY subprice DESC";
-			$resql = $db->query($sql);
 			if($resql){
 				$result = ((object)$resql)->fetch_assoc();
 				$minBuyPrice = $result['min'];
 				$maxBuyPrice = $result['max'];
 			}
-			print "<tr><td class='valignmiddle'>Prix d'achat</td><td>Min : $minBuyPrice / Max : $maxBuyPrice</td></tr>";
+			print "<tr><td class='valignmiddle'>Prix d'achat</td><td>Min : $minBuyPrice / Max : $maxBuyPrice <a style='float:right;' href='/product/listBuyPrice.php?id=$id'>List complet</a></td></tr>";
 			
 			// min max vendre
 			$minSellPrice = 0;
 			$maxSellPrice = 0;
-			$sql = "SELECT MIN(subprice) as min, MAX(subprice) as max FROM llx_commandedet WHERE fk_product = $id and product_type = 0 and fk_commande in (select rowid from llx_commande WHERE fk_statut = 3)";
+			$sql = "SELECT TRUNCATE(MIN(subprice), 2) as min, TRUNCATE(MAX(subprice), 2) as max FROM llx_commandedet WHERE fk_product = $id and product_type = 0 and fk_commande in (select rowid from llx_commande WHERE fk_statut = 3)";
 			$resql = $db->query($sql);
 			if($resql){
 				$result = ((object)$resql)->fetch_assoc();
-				$minBuyPrice = $result['min'];
-				$maxBuyPrice = $result['max'];
+				$minSellPrice = $result['min'];
+				$maxSellPrice = $result['max'];
 			}
-			print "<tr><td class='valignmiddle'>Prix de vendre</td><td>Min : $minBuyPrice / Max : $maxBuyPrice</td></tr>";
+			print "<tr><td class='valignmiddle'>Prix de vendre</td><td>Min : $minSellPrice / Max : $maxSellPrice <a style='float:right;' href='/product/listSellPrice.php?id=$id'>List complet</a></td></tr>";
 
 
 

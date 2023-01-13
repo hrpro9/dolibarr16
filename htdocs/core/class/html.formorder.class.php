@@ -70,6 +70,32 @@ class FormOrder extends Form
 
 		print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
 	}
+	public function selectdemandeAchatStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	{
+		$options = array();
+
+		// 7 is same label than 6. 8 does not exists (billed is another field)
+		$statustohow = array(
+			'0' => '0',
+			'1' => '1'
+		);
+		$libstatut[0] = 'Brouillon';
+		$libstatut[1] = 'Validé';
+
+		$tmpsupplierorder = new CommandeFournisseur($this->db);
+
+		foreach ($statustohow as $key => $value) {
+			$options[$value] = $libstatut[$key];
+		}
+
+		if (is_array($selected)) {
+			$selectedarray = $selected;
+		} else {
+			$selectedarray = explode(',', $selected);
+		}
+
+		print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
+	}
 
 	/**
 	 *	Return list of input method (mode used to receive order, like order received by email, fax, online)

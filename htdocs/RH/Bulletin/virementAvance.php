@@ -265,6 +265,8 @@ if ($action == "reset") {
     // }
     
 }
+
+
 if ($action == "generateVirement") {
     $users = GETPOST('ids');
 	$ids = explode(',', $users);
@@ -272,7 +274,7 @@ if ($action == "generateVirement") {
 	$nameSte = dolibarr_get_const($db, 'MAIN_INFO_SOCIETE_NOM', $conf->entity);
 	$account = new Account($db);
 	$account->fetch(1);
-	$date = $day.'-'.$month.'-'.$year.'  ' .$hours.':'.$minutes;
+	$date = $day.'-'.$month.'-'.$year;
 	$dateg = $month.'-'.$year;
 	$smit = 'Avance Sur Salaire';
     $spreadsheet = new Spreadsheet();
@@ -291,7 +293,6 @@ if ($action == "generateVirement") {
 		if (((object)$res)->num_rows > 0) {
 			$ribClt = ((object)$res)->fetch_assoc()['number'];
 		}
-		$avance = 0;
 		// Montant de salaire
 		$mt = 0;
 		$sql1 = "SELECT avance FROM llx_Paie_MonthDeclaration WHERE userid=$ids[$i] AND year=$year AND month=$month ";
@@ -313,29 +314,32 @@ if ($action == "generateVirement") {
             $sheet->setCellValueByColumnAndRow($index + 1, $j, $row[$index]);
         }
 
-		$sql1 = "update llx_Paie_MonthDeclaration set clotureAvance =1 WHERE userid=$ids[$i] AND year=$year AND month=$month ";
+		$sql1 = "update llx_Paie_MonthDeclaration set clotureAvance =1 WHERE userid=$ids[$i] AND year=$year AND month=$month";
 		$res = $db->query($sql1);
 
         $j++;
+
+
 	}
 
+	foreach ($sheet->getColumnIterator() as $column) {
+		$sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+	}
+	$sheet->getStyle('A1:G1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFF00');
+
+    $writer = new Xlsx($spreadsheet);
+	$now = date("Y_m_d_H-i-s");
+	$userId = $user->id;
+	$template = DOL_DATA_ROOT . "/grh/virementAvance/".$userId."_OrderDeVirementAvance-".$now.".xlsx"; 
+	$writer->save("$template");
 
     $fileName = "_OrderDeVirementAvance_$dateg.xlsx";
-    $writer = new Xlsx($spreadsheet);
 	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 	header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
 	$writer->save('php://output');
-	exit();
-
-	
-
-    
-    
+	Exit();
     
 }
-
-
-
 
 
 
@@ -445,7 +449,7 @@ $reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Not
 if ($reshook > 0) {
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql .= " WHERE u.entity IN (".getEntity('user').")";
+	$sql .= " WHERE u.entity IN (".getEntity('user').") and u.employee=1";
 }
 if ($socid > 0) {
 	$sql .= " AND u.fk_soc = ".((int) $socid);
@@ -871,6 +875,8 @@ $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $users = array();
+$employeesWithRibNotValid = array();
+$employeesNeedValidePaie = array();
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 while ($i < ($limit ? min($num, $limit) : $num)) {
@@ -906,7 +912,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
     }
 
 	// see if it's clotured
-    $sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and clotureAvance = '1'";
+    $sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and clotureAvance = 1";
     $res1 = $db->query($sql1);
     if ($res1->num_rows > 0) {
 		$i++;
@@ -937,10 +943,15 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$row = $res1->fetch_assoc();
 		$mode = $row["mode_paiement"];
 	}
-	if ($mode != 'virement')
+	if ($mode != 'virement'){
+		array_push($employeesNeedValidePaie, $obj);
 		continue;
-	if (strlen($rib) != 24)
+	}
+	if (strlen($rib) != 24){
+			array_push($employeesWithRibNotValid, $obj);
+
 		continue;
+	}
 
 	$users[$i] = $obj;
     $li = '<a href="/RH/Users/card.php?id=' . $userstatic->id . '">' . $userstatic->login . '</a>';
@@ -1241,15 +1252,78 @@ print '</table>
 </form>';
 
 
+if (count($employeesWithRibNotValid) > 0){
+
+
+	print '
+	<table class="noborder editmode" style="width:100%">
+	<h3>Employees avec rib invalide ('.count($employeesWithRibNotValid).')</h3>
+	<thead>
+		<tr class="liste_titre">
+			<th class="titlefield wordbreak">Matricule</th>
+			<th class="titlefield wordbreak">Nom Complet</th>
+			<th class="titlefield wordbreak">rib</th';
+	print '</tr>
+	</thead>
+	<tbody>';
+	foreach ($employeesWithRibNotValid as $employee) {
+
+		$salaireParams = "";
+		$sql = "SELECT number from llx_user_rib WHERE fk_user=$employee->rowid";
+		$res = $db->query($sql);
+		if (((object)$res)->num_rows > 0) {
+			$rib = ((object)$res)->fetch_assoc()['number'];
+		}else{
+			$rib = '';
+		}
+		print "
+			<tr>
+				<td>$employee->options_matricule</td>
+				<td><a href='/RH/Users/bank.php?id=$employee->rowid'>$employee->lastname $employee->firstname</a></td>
+				<td>$rib</td>
+			</t>";
+	}
+
+	print '</tbody>
+	</table>';
+}
+if (count($employeesNeedValidePaie) > 0){
+	
+	print '
+	<table class="noborder editmode" style="width:100%">
+	<h3>Employees avec autres mode paiement ('.count($employeesNeedValidePaie).')</h3>
+	<thead>
+	<tr class="liste_titre">
+	<th class="titlefield wordbreak">Matricule</th>
+	<th class="titlefield wordbreak">Nom Complet</th>
+	<th class="titlefield wordbreak">Mode paiement</th>';
+	print '</tr>
+	</thead>
+	<tbody>';
+	foreach ($employeesNeedValidePaie as $employee) {
+		$mode = '';
+		$sql1 = "SELECT mode_paiement FROM llx_Paie_UserInfo WHERE userid=$employee->rowid";
+		$res1 = $db->query($sql1);
+		if ($res1) {
+			$row = $res1->fetch_assoc();
+			$mode = $row["mode_paiement"];
+		}
+		print "
+			<tr>
+				<td>$employee->options_matricule</td>
+				<td><a href='/RH/Users/bank.php?id=$employee->rowid'>$employee->lastname $employee->firstname</a></td>
+				<td>$mode</td>
+			</t>";
+	}
+
+	print '</tbody>
+	</table>';
+}
+
+
 
 GenerateDocuments();
 
-
-// $action = GETPOST('action');
-// $id = GETPOST('id', 'int');
-// if ($id && $action == 'show') {
-//     ShowBulletin($id);
-// }
 // ShowDocuments();
 
 function GenerateDocuments()
@@ -1306,9 +1380,6 @@ function GenerateDocuments()
 		}
 	}
 	</style>";
-
-
-
 
 $db->free($result);
 
