@@ -388,6 +388,17 @@ if ($action == 'addList') {
                                     if($res === TRUE){
                                         array_push($rowsLog, [1, $i+1, 'Utilisateur '.$prenom.' '.$nom.' Ajouté avec success']);
                                         $db->commit();
+                                        if($extension == 'csv') {
+                                            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
+                                        } else if($extension == 'xls') {
+                                            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
+                                        }else if ($extension == 'xlsx'){
+                                            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                                        }
+                                        $now = date("Y_m_d_H-i-s");
+                                        $userId = $user->id;
+                                        $template = DOL_DATA_ROOT . "/import/employees/".$userId."-".$now.".".$extension; 
+                                        $writer->save("$template");
                                     }else{
                                         $db->rollback();
                                         $errorMsg = "RIB error";

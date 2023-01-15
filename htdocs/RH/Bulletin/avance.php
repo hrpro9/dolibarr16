@@ -263,7 +263,7 @@ if ($action == "generateAvance") {
         if (((object)$res)->num_rows > 0) {
             $avance = ((object)$res)->fetch_assoc()['amount'];
         }
-        $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, avance, cloture) VALUES($userid, $year, $month, $avance, 0);";
+        $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, avance) VALUES($userid, $year, $month, $avance);";
         $res = $db->query($sql);
         if ($res);
         else print("<br>fail ERR: " . $sql);
@@ -383,7 +383,7 @@ $reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Not
 if ($reshook > 0) {
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql .= " WHERE u.entity IN (".getEntity('user').")";
+	$sql .= " WHERE u.entity IN (".getEntity('user').") and u.employee=1";
 }
 if ($socid > 0) {
 	$sql .= " AND u.fk_soc = ".((int) $socid);
@@ -849,13 +849,24 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$userstatic->employee = $obj->employee;
 	$userstatic->photo = $obj->photo;
 
-    $res1 = $db->query($sql1);
     if ((strtotime($obj->dateemploymentend) < strtotime(date("d") . '-' . $month . '-' . $year) && $obj->dateemploymentend != '') || $obj->dateemployment == '' || (strtotime($obj->dateemployment) > strtotime(date("t", strtotime('01-' . $month . '-' . $year)) . '-' . $month . '-' . $year) && $obj->dateemployment != '')) {
         $i++;
         continue;
     }
 
-	$sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='902' AND userid=$obj->rowid";
+
+
+	// see if it's clotured
+    $sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and avance > 0";
+    $res1 = $db->query($sql1);
+    if ($res1->num_rows > 0) {
+		$i++;
+		continue;
+    }
+
+
+	$sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='802' AND userid=$obj->rowid";
+
 	$res = $db->query($sql);
 	$avance = 0;
 	if (((object)$res)->num_rows > 0) {
@@ -866,13 +877,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
         continue;
 	}
 	
-    // see if it's clotured
-    $sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and avance > 0";
-    $res1 = $db->query($sql1);
-    if ($res1->num_rows > 0) {
-		$i++;
-		continue;
-    }
+    
 
 	
 
@@ -1322,138 +1327,6 @@ function displayAvance()
 }
 
 
-// function ShowBulletin($id)
-// {
-//     global $db, $object, $year, $month;
-
-//     $object->fetch($id);
-
-//     include 'Bulletin_Class.php';
-
-//     $bulttin = '<style type="text/css">
-//         table.tableizer-table {
-//             font-size: 11px;
-//             margin:auto;
-//             border-bottom:1px solid #000;
-//             border-collapse: collapse;
-//         } 
-//         .tableizer-table td {
-//             padding: 4px;
-//             margin: 3px;
-//             border-left: 1px solid #000;
-//             border-right: 1px solid #000;
-//         }
-//         .tableizer-table th {
-//             background-color: #104E8B; 
-//             color: #FFF;
-//             font-weight: bold;
-//         }
-//         .row-bordered{
-//             border-top: 1px solid #000;
-//             border-bottom: 1px solid #000;
-//         }
-//         .row-content{
-//             background-color: rgb(214, 214, 214);
-//         }
-//         .importent-cell{
-//             background-color: rgb(122, 166, 202);
-//             font-weight: bold;
-//         }
-//         .white-cell{
-//             background-color: white;
-//             font-weight: bold;
-//         }
-//         </style>
-//             <table class="tableizer-table">
-//                 <thead><tr class="tableizer-firstrow"><th colspan="7">BULLETIN DE PAIE</th></tr></thead>
-//                 <tbody>
-//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Nom</td><td class="white-cell">' . $object->lastname . ' ' . $object->firstname . '</td><td>Date de naissance</td><td class="white-cell" colspan="2">' . date("d/m/Y", $object->birth) . '</td></tr>
-//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° CNSS</td><td class="white-cell">' . $salaireParams["cnss"] . '</td><td>Fonction</td><td class="white-cell" colspan="2">' . $object->job . '</td></tr>
-//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° Mutuelle</td><td class="white-cell">' . $salaireParams["mutuelle"] . '</td><td>N° CIMR</td><td class="white-cell" colspan="2">' . $salaireParams["cimr"] . '</td></tr>
-//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Periode</td><td class="white-cell">' . $periode . '</td><td>adresse</td><td class="white-cell" colspan="2">' . $object->address . '</td></tr>
-//                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Situation familiale</td><td class="white-cell">' . $situation . '</td><td>nombre d\'enfants</td><td class="white-cell" colspan="2">' . $enfants . '</td></tr>
-//                 <tr class="importent-cell row-bordered"><td rowspan="2">Rub</td><td rowspan="2">Désignation</td><td rowspan="2">Nombre</td><td rowspan="2">Base</td><td colspan="3">Part salariale</td></tr>
-//                 <tr class="importent-cell row-bordered"><td>Taux</td><td>A payer</td><td>A retenues</td></tr>
-//     ';
-
-//     if ($type == "mensuel") {
-//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireMensuel") . '</td><td>SALAIRE MENSUEL</td><td></td><td>' . price($bases["salaire de base"], 0, '', 1, 1,2) . '</td><td> ' . $Taux . ' </td><td> ' . price($bases["salaire mensuel"]) . ' </td><td>&nbsp;</td></tr>';
-//     }
-
-//     if ($type == "horaire") {
-//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireHoraire") . '</td><td>SALAIRE HORAIRE</td><td>' . $workingHours . '</td><td>' . price($salaireHoraire, 0, '', 1, 1,2) . '</td><td>  </td><td> ' . price($bases["salaire mensuel"], 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
-//     }
-
-//     if ($primeDancien > 0) {
-//         $bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases["salaire mensuel"], 0, '', 1, 1,2) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr> ';
-//     }
-
-//     if ($soldeConge > 0) {
-//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("congePaye") . '</td><td>CONGE PAYE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1,2) . '</td><td>' . $congeDays . '</td><td> ' . price($soldeConge, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
-//     }
-
-//     if ($soldeferie > 0) {
-//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>LES JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1,2) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
-//     }
-
-//     foreach ((array)$hrs as $hr) {
-//         $bulttin .= '<tr class="row-content"><td>' . $hr["rub"] . '</td><td>' . $hr["designation"] . '</td><td>' . price($hr["nombre"], 0, '', 1, 1,2) . '</td><td>' . price($hr["base"], 0, '', 1, 1,2) . '</td><td>' . $hr["taux"] . '%</td><td> ' . price($hr["apayer"], 0, '', 1, 1,2) . ' </td><td>' . price($hr["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
-//     }
-
-//     foreach ((array)$enBruts as $enBrut) {
-//         $base = $enBrut["base"] > 0 ? price($enBrut["base"], 0, '', 1, 1,2) : "";
-//         $bulttin .= '<tr class="row-content"><td>' . $enBrut["rub"] . '</td><td>' . $enBrut["designation"] . '</td><td>' . $enBrut["nombre"] . '</td><td>' . $base . '</td><td>' . $enBrut["taux"] . '</td><td> ' . price($enBrut["apayer"], 0, '', 1, 1,2) . ' </td><td>' . price($enBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
-//     }
-
-//     if ($primeCommercial > 0) {
-//         $base = $CA > 0 ? price($CA, 0, '', 1, 1,2) : "";
-//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("primeCommercial") . '</td><td>PRIME COMMERCIAL</td><td></td><td>' . $base . '</td><td>' . $percent . '%</td><td> ' . price($primeCommercial, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
-//     }
-
-//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-//              <tr class="row-content"><td></td><td>SALAIRE BRUT</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($brutGlobal, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>
-//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
-
-//     foreach ((array)$cotisations as $cotisation) {
-//         $base = $cotisation["base"] > 0 ? price($cotisation["base"], 0, '', 1, 1,2) : "";
-//         $bulttin .= '<tr class=""><td>' . $cotisation["rub"] . '</td><td>' . $cotisation["designation"] . '</td><td>' . price($cotisation["nombre"], 0, '', 1, 1,2) . '</td><td>' . $base . '</td><td>' . $cotisation["taux"] . '</td><td>  </td><td>' . price($cotisation["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
-//     }
-
-//     $bulttin .= ' <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-//              <tr class="row-content"><td>' . getRebrique("netImposable") . '</td><td>SALAIRE NET IMPOSABLE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($netImposable, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>
-//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
-
-//     if ($chargeFamille != 0) {
-//         $bulttin .= '<tr class="row-content"><td>' . getRebrique("chargefamille") . '</td><td>CHARGE DE FAMILLE</td><td>&nbsp;</td><td>&nbsp;</td><td>' . $chargeFamilleTaux . '</td><td>' . price($chargeFamille, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr>';
-//     }
-
-//     if ($irNet > 0) {
-//         $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-//         <tr><td>' . getRebrique("ir") . '</td><td>IR</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($irNet, 0, '', 1, 1,2) . ' </td></tr>';
-//     }
-    
-//     foreach ((array)$pasEnBruts as $pasEnBrut) {
-//         $base = $pasEnBrut["base"] > 0 ? price($pasEnBrut["base"], 0, '', 1, 1,2) : "";
-//         $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
-// 		$bulttin .= '<tr class="row-content"><td>'. $pasEnBrut["rub"] .'</td><td>' . $pasEnBrut["designation"] . '</td><td>&nbsp;</td><td>' . price($pasEnBrut["nombre"], 0, '', 1, 1,2) . '</td><td>'.$base.'</td><td>' . price($pasEnBrut["apayer"], 0, '', 1, 1,2) . '</td><td>' . price($pasEnBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
-
-//         // $bulttin .= '<tr class="row-content"><td>' . $pasEnBrut["rub"] . '</td><td>' . $pasEnBrut["designation"] . '</td><td>' . price($pasEnBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
-//     }
-
-//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-//              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td></td><td class="importent-cell row-bordered"> ' . price($totalBrut, 0, '', 1, 1,2) . ' </td><td class="importent-cell row-bordered"> ' . price($totalRetenu + $retenueFromBrut, 0, '', 1, 1,2) . ' </td></tr>
-//              <tr ><td></td><td>&nbsp;</td><td class="importent-cell row-bordered" colspan="3">Net a payer</td><td class="importent-cell row-bordered" colspan="2"> ' . price($totalNet, 0, '', 1, 1,2) . ' </td></tr>
-
-//              <tr><td></td><td>&nbsp;</td><td>Jours travaillés</td><td>Brut imposable</td><td>Net imposable</td><td>Retenue I.R.</td></tr>
-//              <tr class="row-bordered row-content"><td></td><td>Mensuel</td><td>' . ($workingdaysdeclaré) . '</td><td>' . price($brutImposable) . '</td><td>' . price($netImposable, 0, '', 1, 1,2) . '</td><td>' . price($irNet, 0, '', 1, 1,2) . '</td></tr>
-//              <tr class="row-bordered row-content"><td></td><td>Annuel</td><td>' . ($comulWorkingDays + $workingdaysdeclaré) . '</td><td>' . price($comulsalaireBrut + $brutImposable, 0, '', 1, 1,2) . '</td><td>' . price($comulnetImposable + $netImposable, 0, '', 1, 1,2) . '</td><td>' . price($comulIR + $irNet, 0, '', 1, 1,2) . '</td></tr>
-//        </tbody>
-//     </table>';
-
-//     print $bulttin;
-// }
 
 // style
 print'
