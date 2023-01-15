@@ -257,7 +257,7 @@ if ($action == "reset") {
 if ($action == "generateAvance") {
     $users = GETPOST('id');
     foreach (explode(',', $users) as $userid) {
-        $sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='802' AND userid=$userid";
+        $sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='902' AND userid=$userid";
         $res = $db->query($sql);
         $avance = 0;
         if (((object)$res)->num_rows > 0) {
@@ -855,6 +855,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
     }
 
 
+
 	// see if it's clotured
     $sql1 = "SELECT * FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month and avance > 0";
     $res1 = $db->query($sql1);
@@ -865,6 +866,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 
 	$sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='802' AND userid=$obj->rowid";
+
 	$res = $db->query($sql);
 	$avance = 0;
 	if (((object)$res)->num_rows > 0) {
@@ -1190,7 +1192,7 @@ if ($action == 'updateAvance') {
     // foreach ($users as $user) {
     //     $sql = '';
     //     $avance = (int)GETPOST("avance_$user->rowid", "float");
-	// 	$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, amount) values ($user->rowid, '802', '$avance');";
+	// 	$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, amount) values ($user->rowid, '902', '$avance');";
     //     $res = $db->query($sql);
     //     if ($res);
     //     else print("<br>fail ERR: " . $sql);
@@ -1299,7 +1301,7 @@ function displayAvance()
 
         $salaireParams = "";
         //Get user salaire informations from database
-        $sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='802' AND userid=$user->rowid";
+        $sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='902' AND userid=$user->rowid";
         $res = $db->query($sql);
         if (((object)$res)->num_rows > 0) {
             $avance = ((object)$res)->fetch_assoc()['amount'];
