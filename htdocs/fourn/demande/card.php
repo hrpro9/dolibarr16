@@ -67,6 +67,7 @@ $langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'pr
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action 		= GETPOST('action', 'alpha');
+$lineAction 		= GETPOST('lineAction', 'alpha');
 $confirm		= GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
 
@@ -118,8 +119,10 @@ if ($id) {
 	$object = (object) $demendeAchat;
 	if ($object->statut == 0){
 		$badge = '<div class="statusref"><span class="badge  badge-status0 badge-status" title="Brouillon (à valider)">Brouillon (à valider)</span></div>';
-	}else{
+	}else if ($object->statut == 1){
 		$badge = '<div class="statusref"><span class="badge  badge-status4 badge-status" title="Validé">Validé</span></div>';
+	}else if ($object->statut == 2){
+		$badge = '<div class="statusref"><span class="badge  badge-status8 badge-status" title="Refusé">Refusé</span></div>';
 	}
 	if ($object->deleted == 1){
 		header("Location: /fourn/demande/list.php?mainmenu=commercial&idmenu=21895");
@@ -233,6 +236,71 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	}
+	// Add Line
+	if ($lineAction == 'add') {
+		$action = 'view';
+		$errorMsg = null;
+		$product_id 	= GETPOST('product_id', 'int')  == '' ? "NULL" : GETPOST('product_id', 'int');
+		$desc 	= GETPOST('desc', 'text') == '' ? "NULL" : "'".GETPOST('desc', 'text')."'";
+		$qty 	= GETPOST('qty', 'int') < 1 ? "NULL" : GETPOST('qty', 'int');
+		if($product_id == 'NULL'){
+			if ($desc == 'NULL'){
+				$errorMsg = "Le champ 'produit' est obligatoire si le produit n'existe pas remplir le chemp 'description' pour identifier le produit";
+				print $errorMsg;
+			}
+		}
+		if ($qty == "NULL" && $errorMsg == null){
+				$errorMsg = "Le champ 'quantité' est obligatoire";
+				print $errorMsg;
+		} 
+		if ($errorMsg != null){
+			setEventMessages($errorMsg, array(), 'errors');
+		}else{
+			$sql = "INSERT INTO `llx_demande_achat_lines` (`fk_demande`, `fk_product`, `quantity`, `description`) VALUES ($id, $product_id , $qty, $desc);";
+			print $sql;
+			$result = $db->query($sql);
+			if ($result){
+				setEventMessages('Produit ajouté avec succès', array(), 'mesgs');	
+			}
+		}
+	}
+	else if ($lineAction == 'update') {
+		$action = 'view';
+		$errorMsg = null;
+		$edit_line_id 	= GETPOST('edit_line_id', 'int')  == '' ? "NULL" : GETPOST('edit_line_id', 'int');
+		$product_id 	= GETPOST('edit_product_id', 'int')  == '' ? "NULL" : GETPOST('edit_product_id', 'int');
+		$desc 	= GETPOST('edit_desc', 'text') == '' ? "NULL" : "'".GETPOST('edit_desc', 'text')."'";
+		$qty 	= GETPOST('edit_qty', 'int') < 1 ? "NULL" : GETPOST('edit_qty', 'int');
+		if($product_id == 'NULL'){
+			if ($desc == 'NULL'){
+				$errorMsg = "Le champ 'description' est obligatoire";
+			}
+		}
+		if ($qty == "NULL" && $errorMsg == null){
+				$errorMsg = "Le champ 'quantité' est obligatoire";
+			} 
+		if ($errorMsg != null){
+			setEventMessages($errorMsg, array(), 'errors');
+			header("Location: /fourn/demande/card.php?id=$id&action=view&lineid=$edit_line_id&editLine=1&edit_desc=".GETPOST('edit_desc', 'text')."&edit_qty=".GETPOST('edit_qty', 'int'));
+		}else{
+			$sql = "UPDATE `llx_demande_achat_lines` SET `quantity` = $qty, `description` = $desc WHERE `llx_demande_achat_lines`.`id` = $edit_line_id;";
+			$result = $db->query($sql);
+			if ($result){
+				setEventMessages('Produit modifié avec succès', array(), 'mesgs');	
+			}
+		}
+	}else if ($lineAction == 'delete') {
+		$action = 'view';
+		$deleted_line_id 	= GETPOST('deleted_line_id', 'int')  == '' ? "NULL" : GETPOST('deleted_line_id', 'int');
+
+		$sql = "DELETE FROM `llx_demande_achat_lines` WHERE `id` = $deleted_line_id;";
+		$result = $db->query($sql);
+		if ($result){
+			setEventMessages('Ligne produit supprimée avec succès', array(), 'mesgs');	
+		}else{
+			setEventMessages("Ligne produit n'est pas supprimée", array(), 'errors');
+		}
+	}
 
 	// Confirmation de la validation
 	if ($action == 'validate') {
@@ -249,6 +317,21 @@ if (empty($reshook)) {
 			}
 		}else{
 			setEventMessages('Ajouter un tier pour valider la demande', array(), 'errors');
+		}
+	}
+	if ($action == 'refuser') {
+		$action = 'view';
+		$sql = "update `llx_demande_Achat` set statut = 2, dateRejte = now()  where id=$id;";
+		print $sql;
+		$result = $db->query($sql);
+		if ($result){
+			$db->commit();
+			setEventMessages('Demande refuser avec succès', array(), 'mesgs');	
+			header("Location: ".$_SERVER['PHP_SELF']."?action=view&id=".$id);
+
+		}else{
+			$db->rollback();
+			setEventMessages("demande n'est pas refuser", array(), 'errors');
 		}
 	}
 	// Confirmation de la delete
@@ -602,7 +685,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head('');
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent displaying">';
 
 	// Ref
 	print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$object->ref.'</td></tr>';
@@ -647,7 +730,7 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td>Devise</td>';
 		print '<td class="maxwidthonsmartphone">';
-		print $obj->multicurrency_code;
+		print $object->multicurrency_code;
 		print '</td></tr>';
 	}
 
@@ -664,12 +747,125 @@ if ($action == 'create') {
 	// Bouton "Create Draft"
 	print "</table>\n";
 
+	
+	print '<div class="div-table-responsive-no-min" style="margin-top:20px;">';
+	print '<table id="tablelines" class="noborder noshadow centpercent">';
+
+	// head
+	print '<thead>
+	<tr style="background: #e9eaed !important;font-weight: normal;color: #28283ce6;font-family: arial,tahoma,verdana,helvetica;" class="liste_titre nodrag nodrop"><td class="linecoldescription">Description</td><td class="linecolqty center">Qté</td><td class="linecoledit" style="width: 10px"></td><td class="linecoldelete" style="width: 10px"></td></tr>
+	</thead>';
+
+	// Body
+	print '<tbody class="showLines">';
+	$products = array();
+	$sql = "SELECT p.rowid, p.ref, p.label FROM llx_product as p ORDER BY p.ref ASC";
+	$resql = $db->query($sql);
+	$num_row = $db->num_rows($resql);
+	if ($num_row > 0){
+		$i=0;
+		while ($row = $resql->fetch_object()) {
+			$products[$i] = $row;
+			$i++;
+		}
+	}
+
+	$sql = "SELECT p.rowid, p.ref, p.label, l.quantity, l.id, l.description FROM `llx_demande_achat_lines` as l ";
+	$sql .= " LEFT JOIN llx_product as p ON p.rowid = l.fk_product where l.fk_demande = $id";
+	$resql = $db->query($sql);
+	$num_row = $db->num_rows($resql);
+	if ($num_row > 0){
+		while ($row = $resql->fetch_object()) {
+			if (GETPOST('editLine', 'int') == 1 && GETPOST('lineid', 'int') == $row->id && $object->statut == 0){
+				print "
+				<tr class='oddeven tredited'>
+				<td class='linecoldesc minwidth250onall'>
+				<input type='hidden' name='edit_line_id' value='$row->id'>
+				<div id='line_$row->id'></div>
+			
+				<input type='hidden' name='lineid' value='$row->id'>			
+				<a href='/product/card.php?id=$row->rowid' class='nowraponall classfortooltip'><span class='fas fa-cube paddingright classfortooltip' style=' color: #a69944;'></span>$row->ref</a> - $row->label
+				<input type='hidden' name='edit_product_id' value='$row->rowid'>		<br><br>
+				
+				<textarea name='edit_desc' rows='3' style='margin-top: 5px; width: 98%' class='flat '>".(GETPOSTISSET('edit_desc', 'text') ? GETPOST('edit_desc', 'text') : $row->description)."</textarea>	</td>
+			
+				<td class='center'><input size='3' type='number' class='flat right' name='edit_qty' value='".(GETPOSTISSET('edit_qty', 'int') ? GETPOST('edit_qty', 'int') : $row->quantity)."'>	</td>
+			
+				
+				<td class='center valignmiddle' colspan='5'>	
+				    <button type='button' class='button buttongen marginbottomonly button-save' onclick='updateLine()'>Enregistrer</button>
+					<input type='submit' class='button buttongen marginbottomonly button-cancel' id='cancellinebutton' name='cancel' value='Annuler'>
+				</td>
+			</tr>
+				";
+			}else{
+				
+				if ($row->rowid == null){
+					$label = $row->description;
+					$ref = '';
+				}else{
+					$label = $row->ref;
+					$ref = $row->label;
+				}
+				print "
+				<tr id='row-$row->id' class='drag drop oddeven' data-element='commande_fournisseurdet' data-id='$row->id' data-qty='$row->quantity'>
+					<td class='linecoldescription minwidth300imp'><div id='line_$row->id'></div><a href='/product/card.php?id=$row->rowid' class='nowraponall classfortooltip'><span class='fas fa-cube paddingright classfortooltip' style=' color: #a69944;'></span>$ref</a> - $label</td>
+					<td class='linecolqty nowrap center'>$row->quantity</td>";
+					if ($object->statut == 0)	{
+						print " <td class='linecoledit center'><a class='editfielda reposition' href='/fourn/demande/card.php?id=$id&action=view&lineid=$row->id&editLine=1'><span class='fas fa-pencil-alt' style=' color: #444;' title='Modifier'></span></a></td>
+						<td class='linecoldelete center'><a href='#'  onclick='showConfirmation(".'"Êtes-vous sûr de vouloir effacer cette ligne produit ?", "Supprimer ligne",'. $row->id .")'><span class='fas fa-trash pictodelete' style='' title='Supprimer'></span></a></td>";
+					}else{
+						print " <td class='linecoledit center'></td>
+						<td class='linecoldelete center'></td>";
+
+					}
+					print "</tr>";
+	
+			}
+		}
+	}
+	print '</tbody>';
+	print '<tbody>';
+	if ($object->statut == 0)	{
+	print "
+	<tr class='pair nodrag nodrop nohoverpair liste_titre_create'>
+	<td class='nobottom linecoldescription minwidth500imp'>
+	<select name='product_id'>
+	<option value=''></option>";
+	$selected = ($errorMsg ? GETPOST('product_id', 'int') : null);
+	foreach ($products as $product) {
+		print "<option value='$product->rowid' ".($product->rowid == $selected ? "selected" : "").">$product->ref $product->label</option>";
+	}
+	print "
+
+</select>
+<br><textarea name='desc' rows='3' style='margin-top: 5px; width: 98%' class='flat '>".($errorMsg ? GETPOST('desc', 'text') : null)."</textarea></td>
+	
+<td class='nobottom linecolqty center'>
+	<input type='number' size='2' name='qty' class='flat right' value='".($errorMsg ? GETPOST('qty', 'int') : null). "'>
+</td>
+<td class='nobottom linecoledit center valignmiddle' colspan='3'>
+	<button type='button' class='button reposition' onclick='addLine()'>Ajouter</button>
+
+</td>
+</tr>
+	";
+}
+
+	print '</tbody>';
+	print '</table>';
+	print '</div>';
+
+
 	print dol_get_fiche_end();
 
 	if ($object->statut == 0){
 		print "<button type='button' class='butAction' onclick='editDemande()'>".$langs->trans("Modify")."</button>";
-		print "<button type='button' class='butAction validateBtn' onclick='showConfirmation(".'"Veuillez vraiment valider ce dossier", "Valider"'.")'>Valider</button>";
-		print "<button type='button' class='butAction deleteBtn' onclick='showConfirmation(".'"Veuillez vraiment supprimer ce dossier", "Supprimer"'.")'>Supprimer</button>";
+		if ($num_row > 0){
+			print "<button type='button' class='butAction validateBtn' onclick='showConfirmation(".'"Veuillez vraiment valider cette demande", "Valider",'. null.")'>Valider</button>";
+			print "<button type='button' class='butAction rejetBtn' onclick='showConfirmation(".'"Veuillez vraiment refuse cette demande", "Refuser",'. null.")'>Refuser</button>";
+		}
+		print "<button type='button' class='butAction deleteBtn' onclick='showConfirmation(".'"Veuillez vraiment supprimer cette demande", "Supprimer",'. null.")'>Supprimer</button>";
 	}
 
 
@@ -677,9 +873,12 @@ if ($action == 'create') {
 
 	print "
 		<style>
-			#viewForm tr:nth-child(odd) {
+			#viewForm .displaying tr:nth-child(odd) {
 				background: #e9e9e9 !important;
 			}
+			// #viewForm .showLines tr:nth-child(odd) {
+			// 	background-color: #fafafa;
+			// }
 		</style>
 	";
 }
@@ -688,7 +887,6 @@ if ($action == 'create') {
 print '<div id="overflow">';
 print "
     <div id='confirmationModal'>
-        <input type='hidden' id='deletedRubId'/>
         <div class='confirmation-title'>
             <h2>Voulez-vous supprimer cette rubrique</h2>
         </div>
@@ -707,6 +905,9 @@ print "
 		}
 		.deleteBtn{
 			background: rgb(189 57 57 / 95%);
+		}
+		.rejetBtn{
+			background: rgb(203 170 42 / 95%);
 		}
 		#overflow{
 			display: none;
@@ -760,7 +961,11 @@ $db->close();
 
 ?>
 <script>
-function showConfirmation(message, confirm) {
+function showConfirmation(message, confirm, id) {
+	if (id > 0){
+		$("#viewForm").append('<input id="deleteLine" type="hidden" name="deleted_line_id" value="'+id+'" />'); 
+	}
+
    $("html, body").css({
 	   overflow: "hidden",
    });
@@ -774,16 +979,33 @@ function editDemande() {
 	$("#viewForm").submit();
 
 }
+function addLine() {
+	$("#viewForm").append('<input type="hidden" name="lineAction" value="add" />');
+	$("#viewForm").submit();
+
+}
+function updateLine() {
+	$("#viewForm").append('<input type="hidden" name="lineAction" value="update" />');
+	$("#viewForm").submit();
+
+}
 $("#confirmationModal").on('click', ".confirm", function(event) {
    if ($(this).text() == 'Valider'){
 	   $("#viewForm").append('<input type="hidden" name="action" value="validate" />'); 
    }else if($(this).text() == 'Supprimer'){
 	   $("#viewForm").append('<input type="hidden" name="action" value="delete" />'); 
-   }
-   $("#viewForm").submit();
+	}else if($(this).text() == 'Supprimer ligne'){
+	   $("#viewForm").append('<input type="hidden" name="lineAction" value="delete" />'); 
+	}else if($(this).text() == 'Refuser'){
+	   $("#viewForm").append('<input type="hidden" name="action" value="refuser" />'); 
+	}
+	$("#viewForm").submit();
 });
 // cancel supprission
 $("#confirmationModal").on('click', ".cancel", function() {
+	if($("#confirmationModal .confirm").text() == 'Supprimer ligne'){
+	   $("#viewForm #deleteLine").remove();
+	}
 	$("#confirmationModal").css("display", "none");
 	$("#overflow").css("display", "none");
 	$('html, body').css({

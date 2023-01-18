@@ -77,10 +77,12 @@ class FormOrder extends Form
 		// 7 is same label than 6. 8 does not exists (billed is another field)
 		$statustohow = array(
 			'0' => '0',
-			'1' => '1'
+			'1' => '1',
+			'2' => '2'
 		);
 		$libstatut[0] = 'Brouillon';
 		$libstatut[1] = 'Validé';
+		$libstatut[2] = 'Refusé';
 
 		$tmpsupplierorder = new CommandeFournisseur($this->db);
 
