@@ -2,14 +2,14 @@
 
 require_once '../../vendor/autoload.php';
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 
 
 
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx as Write; 
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as Write;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 
@@ -33,8 +33,8 @@ if ($action == 'exporter') {
 
     $users = array();
     $spreadsheet = new Spreadsheet();
-	$sheet = $spreadsheet->getActiveSheet();
-    
+    $sheet = $spreadsheet->getActiveSheet();
+
     $sql = "SELECT ef.matricule, u.rowid, u.login, u.firstname, u.lastname FROM `llx_user` as u LEFT JOIN llx_user_extrafields as ef ON u.rowid = ef.fk_object where u.employee = 1";
     $res = $db->query($sql);
     if ($res->num_rows) {
@@ -49,72 +49,80 @@ if ($action == 'exporter') {
         $sheet->setCellValueByColumnAndRow($i + 1, 1, $header[$i]);
     }
 
-    $j=2;
+    $j = 2;
     for ($i = 0, $l = count($users); $i < $l; $i++) {
         for ($index = 0, $k = count($users[$i]); $index < $k; $index++) {
             $sheet->setCellValueByColumnAndRow($index + 1, $j, $users[$i][$index]);
         }
         $j++;
-	}
+    }
 
 
     $fileName = "Employees.xlsx";
     $writer = new Write($spreadsheet);
-	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-	header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
-	$writer->save('php://output');
-	exit();
-
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="' . urlencode($fileName) . '"');
+    $writer->save('php://output');
+    exit();
 }
 if ($action == 'import') {
     $errorFormat = false;
     $arr_file = explode('.', $_FILES['file']['name']);
     $extension = end($arr_file);
-    if($extension == 'csv') {
+    if ($extension == 'csv') {
         $reader = new Csv();
-    } else if($extension == 'xls') {
+    } else if ($extension == 'xls') {
         $reader = new Xls();
-    }else if ($extension == 'xlsx'){
+    } else if ($extension == 'xlsx') {
         $reader = new Xlsx();
-    }else{
+    } else {
         $errorFormat = true;
     }
-    if (! $errorFormat){
+    if (!$errorFormat) {
         $spreadsheet = $reader->load($_FILES['file']['tmp_name']);
         $sheetData = $spreadsheet->getActiveSheet()->toArray();
         $rubValues = array();
         if (!empty($sheetData)) {
-            for ($i=1; $i<count($sheetData); $i++) {
+            for ($i = 1; $i < count($sheetData); $i++) {
                 $id = $sheetData[$i][1];
                 $avance  = 0;
-                for ($j= count($userInfos); $j < count(($sheetData[$i])); $j++) { 
+                for ($j = count($userInfos); $j < count(($sheetData[$i])); $j++) {
                     $avance  = $sheetData[$i][$j] != '' ? $sheetData[$i][$j] : 0;
                     array_push($rubValues, [$id, $sheetData[0][$j], $avance]);
                 }
             }
             $sql = "REPLACE INTO llx_Paie_UserParameters (userid, rub, amount) values ";
             foreach ($rubValues as $value) {
-                $sql .= "($value[0], $value[1], '$value[2]'),";
+                if (!empty($value[0]))
+                    $sql .= "($value[0], $value[1], '$value[2]'),";
             }
             $sql = substr($sql, 0, -1);
             $res = $db->query($sql);
-            if($res === TRUE){
-                if($extension == 'csv') {
+            if ($res === TRUE) {
+                if ($extension == 'csv') {
                     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
-                } else if($extension == 'xls') {
+                } else if ($extension == 'xls') {
                     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
-                }else if ($extension == 'xlsx'){
+                } else if ($extension == 'xlsx') {
                     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
                 }
                 $now = date("Y_m_d_H-i-s");
                 $userId = $user->id;
-                $template = DOL_DATA_ROOT . "/import/rubriques/".$userId."-".$now.".".$extension; 
+                $dir = DOL_DATA_ROOT . "/import/rubriques/";
+                $file = $userId . "-" . $now . "." . $extension;
+                $template = $dir . $file;
+                if (!file_exists($dir)) {
+                    if (dol_mkdir($dir) < 0) {
+                        $this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
+                        return 0;
+                    }
+                }
                 $writer->save("$template");
             }
-        }else{
+        } else {
             $fileError = "le fichier empty";
         }
-    }else{
+    } else {
         $fileError = "le fichier non autorisé. Uniquement .csv, .xls ou .xlsx";
     }
     $db->close();
@@ -125,7 +133,7 @@ $text = "Attacher Les Primes";
 
 llxHeader("", "$text");
 
-print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'setup', 0, $morehtmlright.' '.$newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'setup', 0, $morehtmlright . ' ' . $newcardbutton, '', $limit, 0, 0, 1);
 
 
 print '
@@ -291,7 +299,7 @@ print '
     </style>
 ';
 
-if ($fileError){
+if ($fileError) {
     print '
         <div id="overflow" style="display:block">
         </div>
@@ -300,7 +308,7 @@ if ($fileError){
             <i class="far fa-times-circle"></i>
             </div>
             <div class="title">Oops</div>
-            <div class="message">'.$fileError.'</div>
+            <div class="message">' . $fileError . '</div>
             <div class="dismiss"><button>Ok</button></div>
         </div>
     ';
@@ -309,25 +317,25 @@ if ($fileError){
 
 // exporter
 print "
-    <form enctype='multipart/form-data'  method='post' action='" . $_SERVER['PHP_SELF'] ."'>
+    <form enctype='multipart/form-data'  method='post' action='" . $_SERVER['PHP_SELF'] . "'>
         <input type='hidden' name='action' value='exporter'>
-        <input type='hidden' name='token' value='".newToken()."'>";
-        foreach ($importable as $rub) {
-           print "
+        <input type='hidden' name='token' value='" . newToken() . "'>";
+foreach ($importable as $rub) {
+    print "
            <label>$rub[0] : $rub[1]</label>
            <input type='checkbox' name='rubs[]' value='$rub[0]'><br>";
-        }
-            
-    print "</select>
+}
+
+print "</select>
         <p><button class='exporter' type='submit'>Exporter</button></p>";
-    print '</form>';
+print '</form>';
 
 
 
 print "
-    <form enctype='multipart/form-data' id='file-upload-form' class='uploader' method='post' action='" . $_SERVER['PHP_SELF'] ."'>
+    <form enctype='multipart/form-data' id='file-upload-form' class='uploader' method='post' action='" . $_SERVER['PHP_SELF'] . "'>
         <input type='hidden' name='action' value='import'>
-        <input type='hidden' name='token' value='".newToken()."'>
+        <input type='hidden' name='token' value='" . newToken() . "'>
         <input id='file-upload' type='file' name='file' accept='application/vnd.ms-excel, text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' />
         <label for='file-upload' id='file-drag'>
             <div id='start'>
@@ -344,7 +352,7 @@ $sql = "SELECT ef.matricule, u.firstname, u.lastname, u.rowid FROM `llx_user` as
 $res = $db->query($sql);
 if ($res->num_rows) {
     while ($row = $res->fetch_assoc()) {
-        array_push($employees, [$row['rowid'], $row['matricule'], $row['firstname'] .' '.$row['lastname']]);
+        array_push($employees, [$row['rowid'], $row['matricule'], $row['firstname'] . ' ' . $row['lastname']]);
     }
 }
 print '<table border="1" style="border-collapse: collapse;"><thead><tr style="background-color: #dfdfdf;font-weight: 600;font-size: 12px;"><td>Matricule</td><td>Nom Complet</td>';
@@ -357,7 +365,7 @@ foreach ($employees as $employee) {
     foreach ($importable as $rub) {
         $sql = "SELECT amount from llx_Paie_UserParameters WHERE userid=" . $employee[0] . " AND rub=" . $rub[0];
         $res1 = $db->query($sql);
-        $amount=0;
+        $amount = 0;
         if ($res1->num_rows > 0) {
             $amount = $res1->fetch_assoc()["amount"];
         }
@@ -388,7 +396,3 @@ print '
     </style>
     
 ';
-
-
-
-?>

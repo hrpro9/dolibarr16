@@ -488,26 +488,9 @@ if ($cloture == 0) {
                         }
                     }
                     if ($fiche["checked"] == 1 || $fiche["amount"] > 0) {
-                        if ($param["rub"] != '902') {
-                            $rubs .= $param["rub"] . ":pasEnBrut:$apayer" . ";";
-                            $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => $apayer, "aretenu" => "", "surbulletin" => $param["surBulletin"]);
-
-                        }
-                        //  else {
-
-                        //     $aretenu = $apayer;
-                        //     $apayer = 0;
-                        //     $rubs .= $param["rub"] . ":pasEnBrut:$aretenu" . ";";
-                        //     $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $aretenu, "surbulletin" => $param["surBulletin"]);
-                        
-                        // }
+                        $rubs .= $param["rub"] . ":pasEnBrut:$apayer" . ";";
+                        $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => $apayer, "aretenu" => "", "surbulletin" => $param["surBulletin"]);
                     }
-                    if ($avance > 0){
-                        $rubs .= $param["rub"] . ":pasEnBrut:$avance" . ";";
-                        $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $avance, "surbulletin" => $param["surBulletin"]);
-                    }
-
-
                 }
             } else {
                 //if it's calculable
@@ -521,6 +504,10 @@ if ($cloture == 0) {
                     $apayer = (float)($base * $param["percentage"] / 100);
                     $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => $apayer, "aretenu" => "", "surbulletin" => $param["surBulletin"]);
                     $rubs .= $param["rub"] . ":pasEnBrut:$apayer" . ";";
+                }
+                if ($avance > 0) {
+                    $rubs .= $param["rub"] . ":pasEnBrut:$avance" . ";";
+                    $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $avance, "surbulletin" => $param["surBulletin"]);
                 }
             }
             $totalBrut += $apayer;
