@@ -257,7 +257,6 @@ if (empty($reshook)) {
 			setEventMessages($errorMsg, array(), 'errors');
 		}else{
 			$sql = "INSERT INTO `llx_demande_achat_lines` (`fk_demande`, `fk_product`, `quantity`, `description`) VALUES ($id, $product_id , $qty, $desc);";
-			print $sql;
 			$result = $db->query($sql);
 			if ($result){
 				setEventMessages('Produit ajouté avec succès', array(), 'mesgs');	
@@ -322,7 +321,6 @@ if (empty($reshook)) {
 	if ($action == 'refuser') {
 		$action = 'view';
 		$sql = "update `llx_demande_Achat` set statut = 2, dateRejte = now()  where id=$id;";
-		print $sql;
 		$result = $db->query($sql);
 		if ($result){
 			$db->commit();

@@ -29,11 +29,12 @@ if ($res->num_rows > 0) {
 
 // see if it's clotured
 $cloture = 0;
-$sql1 = "SELECT cloture FROM llx_Paie_MonthDeclaration WHERE userid=$id AND year=$year AND month=$month";
+$sql1 = "SELECT cloture, avance FROM llx_Paie_MonthDeclaration WHERE userid=$id AND year=$year AND month=$month";
 $res1 = $db->query($sql1);
 if ($res1) {
     $row1 = $res1->fetch_assoc();
     $cloture = $row1["cloture"] > 0 ? $row1["cloture"] : 0;
+    $avance = $row1["avance"] > 0 ? $row1["avance"] : 0;
 }
 if ($cloture > 0) {
     return;
@@ -446,7 +447,7 @@ if ($cloture == 0) {
     $irNet = $irNet / ($params["workingDays"] * 12) * ($comulWorkingDays + $workingdaysdeclaré);
     $irNet = $irNet - $comulIR;
 
-    $totalRetenu += $irNet + $avanceSurSalaire;
+    $totalRetenu += $irNet + $avance;
     $totalBrut = $brutGlobal;
 
     //Get les rubriques pas en brut global et non imposable
@@ -487,16 +488,26 @@ if ($cloture == 0) {
                         }
                     }
                     if ($fiche["checked"] == 1 || $fiche["amount"] > 0) {
-                        if ($param["rub"] == '902') {
-                            $aretenu = $apayer;
-                            $apayer = 0;
-                            $rubs .= $param["rub"] . ":pasEnBrut:$aretenu" . ";";
-                            $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $aretenu, "surbulletin" => $param["surBulletin"]);
-                        } else {
+                        if ($param["rub"] != '902') {
                             $rubs .= $param["rub"] . ":pasEnBrut:$apayer" . ";";
                             $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => $apayer, "aretenu" => "", "surbulletin" => $param["surBulletin"]);
+
                         }
+                        //  else {
+
+                        //     $aretenu = $apayer;
+                        //     $apayer = 0;
+                        //     $rubs .= $param["rub"] . ":pasEnBrut:$aretenu" . ";";
+                        //     $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $aretenu, "surbulletin" => $param["surBulletin"]);
+                        
+                        // }
                     }
+                    if ($avance > 0){
+                        $rubs .= $param["rub"] . ":pasEnBrut:$avance" . ";";
+                        $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $avance, "surbulletin" => $param["surBulletin"]);
+                    }
+
+
                 }
             } else {
                 //if it's calculable
@@ -526,7 +537,7 @@ if ($cloture == 0) {
 
 
     //Inset data to month declaration table
-    $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours, joursferie, netImposable, salaireBrut, salaireNet, ir, cloture ) VALUES($object->id, $year, $month, $workingdaysdeclaré, $workingHours, $joursFerie, $netImposable, $brutImposable, $totalNet, $irNet, $cloture);";
+    $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours, joursferie, netImposable, salaireBrut, salaireNet, ir, cloture, avance ) VALUES($object->id, $year, $month, $workingdaysdeclaré, $workingHours, $joursFerie, $netImposable, $brutImposable, $totalNet, $irNet, $cloture, $avance);";
     $res = $db->query($sql);
     if ($res);
     else print("<br>fail ERR: " . $sql);
