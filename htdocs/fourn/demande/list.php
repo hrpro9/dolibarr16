@@ -702,10 +702,14 @@ if ($resql) {
 			$badge = 'badge-status1';
 			$titreDemande = 'Brouillon';
 			$titreDemandeShow = 'Brouillon (à valider)';
-		}else{
+		}else if ($obj->statut == 1){
 			$badge = 'badge-status4';
 			$titreDemande = 'Validé';
 			$titreDemandeShow = 'Validé';
+		}else{
+			$badge = 'badge-status8';
+			$titreDemande = 'Refusé';
+			$titreDemandeShow = 'Refusé';
 		}
 
 		// Ref
@@ -786,7 +790,14 @@ if ($resql) {
 
 		// Status
 		if (!empty($arrayfields['da.statut']['checked'])) {
-			print '<td class="right nowrap">'.($obj->statut == '0' ? 'Brouillon' : 'Validé').'</td>';
+			if ($obj->statut == '0'){
+				$etat = 'Brouillon';
+			}else if ($obj->statut == '1'){
+				$etat = "Validé";
+			}else{
+				$etat = 'Refusé';
+			}
+			print '<td class="right nowrap">'.$etat.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

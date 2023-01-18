@@ -338,6 +338,7 @@ if ($action == "generateVirement") {
 	header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
 	$writer->save('php://output');
 	Exit();
+	header("refresh: 0");
     
 }
 
@@ -876,7 +877,7 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $users = array();
 $employeesWithRibNotValid = array();
-$employeesNeedValidePaie = array();
+// $employeesNeedValidePaie = array();
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 while ($i < ($limit ? min($num, $limit) : $num)) {
@@ -944,7 +945,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$mode = $row["mode_paiement"];
 	}
 	if ($mode != 'virement'){
-		array_push($employeesNeedValidePaie, $obj);
+		// array_push($employeesNeedValidePaie, $obj);
 		continue;
 	}
 	if (strlen($rib) != 24){
@@ -1287,38 +1288,38 @@ if (count($employeesWithRibNotValid) > 0){
 	print '</tbody>
 	</table>';
 }
-if (count($employeesNeedValidePaie) > 0){
+// if (count($employeesNeedValidePaie) > 0){
 	
-	print '
-	<table class="noborder editmode" style="width:100%">
-	<h3>Employees avec autres mode paiement ('.count($employeesNeedValidePaie).')</h3>
-	<thead>
-	<tr class="liste_titre">
-	<th class="titlefield wordbreak">Matricule</th>
-	<th class="titlefield wordbreak">Nom Complet</th>
-	<th class="titlefield wordbreak">Mode paiement</th>';
-	print '</tr>
-	</thead>
-	<tbody>';
-	foreach ($employeesNeedValidePaie as $employee) {
-		$mode = '';
-		$sql1 = "SELECT mode_paiement FROM llx_Paie_UserInfo WHERE userid=$employee->rowid";
-		$res1 = $db->query($sql1);
-		if ($res1) {
-			$row = $res1->fetch_assoc();
-			$mode = $row["mode_paiement"];
-		}
-		print "
-			<tr>
-				<td>$employee->options_matricule</td>
-				<td><a href='/RH/Users/bank.php?id=$employee->rowid'>$employee->lastname $employee->firstname</a></td>
-				<td>$mode</td>
-			</t>";
-	}
+// 	print '
+// 	<table class="noborder editmode" style="width:100%">
+// 	<h3>Employees avec autres mode paiement ('.count($employeesNeedValidePaie).')</h3>
+// 	<thead>
+// 	<tr class="liste_titre">
+// 	<th class="titlefield wordbreak">Matricule</th>
+// 	<th class="titlefield wordbreak">Nom Complet</th>
+// 	<th class="titlefield wordbreak">Mode paiement</th>';
+// 	print '</tr>
+// 	</thead>
+// 	<tbody>';
+// 	foreach ($employeesNeedValidePaie as $employee) {
+// 		$mode = '';
+// 		$sql1 = "SELECT mode_paiement FROM llx_Paie_UserInfo WHERE userid=$employee->rowid";
+// 		$res1 = $db->query($sql1);
+// 		if ($res1) {
+// 			$row = $res1->fetch_assoc();
+// 			$mode = $row["mode_paiement"];
+// 		}
+// 		print "
+// 			<tr>
+// 				<td>$employee->options_matricule</td>
+// 				<td><a href='/RH/Users/bank.php?id=$employee->rowid'>$employee->lastname $employee->firstname</a></td>
+// 				<td>$mode</td>
+// 			</t>";
+// 	}
 
-	print '</tbody>
-	</table>';
-}
+// 	print '</tbody>
+// 	</table>';
+// }
 
 
 
