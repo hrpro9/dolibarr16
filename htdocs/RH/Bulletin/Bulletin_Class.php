@@ -269,7 +269,7 @@ if ($cloture == 0) {
                     } else {
                         $base = "";
                         $Tauxr = "";
-                        if ($param["rub"] == 10) {
+                        if ($param["rub"] == 5) {
                             $aretenu = (float)$fiche["amount"];
                             $retenueFromBrut += $aretenu;
                         } else {
@@ -289,7 +289,7 @@ if ($cloture == 0) {
                         }
                     }
                     if ($fiche["checked"] == 1 || $fiche["amount"] > 0) {
-                        if ($param["rub"] == 10) {
+                        if ($param["rub"] == 5) {
                             $rubs .= $param["rub"] . ":enBrut:$aretenu" . ";";
                         } else {
                             $rubs .= $param["rub"] . ":enBrut:$apayer" . ";";
@@ -487,7 +487,7 @@ if ($cloture == 0) {
                         }
                     }
                     if ($fiche["checked"] == 1 || $fiche["amount"] > 0) {
-                        if ($param["rub"] == '802') {
+                        if ($param["rub"] == '902') {
                             $aretenu = $apayer;
                             $apayer = 0;
                             $rubs .= $param["rub"] . ":pasEnBrut:$aretenu" . ";";
