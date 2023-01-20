@@ -274,9 +274,9 @@ if ($action == "generateVirement") {
 	$nameSte = dolibarr_get_const($db, 'MAIN_INFO_SOCIETE_NOM', $conf->entity);
 	$account = new Account($db);
 	$account->fetch(1);
-	$date = $day.'-'.$month.'-'.$year;
+	$date = sprintf("%02d", $day).$month.$year;
 	$dateg = $month.'-'.$year;
-	$smit = 'Avance Sur Salaire';
+	$smit = '';
     $spreadsheet = new Spreadsheet();
 	$sheet = $spreadsheet->getActiveSheet();
 	for ($i = 0, $l = count($header); $i < $l; $i++) {
@@ -306,10 +306,10 @@ if ($action == "generateVirement") {
 		$res = $db->query($sql1);
 		if ($res->num_rows > 0) {
 			$row = ((object)$res)->fetch_assoc();
-			$nameClt = $row['firstname'] . ' ' . $row['lastname'];
+			$nameClt = $row['lastname']. ' ' .$row['firstname'];
 		}
 
-		$row = [$date, $nameSte, $nameClt, $account->number, $ribClt, $mt, $smit];
+		$row = [$date, $nameSte, strtoupper($nameClt), $account->number, $ribClt, sprintf("%09d", $mt), $smit];
 		for ($index = 0, $k = count($row); $index < $k; $index++) {
             $sheet->setCellValueByColumnAndRow($index + 1, $j, $row[$index]);
         }

@@ -339,10 +339,10 @@ $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
             <tr class="row-content"><td>' . getRebrique("netImposable") . '</td><td >SALAIRE NET IMPOSABLE</td><td > ' . price($netImposableTot) . ' </td></tr>
             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>';
 
-$Livre .= '<tr class="row-content"><td>' . getRebrique("chargefamille") . '</td><td >CHARGE DE FAMILLE</td><td >' . price($chargeFamilleTot) . '</td></tr>';
+$Livre .= '<tr class="row-content"><td>' . getRebrique("chargefamille") . '</td><td >DECUCTION</td><td >' . price($chargeFamilleTot) . '</td></tr>';
 
 $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
-        <tr class="row-content"><td>' . getRebrique("ir") . '</td><td >IR  NET</td><td > ' . price($irNetTot * -1) . ' </td></tr>';
+        <tr class="row-content"><td>' . getRebrique("ir") . '</td><td >IR </td><td > ' . price($irNetTot * -1) . ' </td></tr>';
 
 $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>';
 
@@ -351,11 +351,11 @@ foreach ($pasEnBrutRubs as $rub) {
     $Livre .= '<tr class="row-content"><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td >' . price($pasEnBruts[$rub["rub"]]) . '</td></tr>';
 }
 
-$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
-             <tr class="row-content"><td>' . getRebrique("arrondiPrecdent") . '</td><td >ARRONDI PRÉCÉDENTE</td><td >' . price($prev_arrondiTot) . '</td></tr>';
+// $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
+//              <tr class="row-content"><td>' . getRebrique("arrondiPrecdent") . '</td><td >ARRONDI PRÉCÉDENTE</td><td >' . price($prev_arrondiTot) . '</td></tr>';
 
-$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
-             <tr class="row-content"><td>' . getRebrique("arrondiEnCours") . '</td><td >ARRONDI</td><td >' . price($arrondiTot) . '</td></tr>';
+// $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
+//              <tr class="row-content"><td>' . getRebrique("arrondiEnCours") . '</td><td >ARRONDI</td><td >' . price($arrondiTot) . '</td></tr>';
 
 $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
              <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>

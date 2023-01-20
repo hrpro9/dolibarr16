@@ -1209,7 +1209,7 @@ function GenerateDocuments()
 	print '<input type="hidden" name="month" value="' . $month . '">';
 	print '<input type="hidden" name="year" value="' . $year . '">';
 	print '<input type="hidden" name="limit" value="' . $limit . '">';
-	print '<div class=""  style="margin-bottom: 0px; margin-left: 5%;"><input type="button" id="btngen" class="button" name="save" value="génerer"></div>';
+	print '<div class=""  style="margin-bottom: 0px; margin-left: 5%;"><input type="button" id="btngen" class="button" name="save" value="Cloturer"></div>';
 
 	print "<script>
         $('#btngen').click(function(){
@@ -1445,7 +1445,7 @@ function ShowBulletin($id)
 	}
 
 	if ($soldeferie > 0) {
-		$bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>LES JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+		$bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
 	}
 
 	foreach ((array)$hrs as $hr) {

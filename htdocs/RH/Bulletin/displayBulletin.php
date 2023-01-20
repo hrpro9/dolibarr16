@@ -1148,7 +1148,15 @@ if ($action == 'confirmeWorkingDays') {
 		$workingHours = (int)GETPOST("workingHours_$user->rowid", "float");
 		// $joursferie = (int)GETPOST("joursferie_$user->rowid", "float");
 		//change the working days
-		$sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours) VALUES($user->rowid, $year, $month, $workingdays, $workingHours);";
+		
+		// see if it's clotured
+		$sql1 = "SELECT cloture, avance FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND year=$year AND month=$month";
+		$res1 = $db->query($sql1);
+		if ($res1) {
+			$row1 = $res1->fetch_assoc();
+			$avance = $row1["avance"] > 0 ? $row1["avance"] : 0;
+		}
+		$sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours, avance) VALUES($user->rowid, $year, $month, $workingdays, $workingHours, $avance);";
 		$res = $db->query($sql);
 		if ($res);
 		else print("<br>fail ERR: " . $sql);
@@ -1223,7 +1231,7 @@ function GenerateDocuments()
 	print '<input type="hidden" name="month" value="' . $month . '">';
 	print '<input type="hidden" name="year" value="' . $year . '">';
 	print '<input type="hidden" name="limit" value="' . $limit . '">';
-	print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="butActionDelete" value="Changer les jours travaillé">';
+	print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="butActionDelete" value="Traitement">';
 	print '</form>';
 }
 // function ShowDocuments()
@@ -1446,7 +1454,7 @@ function ShowBulletin($id)
 	}
 
 	if ($soldeferie > 0) {
-		$bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>LES JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+		$bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
 	}
 
 	foreach ((array)$hrs as $hr) {

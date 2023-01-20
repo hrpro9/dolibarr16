@@ -15,7 +15,6 @@ if (!$user->rights->salaries->read) {
 
 
 
-
 $action = GETPOST('action', 'aZ09'); // The action 'add', 'create', 'edit', 'update', 'view', ...
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userlist'; // To manage different context of search
@@ -385,9 +384,9 @@ if ($reshook > 0) {
 } else {
 	$sql .= " WHERE u.entity IN (".getEntity('user').") and u.employee=1";
 }
-if ($socid > 0) {
-	$sql .= " AND u.fk_soc = ".((int) $socid);
-}
+// if ($socid > 0) {
+// 	$sql .= " AND u.fk_soc = ".((int) $socid);
+// }
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0) {
 	$sql .= " AND u.fk_user IN (".$db->sanitize($search_supervisor).")";
@@ -865,7 +864,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
     }
 
 
-	$sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='802' AND userid=$obj->rowid";
+	$sql = "SELECT amount from llx_Paie_UserParameters WHERE rub='902' AND userid=$obj->rowid";
 
 	$res = $db->query($sql);
 	$avance = 0;

@@ -9,3 +9,7 @@ composer.phar
 ## other
 .DS_Store
 htdocs/conf/conf.php
+
+
+htdocs1/**
+htdocs.zip

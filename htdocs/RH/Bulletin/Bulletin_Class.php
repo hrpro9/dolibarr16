@@ -66,7 +66,7 @@ if ($cloture == 0) {
     // }
     // $Hours = round($Hours, 0);
 
-    $situation = ($extrafields["situation"] == '1') ? "MARIE" : (($extrafields["situation"] == '2') ? "CELEBATAIRE" : "DIVORCE");
+    $situation = ($extrafields["situation"] == '1') ? "MARIE" : (($extrafields["situation"] == '2') ? "CELIBATAIRE" : "DIVORCE");
     $enfants = $extrafields["enfants"] > $params["maxChildrens"] ? $params["maxChildrens"] : (int)$extrafields["enfants"];
 
     $chargeFamilleTaux = (($extrafields["situation"] == 1) && $object->gender == "man") ? 1 : 0;

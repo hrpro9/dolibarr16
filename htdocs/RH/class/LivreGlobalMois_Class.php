@@ -1,7 +1,5 @@
 <?php
 
-
-
 $i = 0;
 $result = $db->query($sql0);
 if ($result) {
@@ -62,25 +60,25 @@ while ($i < $num) {
 
     $object->fetch($obj->rowid);
 
-    $sql1 = "SELECT fk_user FROM " . MAIN_DB_PREFIX . "payment_salary WHERE fk_user=" . $obj->rowid . " AND year(datep)=" . $prev_year . " AND month(datep)=" . $prev_month;
-    $res1 = $db->query($sql1);
-    if ($res1->num_rows == 0) {
-        $i++;
-        continue;
-    }
+    // $sql1 = "SELECT fk_user FROM " . MAIN_DB_PREFIX . "payment_salary WHERE fk_user=" . $obj->rowid . " AND year(datep)=" . $prev_year . " AND month(datep)=" . $prev_month;
+    // $res1 = $db->query($sql1);
+    // if ($res1->num_rows == 0) {
+    //     $i++;
+    //     continue;
+    // }
 
     // see if it's clotured
-    $cloture = 0;
-    $sql1 = "SELECT cloture FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$prev_year AND month=$prev_month";
-    $res1 = $db->query($sql1);
-    if ($res1) {
-        $row1 = $res1->fetch_assoc();
-        $cloture = $row1["cloture"] > 0 ? $row1["cloture"] : 0;
-    }
-    if ($cloture == 0) {
-        $i++;
-        continue;
-    }
+    // $cloture = 0;
+    // $sql1 = "SELECT cloture FROM " . MAIN_DB_PREFIX . "Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$prev_year AND month=$prev_month";
+    // $res1 = $db->query($sql1);
+    // if ($res1) {
+    //     $row1 = $res1->fetch_assoc();
+    //     $cloture = $row1["cloture"] > 0 ? $row1["cloture"] : 0;
+    // }
+    // if ($cloture == 0) {
+    //     $i++;
+    //     continue;
+    // }
 
     /*************************************** ******************************************
      * ********************************** 
