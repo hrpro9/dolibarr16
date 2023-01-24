@@ -157,10 +157,12 @@ if ($reshook > 0) {
 } else {
     $sql0 .= " WHERE u.entity IN (" . getEntity('user') . ")";
 }
+$sql0 .= " AND u.employee = 1";
+
 if ($socid > 0) $sql0 .= " AND u.fk_soc = " . $socid;
 
 //specifie the status (1=Employee)
-$sql0 .= " AND ef.status  = '1'";
+// $sql0 .= " AND ef.status  = '1'";
 
 //if ($search_user != '')       $sql0.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0)   $sql0 .= " AND u.fk_user IN (" . $db->escape($search_supervisor) . ")";
@@ -196,7 +198,7 @@ llxHeader("", "Livre de Paie Global");
 $text = "Livre de Paie Global";
 
 //peroide
-$periode = sprintf("01/%02d", $prev_month) . '/' . $prev_year . ' - '  . date("t/m/Y", strtotime("$prev_month/01/$prev_year"));
+$periode = sprintf("%02d", $prev_month) . '/' . $prev_year;
 
 //add filter by date
 datefilter();
@@ -312,43 +314,56 @@ $Livre = '<style type="text/css">
     }
     </style>
         <table class="tableizer-table">
-            <thead><tr class="tableizer-firstrow"><th colspan="9">LIVRE DE PAIE GLOBAL</th></tr></thead>
+            <thead>
+                <tr class="tableizer-firstrow">
+                    <th colspan="9">LIVRE DE PAIE GLOBAL</th>
+                </tr>
+            </thead>
             <tbody>
 			 <tr class="importent-cell row-bordered"><td></td><td>Periode</td><td class="white-cell" colspan="7">' . $periode . '</td></tr>
-             <tr class="importent-cell row-bordered"><td>Rub</td><td >Désignation</td><td>A Payer</td></tr>
-             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
-             <tr class="row-content"><td></td><td >NOMBRE DES JOURS</td><td > ' . price($workingdaysdeclaréTot) . ' </td></tr>
-             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>';
+             <tr class="importent-cell row-bordered">
+                <td>Rub</td>
+                <td >Désignation</td>
+                <td>BASE</td>
+                <td>DEBIT</td>
+                <td>CREDIT</td>
+            </tr>
+             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
+             <tr class="row-content"><td></td><td >NOMBRE DES JOURS</td><td > ' . $workingdaysdeclaréTot . ' </td><td></td><td></td></tr>
+             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>';
 
 
 //Get les rubriques en brut global
 foreach ($enBrutsRubs as $rub) {
-    $Livre .= '<tr class="row-content"><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td >' . price($enBruts[$rub["rub"]]) . '</td></tr>';
+    $Livre .= '<tr class="row-content"><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td></td><td >' . price($enBruts[$rub["rub"]], 0, '', 1, 1, 2) . '</td><td></td></tr>';
 }
 
-$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
-             <tr class="row-content"><td>&nbsp;</td><td >TOTAL BRUT</td><td > ' . price($brutGlobalTot) . ' </td></tr>
-             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>';
+$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
+             <tr class="row-content"><td>&nbsp;</td><td >TOTAL BRUT</td><td></td><td > ' . price($brutGlobalTot, 0, '', 1, 1, 2) . ' </td><td></td></tr>
+             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>';
 
 //Get les rubriques cotisations
 foreach ($cotisationsRubs as $rub) {
-    $Livre .= '<tr class=""><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td >' . price($cotisations[$rub["rub"]]) . '</td></tr>';
+    $Livre .= '<tr class=""><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td>' . $rubBases[$rub["rub"]] . '</td><td></td><td >' . price(abs($cotisations[$rub["rub"]]), 0, '', 1, 1, 2) . '</td></tr>';
 }
 
-$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
-            <tr class="row-content"><td>' . getRebrique("netImposable") . '</td><td >SALAIRE NET IMPOSABLE</td><td > ' . price($netImposableTot) . ' </td></tr>
-            <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>';
+$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
+            <tr class="row-content"><td>' . getRebrique("netImposable") . '</td><td >SALAIRE NET IMPOSABLE</td><td></td><td > ' . price($netImposableTot, 0, '', 1, 1, 2) . ' </td><td></td></tr>
+            <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>';
 
-$Livre .= '<tr class="row-content"><td>' . getRebrique("chargefamille") . '</td><td >DECUCTION</td><td >' . price($chargeFamilleTot) . '</td></tr>';
+$Livre .= '<tr class=""><td>' . getRebrique("chargefamille") . '</td><td >DECUCTION</td><td></td><td >' . price($chargeFamilleTot, 0, '', 1, 1, 2) . '</td><td></td></tr>';
 
-$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
-        <tr class="row-content"><td>' . getRebrique("ir") . '</td><td >IR </td><td > ' . price($irNetTot * -1) . ' </td></tr>';
+$Livre .= '
+        <tr class=""><td>' . getRebrique("ir") . '</td><td >RETENU IGR </td><td>' . price($brutImposableTot, 0, '', 1, 1, 2) . '</td><td></td><td> ' . price($irNetTot, 0, '', 1, 1, 2) . ' </td></tr>';
 
-$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>';
+$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>';
 
 //Get rubriques pas en brut et pas imposable
 foreach ($pasEnBrutRubs as $rub) {
-    $Livre .= '<tr class="row-content"><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td >' . price($pasEnBruts[$rub["rub"]]) . '</td></tr>';
+    if ($pasEnBruts[$rub["rub"]] > 0)
+        $Livre .= '<tr class=""><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td></td><td >' . price($pasEnBruts[$rub["rub"]], 0, '', 1, 1, 2) . '</td><td></td></tr>';
+    elseif ($pasEnBruts[$rub["rub"]] < 0)
+        $Livre .= '<tr class=""><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td></td><td></td><td >' . price(abs($pasEnBruts[$rub["rub"]]), 0, '', 1, 1, 2) . '</td></tr>';
 }
 
 // $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
@@ -357,9 +372,13 @@ foreach ($pasEnBrutRubs as $rub) {
 // $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
 //              <tr class="row-content"><td>' . getRebrique("arrondiEnCours") . '</td><td >ARRONDI</td><td >' . price($arrondiTot) . '</td></tr>';
 
-$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
-             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td></tr>
-             <tr  class="importent-cell row-bordered" ><td>&nbsp;</td><td >Net a payer</td><td > ' . price($totalNetTot) . ' </td></tr>
+$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
+             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
+             <tr  class="row-content" ><td>&nbsp;</td><td >Net a payer</td><td></td><td > ' . price($totalNetTot, 0, '', 1, 1, 2) . ' </td><td></td></tr>';
+
+$Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
+             <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
+             <tr  class="importent-cell row-bordered" ><td colspan="2">TOTAL GENERAL</td><td>' . price($baseTot, 0, '', 1, 1, 2) . '</td><td > ' . price($debitTot, 0, '', 1, 1, 2) . ' </td><td>' . price(abs($creditTot), 0, '', 1, 1, 2) . '</td></tr>
              
              </tbody>
     </table>';

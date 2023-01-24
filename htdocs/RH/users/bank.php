@@ -29,19 +29,19 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/user/class/userbankaccount.class.php';
 if (!empty($conf->holiday->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
 }
 if (!empty($conf->expensereport->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/salaries/class/salary.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/salaries/class/paymentsalary.class.php';
 }
 
 // Load translation files required by page
@@ -142,49 +142,6 @@ if ($action == 'add' && !$cancel) {
 if ($action == 'update' && !$cancel) {
 	$account->userid = $object->id;
 
-	/*
-	if ($action == 'update' && !$cancel)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		if ($canedituser)    // Case we can edit all field
-		{
-			$error = 0;
-
-			if (!$error)
-			{
-				$objectuser->fetch($id);
-
-				$objectuser->oldcopy = clone $objectuser;
-
-				$db->begin();
-
-				$objectuser->default_range = GETPOST('default_range');
-				$objectuser->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
-
-				if (!$error) {
-					$ret = $objectuser->update($user);
-					if ($ret < 0) {
-						$error++;
-						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
-						} else {
-							setEventMessages($objectuser->error, $objectuser->errors, 'errors');
-						}
-					}
-				}
-
-				if (!$error && !count($objectuser->errors)) {
-					setEventMessages($langs->trans("UserModified"), null, 'mesgs');
-					$db->commit();
-				} else {
-					$db->rollback();
-				}
-			}
-		}
-	}*/
-
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
 	$account->courant         = GETPOST('courant', 'alpha');
@@ -223,12 +180,12 @@ if ($action == 'updateSalary' && !$cancel) {
 	$salaire = str_replace(',', '.', $db->escape(GETPOST('salaire', 'alpha')));
 	$thm = str_replace(',', '.', $db->escape(GETPOST('thm', 'alpha')));
 	$tjm = str_replace(',', '.', $db->escape(GETPOST('tjm', 'alpha')));
-	
+
 	//update user salire and tarifs
 	$sql = "UPDATE llx_user Set salary='$salaire', thm='$thm', tjm='$tjm' where rowid = $object->id";
 	$res = $db->query($sql);
 	if ($res);
-	else $error +1;
+	else $error + 1;
 
 
 	$sql = "REPLACE into llx_Paie_UserInfo(userid, cnss, mutuelle, cimr, type, mode_paiement) values ($object->id, '$cnss','$mutuelle','$cimr', '$type', '$mode_paie');";
@@ -242,7 +199,7 @@ if ($action == 'updateSalary' && !$cancel) {
 
 	if ($resr->num_rows > 0) {
 		while ($row = $resr->fetch_assoc()) {
-			if ($row["rub"] != '711'|| $row["rub"] != '713' || $row["rub"] != '711'|| $row["rub"] != '713'){
+			if ($row["rub"] != '710' && $row["rub"] != '711' && $row["rub"] != '712' && $row["rub"] != '713') {
 				if ($row["calcule"] == 1 || $row["cotisation"] == 1) {
 					$checked = (GETPOST($row["rub"], 'float') == "on") ? 1 : 0;
 					$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, " . $row['rub'] . ", $checked);";
@@ -251,6 +208,10 @@ if ($action == 'updateSalary' && !$cancel) {
 					else print("<br>fail ERR: " . $sql);
 				} else {
 					$amount = (float)GETPOST($row["rub"], 'float');
+					if ($row["rub"] == '14' && $amount > (0.1 * $salaire)) {
+						$amount = 0.1 * $salaire;
+						setEventMessages("La représentation est > 10 %. passera automatiquement à 10 %", array(), 'errors');
+					}
 					$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, amount) values ($object->id, " . $row['rub'] . ", $amount);";
 					$res = $db->query($sql);
 					if ($res);
@@ -261,17 +222,17 @@ if ($action == 'updateSalary' && !$cancel) {
 	}
 	$cimrChecked = GETPOST('cimr', 'int');
 	$sql = "";
-	if ($cimrChecked == '710'){
+	if ($cimrChecked == '710') {
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '710', 1);";
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '711', 1);";
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '712', 0);";
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '713', 0)";
-	}else if ($cimrChecked == '712'){
+	} else if ($cimrChecked == '712') {
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '710', 0);";
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '711', 0);";
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '712', 1);";
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '713', 1)";
-	}else{
+	} else {
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '710', 0);";
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '711', 0);";
 		$sql .= "REPLACE into llx_Paie_UserParameters(userid, rub, checked) values ($object->id, '712', 0);";
@@ -310,21 +271,21 @@ llxHeader(null, $langs->trans("BankAccounts"));
 $head = user_prepare_head_rh($object);
 
 if ($id && $bankid && $action == 'edit') {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<form action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '" method="post">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
-	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
+	print '<input type="hidden" name="id" value="' . GETPOST("id", 'int') . '">';
+	print '<input type="hidden" name="bankid" value="' . $bankid . '">';
 }
 if ($id && $action == 'create') {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<form action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '" method="post">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
+	print '<input type="hidden" name="bankid" value="' . $bankid . '">';
 }
 if ($id && $action == 'editSalary') {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<form action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '" method="post">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="updateSalary">';
 }
 
@@ -348,11 +309,11 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 	$linkback = '';
 
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/RH/Users/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/RH/Users/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 	}
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref = '<a href="' . DOL_URL_ROOT . '/user/vcard.php?id=' . $object->id . '" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download") . ' ' . $langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
@@ -366,26 +327,26 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 
 
 
-	
+
 
 	print '<tr><td class="nowrap"> Type de salaire </td>';
 	print '<td>' . $salaireInfo["type"] . '</td></tr>';
 
 	print '<tr><td class="nowrap"> Mode Paiment </td>';
 	print '<td>' . $salaireInfo["mode_paiement"] . '</td></tr>';
-	
-	print '<tr><td class="nowrap">'. $langs->trans("Salary").'</td>';
-	print '<td>' . ($object->salary == "" ? "-":price($object->salary, '', $langs, 1, -1, -1, $conf->currency)) . '</td></tr>';
-	
-	print '<tr><td class="nowrap">'. $langs->trans("THM").'</td>';
-	print '<td>' . ($object->thm != '' ?price($object->thm, '', $langs, 1, -1, -1, $conf->currency) : '-') . '</td></tr>';
-	
-	print '<tr><td class="nowrap">'. $langs->trans("TJM").'</td>';
-	print '<td>' . ($object->tjm != '' ?price($object->tjm, '', $langs, 1, -1, -1, $conf->currency) : '-') . '</td></tr>';
+
+	print '<tr><td class="nowrap">' . $langs->trans("Salary") . '</td>';
+	print '<td>' . ($object->salary == "" ? "-" : price($object->salary, '', $langs, 1, -1, -1, $conf->currency)) . '</td></tr>';
+
+	print '<tr><td class="nowrap">' . $langs->trans("THM") . '</td>';
+	print '<td>' . ($object->thm != '' ? price($object->thm, '', $langs, 1, -1, -1, $conf->currency) : '-') . '</td></tr>';
+
+	print '<tr><td class="nowrap">' . $langs->trans("TJM") . '</td>';
+	print '<td>' . ($object->tjm != '' ? price($object->tjm, '', $langs, 1, -1, -1, $conf->currency) : '-') . '</td></tr>';
 
 	print '<tr><td class="titlefield"> N° CNSS </td>';
 	print '<td>' . ($salaireInfo["cnss"] == "" ? "-" : $salaireInfo["cnss"]) . '</td></tr>';
-	
+
 	print '<tr><td class="nowrap"> Mutuelle </td>';
 	print '<td>' . ($salaireInfo["mutuelle"] == "" ? "-" : $salaireInfo["mutuelle"]) . '</td></tr>';
 
@@ -396,14 +357,13 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 	$res = $db->query($sql);
 	if ($res->num_rows > 0) {
 		while ($row = $res->fetch_assoc()) {
-			if($row["rub"] == '710'|| $row["rub"] == '711'|| $row["rub"] == '712'|| $row["rub"] == '713'){
-				if ($row["rub"] == '710' && $row["checked"] == 1){
+			if ($row["rub"] == '710' || $row["rub"] == '711' || $row["rub"] == '712' || $row["rub"] == '713') {
+				if ($row["rub"] == '710' && $row["checked"] == 1) {
 					print '<tr><td class="nowrap"> ' . $row["designation"] . ' </td><td colspan="4"><input type="checkbox" checked disabled></td></tr>';
-				}else if ($row["rub"] == '712' && $row["checked"] == 1){
+				} else if ($row["rub"] == '712' && $row["checked"] == 1) {
 					print '<tr><td class="nowrap"> ' . $row["designation"] . ' </td><td colspan="4"><input type="checkbox" checked disabled></td></tr>';
 				}
-			}
-			else if ($row["calcule"] == 1 || ($row["cotisation"] == 1 && $row["auFiche"] == 1)) {
+			} else if ($row["calcule"] == 1 || ($row["cotisation"] == 1 && $row["auFiche"] == 1)) {
 				print '<tr><td class="nowrap"> ' . $row["designation"] . ' </td>';
 				$checked = '';
 				if ($row["checked"] == 1) {
@@ -429,17 +389,18 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Latest payments of salaries
-	if (!empty($conf->salaries->enabled) &&
+	if (
+		!empty($conf->salaries->enabled) &&
 		(($user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)) || (!empty($user->rights->salaries->readall)))
-		) {
+	) {
 		$payment_salary = new PaymentSalary($db);
 		$salary = new Salary($db);
 
 		$sql = "SELECT s.rowid as sid, s.ref as sref, s.label, s.datesp, s.dateep, s.paye, s.amount, SUM(ps.amount) as alreadypaid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON (s.rowid = ps.fk_salary)";
-		$sql .= " WHERE s.fk_user = ".((int) $object->id);
-		$sql .= " AND s.entity IN (".getEntity('salary').")";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "salary as s";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "payment_salary as ps ON (s.rowid = ps.fk_salary)";
+		$sql .= " WHERE s.fk_user = " . ((int) $object->id);
+		$sql .= " AND s.entity IN (" . getEntity('salary') . ")";
 		$sql .= " GROUP BY s.rowid, s.ref, s.label, s.datesp, s.dateep, s.paye, s.amount";
 		$sql .= " ORDER BY s.dateep DESC";
 
@@ -451,7 +412,7 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-			print '<td colspan="5"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '<td colspan="5"><table class="nobordernopadding centpercent"><tr><td>' . $langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)) . '</td><td class="right"><a class="notasortlink" href="' . DOL_URL_ROOT . '/salaries/list.php?search_user=' . $object->login . '">' . $langs->trans("AllSalaries") . '<span class="badge marginleftonlyshort">' . $num . '</span></a></td>';
 			print '</tr></table></td>';
 			print '</tr>';
 
@@ -475,17 +436,17 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 				print '<td class="nowraponall">';
 				print $salary->getNomUrl(1);
 				print '</td>';
-				print '<td class="right nowraponall">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
-				print '<td class="right nowraponall">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
-				print '<td class="right nowraponall"><span class="amount">'.price($objp->amount).'</span></td>';
-				print '<td class="right nowraponall">'.$salary->getLibStatut(5, $objp->alreadypaid).'</td>';
+				print '<td class="right nowraponall">' . dol_print_date($db->jdate($objp->datesp), 'day') . "</td>\n";
+				print '<td class="right nowraponall">' . dol_print_date($db->jdate($objp->dateep), 'day') . "</td>\n";
+				print '<td class="right nowraponall"><span class="amount">' . price($objp->amount) . '</span></td>';
+				print '<td class="right nowraponall">' . $salary->getLibStatut(5, $objp->alreadypaid) . '</td>';
 				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
+				print '<td colspan="5"><span class="opacitymedium">' . $langs->trans("None") . '</span></a>';
 			}
 			print "</table>";
 			print "</div>";
@@ -499,9 +460,9 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 		$holiday = new Holiday($db);
 
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
-		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
-		$sql .= " WHERE h.fk_user = ".((int) $object->id);
-		$sql .= " AND h.entity IN (".getEntity('holiday').")";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "holiday as h";
+		$sql .= " WHERE h.fk_user = " . ((int) $object->id);
+		$sql .= " AND h.entity IN (" . getEntity('holiday') . ")";
 		$sql .= " ORDER BY h.date_debut DESC";
 
 		$resql = $db->query($sql);
@@ -512,7 +473,7 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastHolidays", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>' . $langs->trans("LastHolidays", ($num <= $MAXLIST ? "" : $MAXLIST)) . '</td><td class="right"><a class="notasortlink" href="' . DOL_URL_ROOT . '/holiday/list.php?id=' . $object->id . '">' . $langs->trans("AllHolidays") . '<span class="badge marginleftonlyshort">' . $num . '</span></a></td>';
 			print '</tr></table></td>';
 			print '</tr>';
 
@@ -532,16 +493,16 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $holiday->getNomUrl(1);
-				print '</td><td class="right nowraponall">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
-				print '<td class="right nowraponall">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
-				print '<td class="right nowraponall">'.$holiday->LibStatut($objp->status, 5).'</td>';
+				print '</td><td class="right nowraponall">' . dol_print_date($db->jdate($objp->date_debut), 'day') . "</td>\n";
+				print '<td class="right nowraponall">' . $nbopenedday . ' ' . $langs->trans('DurationDays') . '</td>';
+				print '<td class="right nowraponall">' . $holiday->LibStatut($objp->status, 5) . '</td>';
 				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
+				print '<td colspan="4"><span class="opacitymedium">' . $langs->trans("None") . '</span></a>';
 			}
 			print "</table>";
 			print "</div>";
@@ -551,15 +512,16 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 	}
 
 	// Latest expense report
-	if (!empty($conf->expensereport->enabled) &&
+	if (
+		!empty($conf->expensereport->enabled) &&
 		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
-		) {
+	) {
 		$exp = new ExpenseReport($db);
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_statut as status, e.date_debut, e.total_ttc";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
-		$sql .= " WHERE e.fk_user_author = ".((int) $object->id);
-		$sql .= " AND e.entity = ".((int) $conf->entity);
+		$sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as e";
+		$sql .= " WHERE e.fk_user_author = " . ((int) $object->id);
+		$sql .= " AND e.entity = " . ((int) $conf->entity);
 		$sql .= " ORDER BY e.date_debut DESC";
 
 		$resql = $db->query($sql);
@@ -570,7 +532,7 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastExpenseReports", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>' . $langs->trans("LastExpenseReports", ($num <= $MAXLIST ? "" : $MAXLIST)) . '</td><td class="right"><a class="notasortlink" href="' . DOL_URL_ROOT . '/expensereport/list.php?id=' . $object->id . '">' . $langs->trans("AllExpenseReports") . '<span class="badge marginleftonlyshort">' . $num . '</span></a></td>';
 			print '</tr></table></td>';
 			print '</tr>';
 
@@ -585,16 +547,16 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $exp->getNomUrl(1);
-				print '</td><td class="right nowraponall">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
-				print '<td class="right nowraponall"><span class="amount">'.price($objp->total_ttc).'</span></td>';
-				print '<td class="right nowraponall">'.$exp->LibStatut($objp->status, 5).'</td>';
+				print '</td><td class="right nowraponall">' . dol_print_date($db->jdate($objp->date_debut), 'day') . "</td>\n";
+				print '<td class="right nowraponall"><span class="amount">' . price($objp->total_ttc) . '</span></td>';
+				print '<td class="right nowraponall">' . $exp->LibStatut($objp->status, 5) . '</td>';
 				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
+				print '<td colspan="4"><span class="opacitymedium">' . $langs->trans("None") . '</span></a>';
 			}
 			print "</table>";
 			print "</div>";
@@ -613,7 +575,7 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 	$morehtmlright = '';
 	if ($account->id == 0) {
 		if ($permissiontoaddbankaccount) {
-			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=create');
 		} else {
 			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('NotEnoughPermissions'), 'fa fa-plus-circle', '', '', -2);
 		}
@@ -638,46 +600,46 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 	if ($account->id > 0) {
 		print '<tr class="oddeven">';
 		// Label
-		print '<td>'.$account->label.'</td>';
+		print '<td>' . $account->label . '</td>';
 		// Bank name
-		print '<td>'.$account->bank.'</td>';
+		print '<td>' . $account->bank . '</td>';
 		// Account number
 		print '<td>';
 		$string = '';
 		foreach ($account->getFieldsToShow() as $val) {
 			if ($val == 'BankCode') {
-				$string .= $account->code_banque.' ';
+				$string .= $account->code_banque . ' ';
 			} elseif ($val == 'BankAccountNumber') {
-				$string .= $account->number.' ';
+				$string .= $account->number . ' ';
 			} elseif ($val == 'DeskCode') {
-				$string .= $account->code_guichet.' ';
+				$string .= $account->code_guichet . ' ';
 			} elseif ($val == 'BankAccountNumberKey') {
-				$string .= $account->cle_rib.' ';
+				$string .= $account->cle_rib . ' ';
 			}
 		}
 		if (!empty($account->label) && $account->number) {
 			if (!checkBanForAccount($account)) {
-				$string .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
+				$string .= ' ' . img_picto($langs->trans("ValueIsNotValid"), 'warning');
 			} else {
-				$string .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
+				$string .= ' ' . img_picto($langs->trans("ValueIsValid"), 'info');
 			}
 		}
 
 		print $string;
 		print '</td>';
 		// IBAN
-		print '<td>'.$account->iban;
+		print '<td>' . $account->iban;
 		if (!empty($account->iban)) {
 			if (!checkIbanForAccount($account)) {
-				print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
+				print ' ' . img_picto($langs->trans("IbanNotValid"), 'warning');
 			}
 		}
 		print '</td>';
 		// BIC
-		print '<td>'.$account->bic;
+		print '<td>' . $account->bic;
 		if (!empty($account->bic)) {
 			if (!checkSwiftForAccount($account)) {
-				print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
+				print ' ' . img_picto($langs->trans("SwiftNotValid"), 'warning');
 			}
 		}
 		print '</td>';
@@ -685,7 +647,7 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 		// Edit/Delete
 		print '<td class="right nowraponall">';
 		if ($permissiontoaddbankaccount) {
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit&token='.newToken().'">';
+			print '<a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&bankid=' . $account->id . '&action=edit&token=' . newToken() . '">';
 			print img_picto($langs->trans("Modify"), 'edit');
 			print '</a>';
 		}
@@ -697,12 +659,12 @@ if ($action != 'edit' && $action != 'create' && $action != 'editSalary') {		// I
 
 	if ($account->id == 0) {
 		$colspan = 6;
-		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
+		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoBANRecord") . '</span></td></tr>';
 	}
-	
+
 	print '</table>';
 	print '</div>';
-	print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editSalary', '', true, $params);
+	print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;action=editSalary', '', true, $params);
 }
 
 // Edit info
@@ -732,26 +694,26 @@ if ($action == 'editSalary') {
 				<option value="mensuel" ' . $types["mensuel"] . '>Mensuel</option>
 				<option value="horaire" ' . $types["horaire"] . '>Horaire</option>
 			</select></td></tr>';
-			// <option value="hebdomadaire" ' . $types["hebdomadaire"] . '>Hebdomadaire</option>
-			// <option value="jornalier" ' . $types["jornalier"] . '>Jornalier</option>
-			// <option value="tache" ' . $types["tache"] . '>Par Tache</option>
+	// <option value="hebdomadaire" ' . $types["hebdomadaire"] . '>Hebdomadaire</option>
+	// <option value="jornalier" ' . $types["jornalier"] . '>Jornalier</option>
+	// <option value="tache" ' . $types["tache"] . '>Par Tache</option>
 
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Salary").'</td>
-		<td colspan="4"><input size="30" type="text" name="salaire" value="' . (str_replace(" ","",price($object->salary))) . '"></td>';
+	print '<tr><td class="titlefield fieldrequired">' . $langs->trans("Salary") . '</td>
+		<td colspan="4"><input size="30" type="text" name="salaire" value="' . (str_replace(" ", "", price($object->salary))) . '"></td>';
 	$modes[$salaireInfo["mode_paiement"]] = 'selected';
 	print '<tr><td class="titlefield fieldrequired"> Mode Paiment </td>';
 	print '<td colspan="4"><select name="modePaiement">
 				<option value=""></option>
-				<option value="cheque" '.$modes["cheque"] .'>Chéque</option>
-				<option value="espece" '.$modes["espece"] .'>Espece</option>
-				<option value="virement" '.$modes["virement"] .'>Virement</option>
+				<option value="cheque" ' . $modes["cheque"] . '>Chéque</option>
+				<option value="espece" ' . $modes["espece"] . '>Espece</option>
+				<option value="virement" ' . $modes["virement"] . '>Virement</option>
 			</select></td></tr>';
 
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("THM").'</td>
-		<td colspan="4"><input size="30" type="text" name="thm" value="' . (str_replace(" ","",price($object->thm))).'"></td>';
+	print '<tr><td class="titlefield fieldrequired">' . $langs->trans("THM") . '</td>
+		<td colspan="4"><input size="30" type="text" name="thm" value="' . (str_replace(" ", "", price($object->thm))) . '"></td>';
 
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("TJM").'</td>
-		<td colspan="4"><input size="30" type="text" name="tjm" value="' . (str_replace(" ","",price($object->tjm))).'"></td>';
+	print '<tr><td class="titlefield fieldrequired">' . $langs->trans("TJM") . '</td>
+		<td colspan="4"><input size="30" type="text" name="tjm" value="' . (str_replace(" ", "", price($object->tjm))) . '"></td>';
 
 	print '<tr><td class="titlefield fieldrequired"> N° CNSS </td>
 		<td colspan="4"><input size="30" type="text" name="cnss" value="' . $salaireInfo["cnss"] . '"></td>';
@@ -767,9 +729,8 @@ if ($action == 'editSalary') {
 
 	if ($res->num_rows > 0) {
 		while ($row = $res->fetch_assoc()) {
-			if ($row["rub"] == '711'|| $row["rub"] == '713'){
-
-			}else if ($row["rub"] == '710'|| $row["rub"] == '712'){
+			if ($row["rub"] == '711' || $row["rub"] == '713') {
+			} else if ($row["rub"] == '710' || $row["rub"] == '712') {
 				//Get value
 				$sql = "SELECT * from llx_Paie_UserParameters WHERE userid=" . $object->id . " AND rub=" . $row["rub"];
 				$res1 = $db->query($sql);
@@ -777,14 +738,14 @@ if ($action == 'editSalary') {
 					$salaire = $res1->fetch_assoc();
 					$amount =  $salaire["amount"];
 					$checked = $salaire["checked"];
-				}else{
+				} else {
 					$amount = "";
 					$checked = '';
 				}
 				if ($checked == 1) {
 					$rubSelected = $row["rub"];
 				}
-			}else{
+			} else {
 				//Get value
 				$sql = "SELECT * from llx_Paie_UserParameters WHERE userid=" . $object->id . " AND rub=" . $row["rub"];
 				$res1 = $db->query($sql);
@@ -792,7 +753,7 @@ if ($action == 'editSalary') {
 					$salaire = $res1->fetch_assoc();
 					$amount =  $salaire["amount"];
 					$checked = $salaire["checked"];
-				}else{
+				} else {
 					$amount = "";
 					$checked = '';
 				}
@@ -810,9 +771,9 @@ if ($action == 'editSalary') {
 		print '
 			<tr><td class="titlefield fieldrequired">COTISATION CIMR</td><td>
 				<select name="cimr">	
-					<option value="0" ' . ($rubSelected == '0' ? 'selected' : '' ).'></option>
-					<option value="710" ' . ($rubSelected == '710' ? 'selected' : '' ).'>3%</option>
-					<option value="712" ' . ($rubSelected == '712' ? 'selected' : '' ).'>6%</option>
+					<option value="0" ' . ($rubSelected == '0' ? 'selected' : '') . '></option>
+					<option value="710" ' . ($rubSelected == '710' ? 'selected' : '') . '>3%</option>
+					<option value="712" ' . ($rubSelected == '712' ? 'selected' : '') . '>6%</option>
 				</select></td>
 			</tr>';
 	}
@@ -826,16 +787,15 @@ if ($action == 'editSalary') {
 	print '<input class="button" name="cancel" value="' . $langs->trans("Cancel") . '" type="submit">';
 	print '</div>';
 	print "</form>";
-
 }
 
 
 // Edit
-if ($id && ($action == 'edit' || $action == 'create') ) {
+if ($id && ($action == 'edit' || $action == 'create')) {
 	$title = $langs->trans("User");
 	print dol_get_fiche_head($head, 'bank', $title, 0, 'user');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/RH/Users/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/RH/Users/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
@@ -844,11 +804,11 @@ if ($id && ($action == 'edit' || $action == 'create') ) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-	print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
+	print '<tr><td class="titlefield fieldrequired">' . $langs->trans("LabelRIB") . '</td>';
+	print '<td colspan="4"><input size="30" type="text" name="label" value="' . $account->label . '"></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
-	print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
+	print '<tr><td class="fieldrequired">' . $langs->trans("BankName") . '</td>';
+	print '<td><input size="30" type="text" name="bank" value="' . $account->bank . '"></td></tr>';
 
 	// Show fields of bank account
 	foreach ($account->getFieldsToShow() as $val) {
@@ -870,28 +830,28 @@ if ($id && ($action == 'edit' || $action == 'create') ) {
 			$content = $account->cle_rib;
 		}
 
-		print '<td>'.$langs->trans($val).'</td>';
-		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
+		print '<td>' . $langs->trans($val) . '</td>';
+		print '<td><input size="' . $size . '" type="text" class="flat" name="' . $name . '" value="' . $content . '"></td>';
 		print '</tr>';
 	}
 
 	// IBAN
-	print '<tr><td class="fieldrequired">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
+	print '<tr><td class="fieldrequired">' . $langs->trans("IBAN") . '</td>';
+	print '<td colspan="4"><input size="30" type="text" name="iban" value="' . $account->iban . '"></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
+	print '<tr><td class="fieldrequired">' . $langs->trans("BIC") . '</td>';
+	print '<td colspan="4"><input size="12" type="text" name="bic" value="' . $account->bic . '"></td></tr>';
 
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">' . $langs->trans("BankAccountDomiciliation") . '</td><td colspan="4">';
 	print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
 	print dol_escape_htmltag($account->domiciliation);
 	print "</textarea></td></tr>";
 
-	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
+	print '<tr><td>' . $langs->trans("BankAccountOwner") . '</td>';
+	print '<td colspan="4"><input size="30" type="text" name="proprio" value="' . $account->proprio . '"></td></tr>';
 	print "</td></tr>\n";
 
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+	print '<tr><td class="tdtop">' . $langs->trans("BankAccountOwnerAddress") . '</td><td colspan="4">';
 	print '<textarea name="owner_address" rows="4" class="quatrevingtpercent">';
 	print dol_escape_htmltag($account->owner_address);
 	print "</textarea></td></tr>";

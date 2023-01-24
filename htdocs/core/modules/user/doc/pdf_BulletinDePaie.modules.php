@@ -222,10 +222,8 @@ class pdf_BulletinDePaie extends ModelePDFUser
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
-
 		if (1) {
 			$object->fetch_thirdparty();
-
 			// Definition of $dir and $file
 			if ($object->specimen) {
 				$dir = $conf->fournisseur->facture->dir_output;
@@ -310,6 +308,8 @@ class pdf_BulletinDePaie extends ModelePDFUser
 					$this->posxdiscount += $delta;
 					// post of fields after are not modified, stay at same position
 				}
+
+				$object->rowid = $object->id;
 
 				//include bulltin class that have all calculations
 				include DOL_DOCUMENT_ROOT . '/RH/Bulletin/Bulletin_Class.php';
@@ -541,7 +541,20 @@ class pdf_BulletinDePaie extends ModelePDFUser
 			return 0;
 		}
 	}
+	
+	//Les compte comptable
+	function getRebrique($name)
+	{
+		global $db;
+		$sql = "SELECT rub FROM llx_Paie_Rubriques WHERE name = '$name'";
+		$res = $db->query($sql);
+		if ($res) {
+			$row = ((object)$res)->fetch_assoc();
+		} else
+			print("<br>fail ERR: " . $sql);
 
+		return $row["rub"];
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
