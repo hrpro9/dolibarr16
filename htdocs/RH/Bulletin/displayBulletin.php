@@ -361,6 +361,7 @@ if ($reshook > 0) {
 } else {
 	$sql .= " WHERE u.entity IN (" . getEntity('user') . ")";
 }
+$sql .= " AND u.employee = 1";
 if ($socid > 0) {
 	$sql .= " AND u.fk_soc = " . ((int) $socid);
 }

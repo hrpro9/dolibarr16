@@ -58,18 +58,18 @@ if ($cloture == 0) {
     $rubs .= getRebrique("chargefamille") . ":chargeFamille:$chargeFamille" . ";";
     $type = $salaireParams["type"];
 
-    $workingDays = 26;
+    $workingdays = 26;
+    $workingHours = 0;
     $sql = "SELECT workingDays, joursferie, joursconge, workingHours FROM llx_Paie_MonthDeclaration WHERE userid=$object->id AND month=$month AND year = $year";
     $res = $db->query($sql);
     if (((object)$res)->num_rows > 0) {
         $row = ((object)$res)->fetch_assoc();
-        $workingDays = (float)$row["workingDays"];
+        $workingdays = (float)$row["workingDays"];
         $workingHours = (float)$row["workingHours"];
         $congeDays = (float)$row["joursconge"];
         $joursFerie = (int)$row["joursferie"];
     }
 
-    $workingHours = 0;
     if ($type == 'mensuel') //Mensuel
     {
         $smig = $params["smigHoraire"] * $workingdaysdeclaré * ($params["hoursMonsuele"] / $params["workingDays"]);
@@ -87,6 +87,7 @@ if ($cloture == 0) {
         if ($workingdays > ($params["workingDays"] - $congeDays - $joursFerie)) {
             $workingdays = $params["workingDays"] - $congeDays - $joursFerie;
         }
+        $Taux = $workingdays;
 
         //get working days
         $workingdaysdeclaré = $workingdays + $congeDays;
@@ -106,6 +107,7 @@ if ($cloture == 0) {
         if (($workingHours + ($congeDays * ($params["hoursMonsuele"] / $params["workingDays"])) + ($joursFerie * ($params["hoursMonsuele"] / $params["workingDays"]))) > $params["hoursMonsuele"]) {
             $workingHours = (int) ($params["hoursMonsuele"] - ($congeDays * ($params["hoursMonsuele"] / $params["workingDays"])) - ($joursFerie * ($params["hoursMonsuele"] / $params["workingDays"])));
         }
+        $Taux = $workingHours;
 
         $yearHours = 1;
         $sql = "SELECT sum(workingHours) FROM llx_Paie_MonthDeclaration WHERE userid=$object->id";
@@ -446,8 +448,8 @@ if ($cloture == 0) {
                     $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => $apayer, "aretenu" => "", "surbulletin" => $param["surBulletin"]);
                     $rubs .= $param["rub"] . ":pasEnBrut:$apayer" . ";";
                 }
-                if ($avance > 0) {
-                    $rubs .= $param["rub"] . ":pasEnBrut:$avance" . ";";
+                if ($avance > 0 && $param["rub"] == '902') {
+                    $rubs .= $param["rub"] . ":pasEnBrut:" . ($avance * -1) . ";";
                     $pasEnBruts[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => "", "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $avance, "surbulletin" => $param["surBulletin"]);
                 }
             }
@@ -465,12 +467,13 @@ if ($cloture == 0) {
 
 
     //Inset data to month declaration table
-    $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours, joursferie, netImposable, salaireBrut, salaireNet, ir, cloture, avance ) VALUES($object->id, $year, $month, $workingdaysdeclaré, $workingHours, $joursFerie, $netImposable, $brutImposable, $totalNet, $irNet, $cloture, $avance);";
+    $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours, joursferie, netImposable, salaireBrut, salaireNet, ir, cloture, avance, joursconge ) VALUES($object->id, $year, $month, $workingdaysdeclaré, $workingHours, $joursFerie, $netImposable, $brutImposable, $totalNet, $irNet, $cloture, $avance, $congeDays);";
     $res = $db->query($sql);
     if ($res);
     else print("<br>fail ERR: " . $sql);
 
-    $sql = "REPLACE INTO llx_Paie_MonthDeclarationRubs(userid, year, month, type, post, situationFamiliale, enfants, salaireDeBase, salaireMensuel, salaireHoraire, rubs) VALUES($object->id, $year, $month, '$type', '$object->job', '$situation', $enfants, " . $bases["salaire de base"] . ", " . $bases["salaire mensuel"] . ", $salaireHoraire, '$rubs');";
+    $sql = "REPLACE INTO llx_Paie_MonthDeclarationRubs(userid, year, month, type, post, situationFamiliale, enfants, salaireDeBase, salaireMensuel, salaireHoraire, rubs) 
+        VALUES($object->id, $year, $month, '$type', '$object->job', '$situation', $enfants, " . $bases["salaire de base"] . ", " . $bases["salaire mensuel"] . ", $salaireHoraire, '$rubs');";
     $res = $db->query($sql);
     if ($res);
     else print("<br>fail ERR: " . $sql);

@@ -14,12 +14,12 @@ if (!$result) {
 
 $num = $db->num_rows($result);
 
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
-    $obj = $db->fetch_object($resql);
-    $id = $obj->rowid;
-    header("Location: " . DOL_URL_ROOT . '/user/card.php?id=' . $id);
-    exit;
-}
+// if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
+//     $obj = $db->fetch_object($resql);
+//     $id = $obj->rowid;
+//     header("Location: " . DOL_URL_ROOT . '/user/card.php?id=' . $id);
+//     exit;
+// }
 
 $salaireMonsuelTot = 0;
 $salaireHoraireTot = 0;
@@ -36,6 +36,12 @@ $irNetTot  = 0;
 $prev_arrondiTot = 0;
 $arrondiTot  = 0;
 $totalNetTot = 0;
+
+$sql = "SELECT * FROM llx_Paie_Rub";
+$res = $db->query($sql);
+while($row=$res->fetch_assoc()){
+    $Rubs[$row['rub']]=$row;
+}
 
 while ($i < $num) {
     $Taux = 0;
@@ -160,6 +166,7 @@ while ($i < $num) {
                     $enBrutsRubs[$rub[0]] = array("rub" => $rub[0], "designation" => $param["designation"]);
                     $enBruts[$rub[0]] += $apayer;
                 } else if ($rub[1] == "cotisation") {
+                    print($Rubs[''])
                     $aretenu = $rub[2];
                     $cotisationsRubs[$rub[0]] = array("rub" => $rub[0], "designation" => $param["designation"]);
                     $cotisations[$rub[0]] += $aretenu;
