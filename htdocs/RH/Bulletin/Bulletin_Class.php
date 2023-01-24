@@ -1,14 +1,14 @@
 <?php
 global $year, $month;
 
-// les jours ferie
-$joursFerie = 0;
-$sql = "SELECT c.code as country_code, a.day, a.month, a.year, a.active FROM " . MAIN_DB_PREFIX . "c_hrm_public_holiday as a LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON a.fk_country=c.rowid AND c.active=1 WHERE c.code='MA' AND a.month=$month";
-$res = $db->query($sql);
-while ($row = $res->fetch_assoc()) {
-    if ($row['active'])
-        $joursFerie++;
-}
+// // les jours ferie
+// $joursFerie = 0;
+// $sql = "SELECT c.code as country_code, a.day, a.month, a.year, a.active FROM " . MAIN_DB_PREFIX . "c_hrm_public_holiday as a LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON a.fk_country=c.rowid AND c.active=1 WHERE c.code='MA' AND a.month=$month";
+// $res = $db->query($sql);
+// while ($row = $res->fetch_assoc()) {
+//     if ($row['active'])
+//         $joursFerie++;
+// }
 
 //Get Parameters from database
 $sql = "SELECT * FROM llx_Paie_bdpParameters";
@@ -48,23 +48,6 @@ if ($cloture == 0) {
 
     //Get working time on this month
     $Hours = 0;
-    // $sql = "SELECT e.time as ts, s.time as te FROM P_Valide v, P_ENTRER e, P_SORTIE s WHERE v.Cloturé=2 and e.id=v.IdE and s.id=v.IdS and e.userid=" . $extrafields["idpointage"] . " and MONTH(e.time)=MONTH('" . $year . "-" . $month . "-01')";
-    // $res = $db->query($sql);
-
-    // if (((object)$res)->num_rows > 0) {
-    //     while ($row = ((object)$res)->fetch_assoc()) {
-    //         $t1 = strtotime($row['ts']);
-    //         $t2 = strtotime($row['te']);
-    //         $h1 = (int)date("H", $t1);
-    //         $h2 = (int)date("H", $t2);
-    //         $m1 = (int)date("i", $t1);
-    //         $m2 = (int)date("i", $t2);
-    //         $h = $h2 - $h1;
-    //         $m = $m2 - $m1;
-    //         $Hours += $h + $m / 60;
-    //     }
-    // }
-    // $Hours = round($Hours, 0);
 
     $situation = ($extrafields["situation"] == '1') ? "MARIE" : (($extrafields["situation"] == '2') ? "CELIBATAIRE" : "DIVORCE");
     $enfants = $extrafields["enfants"] > $params["maxChildrens"] ? $params["maxChildrens"] : (int)$extrafields["enfants"];
@@ -75,15 +58,15 @@ if ($cloture == 0) {
     $rubs .= getRebrique("chargefamille") . ":chargeFamille:$chargeFamille" . ";";
     $type = $salaireParams["type"];
 
-    //Get congé
-    $sql = "SELECT date_debut, date_fin, halfday FROM llx_holiday WHERE fk_user=" . $object->id . " AND statut=3 AND ((Month(date_debut)=" . $month . " AND Year(date_debut)=" . $year . ")
-        OR (Month(date_fin)=" . $month . " AND Year(date_fin)=" . $year . "))";
+    $workingDays = 26;
+    $sql = "SELECT workingDays, joursferie, joursconge, workingHours FROM llx_Paie_MonthDeclaration WHERE userid=$object->id AND month=$month AND year = $year";
     $res = $db->query($sql);
-
-    if ($res->num_rows > 0) {
-        $row = ((object)($res))->fetch_assoc();
-        //$congeDays = date("d", strtotime($fin) - strtotime($debut));
-        $congeDays = num_open_day(strtotime($row["date_debut"]), strtotime($row["date_fin"]), 0, 1, $row["halfday"]);
+    if (((object)$res)->num_rows > 0) {
+        $row = ((object)$res)->fetch_assoc();
+        $workingDays = (float)$row["workingDays"];
+        $workingHours = (float)$row["workingHours"];
+        $congeDays = (float)$row["joursconge"];
+        $joursFerie = (int)$row["joursferie"];
     }
 
     $workingHours = 0;
@@ -99,22 +82,13 @@ if ($cloture == 0) {
         $diff = date_diff(date_create($dateemployment), date_create("$year-$month-1"));
         $workingYears = $diff->format("%a") / 365;
 
-        $Taux = $Hours / ($params["hoursMonsuele"] / $params["workingDays"]);
-        $Taux = 26;
-        $sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$object->id AND month=$month AND year = $year";
-        $res = $db->query($sql);
-        if (((object)$res)->num_rows > 0) {
-            $row = ((object)$res)->fetch_assoc();
-            $Taux = (float)$row["workingDays"];
-            // $joursFerie = (int)$row["joursferie"];
-        }
 
-        if ($Taux > ($params["workingDays"] - $congeDays - $joursFerie)) {
-            $Taux = $params["workingDays"] - $congeDays - $joursFerie;
+
+        if ($workingdays > ($params["workingDays"] - $congeDays - $joursFerie)) {
+            $workingdays = $params["workingDays"] - $congeDays - $joursFerie;
         }
 
         //get working days
-        $workingdays = $Taux;
         $workingdaysdeclaré = $workingdays + $congeDays;
 
         // calculate smig
@@ -129,42 +103,9 @@ if ($cloture == 0) {
         $object->thm = ($object->thm < $params["smigHoraire"]) ? $params["smigHoraire"] : $object->thm;
         $bases["salaire de base"] = (float)($object->thm * $params["hoursMonsuele"]);
 
-        // //Get working time on all time
-        // $yearHours = 0;
-        // $sql = "SELECT e.time as ts, s.time as te FROM P_Valide v, P_ENTRER e, P_SORTIE s WHERE v.Cloturé=2 and e.id=v.IdE and s.id=v.IdS and e.userid=" . $extrafields["idpointage"];
-        // $res = $db->query($sql);
-
-        // if (((object)$res)->num_rows > 0) {
-        //     while ($row = ((object)$res)->fetch_assoc()) {
-        //         $t1 = strtotime($row['ts']);
-        //         $t2 = strtotime($row['te']);
-        //         $h1 = (int)date("H", $t1);
-        //         $h2 = (int)date("H", $t2);
-        //         $m1 = (int)date("i", $t1);
-        //         $m2 = (int)date("i", $t2);
-        //         $h = $h2 - $h1;
-        //         $m = $m2 - $m1;
-        //         $yearHours += $h + $m / 60;
-        //     }
-        // }
-
-        // $yearHours = round($yearHours, 0);
-        // $workingYears = $yearHours / ($params["hoursMonsuele"] * 12 + $conge);
-        //$Taux = 40;
-        //$salaireMonsuel = 16  * $Taux;
-
-        $Taux = $Hours;
-        $sql = "SELECT workingHours, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$object->id AND month=$month AND year = $year";
-        $res = $db->query($sql);
-        if (((object)$res)->num_rows > 0) {
-            $row = ((object)$res)->fetch_assoc();
-            $Taux = (int)$row["workingHours"];
-            // $joursFerie = (int)$row["joursferie"];
+        if (($workingHours + ($congeDays * ($params["hoursMonsuele"] / $params["workingDays"])) + ($joursFerie * ($params["hoursMonsuele"] / $params["workingDays"]))) > $params["hoursMonsuele"]) {
+            $workingHours = (int) ($params["hoursMonsuele"] - ($congeDays * ($params["hoursMonsuele"] / $params["workingDays"])) - ($joursFerie * ($params["hoursMonsuele"] / $params["workingDays"])));
         }
-        if (($Taux + ($congeDays * ($params["hoursMonsuele"] / $params["workingDays"])) + ($joursFerie * ($params["hoursMonsuele"] / $params["workingDays"]))) > $params["hoursMonsuele"]) {
-            $Taux = (int) ($params["hoursMonsuele"] - ($congeDays * ($params["hoursMonsuele"] / $params["workingDays"])) - ($joursFerie * ($params["hoursMonsuele"] / $params["workingDays"])));
-        }
-        $workingHours = $Taux;
 
         $yearHours = 1;
         $sql = "SELECT sum(workingHours) FROM llx_Paie_MonthDeclaration WHERE userid=$object->id";
