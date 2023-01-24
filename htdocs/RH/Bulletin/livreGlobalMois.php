@@ -329,7 +329,7 @@ $Livre = '<style type="text/css">
                 <td>CREDIT</td>
             </tr>
              <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
-             <tr class="row-content"><td></td><td >NOMBRE DES JOURS</td><td > ' . price($workingdaysdeclaréTot, 0, '', 1, 1, 2) . ' </td><td></td><td></td></tr>
+             <tr class="row-content"><td></td><td >NOMBRE DES JOURS</td><td > ' . $workingdaysdeclaréTot . ' </td><td></td><td></td></tr>
              <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>';
 
 
@@ -344,7 +344,7 @@ $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td>
 
 //Get les rubriques cotisations
 foreach ($cotisationsRubs as $rub) {
-    $Livre .= '<tr class=""><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td></td><td></td><td >' . price(abs($cotisations[$rub["rub"]]), 0, '', 1, 1, 2) . '</td></tr>';
+    $Livre .= '<tr class=""><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td>' . $rubBases[$rub["rub"]] . '</td><td></td><td >' . price(abs($cotisations[$rub["rub"]]), 0, '', 1, 1, 2) . '</td></tr>';
 }
 
 $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
@@ -354,14 +354,14 @@ $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td>
 $Livre .= '<tr class=""><td>' . getRebrique("chargefamille") . '</td><td >DECUCTION</td><td></td><td >' . price($chargeFamilleTot, 0, '', 1, 1, 2) . '</td><td></td></tr>';
 
 $Livre .= '
-        <tr class=""><td>' . getRebrique("ir") . '</td><td >RETENU IGR </td><td></td><td></td><td > ' . price($irNetTot, 0, '', 1, 1, 2) . ' </td></tr>';
+        <tr class=""><td>' . getRebrique("ir") . '</td><td >RETENU IGR </td><td>' . price($brutImposableTot, 0, '', 1, 1, 2) . '</td><td></td><td> ' . price($irNetTot, 0, '', 1, 1, 2) . ' </td></tr>';
 
 $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>';
 
 //Get rubriques pas en brut et pas imposable
 foreach ($pasEnBrutRubs as $rub) {
     if ($pasEnBruts[$rub["rub"]] > 0)
-        $Livre .= '<tr class="row-content"><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td></td><td >' . price($pasEnBruts[$rub["rub"]], 0, '', 1, 1, 2) . '</td><td></td></tr>';
+        $Livre .= '<tr class=""><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td></td><td >' . price($pasEnBruts[$rub["rub"]], 0, '', 1, 1, 2) . '</td><td></td></tr>';
     elseif ($pasEnBruts[$rub["rub"]] < 0)
         $Livre .= '<tr class=""><td>' . $rub["rub"] . '</td><td >' . $rub["designation"] . '</td><td></td><td></td><td >' . price(abs($pasEnBruts[$rub["rub"]]), 0, '', 1, 1, 2) . '</td></tr>';
 }
@@ -378,7 +378,7 @@ $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td>
 
 $Livre .= '<tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
              <tr><td>&nbsp;</td><td >&nbsp;</td><td >&nbsp;</td><td></td><td></td></tr>
-             <tr  class="importent-cell row-bordered" ><td colspan="2">Net a payer</td><td></td><td > ' . price($totalNetTot, 0, '', 1, 1, 2) . ' </td><td></td></tr>
+             <tr  class="importent-cell row-bordered" ><td colspan="2">TOTAL GENERAL</td><td>' . price($baseTot, 0, '', 1, 1, 2) . '</td><td > ' . price($debitTot, 0, '', 1, 1, 2) . ' </td><td>' . price(abs($creditTot), 0, '', 1, 1, 2) . '</td></tr>
              
              </tbody>
     </table>';

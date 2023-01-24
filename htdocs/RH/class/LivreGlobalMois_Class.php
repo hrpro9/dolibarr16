@@ -20,7 +20,7 @@ $num = $db->num_rows($result);
 //     header("Location: " . DOL_URL_ROOT . '/user/card.php?id=' . $id);
 //     exit;
 // }
-
+$rubBases = array();
 $salaireMonsuelTot = 0;
 $salaireHoraireTot = 0;
 $primeDancienTot = 0;
@@ -36,11 +36,16 @@ $irNetTot  = 0;
 $prev_arrondiTot = 0;
 $arrondiTot  = 0;
 $totalNetTot = 0;
+$brutImposableTot = 0;
+
+$debitTot=0;
+$creditTot=0;
+$baseTot=0;
 
 $sql = "SELECT * FROM llx_Paie_Rub";
 $res = $db->query($sql);
-while($row=$res->fetch_assoc()){
-    $Rubs[$row['rub']]=$row;
+while ($row = $res->fetch_assoc()) {
+    $Rubs[$row['rub']] = $row;
 }
 
 while ($i < $num) {
@@ -112,6 +117,7 @@ while ($i < $num) {
         $netImposable = (float)$row["netImposable"];
         $netImposableTot += $netImposable;
         $brutImposable = (float)$row["salaireBrut"];
+        $brutImposableTot+=$brutImposable;
         $irNet = (float)$row["ir"];
         $irNetTot += $irNet;
         $totalNet = (float)$row["salaireNet"];
@@ -123,6 +129,7 @@ while ($i < $num) {
         $joursFerie = (int)$row["joursferie"];
         $bases["salaire de base"] = $row["salaireDeBase"];
         $bases["salaire mensuel"] = $row["salaireMensuel"];
+        $bases["salaire brut imposable"] = $brutImposable;
         $salaireMonsuelTot += $bases["salaire mensuel"];
         $salaireHoraire = $row["salaireHoraire"];
         $salaireHoraireTot += $salaireHoraire;
@@ -138,14 +145,14 @@ while ($i < $num) {
                 $brutGlobal = $rub[2];
                 $brutGlobalTot += $brutGlobal;
             }
-            if ($rub[1] == "arrondiPrecdent") {
-                $prev_arrondi = $rub[2];
-                $prev_arrondiTot += $prev_arrondi;
-            }
-            if ($rub[1] == "arrondiEnCours") {
-                $arrondi = $rub[2];
-                $arrondiTot += $arrondi;
-            }
+            // if ($rub[1] == "arrondiPrecdent") {
+            //     $prev_arrondi = $rub[2];
+            //     $prev_arrondiTot += $prev_arrondi;
+            // }
+            // if ($rub[1] == "arrondiEnCours") {
+            //     $arrondi = $rub[2];
+            //     $arrondiTot += $arrondi;
+            // }
             if ($rub[1] == "chargeFamille") {
                 $chargeFamille = $rub[2];
                 $chargeFamilleTot += $chargeFamille;
@@ -165,15 +172,25 @@ while ($i < $num) {
                     $apayer = $rub[2];
                     $enBrutsRubs[$rub[0]] = array("rub" => $rub[0], "designation" => $param["designation"]);
                     $enBruts[$rub[0]] += $apayer;
+                    $debitTot+=$apayer;
                 } else if ($rub[1] == "cotisation") {
-                    print($Rubs[''])
+                    $base = $bases[$Rubs[$rub[0]]['base']];
+                    if ($Rubs[$rub[0]]['plafonne']) {
+                        $basePlafond = ($Rubs[$rub[0]]['plafond'] * 100) / $Rubs[$rub[0]]['percentage'];
+                        if ($base > $basePlafond)
+                            $base = $basePlafond;
+                    }
+                    $rubBases[$rub[0]] = !isset($rubBases[$rub[0]]) ? $base : $rubBases[$rub[0]] + $base;
                     $aretenu = $rub[2];
                     $cotisationsRubs[$rub[0]] = array("rub" => $rub[0], "designation" => $param["designation"]);
                     $cotisations[$rub[0]] += $aretenu;
+                    $creditTot+=$aretenu;
+                    $baseTot+=$base;
                 } else if ($rub[1] == "pasEnBrut") {
                     $apayer = $rub[2];
                     $pasEnBrutRubs[$rub[0]] = array("rub" => $rub[0], "designation" => $param["designation"]);
                     $pasEnBruts[$rub[0]] += $apayer;
+                    $debitTot+=$apayer;
                 }
             }
         }
