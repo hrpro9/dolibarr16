@@ -218,8 +218,8 @@ $mydate = getdate(date("U"));
 $month = (GETPOST('month') != '') ? GETPOST('month') : $mydate['mon'];
 $year = (GETPOST('year') != '') ? GETPOST('year') : $mydate['year'];
 $day = $mydate['mday'];
-if (strlen($month) == 1){
-	$month = '0'.$month;
+if (strlen($month) == 1) {
+	$month = '0' . $month;
 }
 
 if ($action == 'filter') {
@@ -852,7 +852,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		continue;
 	}
 
-	$users[$i] = $obj;
+	$users[$obj->rowid] = $obj;
 	$li = '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $userstatic->id . '&action=show&year=' . $year . '&month=' . $month . '">' . $userstatic->login . '</a>';
 
 
@@ -1272,117 +1272,12 @@ function ShowDocuments()
 	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
 }
 
-// function changeWorkingDays()
-// {
-//     global $db, $day, $month, $year, $users, $limit;
-
-//     $sql = "SELECT rub, designation FROM llx_Paie_HourSupp";
-//     $res = $db->query($sql);
-//     if (((object)$res)->num_rows > 0) {
-//         $hrs = ((object)$res)->fetch_all();
-//     }
-//     print '<form  action="' . $_SERVER["PHP_SELF"] . '" method="post" style="margin-top:15px;">';
-//     print '<input type="hidden" name="token" value="' . newToken() . '">';
-//     print '<input type="hidden" name="action" value="confirmeWorkingDays">';
-//     print '<input type="hidden" name="day" value="' . $day . '">';
-//     print '<input type="hidden" name="month" value="' . $month . '">';
-//     print '<input type="hidden" name="year" value="' . $year . '">';
-// 	print '<input type="hidden" name="limit" value="' . $limit . '">';
-
-
-//     print ' <style>
-//                 .small-td input{
-//                     width:90%;
-//                 }
-//             </style>
-//         <table class="noborder editmode" style="width:100%">
-//     <thead>
-//         <tr class="liste_titre">
-//             <th class="titlefield wordbreak">Login</th>
-//             <th class="titlefield wordbreak">Nom Complet</th>
-//             <th class="titlefield wordbreak">Nombre des jours travaillé</th>
-//             <th class="titlefield wordbreak">Nombre des Hours travaillé (horaire)</th>
-//             <th class="titlefield wordbreak">Jours férié</th>
-//             <th class="titlefield wordbreak">Jours de congé férié</th>';
-//     foreach ((array)$hrs as $hr) {
-//         print '<th class="titlefield wordbreak">' . $hr[1] . '</th>';
-//     }
-//     print '</tr>
-//     </thead>
-//     <tbody>';
-//     foreach ($users as $user) {
-
-//         $salaireParams = "";
-//         //Get user salaire informations from database
-//         $sql = "SELECT type from llx_Paie_UserInfo WHERE userid=" . $user->rowid;
-//         $res = $db->query($sql);
-//         if (((object)$res)->num_rows > 0) {
-//             $salaireParams = ((object)$res)->fetch_assoc();
-//         }
-//         $type = $salaireParams["type"];
-// 		$conge = 0;
-// 		$sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
-
-
-//         if ($type == 'mensuel') //Mensuel
-//         {
-//             $workingdays = 26;
-//             $sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
-//             $res = $db->query($sql);
-//             if (((object)$res)->num_rows > 0) {
-//                 $row = ((object)$res)->fetch_assoc();
-//                 $workingdays = (int)$row["workingDays"];
-//                 $joursferie = (int)$row["joursferie"];
-//             }
-
-//             print "<tr>
-//                 <td>$user->login</td>
-//                 <td>$user->lastname $user->firstname</td>
-//                 <td><input type='number' onkeypress='return event.charCode >= 48 && event.charCode <= 57' name='workingdays_$user->rowid' value='$workingdays'></td>
-//                 <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
-//         } else if ($type == 'horaire') //Journalier or Horaire
-//         {
-//             $workingHours = 0;
-//             $sql = "SELECT workingHours, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
-//             $res = $db->query($sql);
-//             if (((object)$res)->num_rows > 0) {
-//                 $row = ((object)$res)->fetch_assoc();
-//                 $workingHours = (int)$row["workingHours"];
-//                 $joursferie = (int)$row["joursferie"];
-//             }
-
-//             print "<tr>
-//                 <td>$user->login</td>
-//                 <td>$user->lastname $user->firstname</td>
-//                 <td><input type='number'  name='workingHours_$user->rowid' value='$workingHours'></td>
-//                 <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
-//         }
-//         foreach ((array)$hrs as $hr) {
-//             $sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
-//             $resh = $db->query($sqlh);
-//             if (((object)$resh)->num_rows > 0) {
-//                 $nhours = ((object)$resh)->fetch_assoc()["nhours"];
-//             }
-//             print "<td class='small-td'><input type='number' name='hoursupp_$hr[0]_$user->rowid' value='$nhours'></td>";
-//         }
-//     }
-
-//     print '</tbody>
-//     </table>';
-
-
-
-//     print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="button" value="valider">';
-
-//     print '</form>';
-// }
-
-
 function ShowBulletin($id)
 {
-	global $db, $object, $year, $month;
+	global $db, $year, $month, $object;
 
 	$object->fetch($id);
+	$object->rowid = $object->id;
 
 	include 'Bulletin_Class.php';
 
@@ -1449,11 +1344,11 @@ function ShowBulletin($id)
 	}
 
 	foreach ((array)$hrs as $hr) {
-		$bulttin .= '<tr class="row-content"><td>' . $hr["rub"] . '</td><td>' . $hr["designation"] . '</td><td>' . price($hr["nombre"], 0, '', 1, 1, 2) . '</td><td>' . price($hr["base"], 0, '', 1, 1, 2) . '</td><td>' . $hr["taux"] . '%</td><td> ' . price($hr["apayer"], 0, '', 1, 1, 2) . ' </td><td> </td></tr>';
+		$bulttin .= '<tr class="row-content"><td>' . $hr["rub"] . '</td><td>' . $hr["designation"] . '</td><td>' . price($hr["nombre"], 0, '', 1, 1, 2) . '</td><td>' . price($hr["base"], 0, '', 1, 1, 2) . '</td><td>' . $hr["taux"] . '%</td><td> ' . price($hr["apayer"], 0, '', 1, 1, 2) . ' </td><td>' . price($hr["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
 	}
 
 	if ($primeDancien > 0) {
-		$bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases["primeDancien"], 0, '', 1, 1, 2) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien, 0, '', 1, 1, 2) . '</td><td>&nbsp;</td></tr> ';
+		$bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases['primeDancien'], 0, '', 1, 1, 2) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien, 0, '', 1, 1, 2) . '</td><td>&nbsp;</td></tr> ';
 	}
 
 	foreach ((array)$enBruts as $enBrut) {
@@ -1525,6 +1420,20 @@ function ShowBulletin($id)
     </table>';
 
 	print $bulttin;
+}
+
+//Les compte comptable
+function getRebrique($name)
+{
+	global $db;
+	$sql = "SELECT rub FROM llx_Paie_Rubriques WHERE name = '$name'";
+	$res = $db->query($sql);
+	if ($res) {
+		$row = ((object)$res)->fetch_assoc();
+	} else
+		print("<br>fail ERR: " . $sql);
+
+	return $row["rub"];
 }
 
 // style

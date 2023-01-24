@@ -500,7 +500,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		continue;
 	}
 
-	$users[$i] = $obj;
+	$users[$obj->rowid] = $obj;
 	$i++;
 }
 
@@ -1139,6 +1139,10 @@ if ($action == 'changeWorkingDays') {
 	changeWorkingDays();
 } else {
 	GenerateDocuments();
+	echo '<form action="" method="get" style="text-align: left; width:200px;">
+	<input type="hidden" name="action" value="showallbultins">
+	<button type="submit" style="margin-bottom: 100px; margin-right: 5%;" class="butActionDelete">Afficher tous</button>
+	</form>';
 }
 
 if ($action == 'confirmeWorkingDays') {
@@ -1269,6 +1273,10 @@ if ($action == 'confirmeWorkingDays') {
 
 $action = GETPOST('action');
 $id = GETPOST('id', 'int');
+
+if ($action == 'showallbultins') {
+	ShowAllBulletins();
+}
 if ($id && $action == 'show') {
 	ShowBulletin($id);
 }
@@ -1279,7 +1287,7 @@ function GenerateDocuments()
 	global $day, $month, $year, $limit;
 	print '</form>';
 	print '<hr>';
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="get">';
+	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="get" style="">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="changeWorkingDays">';
 	print '<input type="hidden" name="day" value="' . $day . '">';
@@ -1397,9 +1405,12 @@ function changeWorkingDays()
 
 function ShowBulletin($id)
 {
-	global $db, $object, $year, $month;
+	global $db, $year, $month, $object;
 
 	$object->fetch($id);
+	$object->rowid=$object->id;
+
+	// $object = $users[$id];
 
 	include 'Bulletin_Class.php';
 
@@ -1542,6 +1553,152 @@ function ShowBulletin($id)
     </table>';
 
 	print $bulttin;
+}
+
+function ShowAllBulletins()
+{
+	global $db, $users, $year, $month;
+
+	foreach ($users as $object) {
+		include 'Bulletin_Class.php';
+
+		$bulttin = '<style type="text/css">
+        table.tableizer-table {
+            font-size: 11px;
+            margin:auto;
+            border-bottom:1px solid #000;
+            border-collapse: collapse;
+        } 
+        .tableizer-table td {
+            padding: 4px;
+            margin: 3px;
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+        }
+        .tableizer-table th {
+            background-color: #104E8B; 
+            color: #FFF;
+            font-weight: bold;
+        }
+        .row-bordered{
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        .row-content{
+            background-color: rgb(214, 214, 214);
+        }
+        .importent-cell{
+            background-color: rgb(122, 166, 202);
+            font-weight: bold;
+        }
+        .white-cell{
+            background-color: white;
+            font-weight: bold;
+        }
+        </style>
+            <table class="tableizer-table">
+                <thead><tr class="tableizer-firstrow"><th colspan="7">BULLETIN DE PAIE</th></tr></thead>
+                <tbody>
+                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Nom</td><td class="white-cell">' . $object->lastname . ' ' . $object->firstname . '</td><td>Date de naissance</td><td class="white-cell" colspan="2">' . date("d/m/Y", $object->birth) . '</td></tr>
+                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° CNSS</td><td class="white-cell">' . $salaireParams["cnss"] . '</td><td>Fonction</td><td class="white-cell" colspan="2">' . $object->job . '</td></tr>
+                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° Mutuelle</td><td class="white-cell">' . $salaireParams["mutuelle"] . '</td><td>N° CIMR</td><td class="white-cell" colspan="2">' . $salaireParams["cimr"] . '</td></tr>
+                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Periode</td><td class="white-cell">' . $periode . '</td><td>adresse</td><td class="white-cell" colspan="2">' . $object->address . '</td></tr>
+                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Situation familiale</td><td class="white-cell">' . $situation . '</td><td>nombre d\'enfants</td><td class="white-cell" colspan="2">' . $enfants . '</td></tr>
+                <tr class="importent-cell row-bordered"><td rowspan="2">Rub</td><td rowspan="2">Désignation</td><td rowspan="2">Nombre</td><td rowspan="2">Base</td><td colspan="3">Part salariale</td></tr>
+                <tr class="importent-cell row-bordered"><td>Taux</td><td>A payer</td><td>A retenues</td></tr>
+    ';
+
+		if ($type == "mensuel") {
+			$bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireMensuel") . '</td><td>SALAIRE MENSUEL</td><td></td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td> ' . $Taux . ' </td><td> ' . price($bases["salaire mensuel"], 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+		}
+
+		if ($type == "horaire") {
+			$bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireHoraire") . '</td><td>SALAIRE HORAIRE</td><td>' . $workingHours . '</td><td>' . price($salaireHoraire, 0, '', 1, 1, 2) . '</td><td>  </td><td> ' . price($bases["salaire mensuel"], 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+		}
+
+		if ($soldeConge > 0) {
+			$bulttin .= '<tr class="row-content"><td>' . getRebrique("congePaye") . '</td><td>CONGE PAYE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td>' . $congeDays . '</td><td> ' . price($soldeConge, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+		}
+
+		if ($soldeferie > 0) {
+			$bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+		}
+
+		foreach ((array)$hrs as $hr) {
+			$bulttin .= '<tr class="row-content"><td>' . $hr["rub"] . '</td><td>' . $hr["designation"] . '</td><td>' . price($hr["nombre"], 0, '', 1, 1, 2) . '</td><td>' . price($hr["base"], 0, '', 1, 1, 2) . '</td><td>' . $hr["taux"] . '%</td><td> ' . price($hr["apayer"], 0, '', 1, 1, 2) . ' </td><td>' . price($hr["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
+		}
+
+		if ($primeDancien > 0) {
+			$bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases['primeDancien'], 0, '', 1, 1, 2) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien, 0, '', 1, 1, 2) . '</td><td>&nbsp;</td></tr> ';
+		}
+
+		foreach ((array)$enBruts as $enBrut) {
+			$base = $enBrut["base"] > 0 ? price($enBrut["base"], 0, '', 1, 1, 2) : "";
+			$bulttin .= '<tr class="row-content"><td>' . $enBrut["rub"] . '</td><td>' . $enBrut["designation"] . '</td><td>' . $enBrut["nombre"] . '</td><td>' . $base . '</td><td>' . $enBrut["taux"] . '</td><td> ' . price($enBrut["apayer"], 0, '', 1, 1, 2) . ' </td><td>' . price($enBrut["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
+		}
+
+		if ($primeCommercial > 0) {
+			$base = $CA > 0 ? price($CA, 0, '', 1, 1, 2) : "";
+			$bulttin .= '<tr class="row-content"><td>' . getRebrique("primeCommercial") . '</td><td>PRIME COMMERCIAL</td><td></td><td>' . $base . '</td><td>' . $percent . '%</td><td> ' . price($primeCommercial, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+		}
+
+		$bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+             <tr class="row-content"><td></td><td>SALAIRE BRUT</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($brutGlobal, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>
+             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+
+		foreach ((array)$cotisations as $cotisation) {
+			$base = $cotisation["base"] > 0 ? price($cotisation["base"], 0, '', 1, 1, 2) : "";
+			$bulttin .= '<tr class=""><td>' . $cotisation["rub"] . '</td><td>' . $cotisation["designation"] . '</td><td>' . price($cotisation["nombre"], 0, '', 1, 1, 2) . '</td><td>' . $base . '</td><td>' . $cotisation["taux"] . '</td><td>  </td><td>' . price($cotisation["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
+		}
+
+		$bulttin .= ' <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+             <tr class="row-content"><td>' . getRebrique("netImposable") . '</td><td>SALAIRE NET IMPOSABLE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($netImposable, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>
+             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+
+		if ($chargeFamille != 0) {
+			$bulttin .= '<tr class="row-content"><td>' . getRebrique("chargefamille") . '</td><td>CHARGE DE FAMILLE</td><td>&nbsp;</td><td>&nbsp;</td><td>' . $chargeFamilleTaux . '</td><td>' . price($chargeFamille, 0, '', 1, 1, 2) . '</td><td>&nbsp;</td></tr>';
+		}
+
+		if ($irNet > 0) {
+			$bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>' . getRebrique("ir") . '</td><td>IR</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($irNet, 0, '', 1, 1, 2) . ' </td></tr>';
+		}
+
+		foreach ((array)$pasEnBruts as $pasEnBrut) {
+			$base = $pasEnBrut["base"] > 0 ? price($pasEnBrut["base"], 0, '', 1, 1, 2) : "";
+			$bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+			$bulttin .= '<tr class="row-content"><td>' . $pasEnBrut["rub"] . '</td><td>' . $pasEnBrut["designation"] . '</td><td>&nbsp;</td><td>' . price($pasEnBrut["nombre"], 0, '', 1, 1, 2) . '</td><td>' . $base . '</td><td>' . price($pasEnBrut["apayer"], 0, '', 1, 1, 2) . '</td><td>' . price($pasEnBrut["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
+		}
+
+		$bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td></td><td class="importent-cell row-bordered"> ' . price($totalBrut, 0, '', 1, 1, 2) . ' </td><td class="importent-cell row-bordered"> ' . price($totalRetenu + $retenueFromBrut, 0, '', 1, 1, 2) . ' </td></tr>
+             <tr ><td></td><td>&nbsp;</td><td class="importent-cell row-bordered" colspan="3">Net a payer</td><td class="importent-cell row-bordered" colspan="2"> ' . price($totalNet, 0, '', 1, 1, 2) . ' </td></tr>
+
+             <tr><td></td><td>&nbsp;</td><td>Jours travaillés</td><td>Brut imposable</td><td>Net imposable</td><td>Retenue I.R.</td></tr>
+             <tr class="row-bordered row-content"><td></td><td>Mensuel</td><td>' . ($workingdaysdeclaré) . '</td><td>' . price($brutImposable) . '</td><td>' . price($netImposable, 0, '', 1, 1, 2) . '</td><td>' . price($irNet, 0, '', 1, 1, 2) . '</td></tr>
+             <tr class="row-bordered row-content"><td></td><td>Annuel</td><td>' . ($comulWorkingDays + $workingdaysdeclaré) . '</td><td>' . price($comulsalaireBrut + $brutImposable, 0, '', 1, 1, 2) . '</td><td>' . price($comulnetImposable + $netImposable, 0, '', 1, 1, 2) . '</td><td>' . price($comulIR + $irNet, 0, '', 1, 1, 2) . '</td></tr>
+       	</tbody>
+    	</table>';
+
+		echo $bulttin;
+		echo "<br/><br/><br/><br/>";
+	}
+}
+
+//Les compte comptable
+function getRebrique($name)
+{
+	global $db;
+	$sql = "SELECT rub FROM llx_Paie_Rubriques WHERE name = '$name'";
+	$res = $db->query($sql);
+	if ($res) {
+		$row = ((object)$res)->fetch_assoc();
+	} else
+		print("<br>fail ERR: " . $sql);
+
+	return $row["rub"];
 }
 
 // style

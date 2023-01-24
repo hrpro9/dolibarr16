@@ -210,6 +210,7 @@ if ($action == 'updateSalary' && !$cancel) {
 					$amount = (float)GETPOST($row["rub"], 'float');
 					if ($row["rub"] == '14' && $amount > (0.1 * $salaire)) {
 						$amount = 0.1 * $salaire;
+						setEventMessages("La représentation est > 10 %. passera automatiquement à 10 %", array(), 'errors');
 					}
 					$sql = "REPLACE into llx_Paie_UserParameters(userid, rub, amount) values ($object->id, " . $row['rub'] . ", $amount);";
 					$res = $db->query($sql);
