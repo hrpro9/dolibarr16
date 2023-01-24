@@ -339,9 +339,12 @@ if ($cloture == 0) {
             }
             //if it's calculable
             $base = $bases[$param["base"]];
+            // frais PROFESSIONNELS
+            if ($param["rub"] == '714') {
+                $param["percentage"] = $brutImposable <= 6500 ? 35 : 25;
+            }
             $Tauxr = $param["percentage"] . "%";
 
-            $aretenu = (float)($base * $param["percentage"] / 100);
             if ($param["plafonne"] == 1) {
                 $base = ($aretenu > $param["plafond"]) ? $param["plafond"] / $param["percentage"] * 100 : $base;
             }
@@ -350,7 +353,6 @@ if ($cloture == 0) {
 
             $cotisations[] = array("rub" => $param["rub"], "designation" => $param["designation"], "nombre" => $brutImposable, "base" => $base, "taux" => $Tauxr, "apayer" => "", "aretenu" => $aretenu, "surbulletin" => $param["surBulletin"]);
             $rubs .= $param["rub"] . ":cotisation:" . ($aretenu * -1) . ";";
-
 
             if ($param["surBulletin"]) {
                 $totalRetenu += $aretenu;
