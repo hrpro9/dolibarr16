@@ -45,7 +45,7 @@ if ($cloture == 0) {
     $type = 0;
     $congeDays = 0;
     $workingYears = 0;
-    $joursFerie = 0;
+    $joursFerie = 0;  
     $Taux = 0;
     $salaireHoraire = 0;
     $salaireHoraire = 0;
@@ -335,7 +335,6 @@ if ($cloture == 0) {
     $res = $db->query($sql);
     if ($res->num_rows > 0) {
         while ($param = ((object)($res))->fetch_assoc()) {
-
             if ($param["auFiche"]  == 1) {
                 $sql1 = "SELECT checked FROM llx_Paie_UserParameters WHERE rub=" . $param["rub"] . " AND userid=" . $object->rowid;
                 $res1 = $db->query($sql1);
