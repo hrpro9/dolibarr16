@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-  <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
   </head>
   <body >
 
@@ -14,23 +14,23 @@
                   <h4 style="text-align: center;" class="field-divided">Calcul new prime !!!</h4>
                   <li>
                     <label>salaire net + new prime <span class="required">*</span></label>
-                    <input type="number" name="sn" value="7400" class="field-divided" placeholder="salaire de base" required/>
+                    <input type="number" step="any" name="sn"  class="field-divided" placeholder="salaire de base" required/>
                   </li>
                   <li>
                     <label>salaire de base <span class="required">*</span></label>
-                    <input type="number" name="sb" value="7931.57" class="field-divided" placeholder="salaire de base" required/>
+                    <input type="number" step="any" name="sb"  class="field-divided" placeholder="salaire de base" required/>
                   </li>
                   <li style="margin-top: 26px;">
                     <label>primes <span class="required">*</span></label>
-                    <input type="number" name="primes" value="0" class="field-divided" placeholder="primes" required />
+                    <input type="number" step="any" name="primes"  class="field-divided" placeholder="primes" required />
                   </li>
                   <li style="margin-top: 26px;"> 
                     <label>les_indeminités <span class="required">*</span></label>
-                    <input type="number" name="les_indeminités" value="0" class="field-divided" placeholder="les_indeminités" required />
+                    <input type="number" step="any" name="les_indeminités"  class="field-divided" placeholder="les_indeminités" required />
                   </li>
                   <li style="margin-top: 26px;">
                     <label>charge de famille <span class="required">*</span></label>
-                    <input type="number" name="cf" value="0" class="field-divided" placeholder="charge de famille" required/>
+                    <input type="number" step="any" name="cf"  class="field-divided" placeholder="charge de famille" required/>
                   </li>
                   <li style="margin-top: 18px;">
                     <input type="submit"  name="new_prime" value="Calcul" />
@@ -45,7 +45,7 @@
                     {
                       require "code_calcul_new_prime.php";  
                       ?>
-                      <div class="alert1" role="alert" style="margin-left: 50%; width: 20%;margin-top: -35%;">
+                      <div class="alert1" role="alert" style="margin-left: 50%; width: 20%;margin-top: -32%;">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                      <?php
                         echo "----> salaire  net + new prime : ".$sn ."<br>";

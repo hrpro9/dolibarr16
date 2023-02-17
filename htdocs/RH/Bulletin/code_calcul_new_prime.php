@@ -1,7 +1,7 @@
 <?php
 
     // Load Dolibarr environment
-    require '../../main.inc.php';
+    require_once '../../main.inc.php';
     require_once '../../vendor/autoload.php';
 
     // require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
@@ -54,8 +54,7 @@
     $res = $db->query($sql);
     $ir = ((object)($res))->fetch_assoc();
     $ir_taux =$ir['percentIR']/ 100;
-    $deduction=$sni - $ir['deduction'];
-    $ir_b =$ir_taux*$deduction;
+    $ir_b =($sni*$ir_taux)-$ir['deduction'];
     //ir_net
     $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]);
     // salaire net test
@@ -91,13 +90,12 @@
             $fraie_professionnels=$fp<$maxfp?$fp:$maxfp;
             // salaire_net_imposable 
             $sni=$sbi - ($cnss+$amo+$fraie_professionnels); 
-             //ir_brut
+            //ir_brut
             $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
             $res = $db->query($sql);
             $ir = ((object)($res))->fetch_assoc();
             $ir_taux =$ir['percentIR']/ 100;
-            $deduction=$sni - $ir['deduction'];
-            $ir_b =$ir_taux*$deduction;
+            $ir_b =($sni*$ir_taux)-$ir['deduction'];
             //ir_net
             $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]); 
             // salaire net test
