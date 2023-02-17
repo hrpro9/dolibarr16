@@ -40,7 +40,8 @@
     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=702";
     $res = $db->query($sql);
     $param_amo = ((object)($res))->fetch_assoc();
-    $amo=$sbi*  $param_amo["percentage"]/100;
+    $tauxamo=$param_amo["percentage"]/100;
+    $amo=$sbi*$tauxamo;
     // fraie_professionnels
     $param["percentage"] = $sbi <= 6500 ?0.35 : 0.25;
     $fp=$sbi* $param["percentage"];
@@ -70,7 +71,7 @@
             // salaire_brut_imposable
             $sbi=$sbi+ $v_test; 
             // new_prime
-            $new_prime= $sbi+$les_indeminités-$sb-$primes-$conge; 
+            $new_prime= $sbi+$les_indeminités-$sb-$primes; 
             // cnss
             $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
             $res = $db->query($sql);
@@ -117,7 +118,11 @@
      $param_af = ((object)($res))->fetch_assoc();
      $allocaton_familale=$sbi* $param_af["percentage"]/100;
      //participation_amo
-     $participation_amo=$sbi*0.0185;  
+     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=703";
+     $res = $db->query($sql);
+     $param_pamo = ((object)($res))->fetch_assoc();
+     $tauxpamo=($param_pamo["percentage"]/100)-$tauxamo;
+     $participation_amo=$sbi*$tauxpamo;   
      //amo_patronale
      $amo_patronale=$sbi* $param_amo["percentage"]/100;
 

@@ -1,5 +1,11 @@
 <?php
 
+  if(isset($_POST['code_barre']))
+  {
+     $code_barre=$_POST['code_barre'];
+     $sql="INSERT INTO "
+
+  }
 
 ?>
 
@@ -21,6 +27,9 @@
                     <label>code barre <span class="required">*</span></label>
                     <input type="text" name="code_barre" value="7400" class="field-divided" placeholder="code barre" required/>
                   </li>
+                  <li style="margin-top: 18px;">
+                    <input type="submit"  name="code_barre" value="Save" />
+                  </li>    
                 </ul>
               </form>
             </div>     

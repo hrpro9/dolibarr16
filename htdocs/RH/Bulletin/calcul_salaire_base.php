@@ -13,19 +13,19 @@
                   <h4 style="text-align: center;" class="field-divided">Calcul Salaire de base !!!</h4>
                   <li>
                     <label>salaire net <span class="required">*</span></label>
-                    <input type="text" name="sn" value="7000" class="field-divided" placeholder="salaire de base" required/>
+                    <input type="number" name="sn" value="7000" class="field-divided" placeholder="salaire de base" required/>
                   </li>
                   <li style="margin-top: 26px;">
                     <label>primes <span class="required">*</span></label>
-                    <input type="text" name="primes" value="0" class="field-divided" placeholder="primes" required />
+                    <input type="number" name="primes" value="0" class="field-divided" placeholder="primes" required />
                   </li>
                   <li style="margin-top: 26px;"> 
                     <label>les_indeminités <span class="required">*</span></label>
-                    <input type="text" name="les_indeminités" value="0" class="field-divided" placeholder="les_indeminités" required />
+                    <input type="number" name="les_indeminités" value="0" class="field-divided" placeholder="les_indeminités" required />
                   </li>
                   <li style="margin-top: 26px;">
                     <label>charge de famille <span class="required">*</span></label>
-                    <input type="text" name="cf" value="0" class="field-divided" placeholder="charge de famille" required/>
+                    <input type="number" name="cf" value="0" class="field-divided" placeholder="charge de famille" required/>
                   </li>
                   <li style="margin-top: 18px;">
                     <input type="submit"  name="salaire_base" value="Calcul" />
@@ -63,6 +63,8 @@
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     <?php
                     echo "----> salaire de base : ". $sb;
+                    echo "<br>----> deduction : ".$ir['deduction'];
+                    echo "<br>----> percentIR : ".$ir_taux ;
                     ?> 
                     </div> 
                     <div class="alert3" role="alert" style="margin-left: 50%; width: 20%;">  
