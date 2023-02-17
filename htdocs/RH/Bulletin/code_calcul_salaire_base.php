@@ -18,52 +18,23 @@
     $sql = "SELECT * FROM llx_Paie_bdpParameters";
     $res = $db->query($sql);
     $params = ((object)($res))->fetch_assoc();
-  
     //Get les rubriques cotisations
     $sql = "SELECT * FROM llx_Paie_Rub WHERE cotisation=1";
     $res = $db->query($sql);
     $param = ((object)($res))->fetch_assoc();
-
-   
-
+      
     
+  
+
     $params["fp"];
     $sn=$_POST['sn'];
-    $conge=$_POST['conge'];
     $primes=$_POST['primes'];
     $les_indeminités=$_POST['les_indeminités'];                   
     $cf=$_POST['cf']; 
-    // salaire de base test cnss
+    //test salaire de base 
     $sb=2500; 
-    // salaire_brut_imposable
-    $sbi=($sb+$primes+$conge)-$les_indeminités; 
-    // cnss
-    //  $cnss=$sbi<6000?$sbi*0.0448:6000*0.0448;
-    $cnss=$sbi<$params["maxCNSS"]?$sbi*$params["cnss"]:$params["maxCNSS"]*$params["cnss"];
-    // amo
-    //  $amo=$sbi*0.0226; 
-    $amo=$sbi* $param["percentage"];
-    // fraie_professionnels
-    /* $fraie_professionnels=$sbi>6500?$sbi*0.25:$sbi*0.35; 
-    if($fraie_professionnels>2916.67)
-    {
-        $fraie_professionnels=2916.67;
-    }*/
-    $param["percentage"] = $sbi <= 6500 ?0.35 : 0.25;
-    $fp=$sbi* $param["percentage"];
-    $fraie_professionnels=$fp<2916.67?$fp:2916.67; 
-    // salaire_net_imposable
-    $sni=$sbi - ($cnss+$amo+$fraie_professionnels);
-    //ir_brut
-    $ir='';
-    $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
-    $res = $db->query($sql);
-    $ir = ((object)($res))->fetch_assoc();
-    $ir_b = $ir['percentIR'] * $sni / 100 - $ir['deduction'];
-    //ir_net
-    $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]); 
-    // salaire net test    
-    $sn_test=$sbi-$cnss-$amo-$ir_n;
+    //test salaire net 
+    $sn_test=2331.5;
     if($sn_test == $sn )
     {
         echo "----> salaire de base : ".$sb ."<br>";
@@ -75,19 +46,33 @@
             // salaire de base test
             $sb= round($sb + $v_test, 2);
             // salaire_brut_imposable
-            $sbi=($sb+$primes+$conge)-$les_indeminités; 
+            $sbi=($sb+$primes)-$les_indeminités; 
             // cnss
-            $cnss=$sbi<$params["maxCNSS"]?$sbi*$params["cnss"]:$params["maxCNSS"]*$params["cnss"];
+            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
+            $res = $db->query($sql);
+            $param_cnss = ((object)($res))->fetch_assoc();
+            $tauxcnss=$param_cnss["percentage"]/100;
+            $maxcnss=$param_cnss["plafond"]/$tauxcnss;
+            $cnss=$sbi<$maxcnss?$sbi*$tauxcnss:$maxcnss*$tauxcnss;
             // amo
-            $amo=$sbi*$params["percentage"]; 
+            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=702";
+            $res = $db->query($sql);
+            $param_amo = ((object)($res))->fetch_assoc();
+            $amo=$sbi*  $param_amo["percentage"]/100;
             // fraie_professionnels
             $param["percentage"] = $sbi <= 6500 ?0.35 : 0.25;
             $fp=$sbi* $param["percentage"];
-            $fraie_professionnels=$fp<2916.67?$fp:2916.67;
+            $maxfp=2916.67;
+            $fraie_professionnels=$fp<$maxfp?$fp:$maxfp;
             // salaire_net_imposable
             $sni=$sbi - ($cnss+$amo+$fraie_professionnels);
             //ir_brut
-            $ir_b = $ir['percentIR'] * $sni / 100 - $ir['deduction']; 
+            $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
+            $res = $db->query($sql);
+            $ir = ((object)($res))->fetch_assoc();
+            $ir_taux =$ir['percentIR']/ 100;
+            $deduction=$sni - $ir['deduction'];
+            $ir_b =$ir_taux*$deduction;
             //ir_n
             $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]); 
             // salaire net test 
@@ -96,13 +81,19 @@
     }
     /*--------------------------------> charges patronale <--------------------------------*/
     // cnss patronale
-   //   $cnss_patronale=$sbi<6000?$sbi*0.0898:6000*0.0898;
-    $cnss_patronale=$sbi<$params["maxCNSS"]?$sbi* $params["patronaleCnss"]:$params["maxCNSS"]*$params["patronaleCnss"];
+    $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=701";
+    $res = $db->query($sql);
+    $param_cp = ((object)($res))->fetch_assoc();
+    $tauxcp=$param_cp["percentage"]/100;
+    $maxcp=$param_cp["plafond"]/ $tauxcp;
+    $cnss_patronale=$sbi<$maxcp?$sbi*$tauxcp:$maxcp*$tauxcp;
     //allocaton_familale
-    $allocaton_familale=$sbi*0.0640; 
+    $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=705";
+    $res = $db->query($sql);
+    $param_af = ((object)($res))->fetch_assoc();
+    $allocaton_familale=$sbi* $param_af["percentage"]/100;
     //participation_amo
     $participation_amo=$sbi*0.0185;  
     //amo_patronale
-   // $amo_patronale=$sbi*0.0226;
-    $amo_patronale=$sbi*$params["patronaleAmo"]; 
+    $amo_patronale=$sbi* $param_amo["percentage"]/100;
 ?>

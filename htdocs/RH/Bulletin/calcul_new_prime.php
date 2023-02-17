@@ -24,10 +24,6 @@
                     <label>primes <span class="required">*</span></label>
                     <input type="text" name="primes" value="0" class="field-divided" placeholder="primes" required />
                   </li>
-                  <li style="margin-top: 26px;">
-                    <label>conge <span class="required">*</span></label>
-                    <input type="text" name="conge" value="0" class="field-divided" placeholder="conge" required />
-                  </li>
                   <li style="margin-top: 26px;"> 
                     <label>les_indeminités <span class="required">*</span></label>
                     <input type="text" name="les_indeminités" value="0" class="field-divided" placeholder="les_indeminités" required />

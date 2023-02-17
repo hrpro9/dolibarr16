@@ -11,7 +11,7 @@ if (!$user->admin) {
 
 llxHeader("", "Paramétrage Bulletin de Paie");
 $text = "Paramétrage";
-print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'setup', 0, $morehtmlright . ' ' . $newcardbutton, '', 0, 0, 1);
+//print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'setup', 0, $morehtmlright . ' ' . $newcardbutton, '', 0, 0, 1);
 
 
 $action = GETPOST('action', 'alpha');

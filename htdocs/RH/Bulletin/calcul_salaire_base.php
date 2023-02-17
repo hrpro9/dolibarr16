@@ -19,10 +19,6 @@
                     <label>primes <span class="required">*</span></label>
                     <input type="text" name="primes" value="0" class="field-divided" placeholder="primes" required />
                   </li>
-                  <li style="margin-top: 26px;">
-                    <label>conge <span class="required">*</span></label>
-                    <input type="text" name="conge" value="0" class="field-divided" placeholder="conge" required />
-                  </li>
                   <li style="margin-top: 26px;"> 
                     <label>les_indeminités <span class="required">*</span></label>
                     <input type="text" name="les_indeminités" value="0" class="field-divided" placeholder="les_indeminités" required />
@@ -52,7 +48,6 @@
                     <?php
                       echo "----> salaire  net : ".$sn ."<br>";
                       echo "----> primes : ".$primes ."<br>";
-                      echo "----> conge : ".$conge ."<br>";
                       echo "----> les_indeminités : ".$les_indeminités ."<br>";
                       echo "----> salair brut imposable : ".round($sbi,2) ."<br>";
                       echo "----> cnss : ".round($cnss,2) ."<br>";
@@ -68,15 +63,6 @@
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     <?php
                     echo "----> salaire de base : ". $sb;
-
-                    echo "<br> params maxcnss ". $params["maxCNSS"] ."<br>";
-                    echo "params cnss ". $params["cnss"] ."<br>";
-                    echo "params amo ".$params["amo"] ."<br>";
-                    echo "params maxChildrens ".$params["maxChildrens"]."<br>";
-                    echo "params primDenfan ".$params["primDenfan"]."<br>";
-                    echo "params patronaleCnss ".$params["patronaleCnss"]."<br>";
-                    echo "params patronaleAmo ".$params["patronaleAmo"]."<br>";
-                    echo "params fp ".$params["fp"]."<br>";
                     ?> 
                     </div> 
                     <div class="alert3" role="alert" style="margin-left: 50%; width: 20%;">  
