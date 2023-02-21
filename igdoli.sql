@@ -8876,19 +8876,6 @@ LOCK TABLES `llx_categorie_member` WRITE;
 UNLOCK TABLES;
 
 
---
--- Table structure for table `llx_product_code_barre`
---
--- DROP TABLE IF EXISTS `llx_product_code_barre`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-/*CREATE TABLE `llx_product_code_barre` (
-  `code_barre` int(11) NOT NULL  ,
-  FOREIGN KEY (`rowid`) REFERENCES `llx_product`,
-  PRIMARY KEY (`code_barre`),
-  UNIQUE KEY `code_barre` (`code_barre`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;*/
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 
 --

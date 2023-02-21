@@ -19,16 +19,8 @@
     $sql = "SELECT * FROM llx_Paie_Rub WHERE cotisation=1";
     $res = $db->query($sql);
     $param = ((object)($res))->fetch_assoc();
-    //----
+    //Get data From calcul_salaire_base
     $sn=$_POST['sn'];
-    $num='/^[0-9]{10,10}$/';
-    if(preg_match($num,$sn))
-    {
-        $check='ok';
-    }
-    else{
-        $check='check your number';
-    }
     $primes=$_POST['primes'];
     $les_indeminités=$_POST['les_indeminités'];                   
     $cf=$_POST['cf']; 

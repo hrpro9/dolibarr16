@@ -280,7 +280,7 @@ print '</div><div class="fichetwothirdright">';
 
 /*
  * Latest modified products
- */
+*/
 if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	$max = 15;
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";

@@ -20,13 +20,12 @@
     $sql = "SELECT * FROM llx_Paie_Rub WHERE cotisation=1";
     $res = $db->query($sql);
     $param = ((object)($res))->fetch_assoc();
-
+    //Get data From calcul_new_prime
     $sn=$_POST['sn'];
     $sb=$_POST['sb'];
     $primes=$_POST['primes'];
     $les_indeminités=$_POST['les_indeminités'];                   
     $cf=$_POST['cf'];
-
     // salaire_brut_imposable
     $sbi=($sb+$primes)-$les_indeminités;  
     // cnss

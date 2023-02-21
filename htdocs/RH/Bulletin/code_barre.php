@@ -1,9 +1,12 @@
 <?php
 
+  require '../../main.inc.php';
+  
+
   if(isset($_POST['code_barre']))
   {
      $code_barre=$_POST['code_barre'];
-     $query="INSERT INTO llx_product_code_barr VALUES ('$code_barre')"; 
+     $sql="INSERT INTO llx_product_code_barr VALUES ('$code_barre')"; 
      $res = $db->query($sql); 
   }
 
