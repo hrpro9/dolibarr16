@@ -86,42 +86,51 @@ select{
 
 
 .alert1 {
-    padding: 25px;
-    background-color:#87ceeb	; 
-    color: white;
-    font-size: 17px;
-    font-weight: 500;
-    margin-bottom: 15px;
-  }
-  .alert2 {
-    padding: 25px;
-    background-color: #66cdaa; 
-    color: white;
-    font-size: 17px;
-    font-weight: 500;
-    margin-bottom: 15px;
-  }
-  .alert3 {
-    padding: 25px;
-    background-color: rgb(214, 122, 127); 
-    color: white;
-    font-size: 17px;
-    font-weight: 500;
-    margin-bottom: 15px;
-  }
-  /* The close button */
-  .closebtn {
-    margin-left: 15px;
-    color: white;
-    font-weight: bold;
-    float: right;
-    font-size: 22px;
-    line-height: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  /* When moving the mouse over the close button */
-  .closebtn:hover {
-    color: black;
-  }
+  padding: 25px;
+  background-color:#87ceeb	; 
+  color: white;
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+.alert2 {
+  padding: 25px;
+  background-color: #66cdaa; 
+  color: white;
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+.alert3 {
+  padding: 25px;
+  background-color: rgb(214, 122, 127); 
+  color: white;
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+ 
+}
+
+
+
