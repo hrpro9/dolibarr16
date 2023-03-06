@@ -31,6 +31,9 @@
         <?php
           if(isset($_POST['read_file']))
           {
+            //DELETE data FROM table cnss temporary
+            $sql1="DELETE FROM llx_cnss_temporary";
+            $rest1=$db->query($sql1);
             //upload file 
             $filename = $_FILES["fichename"]["name"];
             $tempname = $_FILES["fichename"]["tmp_name"];  
@@ -80,7 +83,7 @@
           <table class="table" style="margin-top:15px; text-align: center;">
               <thead>
                 <tr>
-                <th scope="col">user id</th>
+              <!--  <th scope="col">user id</th>-->
                 <th scope="col">Num Affilie</th>
                   <th scope="col">L_période</th>
                   <th scope="col">N_Num_Assure</th>
@@ -109,9 +112,7 @@
                 $param = ((object)($rest_ef))->fetch_assoc();
                 ?>
                   <tr>
-                    <th scope="row">
-                      <?= $test['userid'] ?>
-                    </th>
+                 
                     <th scope="row">
                       <?= $test['n_num_affilie'] ?>
                     </th>
@@ -188,8 +189,9 @@
                 ?>
               </tbody>
           </table>    
-            <input type="submit"  name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;"/>
-         </form> 
+           
+            <input type="submit"   name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;"/>
+       
            <?php 
           }
         ?>      
@@ -197,9 +199,20 @@
         <?php
          if(isset($_POST['Generer']))
          {
-           //open file 
-           $fileNameWrite="C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/fileDs.txt";
-           $myfile = fopen("$fileNameWrite", "a+") or die("Unable to open file!");
+          
+             //open file 
+            $fileNameWrite="C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/fileDs.txt";
+            $myfile = fopen("$fileNameWrite", "a+") or die("Unable to open file!");
+            //open file
+            $all_lines = file($fileNameWrite);
+            $b00=$all_lines[0];
+            $b01=$all_lines[1];
+            //write new file b01 and b02
+            file_put_contents($fileNameWrite, '');
+            $myfilee = fopen("$fileNameWrite", "a+") or die("Unable to open file!");
+            $txtf = $b00. $b01;
+            fwrite($myfilee, $txtf);
+            fclose($myfilee);
            //comparison between n°cnss from llx_cnss_temporary and n cnss temporary
            $sql="SELECT *  FROM llx_Paie_UserInfo,llx_cnss_temporary  WHERE cnss=n_cnss_temporary ";
            $rest_cnss=$db->query($sql);
@@ -865,8 +878,8 @@
              //close file
            fclose($myfile);
            //DELETE data FROM table cnss temporary
-           $sql1="DELETE FROM llx_cnss_temporary";
-           $rest1=$db->query($sql1);
+         //  $sql1="DELETE FROM llx_cnss_temporary";
+       //    $rest1=$db->query($sql1);
            //Dowloand file Ds
            ob_clean();
            header('Content-Type: application/txt');
@@ -874,6 +887,9 @@
            flush();
            readfile($fileNameWrite);
            exit();
+
+          //header("refresh: 2");
+          
          }
         ?>
 
