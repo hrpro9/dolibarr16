@@ -25,8 +25,6 @@
             <input type="submit" name="read_file" value="Read file" />
           </li>      
            </ul>
-
-
         </form>      
         <?php
           if(isset($_POST['read_file']))
@@ -46,7 +44,6 @@
             }
             //open file
             $file=fopen("$folder","r") or die("Unable to open file!");
-
             $all_lines = file($folder);
             $b00=$all_lines[0];
             $b00=str_replace("A","B",$b00);
@@ -113,7 +110,6 @@
                 $param = ((object)($rest_ef))->fetch_assoc();
                 ?>
                   <tr>
-                 
                     <th scope="row">
                       <?= $test['n_num_affilie'] ?>
                     </th>
@@ -200,8 +196,7 @@
             <input type="submit"   name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;"/>    
            <?php 
           }
-        ?>      
-
+        ?>
         <?php
          if(isset($_POST['Generer']))
          { 
@@ -230,8 +225,6 @@
             $sql="SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $test['userid'] . " ";
             $rest_ef=$db->query($sql);
             $param = ((object)($rest_ef))->fetch_assoc();
-          
-            
              //n_num_affilie
              $n_num_affilie= $test['n_num_affilie'];
              //l_periode
@@ -882,9 +875,6 @@
              fwrite($myfile,$b06); 
              //close file
            fclose($myfile);
-           //DELETE data FROM table cnss temporary
-         //  $sql1="DELETE FROM llx_cnss_temporary";
-       //    $rest1=$db->query($sql1);
            //Dowloand file Ds
            ob_clean();
            header('Content-Type: application/txt');
@@ -892,8 +882,6 @@
            flush();
            readfile($fileNameWrite);
            exit();
-
-          //header("refresh: 2");
           
          }
         ?>

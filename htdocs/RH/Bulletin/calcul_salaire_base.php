@@ -45,7 +45,7 @@
                    require "code_calcul_salaire_base.php";
                     ?>
                     <div class="alert1" role="alert" style="margin-left: 50%; width: 20%;margin-top: -30%;">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                 <!--   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>-->
                     <?php
                       echo "----> salaire  net : ".$sn ."<br>";
                       echo "----> primes : ".$primes ."<br>";
@@ -61,13 +61,11 @@
                     ?> 
                     </div>
                     <div class="alert2" style="margin-left: 50%; width: 20%;">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     <?php
                     echo "----> salaire de base : ". $sb;
                     ?> 
                     </div> 
                     <div class="alert3" role="alert" style="margin-left: 50%; width: 20%;">  
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     <h3  style="text-align: center;" class="">charges patronale !</h3>
                     <?php
                       echo "----> cnss patronale : ".round($cnss_patronale,2) ."<br>";
@@ -81,8 +79,5 @@
             </div>
         </div>
     </div>
-
-
-
   </body>
 </html> 
