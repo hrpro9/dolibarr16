@@ -44,7 +44,7 @@
                    // require "code_calcul_salaire_base copy.php";
                    require "code_calcul_salaire_base.php";
                     ?>
-                    <div class="alert1" role="alert" style="margin-left: 50%; width: 20%;margin-top: -2%;">
+                    <div class="alert1" role="alert" style="margin-left: 50%; width: 20%;margin-top: -30%;">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     <?php
                       echo "----> salaire  net : ".$sn ."<br>";

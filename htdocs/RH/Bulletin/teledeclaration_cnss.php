@@ -37,8 +37,8 @@
             //upload file 
             $filename = $_FILES["fichename"]["name"];
             $tempname = $_FILES["fichename"]["tmp_name"];  
-            $folder = "C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/".$filename;   
-
+            // "C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/".$filename;  
+            $folder = DOL_DOCUMENT_ROOT.'/RH/Bulletin/files/'.$filename;
             if (move_uploaded_file($tempname, $folder)){
               $msg = "file uploaded successfully";
             }else{  
@@ -53,7 +53,8 @@
             $b01=$all_lines[1];
             $b01=str_replace($b01[0],"B",$b01);
             //write new file b01 and b02
-            $fileNameWrite="C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/fileDs.txt";
+            // "C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/fileDs.txt";
+            $fileNameWrite=  DOL_DOCUMENT_ROOT.'/RH/Bulletin/files/fileDs.txt'; 
             file_put_contents($fileNameWrite, '');
             $myfilee = fopen("$fileNameWrite", "a+") or die("Unable to open file!");
             $txtf = $b00. $b01;
@@ -181,29 +182,34 @@
                       ?>
                     </td>
                     <td>
-                      0
+                      <?php
+                       //L_Situation
+                        $param_st='';
+                        $sql="SELECT *  FROM llx_user WHERE rowid=" . $test['userid'] . " ";
+                        $rest_st=$db->query($sql);
+                        $param_st = ((object)($rest_st))->fetch_assoc();
+                        echo $param_st['l_situation'];
+                      ?>
                     </td>
                   </tr>
                 <?php
               }
                 ?>
               </tbody>
-          </table>    
-           
-            <input type="submit"   name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;"/>
-       
+          </table>              
+            <input type="submit"   name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;"/>    
            <?php 
           }
         ?>      
 
         <?php
          if(isset($_POST['Generer']))
-         {
-          
-             //open file 
-            $fileNameWrite="C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/fileDs.txt";
+         { 
+            //open file 
+            // "C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/fileDs.txt";
+            $fileNameWrite= DOL_DOCUMENT_ROOT.'/RH/Bulletin/files/fileDs.txt';
             $myfile = fopen("$fileNameWrite", "a+") or die("Unable to open file!");
-            //open file
+            //open file line 1 and lin é
             $all_lines = file($fileNameWrite);
             $b00=$all_lines[0];
             $b01=$all_lines[1];
@@ -212,8 +218,8 @@
             $myfilee = fopen("$fileNameWrite", "a+") or die("Unable to open file!");
             $txtf = $b00. $b01;
             fwrite($myfilee, $txtf);
-            fclose($myfilee);
-           //comparison between n°cnss from llx_cnss_temporary and n cnss temporary
+            fclose($myfilee);  
+           //comparison between n°cnss from llx_cnss_temporary and  cnss from temporary
            $sql="SELECT *  FROM llx_Paie_UserInfo,llx_cnss_temporary  WHERE cnss=n_cnss_temporary ";
            $rest_cnss=$db->query($sql);
            $param = ((object)($rest_cnss))->fetch_assoc();
@@ -300,7 +306,6 @@
              $n_t_Salaire_Plaf=$n_t_Salaire_Plaf+$Salaire_Plaf;
              $n_t_Salaire_Plaf=$n_t_Salaire_Plaf;
              //L_Situation
-               //stuation
             $param_st='';
             $sql="SELECT *  FROM llx_user WHERE rowid=" . $test['userid'] . " ";
             $rest_st=$db->query($sql);
