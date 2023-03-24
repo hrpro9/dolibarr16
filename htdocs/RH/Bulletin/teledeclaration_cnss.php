@@ -877,8 +877,12 @@
            fclose($myfile);
            //Dowloand file Ds
            ob_clean();
+           $sqlll="SELECT *  FROM llx_cnss_temporary";
+           $rest_l=$db->query($sqlll);
+           $param_l = ((object)($rest_l))->fetch_assoc();   
+           $DsFile='DS_'.$param_l['n_num_affilie'].'_'.$param_l['date'].'.txt';
            header('Content-Type: application/txt');
-           header('Content-Disposition: attachment; filename="Ds.txt"');
+           header('Content-Disposition: attachment; filename='."$DsFile");
            flush();
            readfile($fileNameWrite);
            exit();
