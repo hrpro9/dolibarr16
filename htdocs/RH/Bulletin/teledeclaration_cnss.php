@@ -51,12 +51,7 @@
             $b01=str_replace($b01[0],"B",$b01);
             //write new file b01 and b02
             // "C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/fileDs.txt";
-            $fileNameWrite=  DOL_DOCUMENT_ROOT.'/RH/Bulletin/files/fileDs.txt'; 
-            file_put_contents($fileNameWrite, '');
-            $myfilee = fopen("$fileNameWrite", "a+") or die("Unable to open file!");
-            $txtf = $b00. $b01;
-            fwrite($myfilee, $txtf);
-            fclose($myfilee);
+         
             while(!feof($file))
             {
               $content=fgets($file);
@@ -76,12 +71,18 @@
               $res = $db->query($sql);
             }
             fclose($file);
+            $fileNameWrite=  DOL_DOCUMENT_ROOT.'/RH/Bulletin/files/fileDs.txt'; 
+            file_put_contents($fileNameWrite, '');
+            $myfilee = fopen("$fileNameWrite", "a+") or die("Unable to open file!");
+            $txtf = $b00. $b01;
+            fwrite($myfilee, $txtf);
+            fclose($myfilee);
         ?>    
           <form method="post"  enctype="multipart/form-data"><br>  
           <table class="table" style="margin-top:15px; text-align: center;">
               <thead>
                 <tr>
-              <!--  <th scope="col">user id</th>-->
+                <!--  <th scope="col">user id</th>-->
                 <th scope="col">Num Affilie</th>
                   <th scope="col">L_période</th>
                   <th scope="col">N_Num_Assure</th>
@@ -872,20 +873,22 @@
              $b06 =
              "B06".$n_num_affilie.$l_periode.$n_nbr_salaries_en_ex.$n_t_num_imm_en_ex. $n_t_jour_declares_en_ex. $n_t_salaire_reel_en_ex. $n_t_Salaire_Plaf_en_ex
              .$n_t_S_Ctr_en_ex.$espace."\n";
-             fwrite($myfile,$b06); 
+             fwrite($myfile,$b06);
              //close file
-           fclose($myfile);
-           //Dowloand file Ds
-           ob_clean();
-           header('Content-Type: application/txt');
-           header('Content-Disposition: attachment; filename="Ds.txt"');
-           flush();
-           readfile($fileNameWrite);
-           exit();
-          
-         }
-        ?>
-
+             fclose($myfile);
+             //Dowloand file Ds
+             ob_clean();
+             $sqlll="SELECT *  FROM llx_cnss_temporary";
+             $rest_l=$db->query($sqlll);
+             $param_l = ((object)($rest_l))->fetch_assoc();   
+             $DsFile='DS_'.$param_l['n_num_affilie'].'_'.$param_l['date'].'.TXT';
+             header('Content-Type: application/txt');
+             header('Content-Disposition: attachment; filename='."$DsFile");
+             flush();
+             readfile($fileNameWrite);
+             exit();
+        }
+      ?>
       </div> 
     </center>
   </body>
