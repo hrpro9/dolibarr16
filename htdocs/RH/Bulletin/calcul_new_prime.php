@@ -1,3 +1,10 @@
+<?php
+    // Load Dolibarr environment
+    require_once '../../main.inc.php';
+    require_once '../../vendor/autoload.php';
+  llxHeader("", "");
+?>
+
 <!doctype html>
 <html lang="en">
   <head>
