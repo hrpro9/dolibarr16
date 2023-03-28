@@ -68,7 +68,7 @@
         $tva = $dom->createElement('tva',number_format($rdTva['total_tva'],2));
         $rd->appendChild($tva);
         // ttc
-        $ttc = $dom->createElement('ttc',round($rdTva['total_ttc'],2));
+        $ttc = $dom->createElement('ttc',number_format($rdTva['total_ttc'],2));
         $rd->appendChild($ttc);
         // refF
         $refF = $dom->createElement('refF');

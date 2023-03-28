@@ -875,20 +875,21 @@
              .$n_t_S_Ctr_en_ex.$espace."\n";
              fwrite($myfile,$b06);
              //close file
-             fclose($myfile);
-             //Dowloand file Ds
-             ob_clean();
-             $sqlll="SELECT *  FROM llx_cnss_temporary";
-             $rest_l=$db->query($sqlll);
-             $param_l = ((object)($rest_l))->fetch_assoc();   
-             $DsFile='DS_'.$param_l['n_num_affilie'].'_'.$param_l['date'].'.TXT';
-             header('Content-Type: application/txt');
-             header('Content-Disposition: attachment; filename='."$DsFile");
-             flush();
-             readfile($fileNameWrite);
-             exit();
-        }
-      ?>
+           fclose($myfile);
+           //Dowloand file Ds
+           ob_clean();
+           $sqlll="SELECT *  FROM llx_cnss_temporary";
+           $rest_l=$db->query($sqlll);
+           $param_l = ((object)($rest_l))->fetch_assoc();   
+           $DsFile='DS_'.$param_l['n_num_affilie'].'_'.$param_l['date'].'.TXT';
+           header('Content-Type: application/txt');
+           header('Content-Disposition: attachment; filename='."$DsFile");
+           flush();
+           readfile($fileNameWrite);
+           exit();
+          
+         }
+        ?>
       </div> 
     </center>
   </body>
