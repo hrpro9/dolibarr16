@@ -80,13 +80,14 @@
         $if = $dom->createElement('if',$param_reff['code_fournisseur']);
         $refF->appendChild($if);
         // nom
-        $nom = $dom->createElement('nom',$param_reff['name_alias']);
+        $nom = $dom->createElement('nom',$param_reff['nom']);
         $refF->appendChild($nom);
         // ice
-        $ice = $dom->createElement('ice','?');
+        $ice = $dom->createElement('ice',$param_reff['idprof5']);
         $refF->appendChild($ice);
         // tx
-        $tx = $dom->createElement('tx','?');
+        $txt_tv=($rdTva['total_tva']/$rdTva['total_ht'])*100;
+        $tx = $dom->createElement('tx',$txt_tv);
         $rd->appendChild($tx);
         // prorata
         $prorata = $dom->createElement('prorata','?');
@@ -100,30 +101,30 @@
         // llx_c_paiement
         $sql="SELECT *  FROM llx_c_paiement ";
         $rest_cp=$db->query($sql);
-       // $param = ((object)($rest))->fetch_assoc();
-       foreach( $rest_cp as $cp)
-       {
-        foreach($rest_p as $p)
+        // $param = ((object)($rest))->fetch_assoc();
+        foreach( $rest_cp as $cp)
         {
-            if($p['fk_paiement'] == $cp['id'])
-            {
-                $mp = $dom->createElement('mp');
-                $rd->appendChild($mp);
-                // id_mp
-                if($cp['libelle']==='Cash'){
-                    $mp_id=1;
-                }
-                else if($cp['libelle']==='Cheque'){
-                    $mp_id=2;
-                }
-                else{
-                    $mp_id=7;
-                }
-                $id = $dom->createElement('id',$mp_id);
-                $mp->appendChild($id);
-            }
-        }  
-       } 
+                foreach($rest_p as $p)
+                {
+                    if($p['fk_paiement'] == $cp['id'])
+                    {
+                        $mp = $dom->createElement('mp');
+                        $rd->appendChild($mp);
+                        // id_mp
+                        if($cp['libelle']==='Cash'){
+                            $mp_id=1;
+                        }
+                        else if($cp['libelle']==='Cheque'){
+                            $mp_id=2;
+                        }
+                        else{
+                            $mp_id=7;
+                        }
+                        $id = $dom->createElement('id',$mp_id);
+                        $mp->appendChild($id);
+                    }
+                }  
+        } 
         // dpai
         $datetime = new DateTime($param_p['datep']);
         $date = $datetime->format('Y-m-d');
