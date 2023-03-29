@@ -1,14 +1,5 @@
 <?php
 
-    // Load Dolibarr environment
-    require_once '../../main.inc.php';
-    require_once '../../vendor/autoload.php';
-
-    // require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
-    // require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-    // require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-    // require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-
     $params = '';
     $salaireParams = '';
     $param='';
@@ -122,12 +113,4 @@
      $participation_amo=$sbi*$tauxpamo;   
      //amo_patronale
      $amo_patronale=$sbi* $param_amo["percentage"]/100;
-
-
-
-
-
-
-
-
 ?>
