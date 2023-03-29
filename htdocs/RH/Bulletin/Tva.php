@@ -87,7 +87,7 @@
         $refF->appendChild($ice);
         // tx
         $txt_tv=($rdTva['total_tva']/$rdTva['total_ht'])*100;
-        $tx = $dom->createElement('tx',$txt_tv);
+        $tx = $dom->createElement('tx',number_format($txt_tv,2));
         $rd->appendChild($tx);
         // prorata
         $prorata = $dom->createElement('prorata','?');
@@ -99,10 +99,10 @@
         $param_p = ((object)($rest_p))->fetch_assoc();
         // mp
         // llx_c_paiement
-        $sql="SELECT *  FROM llx_c_paiement ";
+       /*  $sql="SELECT *  FROM llx_c_paiement ";
         $rest_cp=$db->query($sql);
         // $param = ((object)($rest))->fetch_assoc();
-        foreach( $rest_cp as $cp)
+       foreach( $rest_cp as $cp)
         {
                 foreach($rest_p as $p)
                 {
@@ -124,7 +124,11 @@
                         $mp->appendChild($id);
                     }
                 }  
-        } 
+        } */
+        $mp = $dom->createElement('mp');
+        $rd->appendChild($mp);
+        $id = $dom->createElement('id',$rdTva['fk_mode_reglement']);
+        $mp->appendChild($id);
         // dpai
         $datetime = new DateTime($param_p['datep']);
         $date = $datetime->format('Y-m-d');
@@ -160,7 +164,7 @@
                                 <option value="3">Déclaration TVA</option>
                                 <option value="4">Cessation TVA</option>
                             </select>
-                            <select name="periode" id="periode" disabled>
+                            <select name="periode" id="periode" disabled required>
                                 <option value="">Choose a Période</option>
                             </select>
                         </li>
@@ -188,7 +192,7 @@
                     .then(function(data){
                         let periode = data[declaration];
                         let out = "";
-                    
+                        out += `<option value=""></otion>`;   
                         for(let period of periode){
                             if(period==00)
                             {

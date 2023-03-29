@@ -5,16 +5,16 @@
   </head>
   <body >
 
-    <div class="container ">
+    <div class="container " >
         <div class="row">
           <!-- salaire net!!!!! -->
-            <div class="col-lg-4 ">
+            <div class="col-lg-4 " >
             <form method="post" class="shadow-lg p-3 mb-5 bg-body rounded mt-5">
-                <ul class="form-style-1">
+                <ul class="form-style-1" style="width: 900%;height: 100%;">
                   <h4 style="text-align: center;" class="field-divided">Calcul new prime !!!</h4>
                   <li>
                     <label>salaire net + new prime <span class="required">*</span></label>
-                    <input type="number" step="any" name="sn"  class="field-divided" placeholder="salaire de base" required/>
+                    <input type="number" step="any" name="sn"  class="field-divided" placeholder="salaire net + new prime" required/>
                   </li>
                   <li>
                     <label>salaire de base <span class="required">*</span></label>
