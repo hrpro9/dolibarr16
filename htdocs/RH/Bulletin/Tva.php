@@ -99,7 +99,7 @@
         $param_p = ((object)($rest_p))->fetch_assoc();
         // mp
         // llx_c_paiement
-       /*  $sql="SELECT *  FROM llx_c_paiement ";
+        $sql="SELECT *  FROM llx_c_paiement ";
         $rest_cp=$db->query($sql);
         // $param = ((object)($rest))->fetch_assoc();
        foreach( $rest_cp as $cp)
@@ -111,24 +111,23 @@
                         $mp = $dom->createElement('mp');
                         $rd->appendChild($mp);
                         // id_mp
-                        if($cp['libelle']==='Cash'){
-                            $mp_id=1;
-                        }
-                        else if($cp['libelle']==='Cheque'){
-                            $mp_id=2;
-                        }
-                        else{
-                            $mp_id=7;
+                        switch ($cp['libelle']) {
+                            case 'Cash':$mp_id=1;break;
+                            case 'Cheque':$mp_id=2;break;
+                            case 'Debit order':$mp_id=3;break;
+                            case 'Transfer':$mp_id=4;break;
+                            case 'Traite':$mp_id=5;break;
+                            default:$mp_id=7;
                         }
                         $id = $dom->createElement('id',$mp_id);
                         $mp->appendChild($id);
                     }
                 }  
-        } */
-        $mp = $dom->createElement('mp');
+        } 
+        /* $mp = $dom->createElement('mp');
         $rd->appendChild($mp);
         $id = $dom->createElement('id',$rdTva['fk_mode_reglement']);
-        $mp->appendChild($id);
+        $mp->appendChild($id);*/
         // dpai
         $datetime = new DateTime($param_p['datep']);
         $date = $datetime->format('Y-m-d');
