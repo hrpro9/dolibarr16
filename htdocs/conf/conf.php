@@ -5,17 +5,17 @@
 // Take a look at conf.php.example file for an example of conf.php file
 // and explanations for all possibles parameters.
 //
-$dolibarr_main_url_root = 'https://192.168.10.235';
-$dolibarr_main_document_root = '/var/www/html/dolibarr/htdocs';
+$dolibarr_main_url_root = 'http://localhost:8080/dolibarr16/htdocs/';
+$dolibarr_main_document_root = 'C:\xampp\htdocs\dolibarr16\htdocs';
 $dolibarr_main_url_root_alt = '/custom';
-$dolibarr_main_document_root_alt = '/var/www/html/dolibarr/htdocs/custom';
-$dolibarr_main_data_root = '/var/www/html/dolibarr/documents';
-$dolibarr_main_db_host = '192.168.10.236';
+$dolibarr_main_document_root_alt = 'C:\xampp\htdocs\dolibarr16\htdocs\custom';
+$dolibarr_main_data_root = 'C:\xampp\htdocs\dolibarr16\documents';
+$dolibarr_main_db_host = '192.168.2.29';
 $dolibarr_main_db_port = '3306';
-$dolibarr_main_db_name = 'dolibarrdb';
+$dolibarr_main_db_name = 'igdoli';
 $dolibarr_main_db_prefix = 'llx_';
-$dolibarr_main_db_user = 'dolibarr';
-$dolibarr_main_db_pass = 'Mafi@doli2022';
+$dolibarr_main_db_user = 'iguser';
+$dolibarr_main_db_pass = 'Rayane@25031971+Roma';
 $dolibarr_main_db_type = 'mysqli';
 $dolibarr_main_db_character_set = 'utf8';
 $dolibarr_main_db_collation = 'utf8_unicode_ci';
