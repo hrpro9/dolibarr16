@@ -8875,6 +8875,9 @@ LOCK TABLES `llx_categorie_member` WRITE;
 /*!40000 ALTER TABLE `llx_categorie_member` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+
+
 --
 -- Table structure for table `llx_categorie_product`
 --

@@ -8,6 +8,7 @@
 $dolibarr_main_url_root = 'http://localhost:8080/dolibarr16/htdocs/';
 $dolibarr_main_document_root = 'C:\xampp\htdocs\dolibarr16\htdocs';
 $dolibarr_main_url_root_alt = '/custom';
+$dolibarr_main_url_root_alt = '\custom';
 $dolibarr_main_document_root_alt = 'C:\xampp\htdocs\dolibarr16\htdocs\custom';
 $dolibarr_main_data_root = 'C:\xampp\htdocs\dolibarr16\documents';
 $dolibarr_main_db_host = '192.168.2.29';

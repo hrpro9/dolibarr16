@@ -294,7 +294,6 @@ class PaiementFourn extends Paiement
 											$discount->description = '(DEPOSIT)';
 											$discount->fk_soc = $invoice->socid;
 											$discount->fk_invoice_supplier_source = $invoice->id;
-
 											// Loop on each vat rate
 											$i = 0;
 											foreach ($invoice->lines as $line) {
@@ -308,7 +307,6 @@ class PaiementFourn extends Paiement
 													$i++;
 												}
 											}
-
 											foreach ($amount_ht as $tva_tx => $xxx) {
 												$discount->amount_ht = abs($amount_ht[$tva_tx]);
 												$discount->amount_tva = abs($amount_tva[$tva_tx]);
