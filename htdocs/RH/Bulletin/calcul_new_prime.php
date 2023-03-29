@@ -10,7 +10,7 @@
           <!-- salaire net!!!!! -->
             <div class="col-lg-4 " >
             <form method="post" class="shadow-lg p-3 mb-5 bg-body rounded mt-5">
-                <ul class="form-style-1" style="width: 900%;height: 100%;">
+                <ul class="form-style-1" >
                   <h4 style="text-align: center;" class="field-divided">Calcul new prime !!!</h4>
                   <li>
                     <label>salaire net + new prime <span class="required">*</span></label>

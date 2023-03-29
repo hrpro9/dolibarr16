@@ -6,7 +6,6 @@
   require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
   require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
- 
 ?>
 <!doctype html>
 <html lang="en">
