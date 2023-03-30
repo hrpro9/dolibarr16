@@ -12,7 +12,14 @@
     $regime_value=$_POST['regime'];
     $periode_value=$_POST['periode'];
 
-    $nomfiche="Tva.xml";
+    switch ( $regime_value) {
+        case 1:$nomfiche=$periode_value."Mens".date('Y').".xml";break;
+        case 2:$nomfiche=$periode_value."Trim".date('Y').".xml";break;
+        case 3:$nomfiche=date('m')."Décla".date('Y').".xml";break;
+        case 4:$nomfiche=date('m')."Cess".date('Y').".xml";break;
+        default:$nomfiche=$periode_value."Tva".date('Y').".xml";
+    }
+
     header('Content-Disposition: attachment; filename='.$nomfiche);
     header('Content-Type: text/xml'); 
     // Create a new DOM document
@@ -150,7 +157,7 @@
                 <div class="col-lg-4 m-auto" style="width:100% ;height: 100%;">
                     <form method="post"  enctype="multipart/form-data" >
                     <ul class="form-style-1" style="text-align: center;">
-                        <h4 style="text-align: center;" class="field-divided">Fichier EDI TVA !!!</h4>
+                        <label style="text-align: center;" class="field-divided">Fichier EDI TVA !!!</label>
                         <li>
                         <label>Régime & Période de la déclaration TVA <span class="required">* </label>
                             <select onchange="getCities(this.value)" name="regime" required>

@@ -21,7 +21,7 @@ llxHeader("", "");
             <label style="text-align: center;" class="field-divided">Calcul Salaire de base !!!</label>
             <li>
               <label>salaire net <span class="required">*</label>
-              <input type="number" step="any" name="sn" class="field-divided" placeholder="salaire de base" required />
+              <input type="number" step="any" name="sn" class="field-divided" placeholder="salaire net" required />
 
             </li>
             <li style="margin-top: 26px;">
@@ -54,7 +54,6 @@ llxHeader("", "");
           <div class="alert1" role="alert" style="margin-left: 61%; width: 20%;margin-top: -48%;">
             <!--   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>-->
             <?php
-            echo "----> salaire  net : " . $sn . "<br>";
             echo "----> salaire  net : " . $sn . "<br>";
             echo "----> primes : " . $primes . "<br>";
             echo "----> les_indeminités : " . $les_indeminités . "<br>";
