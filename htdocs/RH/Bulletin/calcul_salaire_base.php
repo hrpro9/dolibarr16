@@ -69,7 +69,7 @@ llxHeader("", "");
           </div>
           <div class="alert2" style="margin-left: 61%; width: 20%;">
             <?php
-            echo "----> salaire de base : " . $sb;
+            echo "----> salaire de base : " . $sb. "<br>"; 
             ?>
           </div>
           <div class="alert3" role="alert" style="margin-left: 61%; width: 20%;">
