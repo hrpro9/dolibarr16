@@ -98,7 +98,7 @@
         $tx = $dom->createElement('tx',number_format($txt_tv,2));
         $rd->appendChild($tx);
         // prorata
-        $prorata = $dom->createElement('prorata','?');
+        $prorata = $dom->createElement('prorata',' ');
         $rd->appendChild($prorata);
         // llx_paiement
         $param_p='';
