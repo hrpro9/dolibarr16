@@ -2,7 +2,7 @@
   margin-left: 240px;
   margin-top: 90px;
   box-shadow: 1px 1px 4px #DADADA;
-	max-width: 350px;
+  max-width: 350px;
 	padding: 20px 50px 40px 50px;
 	font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
@@ -132,6 +132,4 @@ table, th, td {
   border-collapse: collapse;
  
 }
-
-
 

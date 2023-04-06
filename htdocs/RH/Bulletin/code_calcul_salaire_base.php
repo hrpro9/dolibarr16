@@ -46,13 +46,19 @@
             $param_amo = ((object)($res))->fetch_assoc();
             $tauxamo=$param_amo["percentage"]/100;
             $amo=$sbi*$tauxamo;
+            // COTISATION MUTUELLE
+            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
+            $res = $db->query($sql);
+            $param_mutuelle = ((object)($res))->fetch_assoc();
+            $tauxmutuelle=$param_mutuelle["percentage"]/100;
+            $mutuelle=$sbi*$tauxmutuelle;
             // fraie_professionnels
             $param["percentage"] = $sbi <= 6500 ?0.35 : 0.25;
             $fp=$sbi* $param["percentage"];
             $maxfp=2916.67;
             $fraie_professionnels=$fp<$maxfp?$fp:$maxfp;
             // salaire_net_imposable
-            $sni=$sbi - ($cnss+$amo+$fraie_professionnels);
+            $sni=$sbi - ($cnss+$amo+$mutuelle+$fraie_professionnels);
             //ir_brut
             $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
             $res = $db->query($sql);
@@ -62,7 +68,7 @@
             //ir_n
             $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]); 
             // salaire net test 
-            $sn_test=round($sbi-$cnss-$amo-$ir_n, 2);
+            $sn_test=round($sbi-$cnss-$amo-$mutuelle-$ir_n, 2);
         }while($sn_test != $sn); 
     }
     /*--------------------------------> charges patronale <--------------------------------*/

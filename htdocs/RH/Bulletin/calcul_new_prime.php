@@ -8,12 +8,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="calcul_Style.css">
   </head>
   <body >
 
     <div class="container " >
-        <div class="row">
+      <center>
+        <div class="grid">
           <!-- salaire net!!!!! -->
             <div class="col-lg-4 " >
             <form method="post" class="shadow-lg p-3 mb-5 bg-body rounded mt-5">
@@ -46,13 +47,13 @@
               </form>
             </div>     
             <!-- salaire de net!!!!! -->
-            <div class="col-lg-4 "> 
+            <div class="col-lg-4 "  style="margin-top: 10px;"> 
                   <?php
                     if(isset($_POST['new_prime']))
                     {
                       require "code_calcul_new_prime.php";  
                       ?>
-                      <div class="alert1" role="alert" style="margin-left: 61%; width: 20%;margin-top: -52%;">
+                      <div class="alert1" role="alert" >
                      <?php
                         echo "----> salaire  net + new prime : ".$sn ."<br>";
                         echo "----> primes : ".$primes ."<br>";
@@ -60,6 +61,7 @@
                         echo "----> salair brut imposable : ".round($sbi,2) ."<br>";
                         echo "----> cnss : ".round($cnss,2) ."<br>";
                         echo "----> amo : ".round($amo,2) ."<br>";
+                        echo "----> mutuelle : " . round($mutuelle, 2) . "<br>";     
                         echo "----> fraie_professionnels : ".round($fraie_professionnels,2) ."<br>";
                         echo "----> salair net imposable : ".round($sni,2) ."<br>";
                         echo "----> ir brut : ".round($ir_b,2) ."<br>";
@@ -68,13 +70,13 @@
                         echo "----> salaire de base : ". $sb;
                       ?> 
                       </div>
-                      <div class="alert2" style="margin-left: 61%; width: 20%;">
+                      <div class="alert2" >
                       <?php
                        require "code_calcul_new_prime.php";    
                        echo "----> new prime : ".round($new_prime,2) ."<br>";
                       ?> 
                       </div>
-                      <div class="alert3" role="alert" style="margin-left: 61%; width: 20%;">  
+                      <div class="alert3" role="alert" >  
                       <h3  style="text-align: center;" class="">charges patronale !</h3>
                      <?php
                       require "code_calcul_new_prime.php";
@@ -89,6 +91,7 @@
                 </div>
             </div>
         </div>
+      </center>
     </div>
 
 

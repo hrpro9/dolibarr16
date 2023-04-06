@@ -11,29 +11,24 @@
   { 
     $regime_value=$_POST['regime'];
     $periode_value=$_POST['periode'];
-
-    switch ( $regime_value) {
-        case 1:$nomfiche=$periode_value."Mens".date('Y').".xml";break;
-        case 2:$nomfiche=$periode_value."Trim".date('Y').".xml";break;
-        case 3:$nomfiche=date('m')."Décla".date('Y').".xml";break;
-        case 4:$nomfiche=date('m')."Cess".date('Y').".xml";break;
-        default:$nomfiche=$periode_value."Tva".date('Y').".xml";
-    }
+    $identification_fiscale=$_POST['identification_fiscale'];
+    $annee_now= date('Y'); 
+    $nomfiche="EDI_TVA_".$identification_fiscale."_".$regime_value."_". $annee_now."_".$periode_value.".txt";
 
     header('Content-Disposition: attachment; filename='.$nomfiche);
     header('Content-Type: text/xml'); 
-    // Create a new DOM document
-    $dom=new DOMDocument(); 
+    // Create a new DOM document  $dom=new DOMDocument('1.0', 'UTF-8'); 
+  
+    $dom=new DOMDocument('1.0', 'UTF-8'); 
     $dom->formatOutput=true;  
-    // Create a DeclarationReleveDeduction element
+    // Create a Declaration Releve Deduction element
     $DeclarationReleveDeduction = $dom->createElement('DeclarationReleveDeduction');
     $dom->appendChild($DeclarationReleveDeduction);
 
     // identifiantFiscal
-    $identifiantFiscal = $dom->createElement('identifiantFiscal','?');
+    $identifiantFiscal = $dom->createElement('identifiantFiscal',$identification_fiscale);
     $DeclarationReleveDeduction->appendChild($identifiantFiscal);   
     // annee
-    $annee_now= date('Y'); 
     $annee = $dom->createElement('annee',$annee_now);
     $DeclarationReleveDeduction->appendChild($annee);   
     // periode
@@ -85,17 +80,20 @@
         $rest_reff=$db->query($sql_reff);
         $param_reff = ((object)($rest_reff))->fetch_assoc();
         // if
-        $if = $dom->createElement('if',$param_reff['code_fournisseur']);
+        $if_value=(!empty($param_reff['code_fournisseur']))?$param_reff['code_fournisseur']:' ';
+        $if = $dom->createElement('if',$if_value);
         $refF->appendChild($if);
         // nom
-        $nom = $dom->createElement('nom',$param_reff['nom']);
+        $nom_value=(!empty($param_reff['nom']))?$param_reff['nom']:' ';
+        $nom = $dom->createElement('nom', $nom_value);
         $refF->appendChild($nom);
         // ice
-        $ice = $dom->createElement('ice',$param_reff['idprof5']);
+        $ice_value=(!empty($param_reff['idprof5']))?$param_reff['idprof5']:' ';
+        $ice = $dom->createElement('ice',$ice_value);
         $refF->appendChild($ice);
         // tx
         $txt_tv=($rdTva['total_tva']/$rdTva['total_ht'])*100;
-        $tx = $dom->createElement('tx',number_format($txt_tv,2));
+        $tx = $dom->createElement('tx',$txt_tv);
         $rd->appendChild($tx);
         // prorata
         $prorata = $dom->createElement('prorata',' ');
@@ -142,7 +140,7 @@
         $rd->appendChild($dfac);
     }
     // Output the XML file without XML declaration
-    echo $dom->saveXML($dom->documentElement);
+    echo $dom->saveXML();
    }
     else
     {     
@@ -158,6 +156,10 @@
                     <form method="post"  enctype="multipart/form-data" >
                     <ul class="form-style-1" style="text-align: center;">
                         <label style="text-align: center;" class="field-divided">Fichier EDI TVA !!!</label>
+                        <li>
+                         <label>N°d'identification fiscale <span class="required">* </label>
+                         <input type="text" name="identification_fiscale" class="field-divided" placeholder="N°d'identification fiscale" required />
+                        </li>
                         <li>
                         <label>Régime & Période de la déclaration TVA <span class="required">* </label>
                             <select onchange="getCities(this.value)" name="regime" required>
