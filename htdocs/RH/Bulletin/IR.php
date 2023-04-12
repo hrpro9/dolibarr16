@@ -36,6 +36,9 @@
     foreach($rest as $permanentPersonnel)
     {
         //-----------------------------------------------------------
+        $SBaseAnnuel=0;
+        $periodeAnnuel=0;
+        $SBrutAnnuel=0;
         $param_user_extrafields='';
         $sql="SELECT *  FROM llx_user_extrafields WHERE rowid=" . $permanentPersonnel['rowid'] . "  ";
         $rest=$db->query($sql);
@@ -45,6 +48,12 @@
         $sql_salaire="SELECT *  FROM llx_Paie_MonthDeclaration WHERE userid=" . $permanentPersonnel['rowid'] . " ";
         $rest_salaire=$db->query($sql_salaire);
         $param_salaire=((object)($rest_salaire))->fetch_assoc();
+        //-----------------------------------------------------------
+        $param_MonthDeclarationRubs='';
+        $sql_MonthDeclarationRubs="SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $permanentPersonnel['rowid'] . " ";
+        $rest_MonthDeclarationRubs=$db->query($sql_MonthDeclarationRubs);
+        $param_MonthDeclarationRubs=((object)($rest_MonthDeclarationRubs))->fetch_assoc();
+        //-----------------------------------------------------------
         if(empty($param_user_extrafields['stype']))
         {
             $param_user_extrafields['stype']=0;
@@ -76,13 +85,11 @@
             $TtMtRevenuBrutImposablePP+=$BrutImposablePP_mois;
             $TtMtRevenuNetImposablePP+=$RevenuNetImposablePP_mois;
             $TtMtIrPrelevePP+= $IrPrelevePP_mois;
-
-
+            // -------     -> list Personnel Permanent  <-    -------
             if(empty($listPersonnelPermanent))
             {
                 // -------     -> list Personnel Permanent  <-    -------
-                $listPersonnelPermanent = $dom->createElement('listPersonnelPermanent');
-               
+                $listPersonnelPermanent = $dom->createElement('listPersonnelPermanent');    
             }
             // Create a PersonnelPermanent element
             $PersonnelPermanent = $dom->createElement('PersonnelPermanent');
@@ -115,21 +122,55 @@
             $PersonnelPermanent->appendChild($numCNSS);
             // Create a ifu element
             $ifu = $dom->createElement('ifu',' ');
+            //------------>
+            foreach($rest_MonthDeclarationRubs as $mdr)
+            {
+                if($mdr['userid']==$permanentPersonnel['rowid'])
+                {
+                    $SBaseAnnuel+=$mdr['salaireDeBase'];
+                }
+            }
             // Create a salaireBaseAnnuel element
-            $salaireBaseAnnuel = $dom->createElement('salaireBaseAnnuel',' ');
-            $PersonnelPermanent->appendChild($salaireBaseAnnuel);
+            $salaireBaseAnnuel = $dom->createElement('salaireBaseAnnuel',$SBaseAnnuel);
+            $PersonnelPermanent->appendChild($salaireBaseAnnuel); 
+            foreach($rest_salaire as $sb_pr)
+            {
+                if($sb_pr['userid']==$permanentPersonnel['rowid'])
+                {
+                    $SBrutAnnuel+=$sb_pr['salaireBrut'];
+                    $periodeAnnuel+=$sb_pr['workingDays'];
+                }
+            }
             // Create a mtBrutTraitementSalaire element
-            $mtBrutTraitementSalaire = $dom->createElement('mtBrutTraitementSalaire',' ');
+            $mtBrutTraitementSalaire = $dom->createElement('mtBrutTraitementSalaire',$SBrutAnnuel);
             $PersonnelPermanent->appendChild($mtBrutTraitementSalaire);
             // Create a periode element
-            $periode = $dom->createElement('periode',' ');
+            $periode = $dom->createElement('periode',$periodeAnnuel);
             $PersonnelPermanent->appendChild($periode);
             // Create a mtExonere element
             $mtExonere = $dom->createElement('mtExonere',' ');
             $PersonnelPermanent->appendChild($mtExonere);
-            // Create a mtEcheances element
+            // Create a mtEcheances element  
             $mtEcheances = $dom->createElement('mtEcheances',' ');
-            $PersonnelPermanent->appendChild($mtEcheances);     
+            $PersonnelPermanent->appendChild($mtEcheances);
+            // Create a nbrReductions element
+            $enfants=$param_MonthDeclarationRubs['enfants'];
+            $nbrReductions_value= ($param_MonthDeclarationRubs['situationFamiliale']=="MARIE")? $enfants+1: $enfants;
+            $nbrReductions = $dom->createElement('nbrReductions',$nbrReductions_value);
+            $PersonnelPermanent->appendChild($nbrReductions);
+            // Create a mtIndemnite element
+            $mtIndemnite = $dom->createElement('mtIndemnite',' ');
+            $PersonnelPermanent->appendChild($mtIndemnite);   
+            // Create a mtAvantages element
+            $mtAvantages = $dom->createElement('mtAvantages',' ');
+            $PersonnelPermanent->appendChild($mtAvantages);
+            // Create a mtRevenuBrutImposable element
+            $mtRevenuBrutImposable = $dom->createElement('mtRevenuBrutImposable',' ');
+            $PersonnelPermanent->appendChild($mtRevenuBrutImposable);
+            // Create a mtFraisProfess element
+            $mtFraisProfess = $dom->createElement('mtFraisProfess',' ');
+            $PersonnelPermanent->appendChild($mtFraisProfess);
+            
         }
         //-------------------> PERSONNEL OCCASIONNEL <-------------------
         else if($param_user_extrafields['stype']==2){
@@ -150,7 +191,7 @@
                 default:$BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
             }
             $TtMtBrutSommesPO+=$BrutImposablePO_mois;
-            $TtMtRevenuNetImposablePP+=$IrPrelevePO_mois; 
+            $TtMtRevenuNetImposablePP+=$IrPrelevePO_mois;
         }
         //---------------------> STAGIAIRES <-------------------------
         else if($param_user_extrafields['stype']==3){
@@ -172,7 +213,7 @@
             }
             $TtMtBrutTraitSalaireS+=$BrutTraitSalaireSTG_mois;
             $TtMtRevenuNetImpSTG+=$MtRevenuNetImp_moisSTG;
-        }  
+        }
     }
     // Create a identifiantFiscal element
     $identifiantFiscal = $dom->createElement('identifiantFiscal',' ');
@@ -367,7 +408,8 @@
                 break;
             default:
                 $NbrPersoPermanent++;
-        }*/
+        }
+    */
 
 
 
@@ -378,7 +420,7 @@
 
 
 
-         /*
+    /*
     foreach($rest as $permanentPersonnel)
     {
         $sql="SELECT *  FROM llx_user_extrafields WHERE rowid=" . $permanentPersonnel['rowid'] . "  ";
@@ -464,77 +506,7 @@
             // Create a mtFraisProfess element
             $mtFraisProfess = $dom->createElement('mtFraisProfess',' ');
             $PersonnelPermanent->appendChild($mtFraisProfess);
-            // Create a mtCotisationAssur element
-            $mtCotisationAssur = $dom->createElement('mtCotisationAssur',' ');
-            $PersonnelPermanent->appendChild($mtCotisationAssur);
-            // Create a mtAutresRetenues element
-            $mtAutresRetenues = $dom->createElement('mtAutresRetenues',' ');
-            $PersonnelPermanent->appendChild($mtAutresRetenues);
-            // Create a mtRevenuNetImposable element
-            $mtRevenuNetImposable = $dom->createElement('mtRevenuNetImposable',' ');
-            $PersonnelPermanent->appendChild($mtRevenuNetImposable);
-            // Create a mtTotalDeduction element
-            $mtTotalDeduction = $dom->createElement('mtTotalDeduction',' ');
-            $PersonnelPermanent->appendChild($mtTotalDeduction);
-            // Create a irPreleve element
-            $irPreleve = $dom->createElement('irPreleve',' ');
-            $PersonnelPermanent->appendChild($irPreleve);
-            // Create a casSportif element
-            $casSportif = $dom->createElement('casSportif',' ');
-            $PersonnelPermanent->appendChild($casSportif);
-            // Create a numMatricule element
-            $numMatricule = $dom->createElement('numMatricule',' ');
-            $PersonnelPermanent->appendChild($numMatricule);
-            // Create a datePermis element
-            $datePermis = $dom->createElement('datePermis',' ');
-            $PersonnelPermanent->appendChild($datePermis);
-            // Create a dateAutorisation element
-            $dateAutorisation = $dom->createElement('dateAutorisation',' ');
-            $PersonnelPermanent->appendChild($dateAutorisation);
-            // Create a refSituationFamiliale element
-            $refSituationFamiliale = $dom->createElement('refSituationFamiliale');
-            $PersonnelPermanent->appendChild($refSituationFamiliale);
-            // Create a code Situation familiale element 
-            switch($permanentPersonnel['civility'])
-            {
-                case 'MR':
-                    $permanentPersonnel['civility'] = "M";
-                    break;
-                case 'CE':
-                    $permanentPersonnel['civility'] = "C";
-                    break;
-                case 'VE':
-                    $permanentPersonnel['civility'] = "V";
-                    break;
-                case 'DI':
-                    $permanentPersonnel['civility'] = "D"; 
-                    break;
-                default:
-                $permanentPersonnel['civility'] = " ";
-            }
-            $code = $dom->createElement('code',$permanentPersonnel['civility']);
-            $refSituationFamiliale->appendChild($code);
-            // Create a refTaux element
-            $refTaux = $dom->createElement('refTaux');
-            $PersonnelPermanent->appendChild($refTaux);
-            // Create a Taux des frais professionnels element
-            $code = $dom->createElement('code','');
-            $refSituationFamiliale->appendChild($code);
-            // Create a listElementsExonere element
-            $listElementsExonere = $dom->createElement('listElementsExonere');
-            $refSituationFamiliale->appendChild($listElementsExonere);
-            // Create a ElementExonerePP element
-            $ElementExonerePP = $dom->createElement('ElementExonerePP');
-            $listElementsExonere->appendChild($ElementExonerePP);
-            // Create a montantExonere element
-            $montantExonere = $dom->createElement('montantExonere',' ');
-            $listElementsExonere->appendChild($montantExonere);
-            // Create a refNatureElementExonere element
-            $refNatureElementExonere = $dom->createElement('refNatureElementExonere');
-            $listElementsExonere->appendChild($refNatureElementExonere);
-            // Create a code element
-            $code = $dom->createElement('code',' ');
-            $refNatureElementExonere->appendChild($code);
+           c
         }
         else  if($param_ncin['stype'] == 2){
             // -------     -> list Personnel Occasionnel  <-    -------
