@@ -6,9 +6,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-$action = GETPOST('action');
-if ($action != 'generate')
-   // llxHeader("", "");
 
 ?>
 <!doctype html>
@@ -21,7 +18,7 @@ if ($action != 'generate')
 <body>
     <center>
         <div class="col-lg-4 m-auto">
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" >
                 <ul class="form-style-1" style="text-align: center;">
                     <h4 style="text-align: center;" class="field-divided">Declaration Cimr !!!</h4>
                     <li>
@@ -32,10 +29,10 @@ if ($action != 'generate')
                         <label>Trimestre & Année de cotisation <span class="required">* </label>
                             <select  name="trimestriel" required>
                                 <option value="">Choose a Trimestriel</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
+                                <option value="1">Trimestre 1 </option>
+                                <option value="2">Trimestre 2</option>
+                                <option value="3">Trimestre 3</option>
+                                <option value="4">Trimestre 4</option>
                             </select>
                             <input type="reset" name="annee"  value="<?php echo date('Y') ?>">
                         </li>
@@ -108,24 +105,26 @@ if ($action != 'generate')
                         {
                             
                                 $l_situation = (!empty($param_puser_extrafields['l_situation']))?$param_puser_extrafields['l_situation']:"0";
-                                
-                                $code_enregistrement=($l_situation==1 || $l_situation==2  || $l_situation==6 || $l_situation==7 )?7:2;
+                                $enregistrement_value=($l_situation==1 || $l_situation==2  || $l_situation==6 || $l_situation==7 )?7:2;
+                                $code_enregistrement=NombrePositionsNumerique($enregistrement_value,1);
                                 $numero_dadherent= NombrePositionsNumerique($n_adherent,6);
                                 $numero_categorie= NombrePositionsNumerique('0',2);
                                 $matriculeCimr= NombrePositionsNumerique($param_paie_userInfo['cimr'],9);
-                                $tauxcimr = (!empty($param_puser_extrafields['tauxcimr']))?$param_puser_extrafields['tauxcimr']:"0";
+                                $tauxcimr = (!empty($param_puser_extrafields['tauxcimr']))?$param_puser_extrafields['tauxcimr']:"0";//---------------------------> select option ajouter ????????????????????
                                 $tauxCotisation= NombrePositionsNumerique($tauxcimr,4);
                                 $nom = NombrePositionsAlphabetique($user['lastname'],25);
                                 $prenom = NombrePositionsAlphabetique($user['firstname'],25);
-                                $numeroInterieurSociete= NombrePositionsNumerique('0',6);
-                                $sex=($user['gender']=="man")?"M":"F";
-                                $nationalite='M';
-                                $date_daffiliation= NombrePositionsNumerique('0',8);
+                                $numeroInterieurSociete= NombrePositionsNumerique('0',6);//---------------------------> ajouter input ????????????????????
+                                $sex_value=($user['gender']=="man")?"M":"F";
+                                $sex= NombrePositionsAlphabetique($sex_value,1);
+                                $nationalite=NombrePositionsAlphabetique('M',1);//---------------------------> select option ajouter ????????????????????
+                                $date_daffiliation= NombrePositionsNumerique('0',8);//---------------------------> ajouter date  daffiliation ????????????????????
                                 $datetime_naissance = new DateTime($user['birth']);
                                 $jour_naissance = $datetime_naissance->format('d');
                                 $mois_naissance = $datetime_naissance->format('m');
                                 $annee_naissance = $datetime_naissance->format('Y');
-                                $date_naissance=$jour_naissance.$mois_naissance. $annee_naissance;
+                                $date_naissance_value=$jour_naissance.$mois_naissance. $annee_naissance;
+                                $date_naissance=NombrePositionsNumerique($date_naissance_value,8);
                                 switch($param_paie_mdeclarationRubs['situationFamiliale'])
                                 {
                                     case "DIVORCE":$stf="D"; break;
@@ -150,7 +149,12 @@ if ($action != 'generate')
                                 }
                                 $numCnie = NombrePositionsAlphabetique($param_puser_extrafields['cin'],10);
                                 $numCnss = NombrePositionsNumerique( $param_paie_userInfo['cnss'],10);
-                                $numGSM = NombrePositionsNumerique($user['user_mobile'],14);
+                                $user_mobile=$user['user_mobile'];
+                                //GSM
+                                if (strlen($user_mobile) == 10) {
+                                    $user_mobile = str_replace($user_mobile[0], "212", $user_mobile);
+                                }
+                                $numGSM = NombrePositionsNumerique($user_mobile,14);
                                 $adresseEmail = NombrePositionsAlphabetique($user['email'],35);  
 
                              
@@ -159,39 +163,38 @@ if ($action != 'generate')
                                 switch($trimestre)
                                 {
                                     case 1:if($monthD==1 || $monthD==2 || $monthD==3 ){
-                                        $salairebrut+=$mdeclaration["salaireBrut"];
+                                        $salairebrut+=round($mdeclaration["salaireBrut"],2)*100;
                                         $salaireSoumisContributions= NombrePositionsNumerique($salairebrut,10);
                                         $txtf=$code_enregistrement . $numero_dadherent . $numero_categorie . $matriculeCimr . $tauxCotisation .
-                                        $nom . $prenom . $sex . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants . 
+                                        $nom . $prenom .  $numeroInterieurSociete . $sex . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants . 
                                         $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  ."\n";
                                     }  break;
                                     case 2:if($monthD==4 || $monthD==5 || $monthD==6 ){
-                                        $salairebrut+=$mdeclaration["salaireBrut"];
+                                        $salairebrut+=round($mdeclaration["salaireBrut"],2)*100;
                                         $salaireSoumisContributions= NombrePositionsNumerique($salairebrut,10); 
                                         $txtf=$code_enregistrement . $numero_dadherent . $numero_categorie . $matriculeCimr . $tauxCotisation .
-                                        $nom . $prenom . $sex . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants . 
+                                        $nom . $prenom .  $numeroInterieurSociete . $sex . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants . 
                                         $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  ."\n"; 
                                     }  break;
                                     case 3:if($monthD==7 || $monthD==8 || $monthD==9 ) {
-                                        $salairebrut+=$mdeclaration["salaireBrut"];
+                                        $salairebrut+=round($mdeclaration["salaireBrut"],2)*100;
                                         $salaireSoumisContributions= NombrePositionsNumerique($salairebrut,10); 
                                         $txtf=$code_enregistrement . $numero_dadherent . $numero_categorie . $matriculeCimr . $tauxCotisation .
-                                        $nom . $prenom . $sex . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants . 
+                                        $nom . $prenom .  $numeroInterieurSociete  . $sex . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants . 
                                         $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  ."\n";
                                     }  break;
                                     case 4:if($monthD==10 || $monthD==11 || $monthD==12 ) {
-                                        $salairebrut+=$mdeclaration["salaireBrut"];
+                                        $salairebrut+=round($mdeclaration["salaireBrut"],2)*100;
                                         $salaireSoumisContributions= NombrePositionsNumerique($salairebrut,10); 
                                         $txtf=$code_enregistrement . $numero_dadherent . $numero_categorie . $matriculeCimr . $tauxCotisation .
-                                        $nom . $prenom . $sex . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants . 
+                                        $nom . $prenom .  $numeroInterieurSociete . $sex . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants . 
                                         $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  ."\n";
                                     }  break;
                                     default:$txtf="il n'y a pas d'trimestre\n";break;
                                 }
                         }
                       
-                    }      
-                          
+                    }              
                     fwrite($myfilee,$txtf);    
                 }
 

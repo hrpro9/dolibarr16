@@ -4,6 +4,7 @@
     $salaireParams = '';
     $param='';
     $ir ='';
+    $cnss_check=0;
     //Get Parameters from database
     $sql = "SELECT * FROM llx_Paie_bdpParameters";
     $res = $db->query($sql);
@@ -17,6 +18,10 @@
     $primes=$_POST['primes'];
     $les_indeminités=$_POST['les_indeminités'];                   
     $cf=$_POST['cf']; 
+    $cnss_check=$_POST['cnss'] ?? 0; 
+    $amo_check=$_POST['amo'] ?? 0; 
+    $mutuelle_check=$_POST['mutuelle'] ?? 0;
+    $cimr_check=$_POST['cimr'] ?? 0;
     //test salaire de base 
     $sb=2500; 
     //test salaire net 
@@ -34,31 +39,57 @@
             // salaire_brut_imposable
             $sbi=($sb+$primes)-$les_indeminités; 
             // cnss
-            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
-            $res = $db->query($sql);
-            $param_cnss = ((object)($res))->fetch_assoc();
-            $tauxcnss=$param_cnss["percentage"]/100;
-            $maxcnss=$param_cnss["plafond"]/$tauxcnss;
-            $cnss=$sbi<$maxcnss?$sbi*$tauxcnss:$maxcnss*$tauxcnss;
+            if($cnss_check==1)
+            {
+                $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
+                $res = $db->query($sql);
+                $param_cnss = ((object)($res))->fetch_assoc();
+                $tauxcnss=$param_cnss["percentage"]/100;
+                $maxcnss=$param_cnss["plafond"]/$tauxcnss;
+                $cnss=$sbi<$maxcnss?$sbi*$tauxcnss:$maxcnss*$tauxcnss;
+            }else{
+                $cnss=0;
+            }
+            //  cimr
+            if($cimr_check==1)
+            {
+                 $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=710";
+                 $res = $db->query($sql);
+                 $param_cimr = ((object)($res))->fetch_assoc();
+                 $tauxcimr=$param_cimr["percentage"]/100;
+                 $cimr=$sbi*$tauxcimr;
+             }else{
+                 $cimr=0;
+             }
             // amo
-            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=702";
-            $res = $db->query($sql);
-            $param_amo = ((object)($res))->fetch_assoc();
-            $tauxamo=$param_amo["percentage"]/100;
-            $amo=$sbi*$tauxamo;
+            if($amo_check==1)
+            {
+                $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=702";
+                $res = $db->query($sql);
+                $param_amo = ((object)($res))->fetch_assoc();
+                $tauxamo=$param_amo["percentage"]/100;
+                $amo=$sbi*$tauxamo;
+            }else{
+                $amo=0;
+            }
             // COTISATION MUTUELLE
-            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
-            $res = $db->query($sql);
-            $param_mutuelle = ((object)($res))->fetch_assoc();
-            $tauxmutuelle=$param_mutuelle["percentage"]/100;
-            $mutuelle=$sbi*$tauxmutuelle;
+            if($mutuelle_check==1)
+            {
+                $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
+                $res = $db->query($sql);
+                $param_mutuelle = ((object)($res))->fetch_assoc();
+                $tauxmutuelle=$param_mutuelle["percentage"]/100;
+                $mutuelle=$sbi*$tauxmutuelle;
+            }else{
+                $mutuelle=0;
+            }
             // fraie_professionnels
             $param["percentage"] = $sbi <= 6500 ?0.35 : 0.25;
             $fp=$sbi* $param["percentage"];
             $maxfp=2916.67;
             $fraie_professionnels=$fp<$maxfp?$fp:$maxfp;
             // salaire_net_imposable
-            $sni=$sbi - ($cnss+$amo+$mutuelle+$fraie_professionnels);
+            $sni=$sbi - ($cnss+$amo+$cimr+$mutuelle+$fraie_professionnels);
             //ir_brut
             $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
             $res = $db->query($sql);
@@ -68,10 +99,14 @@
             //ir_n
             $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]); 
             // salaire net test 
-            $sn_test=round($sbi-$cnss-$amo-$mutuelle-$ir_n, 2);
+            $sn_test=round($sbi-$cnss-$amo-$cimr-$mutuelle-$ir_n, 2);
         }while($sn_test != $sn); 
     }
     /*--------------------------------> charges patronale <--------------------------------*/
+    $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=702";
+    $res = $db->query($sql);
+    $param_amo = ((object)($res))->fetch_assoc();
+    $tauxamo=$param_amo["percentage"]/100;
     // cnss patronale
     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=701";
     $res = $db->query($sql);
