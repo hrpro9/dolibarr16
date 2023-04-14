@@ -7,122 +7,232 @@
     $sql = "SELECT * FROM llx_Paie_bdpParameters";
     $res = $db->query($sql);
     $params = ((object)($res))->fetch_assoc();
-    //Get les rubriques cotisations
-    $sql = "SELECT * FROM llx_Paie_Rub WHERE cotisation=1";
-    $res = $db->query($sql);
-    $param = ((object)($res))->fetch_assoc();
+     //Get les rubriques cotisations
+     $sql = "SELECT * FROM llx_Paie_Rub WHERE cotisation=1";
+     $res = $db->query($sql);
+     $param = ((object)($res))->fetch_assoc();
+    
     //Get data From calcul_new_prime
-    $sn=$_POST['sn'];
-    $sb=$_POST['sb'];
-    $primes=$_POST['primes'];
-    $les_indeminités=$_POST['les_indeminités'];                   
-    $cf=$_POST['cf'];
-    // salaire_brut_imposable
-    $sbi=($sb+$primes)-$les_indeminités;  
-    // cnss
-    $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
-    $res = $db->query($sql);
-    $param_cnss = ((object)($res))->fetch_assoc();
-    $tauxcnss=$param_cnss["percentage"]/100;
-    $maxcnss=$param_cnss["plafond"]/$tauxcnss;
-    $cnss=$sbi<$maxcnss?$sbi*$tauxcnss:$maxcnss*$tauxcnss;
-    // amo
-    $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=702";
-    $res = $db->query($sql);
-    $param_amo = ((object)($res))->fetch_assoc();
-    $tauxamo=$param_amo["percentage"]/100;
-    $amo=$sbi*$tauxamo;
-     // COTISATION MUTUELLE
-     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
-     $res = $db->query($sql);
-     $param_mutuelle = ((object)($res))->fetch_assoc();
-     $tauxmutuelle=$param_mutuelle["percentage"]/100;
-     $mutuelle=$sbi*$tauxmutuelle;
-    // fraie_professionnels
-    $param["percentage"] = $sbi <= 6500 ?0.35 : 0.25;
-    $fp=$sbi* $param["percentage"];
-    $maxfp=2916.67;
-    $fraie_professionnels=$fp<$maxfp?$fp:$maxfp;
-    // salaire_net_imposable
-    $sni=$sbi - ($cnss+$amo+$mutuelle+$fraie_professionnels);
-    //ir_brut
-    $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
-    $res = $db->query($sql);
-    $ir = ((object)($res))->fetch_assoc();
-    $ir_taux =$ir['percentIR']/ 100;
-    $ir_b =($sni*$ir_taux)-$ir['deduction'];
-    //ir_net
-    $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]);
-    // salaire net test
-    $sn_test=$sbi-$cnss-$amo-$mutuelle-$ir_n;
-    if($sn_test == $sn )
+    $employe=$_POST['employe'];
+    $newprimes=$_POST['newprimes'];
+    $annee_now=date('Y');
+    $mois_now=date('m')-1;
+    $salairenet=0;
+    $primes=0;
+    $les_indeminités=0;
+    $sbi=0;
+    $cnss=0;
+    $amo=0;
+    $mutule_active=0;
+    $cimr_active=0;
+    $fraie_professionnels=0;
+    $sni=0;
+    $ir_b=0;
+    $cf=0;
+    $ir_n=0;
+    $sb=0;
+    $new_prime=0;
+    $mutuelle_patronale=0;
+    $cnss_patronale=0;
+    $allocaton_familale=0;
+    $participation_amo=0;
+    $amo_patronale=0;
+    $les_indeminités0=0;
+    $les_indeminités1=0;
+    $les_indeminités_moins=0;
+
+
+    
+    $sql="SELECT *  FROM llx_Paie_MonthDeclaration ";
+    $rest=$db->query($sql);
+    //$param_paie_mdeclaration=((object)($rest_paie_mdeclaration))->fetch_assoc();
+    foreach($rest as $paie_monthdeclaration)
     {
-        echo "----> prime : ".$primes ."<br>";
-    }
-    else{
-        do
+       
+        if($paie_monthdeclaration['userid']==$employe && $paie_monthdeclaration['year']==$annee_now && $paie_monthdeclaration['month']==$mois_now)
         {
-            $v_test=$sn-$sn_test;
+
+            $salairenet=$paie_monthdeclaration['salaireNet'];
+           
+            $sn= $salairenet;
+            $sn_newprime=$sn+ $newprimes;
+
+            $sql="SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $paie_monthdeclaration['userid'] . " ";
+            $rest=$db->query($sql);
+          //  $param_sb=((object)($rest))->fetch_assoc();
+            foreach($rest as $paie_monthdeclarationrubs)
+            {
+                if($paie_monthdeclarationrubs['month']==$paie_monthdeclaration['month'] &&  $paie_monthdeclarationrubs['year']==$paie_monthdeclaration['year'])
+                {
+                    $sb=$paie_monthdeclarationrubs['salaireDeBase'];
+                    
+                    if($paie_monthdeclarationrubs['situationFamiliale']=="MARIE")
+                    {
+                        $cf=$paie_monthdeclarationrubs['enfants']+1;
+                    }else{
+                        $cf=$paie_monthdeclarationrubs['enfants'];
+                    }
+                }
+            }
+                $sql="SELECT *  FROM llx_Paie_UserParameters WHERE userid=" . $paie_monthdeclaration['userid'] . " ";
+                $rest_paie_userparameters=$db->query($sql);
+                foreach($rest_paie_userparameters as $paie_userparameters)
+                {
+                    $sql="SELECT *  FROM llx_Paie_Rub WHERE cotisation=0";
+                    $rest_paie_rub0=$db->query($sql);
+                    $param_paie_rub0=((object)($rest_paie_rub0))->fetch_assoc();
+                    foreach($rest_paie_rub0 as $paie_rub0)
+                    {
+                        if($paie_rub0['rub']==$paie_userparameters['rub'])
+                        {
+                            $primes+=$paie_userparameters['amount'];
+                        }
+                    }
+
+                    $sql="SELECT *  FROM llx_Paie_Rub WHERE imposable=0";
+                    $rest_paie_rub1=$db->query($sql);
+                    $param_paie_rub1=((object)($rest_paie_rub1))->fetch_assoc();
+                    foreach($rest_paie_rub1 as $paie_rub1)
+                    {
+                        if($paie_rub1['rub']==$paie_userparameters['rub'])
+                        {                         
+                            $les_indeminités0+=$paie_userparameters['amount']; 
+                        }
+                    }
+
+                    $sql="SELECT *  FROM llx_Paie_Rub WHERE imposable=1";
+                    $rest_paie_rub1=$db->query($sql);
+                    $param_paie_rub1=((object)($rest_paie_rub1))->fetch_assoc();
+                    foreach($rest_paie_rub1 as $paie_rub1)
+                    {
+                        if($paie_rub1['rub']==$paie_userparameters['rub'])
+                        {
+                            if($paie_userparameters['amount']>$paie_rub1['maxFree'])
+                            {
+                                $les_indeminités1+=$paie_rub1['maxFree'];
+                                $les_indeminités_moins+=($paie_userparameters['amount']-$paie_rub1['maxFree']);
+                            }
+                            
+                        }
+                    }
+
+                    if($paie_userparameters['rub']==706)
+                    {
+                        $mutule_active=1;
+                    }
+                    if($paie_userparameters['rub']==710)
+                    {
+                        $cimr_active=1;
+                    }
+                }
+            $les_indeminités=$les_indeminités1+$les_indeminités0;
             // salaire_brut_imposable
-            $sbi=$sbi+ $v_test; 
-            // new_prime
-            $new_prime= $sbi+$les_indeminités-$sb-$primes; 
-            // cnss
-            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
+            $sbi=(($sb+$primes)-$les_indeminités)+$les_indeminités_moins;
+
+            if($sn == $sn_newprime )
+            {
+                echo "----> prime : ".$primes ."<br>";
+            }
+            else{
+                do
+                {
+                    $v_test=$sn_newprime-$sn;
+                    // salaire_brut_imposable
+                    $sbi=$sbi+ $v_test; 
+                    // new_prime
+                    $new_prime= $sbi+$les_indeminités-$sb-$primes; 
+                    // cnss
+                     // cnss
+                    $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
+                    $res = $db->query($sql);
+                    $param_cnss = ((object)($res))->fetch_assoc();
+                    $tauxcnss=$param_cnss["percentage"]/100;
+                    $maxcnss=$param_cnss["plafond"]/$tauxcnss;
+                    $cnss=$sbi<$maxcnss?$sbi*$tauxcnss:$maxcnss*$tauxcnss;
+                    // amo
+                    $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=702";
+                    $res = $db->query($sql);
+                    $param_amo = ((object)($res))->fetch_assoc();
+                    $tauxamo=$param_amo["percentage"]/100;
+                    $amo=$sbi*$tauxamo;
+                    // COTISATION MUTUELLE
+                    if($mutule_active==1)
+                    {
+                        $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
+                        $res = $db->query($sql);
+                        $param_mutuelle = ((object)($res))->fetch_assoc();
+                        $tauxmutuelle=$param_mutuelle["percentage"]/100;
+                        $mutuelle=$sbi*$tauxmutuelle;
+                    }
+                    else{
+                        $mutuelle=0;
+                    }
+                    //  cimr
+                    if($cimr_active==1)
+                    {
+                        $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=710";
+                        $res = $db->query($sql);
+                        $param_cimr = ((object)($res))->fetch_assoc();
+                        $tauxcimr=$param_cimr["percentage"]/100;
+                        $cimr=$sbi*$tauxcimr;
+                    }else{
+                        $cimr=0;
+                    }
+                    // fraie_professionnels
+                    $param["percentage"] = $sbi <= 6500 ?0.35 : 0.25;
+                    $fp=$sbi* $param["percentage"];
+                    $maxfp=2916.67;
+                    $fraie_professionnels=$fp<$maxfp?$fp:$maxfp;
+                    // salaire_net_imposable
+                    $sni=$sbi - ($cnss+$amo+$mutuelle+$cimr+$fraie_professionnels);
+                    //ir_brut
+                    $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
+                    $res = $db->query($sql);
+                    $ir = ((object)($res))->fetch_assoc();
+                    $ir_taux =$ir['percentIR']/ 100;
+                    $ir_b =($sni*$ir_taux)-$ir['deduction'];
+                    //ir_net
+                    $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]);
+                    // salaire net test
+                    $sn=round($sbi-$cnss-$amo-$cimr-$mutuelle-$ir_n, 2);
+             }while($sn != $sn_newprime );
+               /*--------------------------------> charges patronale <--------------------------------*/
+            // cnss patronale
+            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=701";
             $res = $db->query($sql);
-            $param_cnss = ((object)($res))->fetch_assoc();
-            $tauxcnss=$param_cnss["percentage"]/100;
-            $maxcnss=$param_cnss["plafond"]/$tauxcnss;
-            $cnss=$sbi<$maxcnss?$sbi*$tauxcnss:$maxcnss*$tauxcnss;
-            // amo
-            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=702";
+            $param_cp = ((object)($res))->fetch_assoc();
+            $tauxcp=$param_cp["percentage"]/100;
+            $maxcp=$param_cp["plafond"]/ $tauxcp;
+            $cnss_patronale=$sbi<$maxcp?$sbi*$tauxcp:$maxcp*$tauxcp;
+            //allocaton_familale
+            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=705";
             $res = $db->query($sql);
-            $param_amo = ((object)($res))->fetch_assoc();
-            $amo=$sbi*  $param_amo["percentage"]/100;
-            // COTISATION MUTUELLE
-            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
+            $param_af = ((object)($res))->fetch_assoc();
+            $allocaton_familale=$sbi* $param_af["percentage"]/100;
+            //participation_amo
+            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=703";
             $res = $db->query($sql);
-            $param_mutuelle = ((object)($res))->fetch_assoc();
-            $tauxmutuelle=$param_mutuelle["percentage"]/100;
-            $mutuelle=$sbi*$tauxmutuelle;
-            // fraie_professionnels
-            $param["percentage"] = $sbi <= 6500 ?0.35 : 0.25;
-            $fp=$sbi* $param["percentage"];
-            $maxfp=2916.67;
-            $fraie_professionnels=$fp<$maxfp?$fp:$maxfp;
-            // salaire_net_imposable 
-            $sni=$sbi - ($cnss+$amo+$mutuelle+$fraie_professionnels); 
-            //ir_brut
-            $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
+            $param_pamo = ((object)($res))->fetch_assoc();
+            $tauxpamo=($param_pamo["percentage"]/100)-$tauxamo;
+            $participation_amo=$sbi*$tauxpamo;   
+            //amo_patronale
+            $amo_patronale=$sbi* $param_amo["percentage"]/100;
+              //MUTUELLE patronale
+              $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
+                        $res = $db->query($sql);
+                        $param_mutuelle = ((object)($res))->fetch_assoc();
+                        $tauxmutuelle=$param_mutuelle["percentage"]/100;
+            $mutuelle_patronale=$sbi*$tauxmutuelle;
+            //cimr patronale
+            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=711";
             $res = $db->query($sql);
-            $ir = ((object)($res))->fetch_assoc();
-            $ir_taux =$ir['percentIR']/ 100;
-            $ir_b =($sni*$ir_taux)-$ir['deduction'];
-            //ir_net
-            $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]); 
-            // salaire net test
-            $sn_test=round($sbi-$cnss-$amo-$mutuelle-$ir_n, 2);
-        }while($sn_test != $sn);
+            $param_cimrpatronale = ((object)($res))->fetch_assoc();
+            $tauxcimrpatronale=$param_cimrpatronale["percentage"]/100;
+            $cimr_patronale=$sbi*$tauxcimrpatronale;
+            }  
+        }
     }
-    /*--------------------------------> charges patronale <--------------------------------*/
-     // cnss patronale
-     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=701";
-     $res = $db->query($sql);
-     $param_cp = ((object)($res))->fetch_assoc();
-     $tauxcp=$param_cp["percentage"]/100;
-     $maxcp=$param_cp["plafond"]/ $tauxcp;
-     $cnss_patronale=$sbi<$maxcp?$sbi*$tauxcp:$maxcp*$tauxcp;
-     //allocaton_familale
-     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=705";
-     $res = $db->query($sql);
-     $param_af = ((object)($res))->fetch_assoc();
-     $allocaton_familale=$sbi* $param_af["percentage"]/100;
-     //participation_amo
-     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=703";
-     $res = $db->query($sql);
-     $param_pamo = ((object)($res))->fetch_assoc();
-     $tauxpamo=($param_pamo["percentage"]/100)-$tauxamo;
-     $participation_amo=$sbi*$tauxpamo;   
-     //amo_patronale
-     $amo_patronale=$sbi* $param_amo["percentage"]/100;
-?>
+
+    
+  
+   

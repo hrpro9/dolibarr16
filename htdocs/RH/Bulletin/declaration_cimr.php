@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
                                 <option value="4">Trimestre 4</option>
                             </select>
                             <input type="reset" name="annee"  value="<?php echo date('Y') ?>">
-                        </li>
+                    </li>
                     <li style="margin-top: 18px;">
                         <input type="submit" name="telecharge_cimr" value="Télécharge" />
                     </li>

@@ -21,24 +21,22 @@
                 <ul class="form-style-1" >
                   <label style="text-align: center;" class="field-divided">Calcul new prime !!!</label>
                   <li>
-                    <label>salaire net + new prime <span class="required">*</span></label>
-                    <input type="number" step="any" name="sn"  class="field-divided" placeholder="salaire net + new prime" required/>
-                  </li>
-                  <li>
-                    <label>salaire de base <span class="required">*</span></label>
-                    <input type="number" step="any" name="sb"  class="field-divided" placeholder="salaire de base" required/>
-                  </li>
-                  <li style="margin-top: 26px;">
-                    <label>primes <span class="required">*</span></label>
-                    <input type="number" step="any" name="primes"  class="field-divided" placeholder="primes" required />
-                  </li>
-                  <li style="margin-top: 26px;"> 
-                    <label>les_indeminités <span class="required">*</span></label>
-                    <input type="number" step="any" name="les_indeminités"  class="field-divided" placeholder="les_indeminités" required />
+                    <label>Liste de employe <span class="required">*</span></label>
+                    <select  name="employe" required>
+                        <option value="">Choose a employe</option>
+                        <?php 
+                          $sql="SELECT *  FROM llx_user";
+                          $rest=$db->query($sql);
+                          foreach($rest as $user)
+                          {
+                           echo '<option value=' .$user["rowid"].'>'. $user["lastname"] . " " . $user["firstname"] . '</option>';
+                          }
+                        ?>     
+                    </select>
                   </li>
                   <li style="margin-top: 26px;">
-                    <label>charge de famille <span class="required">*</span></label>
-                    <input type="number" step="any" name="cf"  class="field-divided" placeholder="charge de famille" required/>
+                    <label> New primes <span class="required">*</span></label>
+                    <input type="number" min="0" step="any" name="newprimes"  class="field-divided" placeholder=" new primes" required />
                   </li>
                   <li style="margin-top: 18px;">
                     <input type="submit"  name="new_prime" value="Calcul" />
@@ -55,35 +53,51 @@
                       ?>
                       <div class="alert1" role="alert" >
                      <?php
-                        echo "----> salaire  net + new prime : ".$sn ."<br>";
-                        echo "----> primes : ".$primes ."<br>";
-                        echo "----> les_indeminités : ".$les_indeminités ."<br>";
-                        echo "----> salair brut imposable : ".round($sbi,2) ."<br>";
-                        echo "----> cnss : ".round($cnss,2) ."<br>";
-                        echo "----> amo : ".round($amo,2) ."<br>";
-                        echo "----> mutuelle : " . round($mutuelle, 2) . "<br>";     
-                        echo "----> fraie_professionnels : ".round($fraie_professionnels,2) ."<br>";
-                        echo "----> salair net imposable : ".round($sni,2) ."<br>";
-                        echo "----> ir brut : ".round($ir_b,2) ."<br>";
-                        echo "----> charge de famille : ".$cf ."<br>";
-                        echo "----> ir net : ".round($ir_n,2)."<br>" ;
-                        echo "----> salaire de base : ". $sb;
+                        echo " Salaire de base : ". $sb."<br>";
+                        echo " Les_indeminités : ".$les_indeminités ."<br>";
+                        echo " Charge de famille : ".$cf ."<br>";
+                        echo " Primes : ".$primes ."<br>";
+                        
+                        echo " salair brut imposable : ".round($sbi,2) ."<br>";
+                        echo " CNSS : ".round($cnss,2) ."<br>";
+                        echo " AMO : ".round($amo,2) ."<br>";
+                        if($mutule_active==1)
+                        {
+                          echo " MUTUELLE : " . round($mutuelle, 2) . "<br>";    
+                        }
+                        if($cimr_active==1)
+                        {
+                        echo "  CIMR : ".  round($cimr, 2)  ."<br>"; 
+                        }
+                        echo " Fraie Professionnels : ".round($fraie_professionnels,2) ."<br>";
+                        echo " Salair net imposable : ".round($sni,2) ."<br>";
+                        echo " Ir brut : ".round($ir_b,2) ."<br>";
+                        echo " Ir net : ".round($ir_n,2)."<br>" ;
+                        echo " Salaire  net  : ".$salairenet ."<br>";
                       ?> 
                       </div>
                       <div class="alert2" >
                       <?php
                        require "code_calcul_new_prime.php";    
-                       echo "----> new prime : ".round($new_prime,2) ."<br>";
+                       echo "----> New Prime : ".round($new_prime,2) ."<br>";
                       ?> 
                       </div>
                       <div class="alert3" role="alert" >  
                       <h3  style="text-align: center;" class="">charges patronale !</h3>
-                     <?php
+                      <?php
                       require "code_calcul_new_prime.php";
-                      echo "----> cnss patronale : ".round($cnss_patronale,2) ."<br>";
-                      echo "----> allocaton familale : ".round($allocaton_familale,2) ."<br>";
-                      echo "----> participation amo : ".round($participation_amo,2) ."<br>";
-                      echo "----> amo patronale : ".round($amo_patronale,2) ."<br>";
+                      echo " CNSS Patronale : ".round($cnss_patronale,2) ."<br>";
+                      echo " Allocaton Familale : ".round($allocaton_familale,2) ."<br>";
+                      echo " Participation AMO : ".round($participation_amo,2) ."<br>";
+                      echo " AMO Patronale : ".round($amo_patronale,2) ."<br>";
+                      if($cimr_active==1)
+                      {
+                        echo " CIMR Patronale : " . round($cimr_patronale, 2) . "<br>";
+                      }
+                      if($mutule_active==1)
+                      {
+                        echo " MUTUELLE Patronale : " . round($mutuelle_patronale, 2) . "<br>";
+                      }
                       ?> 
                       </div>  <?php
                     }

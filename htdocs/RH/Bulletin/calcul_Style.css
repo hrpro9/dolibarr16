@@ -5,6 +5,13 @@
 	grid-gap: 5px;
   
   }
+  .gridcheckbox {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    grid-gap: 5px;
+    
+    }
   
 	.form-style-1 {
 	box-shadow: 1px 1px 4px #DADADA;

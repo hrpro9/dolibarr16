@@ -5,6 +5,7 @@
     $param='';
     $ir ='';
     $cnss_check=0;
+    $mutuelle_patronale=0;
     //Get Parameters from database
     $sql = "SELECT * FROM llx_Paie_bdpParameters";
     $res = $db->query($sql);
@@ -15,13 +16,28 @@
     $param = ((object)($res))->fetch_assoc();
     //Get data From calcul_salaire_base
     $sn=$_POST['sn'];
-    $primes=$_POST['primes'];
+   
     $les_indeminités=$_POST['les_indeminités'];                   
     $cf=$_POST['cf']; 
-    $cnss_check=$_POST['cnss'] ?? 0; 
-    $amo_check=$_POST['amo'] ?? 0; 
     $mutuelle_check=$_POST['mutuelle'] ?? 0;
     $cimr_check=$_POST['cimr'] ?? 0;
+
+    $scolarite_input=$_POST['scolarite_input'] ?? 0;
+    $aid_adha_input=$_POST['aid_adha_input'] ?? 0;
+    $panier_input=$_POST['panier_input'] ?? 0;
+    $transport_input=$_POST['transport_input'] ?? 0;
+    $stage_input=$_POST['stage_input'] ?? 0;
+    $responsabilite_input=$_POST['responsabilite_input'] ?? 0;
+    $preavis_input=$_POST['preavis_input'] ?? 0;
+    $rendement_input=$_POST['rendement_input'] ?? 0;
+    $representation_input=$_POST['representation_input'] ?? 0;
+    $fonction_input=$_POST['fonction_input'] ?? 0;
+    $indemnite_transport_input=$_POST['indemnite_transport_input'] ?? 0;
+
+    $primes=$scolarite_input+$aid_adha_input+$panier_input+$transport_input+$stage_input+$responsabilite_input+$preavis_input+
+    $rendement_input+$representation_input+$fonction_input+$indemnite_transport_input;
+
+
     //test salaire de base 
     $sb=2500; 
     //test salaire net 
@@ -39,17 +55,12 @@
             // salaire_brut_imposable
             $sbi=($sb+$primes)-$les_indeminités; 
             // cnss
-            if($cnss_check==1)
-            {
                 $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
                 $res = $db->query($sql);
                 $param_cnss = ((object)($res))->fetch_assoc();
                 $tauxcnss=$param_cnss["percentage"]/100;
                 $maxcnss=$param_cnss["plafond"]/$tauxcnss;
                 $cnss=$sbi<$maxcnss?$sbi*$tauxcnss:$maxcnss*$tauxcnss;
-            }else{
-                $cnss=0;
-            }
             //  cimr
             if($cimr_check==1)
             {
@@ -62,16 +73,11 @@
                  $cimr=0;
              }
             // amo
-            if($amo_check==1)
-            {
                 $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=702";
                 $res = $db->query($sql);
                 $param_amo = ((object)($res))->fetch_assoc();
                 $tauxamo=$param_amo["percentage"]/100;
                 $amo=$sbi*$tauxamo;
-            }else{
-                $amo=0;
-            }
             // COTISATION MUTUELLE
             if($mutuelle_check==1)
             {
@@ -127,4 +133,16 @@
     $participation_amo=$sbi*$tauxpamo;  
     //amo_patronale
     $amo_patronale=$sbi*$tauxamo;
+    //MUTUELLE patronale
+    $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
+    $res = $db->query($sql);
+    $param_mutuelle = ((object)($res))->fetch_assoc();
+    $tauxmutuelle=$param_mutuelle["percentage"]/100;
+    $mutuelle_patronale=$sbi*$tauxmutuelle;
+    //cimr patronale
+    $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=711";
+    $res = $db->query($sql);
+    $param_cimrpatronale = ((object)($res))->fetch_assoc();
+    $tauxcimrpatronale=$param_cimrpatronale["percentage"]/100;
+    $cimr_patronale=$sbi*$tauxcimrpatronale;
 ?>
