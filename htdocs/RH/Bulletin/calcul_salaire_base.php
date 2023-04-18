@@ -119,54 +119,42 @@ llxHeader("", "");
           require "./code_calcul_salaire_base.php";
         ?>
          <div class="col-lg-4 cell" style="margin-top: 10px;">
-            <div class="alert1" role="alert" >
-              <!--   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>-->
+         <div class="alert2">
               <?php
-               echo " Salaire  net : " . $sn . "<br>";
-               echo " Les_indeminités : " . $les_indeminités . "<br>";
-               echo " Charge de famille : " . $cf . "<br>";
-               echo " Primes : " . $primes . "<br>";
-
-              echo " Salair brut imposable : " . round($sbi, 2) . "<br>";
-              if($mutuelle_check==1)
-              {
-                echo " MUTELLE : " . round($mutuelle, 2) . "<br>";   
-              }
-                echo " CNSS : " . round($cnss, 2) . "<br>";
-                echo " AMO : " . round($amo, 2) . "<br>";           
-              if($cimr_check==3 || $cimr_check==6)
-              {
-                echo " CIMR : " . round($cimr, 2) . "<br>";
-              }
-              echo " Fraie Professionnels : " . round($fraie_professionnels, 2) . "<br>";
-              echo " Salair net imposable : " . round($sni, 2) . "<br>"; 
-              echo " Ir brut : " . round($ir_b, 2) . "<br>";
-              echo " Ir net : " . round($ir_n, 2) . "<br>";
-             
+                   
+                    echo " Indemnités : ".$les_indeminités ."<br>";
+                    echo " Primes : ".$primes ."<br>";
+                    echo " Charge de famille : ".$cf ."<br>"; 
+                    echo " Salaire brut imposable : ".round($sbi,2) ."<br>";
+                    echo " CNSS : ".round($cnss,2) ."<br>";
+                    echo " CNSS Patronale : ".round($cnss_patronale,2) ."<br>";
+                    echo " AMO : ".round($amo,2) ."<br>";
+                    echo " Participation AMO : ".round($participation_amo,2) ."<br>";
+                    echo " AMO Patronale : ".round($amo_patronale,2) ."<br>";
+                    echo " Allocation Familiale : ".round($allocaton_familale,2) ."<br>";
+                    if($mutuelle_check==1)
+                    {
+                      echo " Mutuelle : " . round($mutuelle, 2) . "<br>";  
+                      echo " Mutuelle Patronale : " . round($mutuelle_patronale, 2) . "<br>";  
+                    }
+                    if($cimr_check==3 || $cimr_check==6)
+                    {
+                    echo " CIMR : ".  round($cimr, 2)  ."<br>"; 
+                    echo " CIMR Patronale : " . round($cimr_patronale, 2) . "<br>";
+                    }
+                    echo " Frais Professionnels : ".round($fraie_professionnels,2) ."<br>";
+                    echo " Salaire net imposable : ".round($sni,2) ."<br>";
+                    echo " IR brut : ".round($ir_b,2) ."<br>";
+                    echo " IR net : ".round($ir_n,2)."<br>" ;
+                    echo " Salaire  net : " . $sn . "<br>";
               ?>
             </div>
-            <div class="alert2">
+            <div class="alert3" role="alert" >
+              <!--   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>-->
               <?php
               echo "----> Salaire de base : " . $sb. "<br>"; 
               ?>
-            </div>
-            <div class="alert3" role="alert">
-              <h3 style="text-align: center;" class="">charges patronale !</h3>
-              <?php
-                echo " CNSS Patronale : " . round($cnss_patronale, 2) . "<br>";
-              echo " Allocaton Familale : " . round($allocaton_familale, 2) . "<br>";
-                echo " Participation AMO : " . round($participation_amo, 2) . "<br>";
-                echo " AMO Patronale : " . round($amo_patronale, 2) . "<br>";
-              if($cimr_check==3 || $cimr_check==6)
-              {
-                echo " Cimr Patronale : " . round($cimr_patronale, 2) . "<br>";
-              }
-              if($mutuelle_check==1)
-              {
-                echo " Mutuelle Patronale : " . round($mutuelle_patronale, 2) . "<br>";
-              }
-              ?>
-            </div> 
+            </div>     
           </div>
           <?php
                 }
