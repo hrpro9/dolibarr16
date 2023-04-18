@@ -7,9 +7,9 @@
   }
   .gridcheckbox {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    grid-gap: 5px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 15px;
     
     }
   
@@ -83,7 +83,7 @@
 	  height: 100px;
   }
   .form-style-1 input[type=submit], .form-style-1 input[type=button]{
-	  background: #4B99AD;
+	  background: #88D5E9;
 	  padding: 10px 25px 10px 25px;
 	  border: none;
 	  color: #fff;

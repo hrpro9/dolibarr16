@@ -17,7 +17,9 @@
     $au_date=$_POST['au'];
     $datetime = new DateTime($du_date);
     $annee_now = $datetime->format('Y');
-    $NbrPersoPermanent=0;$NbrPersoOccasionnel=0;$NbrStagiaires=0;$TtMtRevenuBrutImposablePP=0;$TtMtRevenuNetImposablePP=0; $TtIrPrelevePO=0;$TtMtBrutSommesPO=0;$TtMtIrPrelevePP=0; $TtMtBrutTraitSalaireS=0; $TtMtRevenuNetImpSTG=0; $BrutImposablePP_mois=0; $RevenuNetImposablePP_mois=0; $IrPrelevePP_mois=0;$TtmtAnuuelRevenuSalarial=0;
+    $NbrPersoPermanent=0;$NbrPersoOccasionnel=0;$NbrStagiaires=0;$TtMtRevenuBrutImposablePP=0;$TtMtRevenuNetImposablePP=0; $TtIrPrelevePO=0;
+    $TtMtBrutSommesPO=0;$TtMtIrPrelevePP=0; $TtMtBrutTraitSalaireS=0; $TtMtRevenuNetImpSTG=0; $BrutImposablePP_mois=0; $RevenuNetImposablePP_mois=0;
+    $IrPrelevePP_mois=0;$TtmtAnuuelRevenuSalarial=0;
     $nomfiche="IR".date('Y').".xml";
     header('Content-Disposition: attachment; filename='.$nomfiche);
     header('Content-Type: text/xml'); 
@@ -104,14 +106,14 @@
             $adressePersonnelle = $dom->createElement('adressePersonnelle',$permanentPersonnel['address']);
             $PersonnelPermanent->appendChild($adressePersonnelle);
             // Create a numCNI element
-            $cni_value=(!empty($param_user_extrafields['cin']))?$param_user_extrafields['cin']:' ';
+            $cni_value=(!empty($param_user_extrafields['cin']))?$param_user_extrafields['cin']:'';
             $numCNI = $dom->createElement('numCNI',$cni_value);
             $PersonnelPermanent->appendChild($numCNI);
             // Create a numCE element
-            $numCE = $dom->createElement('numCE',' ');//null
+            $numCE = $dom->createElement('numCE','');//null
             $PersonnelPermanent->appendChild($numCE);
             // Create a numPPR element
-            $numPPR = $dom->createElement('numPPR',' ');
+            $numPPR = $dom->createElement('numPPR','');
             $PersonnelPermanent->appendChild($numPPR);
             // Create a numCNSS element
             $sql_Paie_UserInfo="SELECT *  FROM llx_Paie_UserInfo WHERE userid=" . $permanentPersonnel['rowid'] . " ";
@@ -144,13 +146,43 @@
             // Create a mtBrutTraitementSalaire element
             $mtBrutTraitementSalaire = $dom->createElement('mtBrutTraitementSalaire',$SBrutAnnuel);
             $PersonnelPermanent->appendChild($mtBrutTraitementSalaire);
-            // Create a periode element
+            // Create a periode en jours element
             $periode = $dom->createElement('periode',$periodeAnnuel);
             $PersonnelPermanent->appendChild($periode);
-            // Create a mtExonere element
+            // Create a montant des elements exonérés element
+            $sql="SELECT *  FROM llx_Paie_UserParameters WHERE userid=" .  $permanentPersonnel['rowid']  . " ";
+            $rest_paie_userparameters=$db->query($sql);
+            foreach($rest_paie_userparameters as $paie_userparameters)
+            {
+                $sql="SELECT *  FROM llx_Paie_Rub WHERE imposable=0";
+                $rest_paie_rub1=$db->query($sql);
+                $param_paie_rub1=((object)($rest_paie_rub1))->fetch_assoc();
+                foreach($rest_paie_rub1 as $paie_rub1)
+                {
+                    if($paie_rub1['rub']==$paie_userparameters['rub'])
+                    {                         
+                        $les_indeminités0+=$paie_userparameters['amount']; 
+                    }
+                }
+
+                $sql="SELECT *  FROM llx_Paie_Rub WHERE imposable=1";
+                $rest_paie_rub1=$db->query($sql);
+                $param_paie_rub1=((object)($rest_paie_rub1))->fetch_assoc();
+                foreach($rest_paie_rub1 as $paie_rub1)
+                {
+                    if($paie_rub1['rub']==$paie_userparameters['rub'])
+                    {
+                        if($paie_userparameters['amount']>$paie_rub1['maxFree'])
+                        {
+                            $les_indeminités1+=$paie_rub1['maxFree'];
+                            $les_indeminités_moins+=($paie_userparameters['amount']-$paie_rub1['maxFree']);
+                        }     
+                    }
+                }
+            }
             $mtExonere = $dom->createElement('mtExonere',' ');
             $PersonnelPermanent->appendChild($mtExonere);
-            // Create a mtEcheances element  
+            // Create a montant des échéances prélevées element  
             $mtEcheances = $dom->createElement('mtEcheances',' ');
             $PersonnelPermanent->appendChild($mtEcheances);
             // Create a nbrReductions element

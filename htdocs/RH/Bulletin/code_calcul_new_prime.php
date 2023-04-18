@@ -83,38 +83,21 @@
                     $param_paie_rub0=((object)($rest_paie_rub0))->fetch_assoc();
                     foreach($rest_paie_rub0 as $paie_rub0)
                     {
-                        if($paie_rub0['rub']==$paie_userparameters['rub'])
+                        if($paie_rub0['imposable']==1)
                         {
-                            $primes+=$paie_userparameters['amount'];
-                        }
-                    }
-
-                    $sql="SELECT *  FROM llx_Paie_Rub WHERE imposable=0";
-                    $rest_paie_rub1=$db->query($sql);
-                    $param_paie_rub1=((object)($rest_paie_rub1))->fetch_assoc();
-                    foreach($rest_paie_rub1 as $paie_rub1)
-                    {
-                        if($paie_rub1['rub']==$paie_userparameters['rub'])
-                        {                         
-                            $les_indeminités0+=$paie_userparameters['amount']; 
-                        }
-                    }
-
-                    $sql="SELECT *  FROM llx_Paie_Rub WHERE imposable=1";
-                    $rest_paie_rub1=$db->query($sql);
-                    $param_paie_rub1=((object)($rest_paie_rub1))->fetch_assoc();
-                    foreach($rest_paie_rub1 as $paie_rub1)
-                    {
-                        if($paie_rub1['rub']==$paie_userparameters['rub'])
-                        {
-                            if($paie_userparameters['amount']>$paie_rub1['maxFree'])
-                            {
-                                $les_indeminités1+=$paie_rub1['maxFree'];
-                                $les_indeminités_moins+=($paie_userparameters['amount']-$paie_rub1['maxFree']);
+                            if($paie_rub0['rub']==$paie_userparameters['rub'])
+                            {                         
+                                $primes+=$paie_userparameters['amount']; 
                             }
-                            
+                        }else{
+                            if($paie_rub0['rub']==$paie_userparameters['rub'])
+                           {
+                             $les_indeminités0+=$paie_userparameters['amount'];
+                            }
                         }
                     }
+
+                    
 
                     if($paie_userparameters['rub']==706)
                     {
@@ -125,9 +108,9 @@
                         $cimr_active=1;
                     }
                 }
-            $les_indeminités=$les_indeminités1+$les_indeminités0;
+      //      $les_indeminités=$les_indeminités1+$les_indeminités0;
             // salaire_brut_imposable
-            $sbi=(($sb+$primes)-$les_indeminités)+$les_indeminités_moins;
+            $sbi=(($sb+$primes));
 
             if($sn == $sn_newprime )
             {
@@ -142,7 +125,6 @@
                     // new_prime
                     $new_prime= $sbi+$les_indeminités-$sb-$primes; 
                     // cnss
-                     // cnss
                     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
                     $res = $db->query($sql);
                     $param_cnss = ((object)($res))->fetch_assoc();
@@ -194,7 +176,7 @@
                     //ir_net
                     $ir_n=$cf>$params["maxChildrens"]?$ir_b-($params["maxChildrens"]*$params["primDenfan"]):$ir_b-($cf*$params["primDenfan"]);
                     // salaire net test
-                    $sn=round($sbi-$cnss-$amo-$cimr-$mutuelle-$ir_n, 2);
+                    $sn=round(($sbi-$cnss-$amo-$cimr-$mutuelle-$ir_n)+$les_indeminités0, 2);
              }while($sn != $sn_newprime );
                /*--------------------------------> charges patronale <--------------------------------*/
             // cnss patronale
@@ -217,11 +199,11 @@
             $participation_amo=$sbi*$tauxpamo;   
             //amo_patronale
             $amo_patronale=$sbi* $param_amo["percentage"]/100;
-              //MUTUELLE patronale
-              $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
-                        $res = $db->query($sql);
-                        $param_mutuelle = ((object)($res))->fetch_assoc();
-                        $tauxmutuelle=$param_mutuelle["percentage"]/100;
+            //MUTUELLE patronale
+            $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=706";
+            $res = $db->query($sql);
+            $param_mutuelle = ((object)($res))->fetch_assoc();
+            $tauxmutuelle=$param_mutuelle["percentage"]/100;
             $mutuelle_patronale=$sbi*$tauxmutuelle;
             //cimr patronale
             $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=711";

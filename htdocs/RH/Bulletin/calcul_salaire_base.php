@@ -83,13 +83,19 @@ llxHeader("", "");
                     <h4>Indemnite Transport <span class="required"><input type="checkbox" name="indemnite_transport_transport" value="1" onclick="toggleInput(this, 'indemnite_transport-input')"></span></h4>
                     <input type="number" id="indemnite_transport-input" name="indemnite_transport_input" style="display: none;">
                   </li>
+                 
               </div>
             
             </div>
-            <div  style="margin-top: 26px;">
+            <div  style="margin-top: 0px;">
               <label>Cotisation <span class="required">*</span></label>
               <li style="display: inline-block;">
-                <h4>CIMR <span class="required"> <input type="checkbox" name="cimr" value="1"></span></h4>
+                    <h4>cimr <span class="required"><input type="checkbox" name="cimr" value="1" onclick="toggleInput(this, 'cimr-input')"></span></h4>
+                   <select name="cimr" id="cimr-input"  style="display: none;" required>
+                    <option value=""></option>
+                    <option value="3">3%</option>
+                    <option value="6">6%</option>
+                   </select>
               </li>
               <li style="display: inline-block;">
               <h4>MUTULLE <span class="required"> <input type="checkbox" name="mutuelle" value="1"></h4>
@@ -128,7 +134,7 @@ llxHeader("", "");
               }
                 echo " CNSS : " . round($cnss, 2) . "<br>";
                 echo " AMO : " . round($amo, 2) . "<br>";           
-              if($cimr_check==1)
+              if($cimr_check==3 || $cimr_check==6)
               {
                 echo " CIMR : " . round($cimr, 2) . "<br>";
               }
@@ -151,7 +157,7 @@ llxHeader("", "");
               echo " Allocaton Familale : " . round($allocaton_familale, 2) . "<br>";
                 echo " Participation AMO : " . round($participation_amo, 2) . "<br>";
                 echo " AMO Patronale : " . round($amo_patronale, 2) . "<br>";
-              if($cimr_check==1)
+              if($cimr_check==3 || $cimr_check==6)
               {
                 echo " Cimr Patronale : " . round($cimr_patronale, 2) . "<br>";
               }
