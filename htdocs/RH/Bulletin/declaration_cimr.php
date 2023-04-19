@@ -90,7 +90,10 @@ if ($action != 'generate')
                 $rest = $db->query($sql);
                 foreach ($rest as $user) {
                     $salairebrut = 0;
-
+                    if(!empty( $txtf))
+                    {
+                        $txtf=0;
+                    }
                     $sql = "SELECT *  FROM llx_Paie_UserInfo WHERE userid=" . $user['rowid'] . "  ";
                     $rest_paie_userInfo = $db->query($sql);
                     $param_paie_userInfo = ((object)($rest_paie_userInfo))->fetch_assoc();
@@ -109,9 +112,10 @@ if ($action != 'generate')
                     $sql="SELECT *  FROM llx_Paie_UserParameters WHERE userid=" . $user['rowid'] . " ";
                     $rest_paie_userparameters=$db->query($sql);
                     $param_paie_userparameters = ((object)($rest_paie_userparameters))->fetch_assoc();
-                    foreach ($rest_paie_userparameters as $userparameters) {
-                        if($userparameters['rub']==710)
+
+                        if(!empty($param_paie_userInfo['cimr']) && $param_paie_userInfo['cimr']!=0)
                         {
+                           
                             foreach ($rest_paie_mdeclaration as $mdeclaration) {
                                 if ($mdeclaration["year"] == $annee ) {
         
@@ -223,11 +227,10 @@ if ($action != 'generate')
                                 }
                             }
                         }
-                    }
-                  
-
-                 
-                    fwrite($myfilee, $txtf);
+                    if($txtf != 0)
+                    {
+                        fwrite($myfilee, $txtf);
+                    }  
                 }
 
 

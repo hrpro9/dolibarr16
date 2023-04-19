@@ -21,7 +21,11 @@ llxHeader("", "");
           <ul class="form-style-1">
             <label style="text-align: center;" class="field-divided">Calcul Salaire de base !</label>
             <li>
-              <label>Salaire net <span class="required">*</label>
+              <label>Date de recrutement<span class="required">*</label>
+              <input type="date"  step="any" name="date" class="field-divided" placeholder="date" required />
+            </li>
+            <li>
+              <label>Salaire Net <span class="required">*</label>
               <input type="number" min="0" step="any" name="sn" class="field-divided" placeholder="salaire net" required />
             </li>
             <li style="margin-top: 26px;">
@@ -92,8 +96,8 @@ llxHeader("", "");
               <div class="gridcheckbox">
                 <li style="display: inline-block;">
                   <h4>cimr <span class="required"><input type="checkbox" name="cimr" value="1" onclick="toggleInput(this, 'cimr-input')"></span></h4>
-                  <select name="cimr" id="cimr-input"  style="display: none;" required>
-                    <option value=""></option>
+                  <select name="cimr" id="cimr-input"  style="display: none;" >
+                    <option value="1"></option>
                     <option value="3">3%</option>
                     <option value="6">6%</option>
                   </select>
@@ -114,51 +118,82 @@ llxHeader("", "");
       </div>
       <div >
         <?php
-        if (isset($_POST['salaire_base'])) {
+        if (isset($_POST['salaire_base']))
+        {
+          
           // require "code_calcul_salaire_base copy.php";
-          require "./code_calcul_salaire_base.php";
-        ?>
-         <div class="col-lg-4 cell" style="margin-top: 10px;">
-         <div class="alert2">
-              <?php
-                   
-                    echo " Indemnités : ".$les_indeminités ."<br>";
-                    echo " Primes : ".$primes ."<br>";
-                    echo " Charge de famille : ".$cf ."<br>"; 
-                    echo " Salaire brut imposable : ".round($sbi,2) ."<br>";
-                    echo " CNSS : ".round($cnss,2) ."<br>";
-                    echo " CNSS Patronale : ".round($cnss_patronale,2) ."<br>";
-                    echo " AMO : ".round($amo,2) ."<br>";
-                    echo " Participation AMO : ".round($participation_amo,2) ."<br>";
-                    echo " AMO Patronale : ".round($amo_patronale,2) ."<br>";
-                    echo " Allocation Familiale : ".round($allocaton_familale,2) ."<br>";
-                    if($mutuelle_check==1)
-                    {
-                      echo " Mutuelle : " . round($mutuelle, 2) . "<br>";  
-                      echo " Mutuelle Patronale : " . round($mutuelle_patronale, 2) . "<br>";  
-                    }
-                    if($cimr_check==3 || $cimr_check==6)
-                    {
-                    echo " CIMR : ".  round($cimr, 2)  ."<br>"; 
-                    echo " CIMR Patronale : " . round($cimr_patronale, 2) . "<br>";
-                    }
-                    echo " Frais Professionnels : ".round($fraie_professionnels,2) ."<br>";
-                    echo " Salaire net imposable : ".round($sni,2) ."<br>";
-                    echo " IR brut : ".round($ir_b,2) ."<br>";
-                    echo " IR net : ".round($ir_n,2)."<br>" ;
-                    echo " Salaire  net : " . $sn . "<br>";
-              ?>
-            </div>
-            <div class="alert3" role="alert" >
-              <!--   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>-->
-              <?php
-              echo "----> Salaire de base : " . $sb. "<br>"; 
-              ?>
-            </div>     
-          </div>
-          <?php
-                }
+              require "./code_calcul_salaire_base.php";
+            ?>
+            <div class="col-lg-4 cell" style="margin-top: 10px;">
+            <div class="alert2">
+            <label style="text-align: center;display:block;font-weight: bold;font-size: 18px;"  class="field-divided"> --> DATE DE RECRUTEMENT : <?php echo $date ?> </label>
+                  <?php
+                        echo " Indemnités : ".$les_indeminités ."<br>";
+                        echo " Primes : ".$primes ."<br>";
+                        echo " Charge de famille : ".$cf ."<br>"; 
+                        echo " Salaire brut imposable : ".round($sbi,2) ."<br>";
+                        echo " CNSS : ".round($cnss,2) ."<br>";
+                        echo " CNSS Patronale : ".round($cnss_patronale,2) ."<br>";
+                        echo " AMO : ".round($amo,2) ."<br>";
+                        echo " Participation AMO : ".round($participation_amo,2) ."<br>";
+                        echo " AMO Patronale : ".round($amo_patronale,2) ."<br>";
+                        echo " Allocation Familiale : ".round($allocaton_familale,2) ."<br>";
+                        if($mutuelle_check==1)
+                        {
+                          echo " Mutuelle : " . round($mutuelle, 2) . "<br>";  
+                          echo " Mutuelle Patronale : " . round($mutuelle_patronale, 2) . "<br>";  
+                        }
+                        if($cimr_check==3 || $cimr_check==6)
+                        {
+                        echo " CIMR : ".  round($cimr, 2)  ."<br>"; 
+                        echo " CIMR Patronale : " . round($cimr_patronale, 2) . "<br>";
+                        }
+                        echo " Frais Professionnels : ".round($fraie_professionnels,2) ."<br>";
+                        echo " Salaire net imposable : ".round($sni,2) ."<br>";
+                        echo " IR brut : ".round($ir_b,2) ."<br>";
+                        echo " IR net : ".round($ir_n,2)."<br>" ;
+                        echo " Salaire  net : " . $sn . "<br>";
+                        echo " Salaire  net : " . $cimr_check . "<br>";
+                  ?> 
+                </div>
+                <div class="alert3" role="alert" >
+                  <!--   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>-->
+                  <?php
+                  echo "----> Salaire de base : " . $sb. "<br>"; 
                   ?>
+                </div>
+
+                <form action="" method="post">
+                  <div class="alert" role="alert" >  
+                    <input type="submit" name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;" />
+                  </div>
+                </form>
+
+             
+                 
+              </div>
+              <?php
+        }
+
+        if(isset($_POST['Generer']))
+        {
+          //open file
+          $fileNameWrite =  DOL_DOCUMENT_ROOT . '/RH/Bulletin/files/SalaireBase.txt';
+          
+          
+          //Dowloand file Ds
+          ob_clean();
+          $DsFile = 'SalaireBase.TXT';
+          header('Content-Type: application/txt');
+          header('Content-Disposition: attachment; filename=' . "$DsFile");
+
+          flush();
+          readfile($fileNameWrite);
+          exit();
+
+        }
+
+        ?>
       </div>
     </div>
     </center>

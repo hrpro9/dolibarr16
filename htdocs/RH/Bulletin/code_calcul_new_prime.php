@@ -24,8 +24,14 @@
     $sql="SELECT *  FROM llx_Paie_MonthDeclaration ";
     $rest=$db->query($sql);
     //$param_paie_mdeclaration=((object)($rest_paie_mdeclaration))->fetch_assoc();
+    $jourWork=0;
     foreach($rest as $paie_monthdeclaration)
     {
+
+        if($paie_monthdeclaration['userid']==$employe && $paie_monthdeclaration['year']==$annee_now)
+        {
+            $jourWork+=$paie_monthdeclaration['workingDays'];
+        }
        
         if($paie_monthdeclaration['userid']==$employe && $paie_monthdeclaration['year']==$annee_now && ($paie_monthdeclaration['month']==$mois_now || $paie_monthdeclaration['month']==$moisnew ) )
         {
@@ -34,6 +40,9 @@
            
             $sn= $salairenet;
             $sn_newprime=$sn+ $newprimes;
+
+           
+
 
             $sql="SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $paie_monthdeclaration['userid'] . " ";
             $rest=$db->query($sql);
@@ -51,6 +60,7 @@
                         $cf=$paie_monthdeclarationrubs['enfants'];
                     }
                 }
+
             }
                 $sql="SELECT *  FROM llx_Paie_UserParameters WHERE userid=" . $paie_monthdeclaration['userid'] . " ";
                 $rest_paie_userparameters=$db->query($sql);
@@ -75,24 +85,45 @@
                         }
                     }
 
-                    
+                    $sql="SELECT *  FROM llx_Paie_UserInfo WHERE userid=" . $paie_monthdeclaration['userid'] . " ";
+                    $rest_paie_userInfo=$db->query($sql);
+                    $param_paie_userInfo=((object)($rest_paie_userInfo))->fetch_assoc();
 
-                    if($paie_userparameters['rub']==706)
+                    if(!empty($param_paie_userInfo['mutuelle']) && $param_paie_userInfo['mutuelle']!=0)
                     {
                         $mutule_active=1;
                     }
-                    if($paie_userparameters['rub']==710)
+                    if(!empty($param_paie_userInfo['cimr']) && $param_paie_userInfo['cimr']!=0)
                     {
                         $cimr_active=1;
                     }
+
+                    $sql="SELECT *  FROM  llx_user WHERE rowid=" . $paie_monthdeclaration['userid'] . " ";
+                    $rest_user=$db->query($sql);
+                    $param_user=((object)($rest_user))->fetch_assoc();
+                    $dateemployment=$param_user['dateemployment'];
+                    // Convert $dateemployment to a DateTime object
+                    $date1 = new DateTime($dateemployment);
+                    // Create a DateTime object for today's date
+                    $date2 = new DateTime();
+                    // Calculate the interval between the two dates
+                    $interval = $date1->diff($date2);
+                    // Get the number of years
+                    $years = $interval->y;
+                    $sql = "SELECT 	percentPrimDancien FROM llx_Paie_PrimDancienParameters WHERE (" . $years . ">=de and " . $years . "<=a) OR (" . $years . ">=de and a = '+')";
+                    $res_paie_primDancienParameters = $db->query($sql);
+                    $param__paie_primDancienParameters = ((object)($res_paie_primDancienParameters))->fetch_assoc();
+                    $percentPrimDancien=$param__paie_primDancienParameters['percentPrimDancien']/100;
+                    $prime_danciennete=$sb*$percentPrimDancien;
                 }
-                $primes1=$primes+155;
+         
+            $primes+=$prime_danciennete;
             // salaire_brut_imposable
-            $sbi=(($sb+$primes1));
+            $sbi=(($sb+$primes));
 
             if($sn == $sn_newprime )
             {
-                echo " <br>";
+                echo "<br>";
             }
             else{
                 do
@@ -101,7 +132,7 @@
                     // salaire_brut_imposable
                     $sbi=$sbi+ $v_test; 
                     // new_prime
-                    $new_prime= $sbi+$les_indeminités-$sb-$primes1; 
+                    $new_prime= $sbi+$les_indeminités-$sb-$primes; 
                     // cnss
                     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
                     $res = $db->query($sql);

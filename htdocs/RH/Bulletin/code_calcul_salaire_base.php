@@ -19,6 +19,7 @@
    
     $les_indeminités=$_POST['les_indeminités'];                   
     $cf=$_POST['cf']; 
+    $date=$_POST['date']; 
     $mutuelle_check=$_POST['mutuelle'] ?? 0;
     $cimr_check=$_POST['cimr'] ?? 0;
 
@@ -160,6 +161,52 @@
         $tauxcimrpatronale=$param_cimrpatronale["percentage"]/100;
         $cimr_patronale=$sbi*$tauxcimrpatronale;
      }
+
+
+
     
-    
+
+      //open file
+      $fileNameWrite =  DOL_DOCUMENT_ROOT . '/RH/Bulletin/files/SalaireBase.txt';
+      file_put_contents($fileNameWrite, '');
+      $myfilee = fopen("$fileNameWrite", "a+") or die("Unable to open file!");
+      $txtf = "--> DATE DE RECRUTEMENT : ".$date ."\n";  
+      $txtf .= " Indemnités : ".$les_indeminités ."\n";
+      $txtf .= " Primes : ".$primes ."\n";
+      $txtf .= " Charge de famille : ".$cf ."\n";
+      $txtf .= " Salaire brut imposable : ".round($sbi,2) ."\n";
+      $txtf .= " CNSS : ".round($cnss,2) ."\n";
+      $txtf .= " CNSS Patronale  : ".round($cnss_patronale,2) ."\n";
+      $txtf .= " AMO : ".round($amo,2) ."\n";
+      $txtf .= " Participation AMO : ".round($participation_amo,2) ."\n";
+      $txtf .= " AMO Patronale : ".round($amo_patronale,2) ."\n";
+      if($mutuelle_check==1)
+      { 
+        $txtf .= " Mutuelle : " . round($mutuelle, 2) ."\n";
+        $txtf .= " Mutuelle Patronale : " . round($mutuelle_patronale, 2) ."\n";
+      }
+      if($cimr_check==3 || $cimr_check==6)
+      {
+        $txtf .= " CIMR : ".  round($cimr, 2) ."\n";
+        $txtf .= " CIMR Patronale : " . round($cimr_patronale, 2) ."\n";
+      }
+      $txtf .= " Frais Professionnels : ".round($fraie_professionnels,2) ."\n";
+      $txtf .= " Salaire net imposable : ".round($sni,2) ."\n";
+      $txtf .= " IR brut : ".round($ir_b,2) ."\n";
+      $txtf .= " IR net : ".round($ir_n,2) ."\n";
+      $txtf .= " Salaire  net : " . $sn ."\n";
+      $txtf .= "----> Salaire de base : " . $sb ."\n";
+      fwrite($myfilee, $txtf);
+      fclose($myfilee);
+      
+     /* //Dowloand file Ds
+      ob_clean();
+      $DsFile = 'SalaireBase.TXT';
+      header('Content-Type: application/txt');
+      header('Content-Disposition: attachment; filename=' . "$DsFile");
+
+      flush();
+      readfile($fileNameWrite);
+      exit();*/
+
 ?>

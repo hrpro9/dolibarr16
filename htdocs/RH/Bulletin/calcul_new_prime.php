@@ -48,64 +48,64 @@
          
                   <?php
                     if(isset($_POST['new_prime']))
-                    {?>
-                    <div class="">
-                      <!-- Les donnés  ancien ------------>
-                        <div class="col-lg-4 "  style="margin-top: 10px;"> <?php
-                          require "code_calcul_new_prime.php";  
-                          ?>
-                         
-                          <div class="alert2" role="alert" >
-                          <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;"  class="field-divided"> -->LES DONNÉES ANCIENNES </label>
-                        <?php
-                            echo " Salaire de base : ". $sb."<br>";
-                            echo " Indemnités : ".$les_indeminités0 ."<br>";
-                            echo " Primes : ".$primes1 ."<br>";
-                            echo " Charge de famille : ".$cf ."<br>";
-                            echo " Salaire net   : ".$salairenet ."<br>";
+                      {?>
+                      <div class="">
+                        <!-- Les donnés  ancien ------------>
+                          <div class="col-lg-4 "  style="margin-top: 10px;"> <?php
+                            require "code_calcul_new_prime.php";  
+                            ?>
                           
-
-                          ?> 
-                          </div>
-                            <!-- Les donnés  nouveau ------------>
-                          <div class="alert3" >
-                          <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;"  class="field-divided"> -->LES DONNÉES NOUVELLES</label>
+                            <div class="alert2" role="alert" >
+                            <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;"  class="field-divided"> -->LES DONNÉES ANCIENNES </label>
                           <?php
-                          require "code_calcul_new_prime.php"; 
-                          echo " Salaire brut imposable : ".round($sbi,2) ."<br>";
-                          echo " CNSS : ".round($cnss,2) ."<br>";
-                          echo " CNSS Patronale : ".round($cnss_patronale,2) ."<br>";
-                          echo " AMO : ".round($amo,2) ."<br>";
-                          echo " Participation AMO : ".round($participation_amo,2) ."<br>";
-                          echo " AMO Patronale : ".round($amo_patronale,2) ."<br>";
-                          echo " Allocation Familiale : ".round($allocaton_familale,2) ."<br>";
-                          if($mutule_active==1)
-                          {
-                            echo " Mutuelle : " . round($mutuelle, 2) . "<br>";  
-                            echo " Mutuelle Patronale : " . round($mutuelle_patronale, 2) . "<br>";  
-                          }
-                          if($cimr_active==1)
-                          {
-                          echo " CIMR : ".  round($cimr, 2)  ."<br>"; 
-                          echo " CIMR Patronale : " . round($cimr_patronale, 2) . "<br>";
-                          }
-                          echo " Frais Professionnels : ".round($fraie_professionnels,2) ."<br>";
-                          echo " Salaire net imposable : ".round($sni,2) ."<br>";
-                          echo " IR brut : ".round($ir_b,2) ."<br>";
-                          echo " IR net : ".round($ir_n,2)."<br>" ;
-                        
-                          
-                         
+                              echo " Salaire de base : ". $sb."<br>";
+                              echo " Indemnités : ".$les_indeminités0 ."<br>";
+                              echo " Primes : ".$primes ."<br>";
+                              echo " Charge de famille : ".$cf ."<br>";
+                              echo " Salaire net   : ".$salairenet ."<br>"; 
+                              echo " Jours travaillés annuel   : ".$jourWork ."<br>";
 
-                          echo " Salaire net + nouvelle prime  : ".$sn ."<br>";   
-                          echo "--> Nouvelle prime brut : ".round($new_prime,2) ."<br>";
-                          ?> 
-                          </div>
-                        
-                    </div>
-                    
-                     
-                       <?php
+                            ?> 
+                            </div>
+                              <!-- Les donnés  nouveau ------------>
+                            <div class="alert3" >
+                            <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;"  class="field-divided"> -->LES DONNÉES NOUVELLES</label>
+                            <?php
+                            require "code_calcul_new_prime.php"; 
+                              echo " Salaire brut imposable : ".round($sbi,2) ."<br>";
+                              echo " CNSS : ".round($cnss,2) ."<br>";
+                              echo " CNSS Patronale : ".round($cnss_patronale,2) ."<br>";
+                              echo " AMO : ".round($amo,2) ."<br>";
+                              echo " Participation AMO : ".round($participation_amo,2) ."<br>";
+                              echo " AMO Patronale : ".round($amo_patronale,2) ."<br>";
+                              echo " Allocation Familiale : ".round($allocaton_familale,2) ."<br>";
+                            if($mutule_active==1)
+                            {
+                              echo " Mutuelle : " . round($mutuelle, 2) . "<br>";  
+                              echo " Mutuelle Patronale : " . round($mutuelle_patronale, 2) . "<br>";  
+                            }
+                            if($cimr_active==1)
+                            {
+                              echo " CIMR : ".  round($cimr, 2)  ."<br>"; 
+                              echo " CIMR Patronale : " . round($cimr_patronale, 2) . "<br>";
+                            }
+                              echo " Frais Professionnels : ".round($fraie_professionnels,2) ."<br>";
+                              echo " Salaire net imposable : ".round($sni,2) ."<br>";
+                              echo " IR brut : ".round($ir_b,2) ."<br>";
+                              echo " IR net : ".round($ir_n,2)."<br>" ;
+                              echo " Salaire net + nouvelle prime  : ".$sn ."<br>";   
+                              echo "--> Nouvelle prime brut : ".round($new_prime,2) ."<br>";
+                            ?> 
+                            </div>
+                          
+                      </div>
+                      
+                      
+                        <?php
+                          //open file
+                   
+
+
                     }
                   ?>
                 </div>
