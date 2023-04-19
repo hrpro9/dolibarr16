@@ -25,7 +25,7 @@ if ($action != 'generate')
             <form method="post">
                 <input type="hidden" name="action" value="generate">
                 <ul class="form-style-1" style="text-align: center;">
-                    <h4 style="text-align: center;" class="field-divided">Declaration Cimr !!!</h4>
+                    <h4 style="text-align: center;" class="field-divided">Declaration CIMR !</h4>
                     <li>
                         <label>N°d'adhérent <span class="required">* </label>
                         <input type="text" name="n_adherent" class="field-divided" placeholder="N°d'adhérent" required />
@@ -119,18 +119,18 @@ if ($action != 'generate')
                                     $enregistrement_value = ($l_situation == 1 || $l_situation == 2  || $l_situation == 6 || $l_situation == 7) ? 7 : 2;
                                     $code_enregistrement = NombrePositionsNumerique($enregistrement_value, 1);
                                     $numero_dadherent = NombrePositionsNumerique($n_adherent, 6);
-                                    $numero_categorie = NombrePositionsNumerique('0', 2);
+                                    $numero_categorie = NombrePositionsNumerique('01', 2);
                                     $matriculeCimr = NombrePositionsNumerique($param_paie_userInfo['cimr'], 9);
-                                    $tauxcimr = (!empty($param_puser_extrafields['tauxcimr'])) ? $param_puser_extrafields['tauxcimr'] : "0"; //---------------------------> select option ajouter ????????????????????
+                                    $tauxcimr = (!empty($param_puser_extrafields['tauxcimr'])) ? $param_puser_extrafields['tauxcimr'] : "0"; //---------------------------> taux cimr  ????????????????????
                                     $tauxCotisation = NombrePositionsNumerique($tauxcimr, 4);
                                     $nom = NombrePositionsAlphabetique($user['lastname'], 25);
                                     $prenom = NombrePositionsAlphabetique($user['firstname'], 25);
-                                    $numeroInterieurSociete = NombrePositionsNumerique($param_puser_extrafields['matricule'], 6); //---------------------------> ajouter input ????????????????????
+                                    $numeroInterieurSociete = NombrePositionsNumerique($param_puser_extrafields['matricule'], 6); 
                                     $sex_value = ($user['gender'] == "man") ? "M" : "F";
                                     $sex = NombrePositionsAlphabetique($sex_value, 1);
-                                    $nationalite = NombrePositionsAlphabetique(!empty($param_puser_extrafields['nationalite']) ? $param_puser_extrafields['nationalite'] : 'M', 1); //---------------------------> select option ajouter ????????????????????
+                                    $nationalite = NombrePositionsAlphabetique(!empty($param_puser_extrafields['nationalite']) ? $param_puser_extrafields['nationalite'] : 'M', 1);
                                     $dateAff = !empty($param_puser_extrafields['date_daffiliation']) ? date("jmY", strtotime($param_puser_extrafields['date_daffiliation'])) : '';
-                                    $date_daffiliation = NombrePositionsNumerique($dateAff, 8); //---------------------------> ajouter date  daffiliation ????????????????????
+                                    $date_daffiliation = NombrePositionsNumerique($dateAff, 8);
                                     $datetime_naissance = new DateTime($user['birth']);
                                     $jour_naissance = $datetime_naissance->format('d');
                                     $mois_naissance = $datetime_naissance->format('m');
@@ -187,10 +187,6 @@ if ($action != 'generate')
                                                 $txtf = $code_enregistrement . $numero_dadherent . $numero_categorie . $matriculeCimr . $tauxCotisation .
                                                 $nom . $prenom .  $numeroInterieurSociete . $sex . $nationalite . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants .
                                                 $salaireSoumisContributions . $dateSortie .  $numCnie  . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  . "\n";
-                                             if(strlen($txtf))
-                                             {
-        
-                                             }
                                             }
                                             break;
                                         case 2:

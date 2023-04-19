@@ -51,28 +51,24 @@
                     {?>
                     <div class="">
                       <!-- Les donnés  ancien ------------>
-                      
-               
-
-                    <!-- Les donnés  nouveau ------------>
-
-                    <div class="col-lg-4 "  style="margin-top: 10px;"> <?php
+                        <div class="col-lg-4 "  style="margin-top: 10px;"> <?php
                           require "code_calcul_new_prime.php";  
                           ?>
                          
-                          <div class="alert1" role="alert" >
+                          <div class="alert2" role="alert" >
                           <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;"  class="field-divided"> -->LES DONNÉES ANCIENNES </label>
                         <?php
                             echo " Salaire de base : ". $sb."<br>";
-                            echo " Indemnités : ".$les_indeminités ."<br>";
-                            echo " Primes : ".$primes ."<br>";
+                            echo " Indemnités : ".$les_indeminités0 ."<br>";
+                            echo " Primes : ".$primes1 ."<br>";
                             echo " Charge de famille : ".$cf ."<br>";
                             echo " Salaire net   : ".$salairenet ."<br>";
                           
 
                           ?> 
                           </div>
-                          <div class="alert2" >
+                            <!-- Les donnés  nouveau ------------>
+                          <div class="alert3" >
                           <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;"  class="field-divided"> -->LES DONNÉES NOUVELLES</label>
                           <?php
                           require "code_calcul_new_prime.php"; 

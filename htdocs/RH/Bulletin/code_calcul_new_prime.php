@@ -7,49 +7,27 @@
     $sql = "SELECT * FROM llx_Paie_bdpParameters";
     $res = $db->query($sql);
     $params = ((object)($res))->fetch_assoc();
-     //Get les rubriques cotisations
-     $sql = "SELECT * FROM llx_Paie_Rub WHERE cotisation=1";
-     $res = $db->query($sql);
-     $param = ((object)($res))->fetch_assoc();
-    
-    //Get data From calcul_new_prime
+    //Get les rubriques cotisations
+    $sql = "SELECT * FROM llx_Paie_Rub WHERE cotisation=1";
+    $res = $db->query($sql);
+    $param = ((object)($res))->fetch_assoc();
+
     $employe=$_POST['employe'];
-    $newprimes=$_POST['newprimes'];
+    $newprimes=$_POST['newprimes'] ?? 0;
     $annee_now=date('Y');
+    $moisnew=date('m');
     $mois_now=date('m')-1;
-    $salairenet=0;
-    $primes=0;
-    $les_indeminités=0;
-    $sbi=0;
-    $cnss=0;
-    $amo=0;
-    $mutule_active=0;
-    $cimr_active=0;
-    $fraie_professionnels=0;
-    $sni=0;
-    $ir_b=0;
-    $cf=0;
-    $ir_n=0;
-    $sb=0;
-    $new_prime=0;
-    $mutuelle_patronale=0;
-    $cnss_patronale=0;
-    $allocaton_familale=0;
-    $participation_amo=0;
-    $amo_patronale=0;
-    $les_indeminités0=0;
-    $les_indeminités1=0;
-    $les_indeminités_moins=0;
+    $sn=0;$salairenet=0;$primes=0;$les_indeminités=0;$sbi=0;$cnss=0;$amo=0;$cimr=0;$mutuelle=0;$cimr_patronale=0;$mutule_active=0;$cimr_active=0;
+    $fraie_professionnels=0;$sni=0;$ir_b=0;$cf=0;$ir_n=0;$sb=0;$new_prime=0;$mutuelle_patronale=0;$cnss_patronale=0;$allocaton_familale=0;
+    $participation_amo=0; $amo_patronale=0;$les_indeminités0=0;$les_indeminités1=0;$les_indeminités_moins=0;
 
-
-    
     $sql="SELECT *  FROM llx_Paie_MonthDeclaration ";
     $rest=$db->query($sql);
     //$param_paie_mdeclaration=((object)($rest_paie_mdeclaration))->fetch_assoc();
     foreach($rest as $paie_monthdeclaration)
     {
        
-        if($paie_monthdeclaration['userid']==$employe && $paie_monthdeclaration['year']==$annee_now && $paie_monthdeclaration['month']==$mois_now)
+        if($paie_monthdeclaration['userid']==$employe && $paie_monthdeclaration['year']==$annee_now && ($paie_monthdeclaration['month']==$mois_now || $paie_monthdeclaration['month']==$moisnew ) )
         {
 
             $salairenet=$paie_monthdeclaration['salaireNet'];
@@ -91,7 +69,7 @@
                             }
                         }else{
                             if($paie_rub0['rub']==$paie_userparameters['rub'])
-                           {
+                            {
                              $les_indeminités0+=$paie_userparameters['amount'];
                             }
                         }
@@ -108,13 +86,13 @@
                         $cimr_active=1;
                     }
                 }
-      //      $les_indeminités=$les_indeminités1+$les_indeminités0;
+                $primes1=$primes+155;
             // salaire_brut_imposable
-            $sbi=(($sb+$primes));
+            $sbi=(($sb+$primes1));
 
             if($sn == $sn_newprime )
             {
-                echo "----> prime : ".$primes ."<br>";
+                echo " <br>";
             }
             else{
                 do
@@ -123,7 +101,7 @@
                     // salaire_brut_imposable
                     $sbi=$sbi+ $v_test; 
                     // new_prime
-                    $new_prime= $sbi+$les_indeminités-$sb-$primes; 
+                    $new_prime= $sbi+$les_indeminités-$sb-$primes1; 
                     // cnss
                     $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
                     $res = $db->query($sql);

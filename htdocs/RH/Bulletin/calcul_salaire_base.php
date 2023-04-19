@@ -19,9 +19,9 @@ llxHeader("", "");
       <div class="col-lg-4 cell">
         <form method="post" class="shadow-lg p-3 mb-5 bg-body rounded mt-5">
           <ul class="form-style-1">
-            <label style="text-align: center;" class="field-divided">Calcul Salaire de base !!!</label>
+            <label style="text-align: center;" class="field-divided">Calcul Salaire de base !</label>
             <li>
-              <label>Salaire Net <span class="required">*</label>
+              <label>Salaire net <span class="required">*</label>
               <input type="number" min="0" step="any" name="sn" class="field-divided" placeholder="salaire net" required />
             </li>
             <li style="margin-top: 26px;">
@@ -89,20 +89,23 @@ llxHeader("", "");
             </div>
             <div  style="margin-top: 0px;">
               <label>Cotisation <span class="required">*</span></label>
-              <li style="display: inline-block;">
-                    <h4>cimr <span class="required"><input type="checkbox" name="cimr" value="1" onclick="toggleInput(this, 'cimr-input')"></span></h4>
-                   <select name="cimr" id="cimr-input"  style="display: none;" required>
+              <div class="gridcheckbox">
+                <li style="display: inline-block;">
+                  <h4>cimr <span class="required"><input type="checkbox" name="cimr" value="1" onclick="toggleInput(this, 'cimr-input')"></span></h4>
+                  <select name="cimr" id="cimr-input"  style="display: none;" required>
                     <option value=""></option>
                     <option value="3">3%</option>
                     <option value="6">6%</option>
-                   </select>
-              </li>
-              <li style="display: inline-block;">
-              <h4>MUTULLE <span class="required"> <input type="checkbox" name="mutuelle" value="1"></h4>
-              </li>
+                  </select>
+                </li>
+                <li style="display: inline-block;">
+                 <h4>MUTULLE <span class="required"> <input type="checkbox" name="mutuelle" value="1"></h4>
+                </li>
+              </div>
+           
             </div>
 
-            <li style="margin-top: 18px;">
+            <li style="margin-top: 0px;">
               <input type="submit" name="salaire_base" value="Calcul" />
             </li>
 
@@ -111,9 +114,6 @@ llxHeader("", "");
       </div>
       <div >
         <?php
-        //  require "code_calcul_salaire_base copy.php";
-        //   echo "----> ir brut : ".round($ir_b,2) ."<br>";
-        //      echo $params["maxCNSS"] ;
         if (isset($_POST['salaire_base'])) {
           // require "code_calcul_salaire_base copy.php";
           require "./code_calcul_salaire_base.php";
