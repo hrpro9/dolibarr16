@@ -25,7 +25,7 @@
             <div class="col-lg-4 ">
             <form method="post" class="shadow-lg p-3 mb-5 bg-body rounded mt-5">
                 <ul class="form-style-1">
-                  <h4 style="text-align: center;" class="field-divided">Calcul new prime !!!</h4>
+                  <h4 style="text-align: center;" class="field-divided"> !!!</h4>
                   <li>
                     <label>code barre <span class="required">*</span></label>
                     <input type="text" name="code_barre" value="7400" class="field-divided" placeholder="code barre" required/>

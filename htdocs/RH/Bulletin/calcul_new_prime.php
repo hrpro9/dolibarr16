@@ -52,8 +52,8 @@ llxHeader("", "");
           <div class="">
             <!-- Les donnés  ancien ------------>
             <div class="col-lg-4 " style="margin-top: 10px;"> <?php
-                                                              require "code_calcul_new_prime.php";
-                                                              ?>
+              require "code_calcul_new_prime.php";
+            ?>
 
               <div class="alert2" role="alert">
                 <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;" class="field-divided"> -->LES DONNÉES ANCIENNES </label>
@@ -64,12 +64,20 @@ llxHeader("", "");
                 echo " Charge de famille : " . $cf . "<br>";
                 echo " Salaire net   : " . $salairenet . "<br>";
                 echo " Jours travaillés annuel   : " . $jourWork . "<br>";
+                echo " comulWorkingDays   : " . $comulWorkingDays . "<br>";
+                echo " comulnetImposable   : " . $comulnetImposable . "<br>";
+                echo " comulsalaireBrut   : " . $comulsalaireBrut . "<br>";
+                echo " comulIR   : " . $comulIR . "<br>";
+                echo " irbase   : " . $irbase . "<br>";
+                echo " deduction   : " . $ir['deduction'] . "<br>";
+                echo " percentIR   : " . $ir['percentIR'] . "<br>";
+
 
                 ?>
               </div>
-              <!-- Les donnés  nouveau ------------>
+              <!-- Les donneés  nouveau ------------>
               <div class="alert3">
-                <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;" class="field-divided"> -->LES DONNÉES NOUVELLES</label>
+                <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;" class="field-divided"> -->LES DONNÉES NOUVELLES </label>
                 <?php
                 require "code_calcul_new_prime.php";
                 echo " Salaire brut imposable : " . round($sbi, 2) . "<br>";

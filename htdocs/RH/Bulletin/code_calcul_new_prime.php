@@ -227,7 +227,7 @@ foreach ($rest as $paie_monthdeclaration) {
                     $ir_n = 0;
                 }
 
-                // //ir_brut
+                 //ir_brut
                 // $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
                 // $res = $db->query($sql);
                 // $ir = ((object)($res))->fetch_assoc();

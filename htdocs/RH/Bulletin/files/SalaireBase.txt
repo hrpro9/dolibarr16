@@ -1,16 +1,20 @@
---> DATE DE DEBUT : 2023-04-30
+--> DATE DE RECRUTEMENT : 2023-04-26
  Indemnités : 0
- Primes : 0
+ Primes : 1000
  Charge de famille : 0
- Salaire brut imposable : 7871.39
+ Salaire brut imposable : 8197.76
  CNSS : 268.8
  CNSS Patronale  : 538.8
- AMO : 177.89
- Participation AMO : 145.62
- AMO Patronale : 177.89
- Frais Professionnels : 1967.85
- Salaire net imposable : 5456.85
- IR brut : 424.7
- IR net : 424.7
+ AMO : 185.27
+ Participation AMO : 151.66
+ AMO Patronale : 185.27
+ Mutuelle : 93.45
+ Mutuelle Patronale : 93.45
+ CIMR : 245.93
+ CIMR Patronale : 319.71
+ Frais Professionnels : 2049.44
+ Salaire net imposable : 5354.86
+ IR brut : 404.3
+ IR net : 404.3
  Salaire  net : 7000
-----> Salaire de base : 7871.39
+----> Salaire de base : 7197.76
