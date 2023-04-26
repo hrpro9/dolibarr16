@@ -27,7 +27,7 @@ llxHeader("", "");
                 <select name="employe" required>
                   <option value="">Choisissez un employé</option>
                   <?php
-                  $sql = "SELECT *  FROM llx_user where employee=1";
+                  $sql = "SELECT * FROM llx_user WHERE employee = 1 ORDER BY lastname ASC";
                   $rest = $db->query($sql);
                   foreach ($rest as $user) {
                     echo '<option value=' . $user["rowid"] . '>' . $user["lastname"] . " " . $user["firstname"] . '</option>';
@@ -62,19 +62,19 @@ llxHeader("", "");
                 echo " Indemnités : " . $les_indeminités0 . "<br>";
                 echo " Primes : " . $primes . "<br>";
                 echo " Charge de famille : " . $cf . "<br>";
-                echo " Salaire net   : " . $salairenet . "<br>";
-                echo " Jours travaillés annuel   : " . $jourWork . "<br>";
-                echo " comulWorkingDays   : " . $comulWorkingDays . "<br>";
+                echo " Salaire net   : " . $sn . "<br>";
+                echo " Jours travaillés annuel   : " . $comulWorkingDays . "<br>";
                 echo " comulnetImposable   : " . $comulnetImposable . "<br>";
                 echo " comulsalaireBrut   : " . $comulsalaireBrut . "<br>";
                 echo " comulIR   : " . $comulIR . "<br>";
                 echo " irbase   : " . $irbase . "<br>";
                 echo " deduction   : " . $ir['deduction'] . "<br>";
                 echo " percentIR   : " . $ir['percentIR'] . "<br>";
-
-
+                echo "  years   : " .  $years . "<br>";
+                echo "  prime_danciennete   : " .  $prime_danciennete . "<br>";
                 ?>
               </div>
+             
               <!-- Les donneés  nouveau ------------>
               <div class="alert3">
                 <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;" class="field-divided"> -->LES DONNÉES NOUVELLES </label>

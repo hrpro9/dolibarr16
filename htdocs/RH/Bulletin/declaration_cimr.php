@@ -109,12 +109,14 @@ if ($action != 'generate')
                     $sql = "SELECT *  FROM llx_Paie_MonthDeclaration WHERE userid=" . $user['rowid'] . " ";
                     $rest_paie_mdeclaration = $db->query($sql);
                 
-                    $sql="SELECT *  FROM llx_Paie_UserParameters WHERE userid=" . $user['rowid'] . " ";
+                    $sql = "SELECT * FROM llx_Paie_UserParameters WHERE userid = " . $user['rowid'] . " AND (rub = 710 AND checked = 1 OR rub = 712 AND checked = 1)";
                     $rest_paie_userparameters=$db->query($sql);
                     $param_paie_userparameters = ((object)($rest_paie_userparameters))->fetch_assoc();
+                    $tcimr=( $param_paie_userparameters['rub']==710 )?'0300':'0600';
 
                         if(!empty($param_paie_userInfo['cimr']) && $param_paie_userInfo['cimr']!=0)
                         {
+
                            
                             foreach ($rest_paie_mdeclaration as $mdeclaration) {
                                 if ($mdeclaration["year"] == $annee ) {
@@ -125,8 +127,8 @@ if ($action != 'generate')
                                     $numero_dadherent = NombrePositionsNumerique($n_adherent, 6);
                                     $numero_categorie = NombrePositionsNumerique('01', 2);
                                     $matriculeCimr = NombrePositionsNumerique($param_paie_userInfo['cimr'], 9);
-                                    $tauxcimr = (!empty($param_puser_extrafields['tauxcimr'])) ? $param_puser_extrafields['tauxcimr'] : "0"; //---------------------------> taux cimr  ????????????????????
-                                    $tauxCotisation = NombrePositionsNumerique($tauxcimr, 4);
+                                  //  $tauxcimr = (!empty($param_puser_extrafields['tauxcimr'])) ? $param_puser_extrafields['tauxcimr'] : "0"; //---------------------------> taux cimr  ????????????????????
+                                    $tauxCotisation = NombrePositionsNumerique($tcimr, 4);
                                     $nom = NombrePositionsAlphabetique($user['lastname'], 25);
                                     $prenom = NombrePositionsAlphabetique($user['firstname'], 25);
                                     $numeroInterieurSociete = NombrePositionsNumerique($param_puser_extrafields['matricule'], 6); 
@@ -190,7 +192,7 @@ if ($action != 'generate')
                                                 $salaireSoumisContributions = NombrePositionsNumerique($salairebrut, 10);
                                                 $txtf = $code_enregistrement . $numero_dadherent . $numero_categorie . $matriculeCimr . $tauxCotisation .
                                                 $nom . $prenom .  $numeroInterieurSociete . $sex . $nationalite . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants .
-                                                $salaireSoumisContributions . $dateSortie .  $numCnie  . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  . "\n";
+                                                $salaireSoumisContributions . $dateSortie .  $numCnie  . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee . "\n";
                                             }
                                             break;
                                         case 2:

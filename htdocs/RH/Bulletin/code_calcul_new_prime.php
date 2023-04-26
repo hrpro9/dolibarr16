@@ -17,33 +17,9 @@ $newprimes = $_POST['newprimes'] ?? 0;
 $annee_now = date('Y');
 $moisnew = date('m');
 $mois_now = date('m') - 1;
-$sn = 0;
-$salairenet = 0;
-$primes = 0;
-$les_indeminités = 0;
-$sbi = 0;
-$cnss = 0;
-$amo = 0;
-$cimr = 0;
-$mutuelle = 0;
-$cimr_patronale = 0;
-$mutule_active = 0;
-$cimr_active = 0;
-$fraie_professionnels = 0;
-$sni = 0;
-$ir_b = 0;
-$cf = 0;
-$ir_n = 0;
-$sb = 0;
-$new_prime = 0;
-$mutuelle_patronale = 0;
-$cnss_patronale = 0;
-$allocaton_familale = 0;
-$participation_amo = 0;
-$amo_patronale = 0;
-$les_indeminités0 = 0;
-$les_indeminités1 = 0;
-$les_indeminités_moins = 0;
+$sn = 0;$salairenet = 0;$primes = 0;$les_indeminités = 0;$sbi = 0;$cnss = 0;$amo = 0;$cimr = 0;$mutuelle = 0;$cimr_patronale = 0;$mutule_active = 0;
+$cimr_active = 0;$fraie_professionnels = 0;$sni = 0;$ir_b = 0;$cf = 0;$ir_n = 0;$sb = 0;$new_prime = 0;$mutuelle_patronale = 0;$cnss_patronale = 0;
+$allocaton_familale = 0;$participation_amo = 0;$amo_patronale = 0;$les_indeminités0 = 0;$les_indeminités1 = 0;$les_indeminités_moins = 0;
 
 $sql = "SELECT *  FROM llx_Paie_MonthDeclaration where userid=$employe and year=$annee_now and month=$mois_now";
 $rest = $db->query($sql);
@@ -54,9 +30,8 @@ foreach ($rest as $paie_monthdeclaration) {
         $jourWork += $paie_monthdeclaration['workingDays'];
 
 
-        $salairenet = $paie_monthdeclaration['salaireNet'];
+        $sn = $paie_monthdeclaration['salaireNet'];
 
-        $sn = $salairenet;
         $sn_newprime = $sn + $newprimes;
 
 
@@ -117,7 +92,7 @@ foreach ($rest as $paie_monthdeclaration) {
             $interval = $date1->diff($date2);
             // Get the number of years
             $years = $interval->y;
-            $sql = "SELECT 	percentPrimDancien FROM llx_Paie_PrimDancienParameters WHERE (" . $years . ">=de and " . $years . "<=a) OR (" . $years . ">=de and a = '+')";
+            $sql = "SELECT 	percentPrimDancien FROM llx_Paie_PrimDancienParameters WHERE (" . $years . "> de and " . $years . "<=a) OR (" . $years . "> de and a = '+')";
             $res_paie_primDancienParameters = $db->query($sql);
             $param__paie_primDancienParameters = ((object)($res_paie_primDancienParameters))->fetch_assoc();
             $percentPrimDancien = $param__paie_primDancienParameters['percentPrimDancien'] / 100;
@@ -136,7 +111,7 @@ foreach ($rest as $paie_monthdeclaration) {
                 // salaire_brut_imposable
                 $sbi = $sbi + $v_test;
                 // new_prime
-                $new_prime = $sbi + $les_indeminités - $sb - $primes;
+                $new_prime = $sbi  - $sb - $primes;
                 // cnss
                 $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
                 $res = $db->query($sql);
@@ -203,7 +178,6 @@ foreach ($rest as $paie_monthdeclaration) {
                     $comulsalaireBrut = (float)$row["salaireBrut"];
                     $comulIR = (float)$row["ir"];
                 }
-
                 // les jours travalle
                 $workingdaysdeclaré = 26;
                 //Get IR from database by the netImposable
