@@ -43,61 +43,61 @@ llxHeader("", "");
                     <tr style="border: 0px !important;">
                       <td style="border: 0px !important;">
                         <h4>Scolarite <span class="required"><input type="checkbox" name="prime_de_scolarite" value="1" onclick="toggleInput(this, 'scolarite-input')"></span></h4>
-                        <input type="number" id="scolarite-input" name="scolarite_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="scolarite-input" name="scolarite_input" style="display: none;">
                       </td>
                       <td style="border: 0px !important;">
                         <h4>Aid Adha <span class="required"><input type="checkbox" name="prime_aid_adha" value="1" onclick="toggleInput(this, 'aid-adha-input')"></span></h4>
-                        <input type="number" id="aid-adha-input" name="aid_adha_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="aid-adha-input" name="aid_adha_input" style="display: none;">
                       </td>
                     </tr>
                     <tr style="border: 0px !important;">
                       <td style="border: 0px !important;">
                         <h4>Panier <span class="required"><input type="checkbox" name="prime_panier" value="1" onclick="toggleInput(this, 'panier-input')"></span></h4>
-                        <input type="number" id="panier-input" name="panier_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="panier-input" name="panier_input" style="display: none;">
                       </td>
                       <td style="border: 0px !important;">
                         <h4>Transport <span class="required"><input type="checkbox" name="prime_transport" value="1" onclick="toggleInput(this, 'transport-input')"></span></h4>
-                        <input type="number" id="transport-input" name="transport_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="transport-input" name="transport_input" style="display: none;">
                       </td>
                     </tr>
                     <tr style="border: 0px !important;">
                       <td style="border: 0px !important;">
                         <h4>Stage <span class="required"><input type="checkbox" name="stage_transport" value="1" onclick="toggleInput(this, 'stage-input')"></span></h4>
-                        <input type="number" id="stage-input" name="stage_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="stage-input" name="stage_input" style="display: none;">
                       </td>
                       <td style="border: 0px !important;">
                         <h4>Responsabilite <span class="required"><input type="checkbox" name="responsabilite_transport" value="1" onclick="toggleInput(this, 'responsabilite-input')"></span></h4>
-                        <input type="number" id="responsabilite-input" name="responsabilite_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="responsabilite-input" name="responsabilite_input" style="display: none;">
                       </td>
                     </tr>
                     <tr style="border: 0px !important;">
                       <td style="border: 0px !important;">
                         <h4>Formation <span class="required"><input type="checkbox" name="formation_transport" value="1" onclick="toggleInput(this, 'formation-input')"></span></h4>
-                        <input type="number" id="formation-input" name="formation_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="formation-input" name="formation_input" style="display: none;">
                       </td>
                       <td style="border: 0px !important;">
                         <h4>Preavis <span class="required"><input type="checkbox" name="preavis_transport" value="1" onclick="toggleInput(this, 'preavis-input')"></span></h4>
-                        <input type="number" id="preavis-input" name="preavis_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="preavis-input" name="preavis_input" style="display: none;">
                       </td>
                     </tr>
                     <tr>
                       <td style="border: 0px !important;">
                         <h4>Rendement <span class="required"><input type="checkbox" name="rendement_transport" value="1" onclick="toggleInput(this, 'rendement-input')"></span></h4>
-                        <input type="number" id="rendement-input" name="rendement_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="rendement-input" name="rendement_input" style="display: none;">
                       </td>
                       <td style="border: 0px !important;">
                         <h4>Representation <span class="required"><input type="checkbox" name="representation_transport" value="1" onclick="toggleInput(this, 'representation-input')"></span></h4>
-                        <input type="number" id="representation-input" name="representation_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="representation-input" name="representation_input" style="display: none;">
                       </td>
                     </tr>
                     <tr>
                       <td style="border: 0px !important;">
                         <h4>Fonction <span class="required"><input type="checkbox" name="fonction_transport" value="1" onclick="toggleInput(this, 'fonction-input')"></span></h4>
-                        <input type="number" id="fonction-input" name="fonction_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="fonction-input" name="fonction_input" style="display: none;">
                       </td>
                       <td style="border: 0px !important;">
                         <h4>Indemnite Transport <span class="required"><input type="checkbox" name="indemnite_transport_transport" value="1" onclick="toggleInput(this, 'indemnite_transport-input')"></span></h4>
-                        <input type="number" id="indemnite_transport-input" name="indemnite_transport_input" style="display: none;">
+                        <input type="number"  min="0" step="any"  id="indemnite_transport-input" name="indemnite_transport_input" style="display: none;">
                       </td>
                     </tr>
                   </table>

@@ -20,6 +20,9 @@ $mois_now = date('m') - 1;
 $sn = 0;$salairenet = 0;$primes = 0;$les_indeminités = 0;$sbi = 0;$cnss = 0;$amo = 0;$cimr = 0;$mutuelle = 0;$cimr_patronale = 0;$mutule_active = 0;
 $cimr_active = 0;$fraie_professionnels = 0;$sni = 0;$ir_b = 0;$cf = 0;$ir_n = 0;$sb = 0;$new_prime = 0;$mutuelle_patronale = 0;$cnss_patronale = 0;
 $allocaton_familale = 0;$participation_amo = 0;$amo_patronale = 0;$les_indeminités0 = 0;$les_indeminités1 = 0;$les_indeminités_moins = 0;
+$comulWorkingDays = 0;$comulnetImposable = 0;$comulsalaireBrut = 0;$comulIR = 0;$irbase = 0;$years = 0;$prime_danciennete = 0;
+
+
 
 $sql = "SELECT *  FROM llx_Paie_MonthDeclaration where userid=$employe and year=$annee_now and month=$mois_now";
 $rest = $db->query($sql);
@@ -30,7 +33,9 @@ foreach ($rest as $paie_monthdeclaration) {
         $jourWork += $paie_monthdeclaration['workingDays'];
 
 
-        $sn = $paie_monthdeclaration['salaireNet'];
+        $salairenet = $paie_monthdeclaration['salaireNet'];
+
+        $sn=$salairenet ;
 
         $sn_newprime = $sn + $newprimes;
 
@@ -51,6 +56,7 @@ foreach ($rest as $paie_monthdeclaration) {
                 }
             }
         }
+
         $sql = "SELECT *  FROM llx_Paie_UserParameters WHERE userid=" . $paie_monthdeclaration['userid'] . " ";
         $rest_paie_userparameters = $db->query($sql);
         foreach ($rest_paie_userparameters as $paie_userparameters) {
@@ -92,7 +98,7 @@ foreach ($rest as $paie_monthdeclaration) {
             $interval = $date1->diff($date2);
             // Get the number of years
             $years = $interval->y;
-            $sql = "SELECT 	percentPrimDancien FROM llx_Paie_PrimDancienParameters WHERE (" . $years . "> de and " . $years . "<=a) OR (" . $years . "> de and a = '+')";
+            $sql = "SELECT 	percentPrimDancien FROM llx_Paie_PrimDancienParameters WHERE (" . $years . ">= de and " . $years . "<a) OR (" . $years . ">= de and a = '+')";
             $res_paie_primDancienParameters = $db->query($sql);
             $param__paie_primDancienParameters = ((object)($res_paie_primDancienParameters))->fetch_assoc();
             $percentPrimDancien = $param__paie_primDancienParameters['percentPrimDancien'] / 100;
@@ -101,12 +107,15 @@ foreach ($rest as $paie_monthdeclaration) {
 
         $primes += $prime_danciennete;
         // salaire_brut_imposable
-        $sbi = (($sb + $primes));
+        $sbi = $sb + $primes;
 
         if ($sn == $sn_newprime) {
             echo "<br>";
-        } else {
-            do {
+        } 
+        else 
+        {
+           do {
+
                 $v_test = $sn_newprime - $sn;
                 // salaire_brut_imposable
                 $sbi = $sbi + $v_test;
@@ -190,7 +199,8 @@ foreach ($rest as $paie_monthdeclaration) {
                 $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $irbase . ">=irmin and " . $irbase . "<=irmax) OR (" . $irbase . ">=irmin and irmax = '+')";
                 $res = $db->query($sql);
                 $ir = ((object)($res))->fetch_assoc();
-
+                $ir['percentIR'] = (!empty($ir['percentIR'])) ? $ir['percentIR'] : "0";
+                $ir['deduction'] = (!empty($ir['deduction'])) ? $ir['deduction'] : "0";
                 $ir_b = $ir['percentIR'] * $irbase / 100 - $ir['deduction'];
                 $ir_n = ($ir_b > $chargeFamille * 12) ? $ir_b - $chargeFamille * 12 : 0;
 
@@ -211,7 +221,10 @@ foreach ($rest as $paie_monthdeclaration) {
                 // $ir_n = $cf > $params["maxChildrens"] ? $ir_b - ($params["maxChildrens"] * $params["primDenfan"]) : $ir_b - ($cf * $params["primDenfan"]);
                 // salaire net test
                 $sn = round(($sbi - $cnss - $amo - $cimr - $mutuelle - $ir_n) + $les_indeminités0, 2);
+
             } while ($sn != $sn_newprime);
+            
+
             /*--------------------------------> charges patronale <--------------------------------*/
             // cnss patronale
             $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=701";
@@ -245,5 +258,6 @@ foreach ($rest as $paie_monthdeclaration) {
             $param_cimrpatronale = ((object)($res))->fetch_assoc();
             $tauxcimrpatronale = $param_cimrpatronale["percentage"] / 100;
             $cimr_patronale = $sbi * $tauxcimrpatronale;
-        }
+           
+        }    
 }

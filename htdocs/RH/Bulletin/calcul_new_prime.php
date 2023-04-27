@@ -62,16 +62,16 @@ llxHeader("", "");
                 echo " Indemnités : " . $les_indeminités0 . "<br>";
                 echo " Primes : " . $primes . "<br>";
                 echo " Charge de famille : " . $cf . "<br>";
-                echo " Salaire net   : " . $sn . "<br>";
-                echo " Jours travaillés annuel   : " . $comulWorkingDays . "<br>";
-                echo " comulnetImposable   : " . $comulnetImposable . "<br>";
-                echo " comulsalaireBrut   : " . $comulsalaireBrut . "<br>";
-                echo " comulIR   : " . $comulIR . "<br>";
-                echo " irbase   : " . $irbase . "<br>";
-                echo " deduction   : " . $ir['deduction'] . "<br>";
-                echo " percentIR   : " . $ir['percentIR'] . "<br>";
-                echo "  years   : " .  $years . "<br>";
-                echo "  prime_danciennete   : " .  $prime_danciennete . "<br>";
+                echo " Salaire net   : " . $salairenet . "<br>";
+                echo " Jours travaillés annuel   : " . round($comulWorkingDays, 2) . "<br>";
+              //  echo " comulnetImposable   : " .round($comulnetImposable, 2)  . "<br>";
+               // echo " comulsalaireBrut   : " .round($comulsalaireBrut, 2)   . "<br>";
+              //  echo " comulIR   : " .round($comulIR, 2)  . "<br>";
+              //  echo " irbase   : " .round($irbase, 2)  . "<br>";
+             //   echo " deduction   : " .round($ir['deduction'], 2)   . "<br>";
+              //  echo " percentIR   : " .round($ir['percentIR'] , 2)  . "<br>";
+               // echo "  years   : " .  $years . "<br>";
+              //  echo "  prime_danciennete   : " .round($prime_danciennete, 2)  . "<br>"; 
                 ?>
               </div>
              

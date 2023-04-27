@@ -200,8 +200,8 @@ if ($action != 'generate')
                                                 $salairebrut += round($mdeclaration["salaireBrut"], 2) * 100;
                                                 $salaireSoumisContributions = NombrePositionsNumerique($salairebrut, 10);
                                                 $txtf = $code_enregistrement . $numero_dadherent . $numero_categorie . $matriculeCimr . $tauxCotisation .
-                                                    $nom . $prenom .  $numeroInterieurSociete . $sex . $nationalite . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants .
-                                                    $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  . "\n";
+                                                $nom . $prenom .  $numeroInterieurSociete . $sex . $nationalite . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants .
+                                                $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  . "\n";
                                             }
                                             break;
                                         case 3:
@@ -209,8 +209,8 @@ if ($action != 'generate')
                                                 $salairebrut += round($mdeclaration["salaireBrut"], 2) * 100;
                                                 $salaireSoumisContributions = NombrePositionsNumerique($salairebrut, 10);
                                                 $txtf = $code_enregistrement . $numero_dadherent . $numero_categorie . $matriculeCimr . $tauxCotisation .
-                                                    $nom . $prenom .  $numeroInterieurSociete  . $sex . $nationalite . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants .
-                                                    $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  . "\n";
+                                                $nom . $prenom .  $numeroInterieurSociete  . $sex . $nationalite . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants .
+                                                $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  . "\n";
                                             }
                                             break;
                                         case 4:
@@ -218,8 +218,8 @@ if ($action != 'generate')
                                                 $salairebrut += round($mdeclaration["salaireBrut"], 2) * 100;
                                                 $salaireSoumisContributions = NombrePositionsNumerique($salairebrut, 10);
                                                 $txtf = $code_enregistrement . $numero_dadherent . $numero_categorie . $matriculeCimr . $tauxCotisation .
-                                                    $nom . $prenom .  $numeroInterieurSociete . $sex . $nationalite . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants .
-                                                    $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  . "\n";
+                                                $nom . $prenom .  $numeroInterieurSociete . $sex . $nationalite . $date_daffiliation . $date_naissance . $stuationFamille . $nombreEnfants .
+                                                $salaireSoumisContributions . $dateSortie .  $numCnie . $numCnss . $numGSM . $adresseEmail . $trimestre . $annee  . "\n";
                                             }
                                             break;
                                         default:
