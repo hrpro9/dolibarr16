@@ -27,7 +27,7 @@ llxHeader("", "");
                 <select name="employe" required>
                   <option value="">Choisissez un employé</option>
                   <?php
-                  $sql = "SELECT * FROM llx_user WHERE employee = 1 ORDER BY lastname ASC";
+                  $sql = "SELECT *  FROM llx_user where employee=1 ORDER BY lastname ASC";
                   $rest = $db->query($sql);
                   foreach ($rest as $user) {
                     echo '<option value=' . $user["rowid"] . '>' . $user["lastname"] . " " . $user["firstname"] . '</option>';
@@ -53,7 +53,7 @@ llxHeader("", "");
             <!-- Les donnés  ancien ------------>
             <div class="col-lg-4 " style="margin-top: 10px;"> <?php
               require "code_calcul_new_prime.php";
-            ?>
+             ?>
 
               <div class="alert2" role="alert">
                 <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;" class="field-divided"> -->LES DONNÉES ANCIENNES </label>
@@ -63,21 +63,14 @@ llxHeader("", "");
                 echo " Primes : " . $primes . "<br>";
                 echo " Charge de famille : " . $cf . "<br>";
                 echo " Salaire net   : " . $salairenet . "<br>";
-                echo " Jours travaillés annuel   : " . round($comulWorkingDays, 2) . "<br>";
-              //  echo " comulnetImposable   : " .round($comulnetImposable, 2)  . "<br>";
-               // echo " comulsalaireBrut   : " .round($comulsalaireBrut, 2)   . "<br>";
-              //  echo " comulIR   : " .round($comulIR, 2)  . "<br>";
-              //  echo " irbase   : " .round($irbase, 2)  . "<br>";
-             //   echo " deduction   : " .round($ir['deduction'], 2)   . "<br>";
-              //  echo " percentIR   : " .round($ir['percentIR'] , 2)  . "<br>";
-               // echo "  years   : " .  $years . "<br>";
-              //  echo "  prime_danciennete   : " .round($prime_danciennete, 2)  . "<br>"; 
+                echo " Jours travaillés annuel   : " . $comulWorkingDays . "<br>";
+                echo " Prime de Rendement  : " . $prime_rendement . "<br>";
+
                 ?>
               </div>
-             
-              <!-- Les donneés  nouveau ------------>
+              <!-- Les donnés  nouveau ------------>
               <div class="alert3">
-                <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;" class="field-divided"> -->LES DONNÉES NOUVELLES </label>
+                <label style="text-align: center;display:block;font-weight: bold;font-size: 20px;" class="field-divided"> -->LES DONNÉES NOUVELLES</label>
                 <?php
                 require "code_calcul_new_prime.php";
                 echo " Salaire brut imposable : " . round($sbi, 2) . "<br>";

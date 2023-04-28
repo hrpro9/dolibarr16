@@ -6,10 +6,11 @@
   require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
   require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-  
+
 
   if(isset($_POST['fichierir']))
   { 
+
     $nom_value=$_POST['nom'];
     $prenom_value=$_POST['prenom'];
     $ncin_value=$_POST['ncin'];
@@ -17,9 +18,11 @@
     $au_date=$_POST['au'];
     $datetime = new DateTime($du_date);
     $annee_now = $datetime->format('Y');
+
     $NbrPersoPermanent=0;$NbrPersoOccasionnel=0;$NbrStagiaires=0;$TtMtRevenuBrutImposablePP=0;$TtMtRevenuNetImposablePP=0; $TtIrPrelevePO=0;
     $TtMtBrutSommesPO=0;$TtMtIrPrelevePP=0; $TtMtBrutTraitSalaireS=0; $TtMtRevenuNetImpSTG=0; $BrutImposablePP_mois=0; $RevenuNetImposablePP_mois=0;
     $IrPrelevePP_mois=0;$TtmtAnuuelRevenuSalarial=0;
+    //nom fiche xml
     $nomfiche="IR".date('Y').".xml";
     header('Content-Disposition: attachment; filename='.$nomfiche);
     header('Content-Type: text/xml'); 
@@ -33,7 +36,8 @@
     // Create a TraitementEtSalaire element
     $TraitementEtSalaire = $dom->createElement('TraitementEtSalaire');
     $dom->appendChild($TraitementEtSalaire);
-    $sql="SELECT *  FROM llx_user";
+    // list employee
+    $sql="SELECT *  FROM llx_user WHERE employee = 1 ";
     $rest=$db->query($sql);
     foreach($rest as $permanentPersonnel)
     {
@@ -42,210 +46,63 @@
         $periodeAnnuel=0;
         $SBrutAnnuel=0;
         $param_user_extrafields='';
-        $sql="SELECT *  FROM llx_user_extrafields WHERE rowid=" . $permanentPersonnel['rowid'] . "  ";
+        $sql="SELECT *  FROM llx_user_extrafields WHERE fk_object=" . $permanentPersonnel['rowid'] . "  ";
         $rest=$db->query($sql);
         $param_user_extrafields=((object)($rest))->fetch_assoc();
         //-----------------------------------------------------------
-        $param_salaire='';
-        $sql_salaire="SELECT *  FROM llx_Paie_MonthDeclaration WHERE userid=" . $permanentPersonnel['rowid'] . " ";
-        $rest_salaire=$db->query($sql_salaire);
-        $param_salaire=((object)($rest_salaire))->fetch_assoc();
+      
         //-----------------------------------------------------------
         $param_MonthDeclarationRubs='';
         $sql_MonthDeclarationRubs="SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $permanentPersonnel['rowid'] . " ";
         $rest_MonthDeclarationRubs=$db->query($sql_MonthDeclarationRubs);
         $param_MonthDeclarationRubs=((object)($rest_MonthDeclarationRubs))->fetch_assoc();
         //-----------------------------------------------------------
-        if(empty($param_user_extrafields['stype']))
-        {
-            $param_user_extrafields['stype']=0;
-        }
+        //
         $salaireBrut_value=isset($param_salaire['salaireBrut'])?$param_salaire['salaireBrut']:0;
         $salaireNet_value=isset($param_salaire['salaireNet'])?$param_salaire['salaireNet']:0;
         $ir_value=isset($param_salaire['ir'])?$param_salaire['ir']:0;
         $netImposable_value=isset($param_salaire['netImposable'])?$param_salaire['netImposable']:0;
         //---------> PERSONNEL PERMANENT <---------------
-        if($param_user_extrafields['stype'] == 1 || $param_user_extrafields['stype']==0)
-        {
-            $NbrPersoPermanent++;
-            $param_salaire['month']=empty($param_salaire['month'])?$param_salaire['month']=0:$param_salaire['month'];
-            switch($param_salaire['month'])
-            {
-                case 1: $BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 2: $BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 3: $BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 4: $BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 5: $BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 6: $BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 7: $BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 8: $BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 9: $BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 10:$BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                case 11:$BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-                default:$BrutImposablePP_mois = $salaireBrut_value; $RevenuNetImposablePP_mois = $salaireNet_value; $IrPrelevePP_mois = $ir_value;break;
-            }
-            $TtMtRevenuBrutImposablePP+=$BrutImposablePP_mois;
-            $TtMtRevenuNetImposablePP+=$RevenuNetImposablePP_mois;
-            $TtMtIrPrelevePP+= $IrPrelevePP_mois;
-            // -------     -> list Personnel Permanent  <-    -------
-            if(empty($listPersonnelPermanent))
-            {
-                // -------     -> list Personnel Permanent  <-    -------
-                $listPersonnelPermanent = $dom->createElement('listPersonnelPermanent');    
-            }
-            // Create a PersonnelPermanent element
-            $PersonnelPermanent = $dom->createElement('PersonnelPermanent');
-            $listPersonnelPermanent->appendChild($PersonnelPermanent);
-            // Create a nom element
-            $nom = $dom->createElement('nom',$permanentPersonnel['lastname']);
-            $PersonnelPermanent->appendChild($nom);
-            // Create a prenom element
-            $prenom = $dom->createElement('prenom',$permanentPersonnel['firstname']);
-            $PersonnelPermanent->appendChild($prenom);
-            // Create a adressePersonnelle element
-            $adressePersonnelle = $dom->createElement('adressePersonnelle',$permanentPersonnel['address']);
-            $PersonnelPermanent->appendChild($adressePersonnelle);
-            // Create a numCNI element
-            $cni_value=(!empty($param_user_extrafields['cin']))?$param_user_extrafields['cin']:'';
-            $numCNI = $dom->createElement('numCNI',$cni_value);
-            $PersonnelPermanent->appendChild($numCNI);
-            // Create a numCE element
-            $numCE = $dom->createElement('numCE','');//null
-            $PersonnelPermanent->appendChild($numCE);
-            // Create a numPPR element
-            $numPPR = $dom->createElement('numPPR','');
-            $PersonnelPermanent->appendChild($numPPR);
-            // Create a numCNSS element
-            $sql_Paie_UserInfo="SELECT *  FROM llx_Paie_UserInfo WHERE userid=" . $permanentPersonnel['rowid'] . " ";
-            $rest_Paie_UserInfo=$db->query($sql_Paie_UserInfo);
-            $param_Paie_UserInfo=((object)($rest_Paie_UserInfo))->fetch_assoc();
-            $ncnss_value=(!empty($param_Paie_UserInfo['cnss']))?$param_Paie_UserInfo['cnss']:' ';
-            $numCNSS = $dom->createElement('numCNSS',$ncnss_value);
-            $PersonnelPermanent->appendChild($numCNSS);
-            // Create a ifu element
-            $ifu = $dom->createElement('ifu',' ');
-            //------------>
-            foreach($rest_MonthDeclarationRubs as $mdr)
-            {
-                if($mdr['userid']==$permanentPersonnel['rowid'])
-                {
-                    $SBaseAnnuel+=$mdr['salaireDeBase'];
-                }
-            }
-            // Create a salaireBaseAnnuel element
-            $salaireBaseAnnuel = $dom->createElement('salaireBaseAnnuel',$SBaseAnnuel);
-            $PersonnelPermanent->appendChild($salaireBaseAnnuel); 
-            foreach($rest_salaire as $sb_pr)
-            {
-                if($sb_pr['userid']==$permanentPersonnel['rowid'])
-                {
-                    $SBrutAnnuel+=$sb_pr['salaireBrut'];
-                    $periodeAnnuel+=$sb_pr['workingDays'];
-                }
-            }
-            // Create a mtBrutTraitementSalaire element
-            $mtBrutTraitementSalaire = $dom->createElement('mtBrutTraitementSalaire',$SBrutAnnuel);
-            $PersonnelPermanent->appendChild($mtBrutTraitementSalaire);
-            // Create a periode en jours element
-            $periode = $dom->createElement('periode',$periodeAnnuel);
-            $PersonnelPermanent->appendChild($periode);
-            // Create a montant des elements exonérés element
-            $sql="SELECT *  FROM llx_Paie_UserParameters WHERE userid=" .  $permanentPersonnel['rowid']  . " ";
-            $rest_paie_userparameters=$db->query($sql);
-            foreach($rest_paie_userparameters as $paie_userparameters)
-            {
-                $sql="SELECT *  FROM llx_Paie_Rub WHERE imposable=0";
-                $rest_paie_rub1=$db->query($sql);
-                $param_paie_rub1=((object)($rest_paie_rub1))->fetch_assoc();
-                foreach($rest_paie_rub1 as $paie_rub1)
-                {
-                    if($paie_rub1['rub']==$paie_userparameters['rub'])
-                    {                         
-                        $les_indeminités0+=$paie_userparameters['amount']; 
-                    }
-                }
 
-                $sql="SELECT *  FROM llx_Paie_Rub WHERE imposable=1";
-                $rest_paie_rub1=$db->query($sql);
-                $param_paie_rub1=((object)($rest_paie_rub1))->fetch_assoc();
-                foreach($rest_paie_rub1 as $paie_rub1)
-                {
-                    if($paie_rub1['rub']==$paie_userparameters['rub'])
-                    {
-                        if($paie_userparameters['amount']>$paie_rub1['maxFree'])
-                        {
-                            $les_indeminités1+=$paie_rub1['maxFree'];
-                            $les_indeminités_moins+=($paie_userparameters['amount']-$paie_rub1['maxFree']);
-                        }     
-                    }
-                }
+        $param_salaire='';
+        if($param_user_extrafields['stype'] == 1 || empty($param_user_extrafields['stype']))
+        {
+            $sql_salairePP="SELECT  sum(salaireBrut) as salaireBrut  , sum(ir) as ir, sum(netImposable) as netImposable   FROM llx_Paie_MonthDeclaration  WHERE userid=" . $permanentPersonnel['rowid'] . " AND month<=12 ";
+            $rest_salairePP=$db->query($sql_salairePP);
+
+            if ($rest_salairePP) {
+                $row = $rest_salairePP->fetch_assoc();
+                $TtMtRevenuBrutImposablePP += (float)$row["salaireBrut"] ;
+                $TtMtRevenuNetImposablePP += (float)$row["netImposable"];
+                $TtMtIrPrelevePP += (float)$row["ir"];
             }
-            $mtExonere = $dom->createElement('mtExonere',' ');
-            $PersonnelPermanent->appendChild($mtExonere);
-            // Create a montant des échéances prélevées element  
-            $mtEcheances = $dom->createElement('mtEcheances',' ');
-            $PersonnelPermanent->appendChild($mtEcheances);
-            // Create a nbrReductions element
-            $enfants=$param_MonthDeclarationRubs['enfants'];
-            $nbrReductions_value= ($param_MonthDeclarationRubs['situationFamiliale']=="MARIE")? $enfants+1: $enfants;
-            $nbrReductions = $dom->createElement('nbrReductions',$nbrReductions_value);
-            $PersonnelPermanent->appendChild($nbrReductions);
-            // Create a mtIndemnite element
-            $mtIndemnite = $dom->createElement('mtIndemnite',' ');
-            $PersonnelPermanent->appendChild($mtIndemnite);   
-            // Create a mtAvantages element
-            $mtAvantages = $dom->createElement('mtAvantages',' ');
-            $PersonnelPermanent->appendChild($mtAvantages);
-            // Create a mtRevenuBrutImposable element
-            $mtRevenuBrutImposable = $dom->createElement('mtRevenuBrutImposable',' ');
-            $PersonnelPermanent->appendChild($mtRevenuBrutImposable);
-            // Create a mtFraisProfess element
-            $mtFraisProfess = $dom->createElement('mtFraisProfess',' ');
-            $PersonnelPermanent->appendChild($mtFraisProfess);
+
             
         }
-        //-------------------> PERSONNEL OCCASIONNEL <-------------------
-        else if($param_user_extrafields['stype']==2){
-            $NbrPersoOccasionnel++;
-            switch($param_salaire['month'])
-            {
-                case 1: $BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 2: $BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 3: $BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 4: $BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 5: $BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 6: $BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 7: $BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 8: $BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 9: $BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 10:$BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                case 11:$BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
-                default:$BrutImposablePO_mois = $salaireBrut_value; $IrPrelevePO_mois = $ir_value;break;
+        else if ($param_user_extrafields['stype'] == 2 )
+        {
+            $sql_salairePO="SELECT  sum(salaireBrut) as salaireBrut , sum(ir) as ir,   FROM llx_Paie_MonthDeclaration  WHERE userid=" . $permanentPersonnel['rowid'] . " AND month<=12 ";
+            $rest_salairePO=$db->query($sql_salairePO);
+
+            if ($rest_salairePO) {
+                $row = $rest_salairePO->fetch_assoc();
+                $TtMtBrutSommesPO += (float)$row["salaireBrut"] ;
+                $TtIrPrelevePO += (float)$row["ir"];
             }
-            $TtMtBrutSommesPO+=$BrutImposablePO_mois;
-            $TtMtRevenuNetImposablePP+=$IrPrelevePO_mois;
-        }
-        //---------------------> STAGIAIRES <-------------------------
-        else if($param_user_extrafields['stype']==3){
-            $NbrStagiaires++;
-            switch($param_salaire['month'])
-            {
-                case 1: $BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 2: $BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 3: $BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 4: $BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 5: $BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 6: $BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 7: $BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 8: $BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 9: $BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 10:$BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                case 11:$BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
-                default:$BrutTraitSalaireSTG_mois = $salaireBrut_value; $MtRevenuNetImp_moisSTG = $netImposable_value;break;
+        }else if ($param_user_extrafields['stype'] == 3 )
+        {
+            $sql_salaireSTG="SELECT  sum(salaireBrut) as salaireBrut , sum(salaireNet) as salaireNet , sum(ir) as ir, sum(netImposable) as netImposable   FROM llx_Paie_MonthDeclaration  WHERE userid=" . $permanentPersonnel['rowid'] . " AND month<=12 ";
+            $rest_salaireSTG=$db->query($sql_salaireSTG);
+
+            if ($rest_salaireSTG) {
+                $row = $rest_salaireSTG->fetch_assoc();
+                $TtMtBrutTraitSalaireS += (float)$row["salaireBrut"] ;
+                $TtMtRevenuNetImpSTG += (float)$row["netImposable"];
             }
-            $TtMtBrutTraitSalaireS+=$BrutTraitSalaireSTG_mois;
-            $TtMtRevenuNetImpSTG+=$MtRevenuNetImp_moisSTG;
         }
+
+    // -------     -> list Personnel Permanent  <-    -------      
+        
     }
     // Create a identifiantFiscal element
     $identifiantFiscal = $dom->createElement('identifiantFiscal',' ');
@@ -285,7 +142,7 @@
     $numeroCNSS = $dom->createElement('numeroCNSS','?');
     $TraitementEtSalaire->appendChild($numeroCNSS);
     // Create a numeroCarte de séjour element
-    $numeroCE = $dom->createElement('numeroCE','?');
+    $numeroCE = $dom->createElement('numeroCE','?');//null
     $TraitementEtSalaire->appendChild($numeroCE);
     // Create a numeroRC element
     $numeroRC = $dom->createElement('numeroRC','?');
@@ -315,22 +172,22 @@
     $nbrStagiaires = $dom->createElement('nbrStagiaires',$NbrStagiaires);
     $TraitementEtSalaire->appendChild($nbrStagiaires);
     // Create a totalMtRevenuBrutImposablePP element  
-    $totalMtRevenuBrutImposablePP = $dom->createElement('totalMtRevenuBrutImposablePP',$TtMtRevenuBrutImposablePP);
+    $totalMtRevenuBrutImposablePP = $dom->createElement('totalMtRevenuBrutImposablePP',round($TtMtRevenuBrutImposablePP,2));
     $TraitementEtSalaire->appendChild($totalMtRevenuBrutImposablePP);
     // Create a totalMtRevenuNetImposablePP element
-    $totalMtRevenuNetImposablePP = $dom->createElement('totalMtRevenuNetImposablePP',$TtMtRevenuNetImposablePP);
+    $totalMtRevenuNetImposablePP = $dom->createElement('totalMtRevenuNetImposablePP',round($TtMtRevenuNetImposablePP,2));
     $TraitementEtSalaire->appendChild($totalMtRevenuNetImposablePP);
     // Create a totalMtTotalDeductionPP element
     $totalMtTotalDeductionPP = $dom->createElement('totalMtTotalDeductionPP','?');
     $TraitementEtSalaire->appendChild($totalMtTotalDeductionPP);
     // Create a totalMtIrPrelevePP element
-    $totalMtIrPrelevePP = $dom->createElement('totalMtIrPrelevePP',$TtMtIrPrelevePP);
+    $totalMtIrPrelevePP = $dom->createElement('totalMtIrPrelevePP',round($TtMtIrPrelevePP,2));
     $TraitementEtSalaire->appendChild($totalMtIrPrelevePP);
     // Create a totalMtBrutSommesPO element
-    $totalMtBrutSommesPO = $dom->createElement('totalMtBrutSommesPO',$TtMtBrutSommesPO);
+    $totalMtBrutSommesPO = $dom->createElement('totalMtBrutSommesPO',round($TtMtBrutSommesPO,2));
     $TraitementEtSalaire->appendChild($totalMtBrutSommesPO);
     // Create a totalIrPrelevePO element
-    $totalIrPrelevePO = $dom->createElement('totalIrPrelevePO',$TtIrPrelevePO);
+    $totalIrPrelevePO = $dom->createElement('totalIrPrelevePO',round($TtIrPrelevePO,2));
     $TraitementEtSalaire->appendChild($totalIrPrelevePO);
     // Create a totalMtBrutTraitSalaireSTG element
     $totalMtBrutTraitSalaireSTG = $dom->createElement('totalMtBrutTraitSalaireSTG',$TtMtBrutTraitSalaireS);
@@ -365,7 +222,7 @@
     $TraitementEtSalaire->appendChild($montantStagiaire);
 
     //----------------> ETAT CONCERNANT LE PERSONNEL PERMANENT <-----------------
-    $TraitementEtSalaire->appendChild($listPersonnelPermanent);
+    
 
    
   
@@ -386,7 +243,7 @@
                 <div class="col-lg-4 m-auto" style="width:100% ;height: 100%;">
                     <form method="post"  enctype="multipart/form-data" >
                     <ul class="form-style-1" style="text-align: center;">
-                        <label style="text-align: center;" class="field-divided">Fichier EDI IR !!!</label>
+                        <label style="text-align: center;" class="field-divided">Declaration IR !</label>
                         <li>
                          <label>Nom <span class="required">* </label>
                          <input type="text" name="nom" class="field-divided" placeholder="nom" required />
@@ -418,6 +275,7 @@
         </html>
         <?php
     }
+
 
 
     /*switch($param_ncin['stype'])

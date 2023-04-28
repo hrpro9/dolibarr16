@@ -16,13 +16,27 @@ $employe = $_POST['employe'];
 $newprimes = $_POST['newprimes'] ?? 0;
 $annee_now = date('Y');
 $moisnew = date('m');
-$mois_now = date('m') - 1;
-$sn = 0;$salairenet = 0;$primes = 0;$les_indeminités = 0;$sbi = 0;$cnss = 0;$amo = 0;$cimr = 0;$mutuelle = 0;$cimr_patronale = 0;$mutule_active = 0;
-$cimr_active = 0;$fraie_professionnels = 0;$sni = 0;$ir_b = 0;$cf = 0;$ir_n = 0;$sb = 0;$new_prime = 0;$mutuelle_patronale = 0;$cnss_patronale = 0;
-$allocaton_familale = 0;$participation_amo = 0;$amo_patronale = 0;$les_indeminités0 = 0;$les_indeminités1 = 0;$les_indeminités_moins = 0;
-$comulWorkingDays = 0;$comulnetImposable = 0;$comulsalaireBrut = 0;$comulIR = 0;$irbase = 0;$years = 0;$prime_danciennete = 0;
+//  $mois_now = date('m') - 1;
+$mois_now =0; 
 
 
+
+
+$sql = "SELECT month FROM llx_Paie_MonthDeclaration where userid=$employe and year=$annee_now and cloture=1 ORDER BY month DESC LIMIT 1";
+$rest_test = $db->query($sql);
+
+if ($rest_test !== false && $rest_test->num_rows > 0) {
+    $param_test = $rest_test->fetch_assoc();
+    $mois_now = $param_test['month'];
+} else {
+    // handle the case where the query result is null
+}
+
+
+
+$sn = 0;$salairenet = 0;$primes = 0;$les_indeminités = 0;$sbi = 0;$cnss = 0;$amo = 0;$cimr = 0;$mutuelle = 0;$comulWorkingDays=0;
+$cimr_patronale = 0;$mutule_active = 0;$cimr_active = 0;$fraie_professionnels = 0;$sni = 0;$ir_b = 0;$cf = 0;$ir_n = 0;$sb = 0;$new_prime = 0;$mutuelle_patronale = 0;
+$cnss_patronale = 0;$allocaton_familale = 0;$participation_amo = 0;$amo_patronale = 0;$les_indeminités0 = 0;$les_indeminités1 = 0;$les_indeminités_moins = 0;$prime_rendement=0;
 
 $sql = "SELECT *  FROM llx_Paie_MonthDeclaration where userid=$employe and year=$annee_now and month=$mois_now";
 $rest = $db->query($sql);
@@ -35,8 +49,7 @@ foreach ($rest as $paie_monthdeclaration) {
 
         $salairenet = $paie_monthdeclaration['salaireNet'];
 
-        $sn=$salairenet ;
-
+        $sn = $salairenet;
         $sn_newprime = $sn + $newprimes;
 
 
@@ -56,11 +69,16 @@ foreach ($rest as $paie_monthdeclaration) {
                 }
             }
         }
+        $sql_prime_rendement = "SELECT *  FROM llx_Paie_UserParameters WHERE userid=" . $paie_monthdeclaration['userid'] . " AND  rub=15 ";
+        $rest_prime_rendement = $db->query($sql_prime_rendement);
+        $param_prime_rendement = ((object)($rest_prime_rendement))->fetch_assoc();
+
+        $prime_rendement= $param_prime_rendement['amount'];
 
         $sql = "SELECT *  FROM llx_Paie_UserParameters WHERE userid=" . $paie_monthdeclaration['userid'] . " ";
         $rest_paie_userparameters = $db->query($sql);
         foreach ($rest_paie_userparameters as $paie_userparameters) {
-            $sql = "SELECT *  FROM llx_Paie_Rub WHERE cotisation=0";
+            $sql = "SELECT *  FROM llx_Paie_Rub WHERE cotisation=0 AND reset=0";
             $rest_paie_rub0 = $db->query($sql);
             // $param_paie_rub0 = ((object)($rest_paie_rub0))->fetch_assoc();
             foreach ($rest_paie_rub0 as $paie_rub0) {
@@ -107,20 +125,17 @@ foreach ($rest as $paie_monthdeclaration) {
 
         $primes += $prime_danciennete;
         // salaire_brut_imposable
-        $sbi = $sb + $primes;
+        $sbi = (($sb + $primes));
 
         if ($sn == $sn_newprime) {
             echo "<br>";
-        } 
-        else 
-        {
-           do {
-
+        } else {
+            do {
                 $v_test = $sn_newprime - $sn;
                 // salaire_brut_imposable
                 $sbi = $sbi + $v_test;
                 // new_prime
-                $new_prime = $sbi  - $sb - $primes;
+                $new_prime = $sbi + $les_indeminités - $sb - $primes;
                 // cnss
                 $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
                 $res = $db->query($sql);
@@ -171,7 +186,9 @@ foreach ($rest as $paie_monthdeclaration) {
                 $situation = ($extrafields['situation'] == '1') ? "MARIE" : (($extrafields['situation'] == '2') ? "CELIBATAIRE" : "DIVORCE");
                 $enfants = $extrafields['enfants'] > $params["maxChildrens"] ? $params["maxChildrens"] : (int)$extrafields['enfants'];
 
-                $chargeFamilleTaux = (($extrafields['situation'] == 1) && $object->gender == "man") ? 1 : 0;
+          //      $chargeFamilleTaux = (($extrafields['situation'] == 1) && $object->gender == "man") ? 1 : 0;
+                $chargeFamilleTaux = ($extrafields['situation'] == 1 && $object && $object->gender == "man") ? 1 : 0;
+
                 $chargeFamilleTaux += $enfants;
                 $chargeFamille = $chargeFamilleTaux * $params["primDenfan"];
 
@@ -187,6 +204,7 @@ foreach ($rest as $paie_monthdeclaration) {
                     $comulsalaireBrut = (float)$row["salaireBrut"];
                     $comulIR = (float)$row["ir"];
                 }
+
                 // les jours travalle
                 $workingdaysdeclaré = 26;
                 //Get IR from database by the netImposable
@@ -199,8 +217,7 @@ foreach ($rest as $paie_monthdeclaration) {
                 $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $irbase . ">=irmin and " . $irbase . "<=irmax) OR (" . $irbase . ">=irmin and irmax = '+')";
                 $res = $db->query($sql);
                 $ir = ((object)($res))->fetch_assoc();
-                $ir['percentIR'] = (!empty($ir['percentIR'])) ? $ir['percentIR'] : "0";
-                $ir['deduction'] = (!empty($ir['deduction'])) ? $ir['deduction'] : "0";
+
                 $ir_b = $ir['percentIR'] * $irbase / 100 - $ir['deduction'];
                 $ir_n = ($ir_b > $chargeFamille * 12) ? $ir_b - $chargeFamille * 12 : 0;
 
@@ -211,7 +228,7 @@ foreach ($rest as $paie_monthdeclaration) {
                     $ir_n = 0;
                 }
 
-                 //ir_brut
+                // //ir_brut
                 // $sql = "SELECT percentIR, deduction FROM llx_Paie_IRParameters WHERE (" . $sni . ">=irmin and " . $sni . "<=irmax) OR (" . $sni . ">=irmin and irmax = '+')";
                 // $res = $db->query($sql);
                 // $ir = ((object)($res))->fetch_assoc();
@@ -221,10 +238,7 @@ foreach ($rest as $paie_monthdeclaration) {
                 // $ir_n = $cf > $params["maxChildrens"] ? $ir_b - ($params["maxChildrens"] * $params["primDenfan"]) : $ir_b - ($cf * $params["primDenfan"]);
                 // salaire net test
                 $sn = round(($sbi - $cnss - $amo - $cimr - $mutuelle - $ir_n) + $les_indeminités0, 2);
-
             } while ($sn != $sn_newprime);
-            
-
             /*--------------------------------> charges patronale <--------------------------------*/
             // cnss patronale
             $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=701";
@@ -258,6 +272,5 @@ foreach ($rest as $paie_monthdeclaration) {
             $param_cimrpatronale = ((object)($res))->fetch_assoc();
             $tauxcimrpatronale = $param_cimrpatronale["percentage"] / 100;
             $cimr_patronale = $sbi * $tauxcimrpatronale;
-           
-        }    
+        }
 }
