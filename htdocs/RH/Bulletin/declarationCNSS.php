@@ -116,6 +116,7 @@ if ($action != 'generate')
                                 $sql = "SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $user['userid'] . " ";
                                 $rest_ef = $db->query($sql);
                                 $param = ((object)($rest_ef))->fetch_assoc();
+                                $ValueGenerer=$user['n_num_affilie'];
                             ?>
                                 <tr>
                                     <th scope="row">
@@ -190,6 +191,18 @@ if ($action != 'generate')
                                         $res = $db->query($sql);
                                         $extrafields = ((object)($res))->fetch_assoc();
                                         $r_d_st = $extrafields['l_situation'];
+                                        switch( $r_d_st)
+                                        {
+                                            case 1 : $situaEmploye='SOrtant';break;
+                                            case 2 : $situaEmploye='DEcédé';break;
+                                            case 3 : $situaEmploye='maTemité';break;
+                                            case 4 : $situaEmploye='maladie';break;
+                                            case 5 : $situaEmploye='Accident de Travail';break;
+                                            case 6 : $situaEmploye='Maintenu Sans Salaire';break;
+                                            case 7 : $situaEmploye='Maladie Professionnelle';break;
+                                            default : $situaEmploye='non renseigné';break;
+                                        }
+                                        echo  $situaEmploye;
                                         ?>
                                     </td>
                                 </tr>
@@ -198,8 +211,16 @@ if ($action != 'generate')
                             ?>
                         </tbody>
                     </table>
-                    <input type="submit" name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;" />
-                <?php
+                    <?php
+
+                    if(!empty($ValueGenerer)  )
+                    {
+                        print_r(' <input type="submit" name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;" />');
+                    }
+                  
+             
+            
+                    
             }
                 ?>
                 <?php
