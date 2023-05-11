@@ -131,25 +131,26 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 }
 
 // Purchase price
-if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid)) {
-	if (!empty($user->rights->margins->creer)) {
-		if ($conf->global->MARGIN_TYPE == "1") {
-			print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('BuyingPrice').'</td>';
-		} else {
-			print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('CostPrice').'</td>';
-		}
-	}
+// if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid)) {
+// 	if (!empty($user->rights->margins->creer)) {
+// 		if ($conf->global->MARGIN_TYPE == "1") {
+// 			print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('BuyingPrice').'</td>';
+// 		} else {
+// 			print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('CostPrice').'</td>';
+// 		}
+// 	}
 
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
-		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</td>';
-	}
-	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
-		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
-	}
-}
+// 	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
+// 		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</td>';
+// 	}
+// 	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
+// 		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
+// 	}
+// }
 
 // Total HT
 print '<td class="linecolht right">'.$langs->trans('TotalHTShort').'</td>';
+print '<td class="linecolht right">Colisage</td>';
 
 // Multicurrency
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {

@@ -184,7 +184,10 @@ class UserBankAccount extends Account
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				$this->userid = $obj->fk_soc;
+				if (isset($obj->fk_soc)) {
+					$this->userid = $obj->fk_soc;
+				}
+			//	$this->userid = $obj->fk_soc;
 				$this->bank = $obj->bank;
 				$this->code_banque = $obj->code_banque;
 				$this->code_guichet = $obj->code_guichet;

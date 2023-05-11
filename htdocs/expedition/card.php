@@ -110,6 +110,16 @@ $hookmanager->initHooks(array('expeditioncard', 'globalcard'));
 
 $date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
 
+$chauffeurs= [];
+$sql = "select id, firstname, lastname, cin from llx_driver where deleted = 0";
+$res = $db->query($sql);
+if ($res->num_rows) {
+	while ($row = $res->fetch_assoc()) {
+		array_push($chauffeurs, [$row['id'], $row['firstname'], $row['lastname'], $row['cin']]);
+	}
+}
+
+
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -212,6 +222,7 @@ if (empty($reshook)) {
 
 		$db->begin();
 
+		$object->chauffeur_intern = GETPOST('nosSoins', 'alpha');
 		$object->note = GETPOST('note', 'alpha');
 		$object->origin				= $origin;
 		$object->origin_id = $origin_id;
@@ -936,6 +947,25 @@ if ($action == 'create') {
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
+			
+			// Chauffeurs
+			print '<tr><td class="fieldrequired">Chauffeurs</td>';
+			print '<td colspan="3">';
+			print "<label>Nos soins</label>";
+			print "<input id='nosSoins' type='checkbox' name='nosSoins' value='1' checked>";
+
+			print "<select id='nosChauffeurs'>
+				<option></option>";
+
+			foreach ($chauffeurs as $key => $chauffeur) {
+				print "<option value='$chauffeur[0]'>$chauffeur[3] | $chauffeur[1] $chauffeur[2]</option>";
+			}
+			print "</select>";
+			print'<div id="extern" style="display:none;">';
+			print img_picto('', 'company') . $form->select_company(GETPOSTISSET('socid') ? GETPOST('socid', 'int') : '', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+			print ' <a href="' . DOL_URL_ROOT . '/societe/card.php?action=create&client=0&fournisseur=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create') . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="' . $langs->trans("AddThirdParty") . '"></span></a>';
+	
+			print "</div></td></tr>";
 
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
@@ -1022,6 +1052,7 @@ if ($action == 'create') {
 				print "</td></tr>\n";
 			}
 
+			
 			print "</table>";
 
 			print dol_get_fiche_end();
@@ -1989,6 +2020,49 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+			print '<tr><td>';
+			print '<table width="100%" class="nobordernopadding"><tr><td>';
+			print "Chauffeur";
+			print '<td><td class="right">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$object->id.'&action=editchaufferur&token='.newToken().'">'.img_edit().'</a>';
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td colspan="3">';
+			if ($action != 'editincoterm') {
+				print "<label>Nos soins</label>";
+				print "<input id='nosSoins' type='checkbox' name='nosSoins' value='1' checked>";
+	
+				print "<select id='nosChauffeurs'>
+					<option></option>";
+	
+				foreach ($chauffeurs as $key => $chauffeur) {
+					print "<option value='$chauffeur[0]'>$chauffeur[3] | $chauffeur[1] $chauffeur[2]</option>";
+				}
+				print "</select>";
+				print'<div id="extern" style="display:none;">';
+				print img_picto('', 'company') . $form->select_company(GETPOSTISSET('socid') ? GETPOST('socid', 'int') : '', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+				print ' <a href="' . DOL_URL_ROOT . '/societe/card.php?action=create&client=0&fournisseur=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create') . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="' . $langs->trans("AddThirdParty") . '"></span></a>';
+		
+				print "</div>";			} else {
+				print '<td colspan="3">';
+				print "<label>Nos soins</label>";
+				print "<input id='nosSoins' type='checkbox' name='nosSoins' value='1' checked>";
+	
+				print "<select id='nosChauffeurs'>
+					<option></option>";
+	
+				foreach ($chauffeurs as $key => $chauffeur) {
+					print "<option value='$chauffeur[0]'>$chauffeur[3] | $chauffeur[1] $chauffeur[2]</option>";
+				}
+				print "</select>";
+				print'<div id="extern" style="display:none;">';
+				print img_picto('', 'company') . $form->select_company(GETPOSTISSET('socid') ? GETPOST('socid', 'int') : '', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+				print ' <a href="' . DOL_URL_ROOT . '/societe/card.php?action=create&client=0&fournisseur=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create') . '"><span class="fa fa-plus-circle valignmiddle paddingleft" title="' . $langs->trans("AddThirdParty") . '"></span></a>';
+		
+				print "</div>";
+			}
+			print '</td></tr>';
+
 		// Other attributes
 		$parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2609,3 +2683,19 @@ if ($action == 'create') {
 // End of page
 llxFooter();
 $db->close();
+?>
+<script>
+	let nosSoins = document.getElementById('nosSoins')
+		nosChauffeurs = document.getElementById('nosChauffeurs'),
+		extern = document.getElementById('extern');
+	nosSoins.addEventListener("change", function(e){
+		let checked = e.target.checked;
+		if(checked){
+			nosChauffeurs.style.display = "inline-block";
+			extern.style.display = "none";
+		}else{
+			nosChauffeurs.style.display = "none";
+			extern.style.display = "inline-block";
+		}
+	});
+</script>

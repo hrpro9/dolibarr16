@@ -1,0 +1,16 @@
+--> DATE DE RECRUTEMENT : 2023-05-10
+ Indemnités : 0
+ Primes : 500
+ Charge de famille : 0
+ Salaire brut imposable : 0
+ CNSS : 0
+ CNSS Patronale  : 0
+ AMO : 0
+ Participation AMO : 0
+ AMO Patronale : 0
+ Frais Professionnels : 0
+ Salaire net imposable : 0
+ IR brut : 0
+ IR net : 0
+ Salaire  net : 0
+----> Salaire de base : -500

@@ -900,6 +900,7 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($search_project_ref != '') {
 	$sql .= natural_search("p.ref", $search_project_ref);
 }
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks

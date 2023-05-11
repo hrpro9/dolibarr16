@@ -7,10 +7,10 @@ require_once '../../vendor/autoload.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 if (!$user->rights->salaries->read) {
-    accessforbidden("you don't have right for this page");
+	accessforbidden("you don't have right for this page");
 }
 
 
@@ -18,7 +18,7 @@ if (!$user->rights->salaries->read) {
 
 $action = GETPOST('action', 'aZ09'); // The action 'add', 'create', 'edit', 'update', 'view', ...
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 
 
@@ -30,7 +30,7 @@ if ($user->socid > 0) {
 
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -44,7 +44,7 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new User($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->user->dir_output . '/temp/massgeneration/' . $user->id;
 $hookmanager->initHooks(array('userlist'));
 
 // Fetch optionals attributes and labels
@@ -63,8 +63,8 @@ if (!$sortorder) {
 $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_'.$key, 'alpha') !== '') {
-		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	if (GETPOST('search_' . $key, 'alpha') !== '') {
+		$search[$key] = GETPOST('search_' . $key, 'alpha');
 	}
 }
 
@@ -74,14 +74,14 @@ $form = new Form($db);
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'u.login'=>"Login",
-	'u.lastname'=>"Lastname",
-	'u.firstname'=>"Firstname",
-	'u.accountancy_code'=>"AccountancyCode",
-	'u.office_phone'=>"PhonePro",
-	'u.user_mobile'=>"PhoneMobile",
-	'u.email'=>"EMail",
-	'u.note'=>"Note",
+	'u.login' => "Login",
+	'u.lastname' => "Lastname",
+	'u.firstname' => "Firstname",
+	'u.accountancy_code' => "AccountancyCode",
+	'u.office_phone' => "PhonePro",
+	'u.user_mobile' => "PhoneMobile",
+	'u.email' => "EMail",
+	'u.note' => "Note",
 );
 if (!empty($conf->api->enabled)) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";
@@ -89,30 +89,32 @@ if (!empty($conf->api->enabled)) {
 
 // Definition of fields for list
 $arrayfields = array(
-	'u.login'=>array('label'=>"Login", 'checked'=>1, 'position'=>10),
-	'u.lastname'=>array('label'=>"Lastname", 'checked'=>1, 'position'=>15),
-	'u.firstname'=>array('label'=>"Firstname", 'checked'=>1, 'position'=>20),
-	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
-	'u.gender'=>array('label'=>"Gender", 'checked'=>0, 'position'=>22),
-	'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27),
-	'u.accountancy_code'=>array('label'=>"AccountancyCode", 'checked'=>0, 'position'=>30),
-	'u.office_phone'=>array('label'=>"PhonePro", 'checked'=>1, 'position'=>31),
-	'u.user_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1, 'position'=>32),
-	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
-	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(!empty($conf->api->enabled) && $user->admin)),
-	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
-	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))),
-	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
-	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
-	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'u.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	'u.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+	'u.login' => array('label' => "Login", 'checked' => 1, 'position' => 10),
+	'u.lastname' => array('label' => "Lastname", 'checked' => 1, 'position' => 15),
+	'u.firstname' => array('label' => "Firstname", 'checked' => 1, 'position' => 20),
+	'u.entity' => array('label' => "Entity", 'checked' => 1, 'position' => 50, 'enabled' => (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
+	'u.gender' => array('label' => "Gender", 'checked' => 0, 'position' => 22),
+	'u.fk_user' => array('label' => "HierarchicalResponsible", 'checked' => 1, 'position' => 27),
+	'u.accountancy_code' => array('label' => "AccountancyCode", 'checked' => 0, 'position' => 30),
+	'u.office_phone' => array('label' => "PhonePro", 'checked' => 1, 'position' => 31),
+	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => 1, 'position' => 32),
+	'u.email' => array('label' => "EMail", 'checked' => 1, 'position' => 35),
+	'u.api_key' => array('label' => "ApiKey", 'checked' => 0, 'position' => 40, "enabled" => (!empty($conf->api->enabled) && $user->admin)),
+	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? 0 : 1), 'position' => 45),
+	'u.salary' => array('label' => "Salary", 'checked' => 1, 'position' => 80, 'enabled' => (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))),
+	'u.datelastlogin' => array('label' => "LastConnexion", 'checked' => 1, 'position' => 100),
+	'u.datepreviouslogin' => array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110),
+	'u.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
+	'u.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
+	'u.statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
 );
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		if ($key != 'matricule') {
+			if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+				$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		}
 	}
 }
 
@@ -123,6 +125,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
+$search_options_matricule = GETPOST('search_options_matricule', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
 $search_firstname = GETPOST('search_firstname', 'alpha');
 $search_gender = GETPOST('search_gender', 'alpha');
@@ -168,6 +171,7 @@ if (empty($reshook)) {
 		$search_date_update = "";
 		$search_array_options = array();
 		$search_categ = 0;
+		$search_options_matricule = '0';
 	}
 }
 
@@ -197,6 +201,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_update = "";
 	$search_array_options = array();
 	$search_categ = 0;
+	$search_options_matricule = '0';
 }
 
 
@@ -210,10 +215,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 //get date filter
 //get date filter
 $mydate = getdate(date("U"));
-$month = (GETPOST('month') != '') ? GETPOST('month') : $mydate['mon'];
+$month = (GETPOST('month') != '') ? GETPOST('month') : "03";
 $year = (GETPOST('year') != '') ? GETPOST('year') : $mydate['year'];
 $day = $mydate['mday'];
-
+if (strlen($month) == 1) {
+	$month = '0' . $month;
+}
 
 if ($action == 'filter') {
 	$dateFiltre = GETPOST('date');
@@ -221,12 +228,22 @@ if ($action == 'filter') {
 	$month = explode('-', $dateFiltre)[1];
 }
 
-$startdayarray = dol_get_prev_month($month, $year);
+// do {
+// 	$loop = true;
+// 	$startdayarray = dol_get_prev_month($month, $year);
 
-$prev = $startdayarray;
-$prev_year  = $prev['year'];
-$prev_month = $prev['month'];
-$prev_day   = 1;
+// 	$prev = $startdayarray;
+// 	$prev_year  = $prev['year'];
+// 	$prev_month = $prev['month'];
+// 	$prev_day   = 1;
+
+// 	$sql = "SELECT * FROM llx_Paie_MonthDeclaration WHERE year=$prev_year AND month=$prev_month AND cloture=1";
+// 	$res = $db->query($sql);
+// 	if ($res->num_rows == 0) {
+// 		$month = $prev_month;
+// 		$loop = false;
+// 	}
+// } while ($loop && $month >= 1);
 
 //Save date to use in generate module
 $_SESSION['dateg'] = $month . "-" . $year;
@@ -238,15 +255,14 @@ $next_day   = 1;
 
 
 if ($action == "reset") {
-    //Cloturé le moi
-    if ($user->admin) {
-        $sql = "UPDATE llx_Paie_MonthDeclaration SET cloture=0 WHERE year=$year AND month=$month;";
-        $res = $db->query($sql);
-        if ($res);
-        else print("<br>fail ERR: " . $sql);
-        header("Refresh:0, url=" . $_SERVER["PHP_SELF"] . "?remonth=" . $month . "&reyear=" . $year);
-    }
-    
+	//Cloturé le moi
+	if ($user->admin) {
+		$sql = "UPDATE llx_Paie_MonthDeclaration SET cloture=0 WHERE year=$year AND month=$month;";
+		$res = $db->query($sql);
+		if ($res);
+		else print("<br>fail ERR: " . $sql);
+		header("Refresh:0, url=" . $_SERVER["PHP_SELF"] . "?month=" . $month . "&year=" . $year . "&limit=" . $limit);
+	}
 }
 
 
@@ -304,6 +320,8 @@ print '
 // Actions to build doc
 $action = GETPOST('action', 'aZ09');
 
+$_SESSION['cloture'] = 1;
+
 $upload_dir = DOL_DATA_ROOT . '/grh/BulletinDePaie';
 $permissiontoadd = 1;
 $donotredirect = 1;
@@ -337,7 +355,7 @@ $sql .= " s.nom as name, s.canvas,";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef." . $key . " as options_" . $key . ', ' : '');
 	}
 }
 // Add fields from hooks
@@ -345,14 +363,14 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
-$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql .= " FROM " . MAIN_DB_PREFIX . "user as u";
 if (key_exists('label', $extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (u.rowid = ef.fk_object)";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $object->table_element . "_extrafields as ef on (u.rowid = ef.fk_object)";
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON u.fk_soc = s.rowid";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u2 ON u.fk_user = u2.rowid";
 if (!empty($search_categ) || !empty($catid)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_user as cu ON u.rowid = cu.fk_user"; // We'll need this table joined to the select in order to filter by categ
+	$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . "categorie_user as cu ON u.rowid = cu.fk_user"; // We'll need this table joined to the select in order to filter by categ
 }
 // Add fields from hooks
 $parameters = array();
@@ -360,14 +378,14 @@ $reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Not
 if ($reshook > 0) {
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql .= " WHERE u.entity IN (".getEntity('user').")";
+	$sql .= " WHERE u.entity IN (" . getEntity('user') . ")";
 }
 if ($socid > 0) {
-	$sql .= " AND u.fk_soc = ".((int) $socid);
+	$sql .= " AND u.fk_soc = " . ((int) $socid);
 }
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0) {
-	$sql .= " AND u.fk_user IN (".$db->sanitize($search_supervisor).")";
+	$sql .= " AND u.fk_user IN (" . $db->sanitize($search_supervisor) . ")";
 }
 if ($search_thirdparty != '') {
 	$sql .= natural_search(array('s.nom'), $search_thirdparty);
@@ -378,6 +396,9 @@ if ($search_warehouse > 0) {
 if ($search_login != '') {
 	$sql .= natural_search("u.login", $search_login);
 }
+if ($search_options_matricule != '') {
+	$sql .= natural_search("ef.matricule", $search_options_matricule);
+}
 if ($search_lastname != '') {
 	$sql .= natural_search("u.lastname", $search_lastname);
 }
@@ -385,7 +406,7 @@ if ($search_firstname != '') {
 	$sql .= natural_search("u.firstname", $search_firstname);
 }
 if ($search_gender != '' && $search_gender != '-1') {
-	$sql .= " AND u.gender = '".$db->escape($search_gender)."'"; // Cannot use natural_search as looking for %man% also includes woman
+	$sql .= " AND u.gender = '" . $db->escape($search_gender) . "'"; // Cannot use natural_search as looking for %man% also includes woman
 }
 if ($search_accountancy_code != '') {
 	$sql .= natural_search("u.accountancy_code", $search_accountancy_code);
@@ -403,28 +424,28 @@ if ($search_api_key != '') {
 	$sql .= natural_search("u.api_key", $search_api_key);
 }
 if ($search_statut != '' && $search_statut >= 0) {
-	$sql .= " AND u.statut IN (".$db->escape($search_statut).")";
+	$sql .= " AND u.statut IN (" . $db->escape($search_statut) . ")";
 }
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($catid > 0) {
-	$sql .= " AND cu.fk_categorie = ".((int) $catid);
+	$sql .= " AND cu.fk_categorie = " . ((int) $catid);
 }
 if ($catid == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($search_categ > 0) {
-	$sql .= " AND cu.fk_categorie = ".((int) $search_categ);
+	$sql .= " AND cu.fk_categorie = " . ((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($search_warehouse > 0) {
-	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
+	$sql .= " AND u.fk_warehouse = " . ((int) $search_warehouse);
 }
 // Add where from extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -465,109 +486,109 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&amp;contextpage='.urlencode($contextpage);
+	$param .= '&amp;contextpage=' . urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&amp;limit='.urlencode($limit);
+	$param .= '&amp;limit=' . urlencode($limit);
 }
 if ($sall != '') {
-	$param .= '&amp;sall='.urlencode($sall);
+	$param .= '&amp;sall=' . urlencode($sall);
 }
 if ($search_user != '') {
-	$param .= "&amp;search_user=".urlencode($search_user);
+	$param .= "&amp;search_user=" . urlencode($search_user);
 }
 if ($search_login != '') {
-	$param .= "&amp;search_login=".urlencode($search_login);
+	$param .= "&amp;search_login=" . urlencode($search_login);
 }
 if ($search_lastname != '') {
-	$param .= "&amp;search_lastname=".urlencode($search_lastname);
+	$param .= "&amp;search_lastname=" . urlencode($search_lastname);
 }
 if ($search_firstname != '') {
-	$param .= "&amp;search_firstname=".urlencode($search_firstname);
+	$param .= "&amp;search_firstname=" . urlencode($search_firstname);
 }
 if ($search_gender != '') {
-	$param .= "&amp;search_gender=".urlencode($search_gender);
+	$param .= "&amp;search_gender=" . urlencode($search_gender);
 }
 if ($search_accountancy_code != '') {
-	$param .= "&amp;search_accountancy_code=".urlencode($search_accountancy_code);
+	$param .= "&amp;search_accountancy_code=" . urlencode($search_accountancy_code);
 }
 if ($search_phonepro != '') {
-	$param .= "&amp;search_phonepro=".urlencode($search_phonepro);
+	$param .= "&amp;search_phonepro=" . urlencode($search_phonepro);
 }
 if ($search_phonemobile != '') {
-	$param .= "&amp;search_phonemobile=".urlencode($search_phonemobile);
+	$param .= "&amp;search_phonemobile=" . urlencode($search_phonemobile);
 }
 if ($search_email != '') {
-	$param .= "&amp;search_email=".urlencode($search_email);
+	$param .= "&amp;search_email=" . urlencode($search_email);
 }
 if ($search_api_key != '') {
-	$param .= "&amp;search_api_key=".urlencode($search_api_key);
+	$param .= "&amp;search_api_key=" . urlencode($search_api_key);
 }
 if ($search_supervisor > 0) {
-	$param .= "&amp;search_supervisor=".urlencode($search_supervisor);
+	$param .= "&amp;search_supervisor=" . urlencode($search_supervisor);
 }
 if ($search_statut != '') {
-	$param .= "&amp;search_statut=".urlencode($search_statut);
+	$param .= "&amp;search_statut=" . urlencode($search_statut);
 }
 if ($search_categ > 0) {
-	$param .= '&amp;search_categ='.urlencode($search_categ);
+	$param .= '&amp;search_categ=' . urlencode($search_categ);
 }
 if ($search_warehouse > 0) {
-	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
+	$param .= '&amp;search_warehouse=' . urlencode($search_warehouse);
 }
 // Add $param from extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array();
-$arrayofmassactions['disable'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("DisableUser");
+$arrayofmassactions['disable'] = img_picto('', 'close_title', 'class="pictofixedwidth"') . $langs->trans("DisableUser");
 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-
-
-
-
-
-print "<div><h3>Le mois: " . $french_months[$month -1] . " </h3></div>";
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-print '<input type="hidden" name="year" value="' . $year . '">';
-print '<input type="hidden" name="month" value="' . $month . '">';
-print '<input type="hidden" name="action" value="view">';
-
 if ($user->admin) {
-	print '<form id="frmReset" name="filter" action="' . $_SERVER["PHP_SELF"] . '" method="POST" style="display:none">';
+	print '<form id="frmReset" name="filter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="reset">';
 	print '<input type="hidden" name="day" value="' . $day . '">';
-	print '<input type="hidden" name="remonth" value="' . $month . '">';
-	print '<input type="hidden" name="reyear" value="' . $year . '">';
+	print '<input type="hidden" name="month" value="' . $month . '">';
+	print '<input type="hidden" name="year" value="' . $year . '">';
+	print '<input type="hidden" name="limit" value="' . $limit . '">';
 	print '<input type="submit" class="butActionDelete" value="reset"/><br>';
 	print '</form>';
 }
 
-$moreparam = array('morecss'=>'marginleftonly');
-$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap paddingleft', DOL_URL_ROOT.'/RH/Users/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
 
-print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'setup', 0, $morehtmlright.' '.$newcardbutton, '', $limit, 0, 0, 1);
+
+print "<div><h3>Le mois: " . $french_months[$month - 1] . " </h3></div>";
+print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">' . "\n";
+print '<input type="hidden" name="token" value="' . newToken() . '">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
+print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
+print '<input type="hidden" name="contextpage" value="' . $contextpage . '">';
+print '<input type="hidden" name="year" value="' . $year . '">';
+print '<input type="hidden" name="month" value="' . $month . '">';
+print '<input type="hidden" name="action" value="view">';
+
+
+
+$moreparam = array('morecss' => 'marginleftonly');
+$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap paddingleft', DOL_URL_ROOT . '/RH/Users/hierarchy.php' . (($search_statut != '' && $search_statut >= 0) ? '?search_statut=' . $search_statut : ''), '', 1, $moreparam);
+
+print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'setup', 0, $morehtmlright . ' ' . $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendUserRef";
 $modelmail = "user";
 $objecttmp = new User($db);
-$trackid = 'use'.$object->id;
-include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+$trackid = 'use' . $object->id;
+include DOL_DOCUMENT_ROOT . '/core/tpl/massactions_pre.tpl.php';
 
 if (!empty($catid)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
 	$ways = $c->print_all_ways(' &gt; ', 'RH/Users/list.php');
-	print " &gt; ".$ways[0]."<br>\n";
+	print " &gt; " . $ways[0] . "<br>\n";
 	print "</div><br>";
 }
 
@@ -575,7 +596,7 @@ if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">' . $langs->trans("FilterOnInto", $search_all) . join(', ', $fieldstosearchall) . '</div>';
 }
 
 $moreforfilter = '';
@@ -584,16 +605,16 @@ $moreforfilter = '';
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Category');
-	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
+	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"') . $formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 // Filter on warehouse
 if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Warehouse');
-	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"') . $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 
@@ -627,19 +648,20 @@ print '<td class="liste_titre maxwidthsearch">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
+print '<td class="liste_titre"><input type="text" name="search_options_matricule" class="maxwidth50" value="' . $search_options_matricule . '"></td>';
 
 if (!empty($arrayfields['u.login']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="' . $search_login . '"></td>';
 }
 if (!empty($arrayfields['u.lastname']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_lastname" class="maxwidth50" value="'.$search_lastname.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_lastname" class="maxwidth50" value="' . $search_lastname . '"></td>';
 }
 if (!empty($arrayfields['u.firstname']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_firstname" class="maxwidth50" value="'.$search_firstname.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_firstname" class="maxwidth50" value="' . $search_firstname . '"></td>';
 }
 if (!empty($arrayfields['u.gender']['checked'])) {
 	print '<td class="liste_titre">';
-	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
+	$arraygender = array('man' => $langs->trans("Genderman"), 'woman' => $langs->trans("Genderwoman"), 'other' => $langs->trans("Genderother"));
 	print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
 	print '</td>';
 }
@@ -650,22 +672,22 @@ if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['u.accountancy_code']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="'.$search_accountancy_code.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="' . $search_accountancy_code . '"></td>';
 }
 if (!empty($arrayfields['u.office_phone']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_phonepro" class="maxwidth50" value="'.$search_phonepro.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_phonepro" class="maxwidth50" value="' . $search_phonepro . '"></td>';
 }
 if (!empty($arrayfields['u.user_mobile']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_phonemobile" class="maxwidth50" value="'.$search_phonemobile.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_phonemobile" class="maxwidth50" value="' . $search_phonemobile . '"></td>';
 }
 if (!empty($arrayfields['u.email']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="'.$search_email.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="' . $search_email . '"></td>';
 }
 if (!empty($arrayfields['u.api_key']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_api_key" class="maxwidth50" value="'.$search_api_key.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_api_key" class="maxwidth50" value="' . $search_api_key . '"></td>';
 }
 if (!empty($arrayfields['u.fk_soc']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_thirdparty" class="maxwidth75" value="'.$search_thirdparty.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_thirdparty" class="maxwidth75" value="' . $search_thirdparty . '"></td>';
 }
 if (!empty($arrayfields['u.entity']['checked'])) {
 	print '<td class="liste_titre"></td>';
@@ -680,9 +702,9 @@ if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['u.datec']['checked'])) {
@@ -698,7 +720,7 @@ if (!empty($arrayfields['u.tms']['checked'])) {
 if (!empty($arrayfields['u.statut']['checked'])) {
 	// Status
 	print '<td class="liste_titre center">';
-	print $form->selectarray('search_statut', array('-1'=>'', '0'=>$langs->trans('Disabled'), '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray('search_statut', array('-1' => '', '0' => $langs->trans('Disabled'), '1' => $langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td>';
 }
 print '</tr>';
@@ -708,7 +730,8 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 // Action column
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ') . "\n";
+print_liste_field_titre("Matricule", $_SERVER['PHP_SELF'], "ef.matricule", $param, "", "", $sortfield, $sortorder);
 
 if (!empty($arrayfields['u.login']['checked'])) {
 	print_liste_field_titre("Login", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
@@ -759,9 +782,9 @@ if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
 	print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", $param, "", '', $sortfield, $sortorder, 'center ');
 }
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['u.datec']['checked'])) {
@@ -773,7 +796,7 @@ if (!empty($arrayfields['u.tms']['checked'])) {
 if (!empty($arrayfields['u.statut']['checked'])) {
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "u.statut", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-print '</tr>'."\n";
+print '</tr>' . "\n";
 
 
 // Detect if we need a fetch on each output line
@@ -821,42 +844,36 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$userstatic->employee = $obj->employee;
 	$userstatic->photo = $obj->photo;
 
-    $sql1 = "SELECT s.fk_user FROM llx_payment_salary as s WHERE s.fk_user=" . $obj->rowid . " AND year(datep)=" . $year . " AND month(datep)=" . $month;
-    $res1 = $db->query($sql1);
-    if ((strtotime($obj->dateemploymentend) < strtotime(date("d") . '-' . $month . '-' . $year) && $obj->dateemploymentend != '') || $obj->dateemployment == '' || (strtotime($obj->dateemployment) > strtotime(date("t", strtotime('01-' . $month . '-' . $year)) . '-' . $month . '-' . $year) && $obj->dateemployment != '')) {
-        $i++;
-        continue;
-    }
+	$sql1 = "SELECT s.fk_user FROM llx_payment_salary as s WHERE s.fk_user=" . $obj->rowid . " AND year(datep)=" . $year . " AND month(datep)=" . $month;
+	$res1 = $db->query($sql1);
+	if ((strtotime($obj->dateemploymentend) < strtotime('23' . '-' . $prev_month . '-' . $prev_year) && $obj->dateemploymentend != '') || $obj->dateemployment == '' || (strtotime($obj->dateemployment) > strtotime('22-' . $month . '-' . $year) && $obj->dateemployment != '') || $obj->statut == 0) {
+		$i++;
+		continue;
+	}
 
-    // see if it's clotured
-    $cloture = 0;
-    $sql1 = "SELECT cloture FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month";
-    $res1 = $db->query($sql1);
-    if ($res1) {
-        $row1 = $res1->fetch_assoc();
-        $cloture = $row1["cloture"] > 0 ? $row1["cloture"] : 0;
-    }
-    if ($cloture > 0) {
-        $i++;
-        continue;
-    }
+	// see if it's clotured
+	$cloture = 0;
+	$sql1 = "SELECT cloture FROM llx_Paie_MonthDeclaration WHERE userid=$obj->rowid AND year=$year AND month=$month";
+	$res1 = $db->query($sql1);
+	if ($res1) {
+		$row1 = $res1->fetch_assoc();
+		$cloture = $row1["cloture"] > 0 ? $row1["cloture"] : 0;
+	}
+	if ($cloture > 0) {
+		$i++;
+		continue;
+	}
 
-    $users[$i] = $obj;
-
-
-	
-
-
-
-    $users[$i] = $obj;
-    $li = '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $userstatic->id . '&action=show&year=' . $year . '&month=' . $month . '">' . $userstatic->login . '</a>';
+	$users[$obj->rowid] = $obj;
+	$li = '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $userstatic->id . '&action=show&year=' . $year . '&month=' . $month . '">' . $userstatic->login . '</a>';
 
 
 	$canreadhrmdata = 0;
 	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read) && in_array($obj->rowid, $childids))
 		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
-		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
-			$canreadhrmdata = 1;
+		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))
+	) {
+		$canreadhrmdata = 1;
 	}
 	$canreadsecretapi = 0;
 	if ($user->id == $obj->rowid || !empty($user->admin)) {	// Current user or admin
@@ -871,21 +888,24 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	if (in_array($object->id, $arrayofselected)) {
 		$selected = 1;
 	}
-	print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+	print '<input id="cb' . $object->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $object->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 	print '</td>';
-	
 
-
+	// matricule
+	print '<td class="tdoverflowmax150" title="' . dol_escape_htmltag($obj->options_matricule) . '">' . dol_escape_htmltag($obj->options_matricule) . '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 	// Login
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print '<td class="nowraponall tdoverflowmax150"><a href="/RH/Users/card.php?id='.$obj->rowid.'">';
+		print '<td class="nowraponall tdoverflowmax150"><a href="/RH/Users/card.php?id=' . $obj->rowid . '">';
 
-		if($obj->gender == "man"){
+		if ($obj->gender == "man") {
 			print '<span class="nopadding userimg" style="margin-right: 3px;"><img class="photouserphoto userphoto" alt="" src="/public/theme/common/user_man.png"></span>';
-		}else{
+		} else {
 			print '<span class="nopadding userimg" style="margin-right: 3px;"><img class="photouserphoto userphoto" alt="" src="/public/theme/common/user_woman.png"></span>';
 		}
-        print $li;
+		print $li;
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 		} elseif ($obj->admin) {
@@ -897,13 +917,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	if (!empty($arrayfields['u.lastname']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
+		print '<td class="tdoverflowmax150" title="' . dol_escape_htmltag($obj->lastname) . '">' . dol_escape_htmltag($obj->lastname) . '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.firstname']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
+		print '<td class="tdoverflowmax150" title="' . dol_escape_htmltag($obj->lastname) . '">' . dol_escape_htmltag($obj->firstname) . '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -911,7 +931,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	if (!empty($arrayfields['u.gender']['checked'])) {
 		print '<td>';
 		if ($obj->gender) {
-			print $langs->trans("Gender".$obj->gender);
+			print $langs->trans("Gender" . $obj->gender);
 		}
 		print '</td>';
 		if (!$i) {
@@ -920,7 +940,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 	// Employee yes/no
 	if (!empty($arrayfields['u.employee']['checked'])) {
-		print '<td class="center">'.yn($obj->employee).'</td>';
+		print '<td class="center">' . yn($obj->employee) . '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -957,26 +977,26 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	if (!empty($arrayfields['u.accountancy_code']['checked'])) {
-		print '<td>'.$obj->accountancy_code.'</td>';
+		print '<td>' . $obj->accountancy_code . '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	if (!empty($arrayfields['u.office_phone']['checked'])) {
-		print '<td>'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+		print '<td>' . dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone') . "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.user_mobile']['checked'])) {
-		print '<td>'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+		print '<td>' . dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile') . "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.email']['checked'])) {
-		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 'AC_EMAIL', 0, 0, 1)."</td>\n";
+		print '<td class="tdoverflowmax150">' . dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 'AC_EMAIL', 0, 0, 1) . "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -987,7 +1007,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if ($canreadsecretapi) {
 				print $obj->api_key;
 			} else {
-				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+				print '<span class="opacitymedium">' . $langs->trans("Hidden") . '</span>';
 			}
 		}
 		print '</td>';
@@ -1003,9 +1023,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$companystatic->canvas = $obj->canvas;
 			print $companystatic->getNomUrl(1);
 		} elseif ($obj->ldap_sid) {
-			print '<span class="opacitymedium">'.$langs->trans("DomainUser").'</span>';
+			print '<span class="opacitymedium">' . $langs->trans("DomainUser") . '</span>';
 		} else {
-			print '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
+			print '<span class="opacitymedium">' . $langs->trans("InternalUser") . '</span>';
 		}
 		print '</td>';
 		if (!$i) {
@@ -1036,7 +1056,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if ($canreadhrmdata) {
 				print price($obj->salary);
 			} else {
-				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+				print '<span class="opacitymedium">' . $langs->trans("Hidden") . '</span>';
 			}
 		}
 		print '</td>';
@@ -1047,23 +1067,23 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Date last login
 	if (!empty($arrayfields['u.datelastlogin']['checked'])) {
-		print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datelastlogin), "dayhour").'</td>';
+		print '<td class="nowrap center">' . dol_print_date($db->jdate($obj->datelastlogin), "dayhour") . '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Date previous login
 	if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
-		print '<td class="nowrap center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
+		print '<td class="nowrap center">' . dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour") . '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+	$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
@@ -1087,28 +1107,28 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	// Status
 	if (!empty($arrayfields['u.statut']['checked'])) {
 		$userstatic->statut = $obj->statut;
-		print '<td class="center">'.$userstatic->getLibStatut(5).'</td>';
+		print '<td class="center">' . $userstatic->getLibStatut(5) . '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 
 	$sql = "SELECT fk_user, bank, number FROM llx_user_rib WHERE fk_user=" . $obj->rowid;
-    $res = $db->query($sql);
-    $data = ((object)($res))->fetch_assoc();
+	$res = $db->query($sql);
+	$data = ((object)($res))->fetch_assoc();
 
-    print '<td> <input type="hidden" name="idCell" value="' . $obj->rowid . '"></td>';
-    print '<td> <input type="hidden" name="salaryCell" value="' . $obj->salary . '"></td>';
-    $bank = $data["bank"];
-    $bank .= "  / RIB: ";
-    $bank .= $data["number"];
-    print '<td> <input type="hidden" name="bankCell" value="' . $bank . '"></td>';
+	print '<td> <input type="hidden" name="idCell" value="' . $obj->rowid . '"></td>';
+	print '<td> <input type="hidden" name="salaryCell" value="' . $obj->salary . '"></td>';
+	$bank = $data["bank"];
+	$bank .= "  / RIB: ";
+	$bank .= $data["number"];
+	print '<td> <input type="hidden" name="bankCell" value="' . $bank . '"></td>';
 
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
-	print '</tr>'."\n";
+	print '</tr>' . "\n";
 
 	$i++;
 }
@@ -1116,7 +1136,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 
 // Show total line
-include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+include DOL_DOCUMENT_ROOT . '/core/tpl/list_print_total.tpl.php';
 
 // If no record found
 if ($num == 0) {
@@ -1126,7 +1146,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
 }
 
 
@@ -1134,7 +1154,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -1143,69 +1163,110 @@ print '</table>
 	</div>
 </form>';
 
+// if ($action == 'changeWorkingDays') {
+//     changeWorkingDays();
+// } else {
+//     GenerateDocuments();
+// }
+GenerateDocuments();
 
 
-if ($action == 'changeWorkingDays') {
-    changeWorkingDays();
-} else {
-    GenerateDocuments();
-}
+// if ($action == 'confirmeWorkingDays') {
+// 	$action = '';
 
-if ($action == 'confirmeWorkingDays') {
-    $action = '';
+// 	foreach ($users as $user) {
+// 		$workingdays = (float)GETPOST("workingdays_$user->rowid", "float");
+// 		$workingHours = (int)GETPOST("workingHours_$user->rowid", "float");
+// 		// $joursFerie = (int)GETPOST("joursferie_$user->rowid", "float");
+// 		//change the working days
+// 		$sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours) VALUES($user->rowid, $year, $month, $workingdays, $workingHours);";
+// 		$res = $db->query($sql);
+// 		if ($res);
+// 		else print("<br>fail ERR: " . $sql);
 
-    foreach ($users as $user) {
-        $workingdays = (int)GETPOST("workingdays_$user->rowid", "float");
-        $workingHours = (int)GETPOST("workingHours_$user->rowid", "float");
-        $joursferie = (int)GETPOST("joursferie_$user->rowid", "float");
-        //change the working days
-        $sql = "REPLACE INTO llx_Paie_MonthDeclaration(userid, year, month, workingDays, workingHours, joursferie) VALUES($user->rowid, $year, $month, $workingdays, $workingHours, $joursferie);";
-        $res = $db->query($sql);
-        if ($res);
-        else print("<br>fail ERR: " . $sql);
+// 		$sql = "SELECT rub FROM llx_Paie_HourSupp";
+// 		$res = $db->query($sql);
+// 		if ($res->num_rows > 0) {
+// 			while ($row = $res->fetch_assoc()) {
+// 				$nhours = (int)GETPOST("hoursupp_" . $row["rub"] . "_$user->rowid", "int");
 
-        $sql = "SELECT rub FROM llx_Paie_HourSupp";
-        $res = $db->query($sql);
-        if ($res->num_rows > 0) {
-            while ($row = $res->fetch_assoc()) {
-                $nhours = (int)GETPOST("hoursupp_" . $row["rub"] . "_$user->rowid", "int");
-
-                $sqlh = "REPLACE INTO llx_Paie_HourSuppDeclaration(userid, rub, year, month, nhours) VALUES($user->rowid, " . $row["rub"] . ", $year, $month, $nhours);";
-                $resh = $db->query($sqlh);
-                if ($resh);
-                else {
-                    print("<br>fail ERR: " . $sqlh);
-                    exit;
-                }
-            }
-        }
-    }
-}
+// 				$sqlh = "REPLACE INTO llx_Paie_HourSuppDeclaration(userid, rub, year, month, nhours) VALUES($user->rowid, " . $row["rub"] . ", $year, $month, $nhours);";
+// 				$resh = $db->query($sqlh);
+// 				if ($resh);
+// 				else {
+// 					print("<br>fail ERR: " . $sqlh);
+// 					exit;
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
 
 $action = GETPOST('action');
 $id = GETPOST('id', 'int');
 if ($id && $action == 'show') {
-    ShowBulletin($id);
+	ShowBulletin($id);
 }
 ShowDocuments();
+progressBar();
+
+function progressBar()
+{
+	echo '
+	<style>
+	.loader {
+		border: 16px solid #f3f3f3;
+		border-radius: 50%;
+		border-top: 16px solid blue;
+		border-bottom: 16px solid blue;
+		width: 120px;
+		height: 120px;
+		-webkit-animation: spin 2s linear infinite;
+		animation: spin 2s linear infinite;
+		position: fixed;
+		top: 45%;
+        left: 45%;
+		display:none;
+	}
+
+	@-webkit-keyframes spin {
+		0% { -webkit-transform: rotate(0deg); }
+		100% { -webkit-transform: rotate(360deg); }
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+	</style>
+
+	<div class="loader" id="loader"></div>';
+}
 
 function GenerateDocuments()
 {
-    global $day, $month, $year;
-    print '<form id="frmgen" name="generateDocs" method="post">';
-    print '<input type="hidden" name="token" value="' . newToken() . '">';
-    print '<input type="hidden" name="action" value="generateDocs">';
-    print '<input type="hidden" name="model" value="BulletinDePaie">';
-    print '<input type="hidden" name="day" value="' . $day . '">';
-    print '<input type="hidden" name="month" value="' . $month . '">';
-    print '<input type="hidden" name="year" value="' . $year . '">';
-    print '<div class=""  style="margin-bottom: 0px; margin-left: 5%;"><input type="button" id="btngen" class="button" name="save" value="génerer"></div>';
+	global $day, $month, $year, $limit;
+	print '<form id="frmgen" name="generateDocs" method="post">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	print '<input type="hidden" name="action" value="generateDocs">';
+	print '<input type="hidden" name="model" value="BulletinDePaie">';
+	print '<input type="hidden" name="day" value="' . $day . '">';
+	print '<input type="hidden" name="month" value="' . $month . '">';
+	print '<input type="hidden" name="year" value="' . $year . '">';
+	print '<input type="hidden" name="limit" value="' . $limit . '">';
+	print '<div class=""  style="margin-bottom: 0px; margin-left: 5%;"><input type="button" id="btngen" class="button" name="save" value="Cloturer"></div>';
 
-    print "<script>
+	print "<script>
         $('#btngen').click(function(){
-            var i=1;
-            $('#tblUsers  input:checkbox.checkforselect:checked').each(function () {
+			var elem = document.getElementById('bar');
+			var i=0;
+			var els=$('#tblUsers  input:checkbox.checkforselect:checked');
+			var num=els.length;
+			if(num>0){
+				$('#loader').css('display', 'block');
+			}
+            els.each(function () {
                 var id = $(this).closest('tr').find('input[name=idCell]').val();
                 var salary = $(this).closest('tr').find('input[name=salaryCell]').val();
                 var b = $(this).closest('tr').find('input[name=bankCell]').val();
@@ -1219,161 +1280,52 @@ function GenerateDocuments()
 					success:function(){			
 					}
 				});
-            });
-			location.reload(true);
-	        
+
+            });   
         });
+		$(document).ajaxStop(function(){
+			window.location.reload();
+		});
     </script>";
-    print '</form>';
-    print '<hr>';
-    print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
-    print '<input type="hidden" name="token" value="' . newToken() . '">';
-    print '<input type="hidden" name="action" value="changeWorkingDays">';
-    print '<input type="hidden" name="day" value="' . $day . '">';
-    print '<input type="hidden" name="month" value="' . $month . '">';
-    print '<input type="hidden" name="year" value="' . $year . '">';
-    print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="butActionDelete" value="Changer les jours travaillé">';
-    print '</form>';
+
+	print '</form>';
 }
+
 function ShowDocuments()
 {
-    global $db, $object, $conf, $month, $year, $societe;
-    print '<div class="fichecenter"><div class="fichehalfleft">';
-    $formfile = new FormFile($db);
+	global $db, $object, $conf, $month, $year, $societe;
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+	$formfile = new FormFile($db);
 
 
-    $subdir = '';
-    $filedir = DOL_DATA_ROOT . '/grh/BulletinDePaie';
-    $urlsource = $_SERVER['PHP_SELF'] . '';
-    $genallowed = 0;
-    $delallowed = 1;
-    $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
+	$subdir = "$month-$year";
+	$filedir = DOL_DATA_ROOT . '/grh/BulletinDePaie/' . $subdir;
+	$urlsource = $_SERVER['PHP_SELF'] . '';
+	$genallowed = 0;
+	$delallowed = 1;
+	$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
 
 	$_SESSION["filterDoc"] = $month . "-" . $year;
 
 
-    print $formfile->showdocuments('BulletinDePaie', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, 'remonth=' . $month . '&amp;reyear=' . $year, '', '', $societe->default_lang);
-    $somethingshown = $formfile->numoffiles;
+	print $formfile->showdocuments('BulletinDePaie', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, 'remonth=' . $month . '&amp;reyear=' . $year, '', '', $societe->default_lang);
+	$somethingshown = $formfile->numoffiles;
 
-    // $_SESSION["filterDoc"] = null;
-    // Show links to link elements
-    //$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
+	// $_SESSION["filterDoc"] = null;
+	// Show links to link elements
+	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('RH'));
 }
-
-function changeWorkingDays()
-{
-    global $db, $day, $month, $year, $users;
-
-    $sql = "SELECT rub, designation FROM llx_Paie_HourSupp";
-    $res = $db->query($sql);
-    if ($res->num_rows > 0) {
-        $hrs = $res->fetch_all();
-    }
-    print '<form  action="' . $_SERVER["PHP_SELF"] . '" method="post">';
-    print '<input type="hidden" name="token" value="' . newToken() . '">';
-    print '<input type="hidden" name="action" value="confirmeWorkingDays">';
-    print '<input type="hidden" name="day" value="' . $day . '">';
-    print '<input type="hidden" name="remonth" value="' . $month . '">';
-    print '<input type="hidden" name="reyear" value="' . $year . '">';
-
-    print ' <style>
-                .small-td input{
-                    width:90%;
-                }
-            </style>
-        <table class="noborder editmode" style="width:100%">
-    <thead>
-        <tr class="liste_titre">
-            <th class="titlefield wordbreak">Login</th>
-            <th class="titlefield wordbreak">Nom</th>
-            <th class="titlefield wordbreak">Prénom</th>
-            <th class="titlefield wordbreak">Nombre des jours travaillé</th>
-            <th class="titlefield wordbreak">Nombre des Hours travaillé (horaire)</th>
-            <th class="titlefield wordbreak">Jours férié</th>';
-    foreach ((array)$hrs as $hr) {
-        print '<th class="titlefield wordbreak">' . $hr[1] . '</th>';
-    }
-    print '</tr>
-    </thead>
-    <tbody>';
-    foreach ($users as $user) {
-
-        $salaireParams = "";
-        //Get user salaire informations from database
-        $sql = "SELECT type from llx_Paie_UserInfo WHERE userid=" . $user->rowid;
-        $res = $db->query($sql);
-        if (((object)$res)->num_rows > 0) {
-            $salaireParams = ((object)$res)->fetch_assoc();
-        }
-        $type = $salaireParams["type"];
-
-        if ($type == 'mensuel') //Mensuel
-        {
-            $workingdays = 26;
-            $sql = "SELECT workingDays, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
-            $res = $db->query($sql);
-            if (((object)$res)->num_rows > 0) {
-                $row = ((object)$res)->fetch_assoc();
-                $workingdays = (int)$row["workingDays"];
-                $joursferie = (int)$row["joursferie"];
-            }
-
-            print "<tr>
-                <td>$user->login</td>
-                <td>$user->firstname</td>
-                <td>$user->lastname</td>
-                <td><input type='number' name='workingdays_$user->rowid' value='$workingdays'></td>
-                <td>---</td>
-                <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
-        } else if ($type == 'horaire') //Journalier or Horaire
-        {
-            $workingHours = 0;
-            $sql = "SELECT workingHours, joursferie FROM llx_Paie_MonthDeclaration WHERE userid=$user->rowid AND month=$month AND year = $year";
-            $res = $db->query($sql);
-            if (((object)$res)->num_rows > 0) {
-                $row = ((object)$res)->fetch_assoc();
-                $workingHours = (int)$row["workingHours"];
-                $joursferie = (int)$row["joursferie"];
-            }
-
-            print "<tr>
-                <td>$user->login</td>
-                <td>$user->firstname</td>
-                <td>$user->lastname</td>
-                <td>---</td>
-                <td><input type='number' name='workingHours_$user->rowid' value='$workingHours'></td>
-                <td class='small-td'><input type='number' name='joursferie_$user->rowid' value='$joursferie'></td>";
-        }
-        foreach ((array)$hrs as $hr) {
-            $sqlh = "SELECT nhours FROM llx_Paie_HourSuppDeclaration  WHERE rub=$hr[0] AND userid=$user->rowid AND month=$month AND year = $year";
-            $resh = $db->query($sqlh);
-            if ($resh->num_rows > 0) {
-                $nhours = $resh->fetch_assoc()["nhours"];
-            }
-            print "<td class='small-td'><input type='number' name='hoursupp_$hr[0]_$user->rowid' value='$nhours'></td>";
-        }
-    }
-
-    print '</tbody>
-    </table>';
-
-
-
-    print '<div class="right"  style="margin-bottom: 100px; margin-right: 5%;"><input type="submit" class="button" value="valider">';
-
-    print '</form>';
-}
-
 
 function ShowBulletin($id)
 {
-    global $db, $object, $prev_month, $prev_year, $year, $month;
+	global $db, $year, $month, $object;
 
-    $object->fetch($id);
+	$object->fetch($id);
+	$object->rowid = $object->id;
 
-    include 'Bulletin_Class.php';
+	include 'Bulletin_Class.php';
 
-    $bulttin = '<style type="text/css">
+	$bulttin = '<style type="text/css">
         table.tableizer-table {
             font-size: 11px;
             margin:auto;
@@ -1412,92 +1364,124 @@ function ShowBulletin($id)
                 <tbody>
                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Nom</td><td class="white-cell">' . $object->lastname . ' ' . $object->firstname . '</td><td>Date de naissance</td><td class="white-cell" colspan="2">' . date("d/m/Y", $object->birth) . '</td></tr>
                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° CNSS</td><td class="white-cell">' . $salaireParams["cnss"] . '</td><td>Fonction</td><td class="white-cell" colspan="2">' . $object->job . '</td></tr>
-                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>N° Mutuelle</td><td class="white-cell">' . $salaireParams["mutuelle"] . '</td><td>N° CIMR</td><td class="white-cell" colspan="2">' . $salaireParams["cimr"] . '</td></tr>
+                <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Matricule</td><td class="white-cell">' . $extrafields["matricule"] . '</td><td>N° CIMR</td><td class="white-cell" colspan="2">' . $salaireParams["cimr"] . '</td></tr>
                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Periode</td><td class="white-cell">' . $periode . '</td><td>adresse</td><td class="white-cell" colspan="2">' . $object->address . '</td></tr>
                 <tr class="importent-cell row-bordered"><td>&nbsp;</td><td>&nbsp;</td><td>Situation familiale</td><td class="white-cell">' . $situation . '</td><td>nombre d\'enfants</td><td class="white-cell" colspan="2">' . $enfants . '</td></tr>
                 <tr class="importent-cell row-bordered"><td rowspan="2">Rub</td><td rowspan="2">Désignation</td><td rowspan="2">Nombre</td><td rowspan="2">Base</td><td colspan="3">Part salariale</td></tr>
                 <tr class="importent-cell row-bordered"><td>Taux</td><td>A payer</td><td>A retenues</td></tr>
     ';
 
-    if ($type == "mensuel") {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireMensuel") . '</td><td>SALAIRE MENSUEL</td><td></td><td>' . price($bases["salaire de base"], 0, '', 1, 1,2) . '</td><td> ' . $Taux . ' </td><td> ' . price($bases["salaire mensuel"]) . ' </td><td>&nbsp;</td></tr>';
-    }
+	if ($type == "mensuel") {
+		$bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireMensuel") . '</td><td>SALAIRE MENSUEL</td><td></td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td> ' . $Taux . ' </td><td> ' . price($bases["salaire mensuel"], 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+	}
 
-    if ($type == "horaire") {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireHoraire") . '</td><td>SALAIRE HORAIRE</td><td>' . $workingHours . '</td><td>' . price($salaireHoraire, 0, '', 1, 1,2) . '</td><td>  </td><td> ' . price($bases["salaire mensuel"], 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
-    }
+	if ($type == "horaire") {
+		$bulttin .= '<tr class="row-content"><td>' . getRebrique("salaireHoraire") . '</td><td>SALAIRE HORAIRE</td><td>' . $workingHours . '</td><td>' . price($salaireHoraire, 0, '', 1, 1, 2) . '</td><td>  </td><td> ' . price($bases["salaire mensuel"], 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+	}
 
-    if ($primeDancien > 0) {
-        $bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases["salaire mensuel"], 0, '', 1, 1,2) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr> ';
-    }
+	if ($soldeConge > 0) {
+		$bulttin .= '<tr class="row-content"><td>' . getRebrique("congePaye") . '</td><td>CONGE PAYE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td>' . $congeDays . '</td><td> ' . price($soldeConge, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+	}
 
-    if ($soldeConge > 0) {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("congePaye") . '</td><td>CONGE PAYE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1,2) . '</td><td>' . $congeDays . '</td><td> ' . price($soldeConge, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
-    }
+	if ($soldeferie > 0) {
+		$bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1, 2) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+	}
 
-    if ($soldeferie > 0) {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("joursferie") . '</td><td>LES JOURS FERIE</td><td>&nbsp;</td><td>' . price($bases["salaire de base"], 0, '', 1, 1,2) . '</td><td>' . $joursFerie . '</td><td> ' . price($soldeferie, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
-    }
+	foreach ((array)$hrs as $hr) {
+		$bulttin .= '<tr class="row-content"><td>' . $hr["rub"] . '</td><td>' . $hr["designation"] . '</td><td>' . price($hr["nombre"], 0, '', 1, 1, 2) . '</td><td>' . price($hr["base"], 0, '', 1, 1, 2) . '</td><td>' . $hr["taux"] . '%</td><td> ' . price($hr["apayer"], 0, '', 1, 1, 2) . ' </td><td>' . price($hr["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
+	}
 
-    foreach ((array)$hrs as $hr) {
-        $bulttin .= '<tr class="row-content"><td>' . $hr["rub"] . '</td><td>' . $hr["designation"] . '</td><td>' . price($hr["nombre"], 0, '', 1, 1,2) . '</td><td>' . price($hr["base"], 0, '', 1, 1,2) . '</td><td>' . $hr["taux"] . '%</td><td> ' . price($hr["apayer"], 0, '', 1, 1,2) . ' </td><td>' . price($hr["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
-    }
+	if ($primeDancien > 0) {
+		$bulttin .= ' <tr class="row-content"><td>' . getRebrique("primeDancien") . '</td><td>PRIME D\'ANCIENNETE</td><td>&nbsp;</td><td>' . price($bases['primeDancien'], 0, '', 1, 1, 2) . '</td><td>' . $primeDancienPercentage . '%</td><td>' . price($primeDancien, 0, '', 1, 1, 2) . '</td><td>&nbsp;</td></tr> ';
+	}
 
-    foreach ((array)$enBruts as $enBrut) {
-        $base = $enBrut["base"] > 0 ? price($enBrut["base"], 0, '', 1, 1,2) : "";
-        $bulttin .= '<tr class="row-content"><td>' . $enBrut["rub"] . '</td><td>' . $enBrut["designation"] . '</td><td>' . $enBrut["nombre"] . '</td><td>' . $base . '</td><td>' . $enBrut["taux"] . '</td><td> ' . price($enBrut["apayer"], 0, '', 1, 1,2) . ' </td><td>' . price($enBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
-    }
+	foreach ((array)$enBruts as $enBrut) {
+		$base = $enBrut["base"] > 0 ? price($enBrut["base"], 0, '', 1, 1, 2) : "";
+		$bulttin .= '<tr class="row-content"><td>' . $enBrut["rub"] . '</td><td>' . $enBrut["designation"] . '</td><td>' . $enBrut["nombre"] . '</td><td>' . $base . '</td><td>' . $enBrut["taux"] . '</td><td> ' . price($enBrut["apayer"], 0, '', 1, 1, 2) . ' </td><td>' . price($enBrut["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
+	}
 
-    if ($primeCommercial > 0) {
-        $base = $CA > 0 ? price($CA, 0, '', 1, 1,2) : "";
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("primeCommercial") . '</td><td>PRIME COMMERCIAL</td><td></td><td>' . $base . '</td><td>' . $percent . '%</td><td> ' . price($primeCommercial, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>';
-    }
+	if ($primeCommercial > 0) {
+		$base = $CA > 0 ? price($CA, 0, '', 1, 1, 2) : "";
+		$bulttin .= '<tr class="row-content"><td>' . getRebrique("primeCommercial") . '</td><td>PRIME COMMERCIAL</td><td></td><td>' . $base . '</td><td>' . $percent . '%</td><td> ' . price($primeCommercial, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>';
+	}
 
-    $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr class="row-content"><td></td><td>SALAIRE BRUT</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($brutGlobal, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>
+	$bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+             <tr class="row-content"><td></td><td>SALAIRE BRUT</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($brutGlobal, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>
              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-    foreach ((array)$cotisations as $cotisation) {
-        $base = $cotisation["base"] > 0 ? price($cotisation["base"], 0, '', 1, 1,2) : "";
-        $bulttin .= '<tr class=""><td>' . $cotisation["rub"] . '</td><td>' . $cotisation["designation"] . '</td><td>' . price($cotisation["nombre"], 0, '', 1, 1,2) . '</td><td>' . $base . '</td><td>' . $cotisation["taux"] . '</td><td>  </td><td>' . price($cotisation["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
-    }
+	foreach ((array)$cotisations as $cotisation) {
+		$base = $cotisation["base"] > 0 ? price($cotisation["base"], 0, '', 1, 1, 2) : "";
+		$bulttin .= '<tr class=""><td>' . $cotisation["rub"] . '</td><td>' . $cotisation["designation"] . '</td><td>' . price($cotisation["nombre"], 0, '', 1, 1, 2) . '</td><td>' . $base . '</td><td>' . $cotisation["taux"] . '</td><td>  </td><td>' . price($cotisation["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
+	}
 
-    $bulttin .= ' <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+	$bulttin .= ' <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr class="row-content"><td>' . getRebrique("netImposable") . '</td><td>SALAIRE NET IMPOSABLE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($netImposable, 0, '', 1, 1,2) . ' </td><td>&nbsp;</td></tr>
+             <tr class="row-content"><td>' . getRebrique("netImposable") . '</td><td>SALAIRE NET IMPOSABLE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($netImposable, 0, '', 1, 1, 2) . ' </td><td>&nbsp;</td></tr>
              <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
 
-    if ($chargeFamille != 0) {
-        $bulttin .= '<tr class="row-content"><td>' . getRebrique("chargefamille") . '</td><td>CHARGE DE FAMILLE</td><td>&nbsp;</td><td>&nbsp;</td><td>' . $chargeFamilleTaux . '</td><td>' . price($chargeFamille, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr>';
-    }
+	if ($chargeFamille != 0) {
+		$bulttin .= '<tr class="row-content"><td>' . getRebrique("chargefamille") . '</td><td>CHARGE DE FAMILLE</td><td>&nbsp;</td><td>&nbsp;</td><td>' . $chargeFamilleTaux . '</td><td>' . price($chargeFamille, 0, '', 1, 1, 2) . '</td><td>&nbsp;</td></tr>';
+	}
 
-    if ($irNet > 0) {
-        $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-        <tr class="row-content"><td>' . getRebrique("ir") . '</td><td>IR</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($irNet, 0, '', 1, 1,2) . ' </td></tr>';
-    }
+	if ($irNet > 0) {
+		$bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>' . getRebrique("ir") . '</td><td>IR</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($irNet, 0, '', 1, 1, 2) . ' </td></tr>';
+	}
+	// if ($avanceSurSalaire > 0) {
+	//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+	//     <tr><td>902</td><td>RETENUE SUR AVANCE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td> ' . price($avanceSurSalaire, 0, '', 1, 1,2) . ' </td></tr>';
+	// }
+	// if ($primePanier > 0) {
+	//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+	//     <tr class="row-content"><td>512</td><td>PRIME DE PANIER</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>' . price($primePanier, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr>';
+	// }
+	// if ($primeAdha > 0) {
+	//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+	//     <tr class="row-content"><td>513</td><td>PRIME AID ADHA</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>' . price($primeAdha, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr>';
+	// }
+	// if ($primeScolarite > 0) {
+	//     $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+	//     <tr class="row-content"><td>514</td><td>PRIME DE SCOLARITE</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>' . price($primeScolarite, 0, '', 1, 1,2) . '</td><td>&nbsp;</td></tr>';
+	// }
 
-    foreach ((array)$pasEnBruts as $pasEnBrut) {
-        $base = $pasEnBrut["base"] > 0 ? price($pasEnBrut["base"], 0, '', 1, 1,2) : "";
-        $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
-        $bulttin .= '<tr class="row-content"><td>' . $pasEnBrut["rub"] . '</td><td>' . $pasEnBrut["designation"] . '</td><td>' . price($pasEnBrut["number"], 0, '', 1, 1,2) . '</td><td>' . $base . '</td><td>' . $pasEnBrut["taux"] . '</td><td> ' . price($pasEnBrut["apayer"], 0, '', 1, 1,2) . ' </td><td>' . $pasEnBrut["aretenu"] > 0 ? price($pasEnBrut["aretenu"], 0, '', 1, 1,2) : '' . '</td></tr>';
-    }
+	foreach ((array)$pasEnBruts as $pasEnBrut) {
+		$base = $pasEnBrut["base"] > 0 ? price($pasEnBrut["base"], 0, '', 1, 1, 2) : "";
+		$bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+		$bulttin .= '<tr class="row-content"><td>' . $pasEnBrut["rub"] . '</td><td>' . $pasEnBrut["designation"] . '</td><td>&nbsp;</td><td>' . price($pasEnBrut["nombre"], 0, '', 1, 1, 2) . '</td><td>' . $base . '</td><td>' . price($pasEnBrut["apayer"], 0, '', 1, 1, 2) . '</td><td>' . price($pasEnBrut["aretenu"], 0, '', 1, 1, 2) . '</td></tr>';
 
-    $bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td></td><td class="importent-cell row-bordered"> ' . price($totalBrut, 0, '', 1, 1,2) . ' </td><td class="importent-cell row-bordered"> ' . price($totalRetenu + $retenueFromBrut, 0, '', 1, 1,2) . ' </td></tr>
-             <tr ><td></td><td>&nbsp;</td><td class="importent-cell row-bordered" colspan="3">Net a payer</td><td class="importent-cell row-bordered" colspan="2"> ' . price($totalNet, 0, '', 1, 1,2) . ' </td></tr>
+		// $bulttin .= '<tr class="row-content"><td>' . $pasEnBrut["rub"] . '</td><td>' . $pasEnBrut["designation"] . '</td><td>' . price($pasEnBrut["aretenu"], 0, '', 1, 1,2) . '</td></tr>';
+	}
+
+	$bulttin .= '<tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+             <tr><td></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td></td><td class="importent-cell row-bordered"> ' . price($totalBrut, 0, '', 1, 1, 2) . ' </td><td class="importent-cell row-bordered"> ' . price($totalRetenu + $retenueFromBrut, 0, '', 1, 1, 2) . ' </td></tr>
+             <tr ><td></td><td>&nbsp;</td><td class="importent-cell row-bordered" colspan="3">Net a payer</td><td class="importent-cell row-bordered" colspan="2"> ' . price($totalNet, 0, '', 1, 1, 2) . ' </td></tr>
 
              <tr><td></td><td>&nbsp;</td><td>Jours travaillés</td><td>Brut imposable</td><td>Net imposable</td><td>Retenue I.R.</td></tr>
-             <tr class="row-bordered row-content"><td></td><td>Mensuel</td><td>' . ($workingdaysdeclaré) . '</td><td>' . price($brutImposable) . '</td><td>' . price($netImposable, 0, '', 1, 1,2) . '</td><td>' . price($irNet, 0, '', 1, 1,2) . '</td></tr>
-             <tr class="row-bordered row-content"><td></td><td>Annuel</td><td>' . ($comulWorkingDays + $workingdaysdeclaré) . '</td><td>' . price($comulsalaireBrut + $brutImposable, 0, '', 1, 1,2) . '</td><td>' . price($comulnetImposable + $netImposable, 0, '', 1, 1,2) . '</td><td>' . price($comulIR + $irNet, 0, '', 1, 1,2) . '</td></tr>
+             <tr class="row-bordered row-content"><td></td><td>Mensuel</td><td>' . ($workingdaysdeclaré) . '</td><td>' . price($brutImposable) . '</td><td>' . price($netImposable, 0, '', 1, 1, 2) . '</td><td>' . price($irNet, 0, '', 1, 1, 2) . '</td></tr>
+             <tr class="row-bordered row-content"><td></td><td>Annuel</td><td>' . ($comulWorkingDays + $workingdaysdeclaré) . '</td><td>' . price($comulsalaireBrut + $brutImposable, 0, '', 1, 1, 2) . '</td><td>' . price($comulnetImposable + $netImposable, 0, '', 1, 1, 2) . '</td><td>' . price($comulIR + $irNet, 0, '', 1, 1, 2) . '</td></tr>
        </tbody>
     </table>';
 
-    print $bulttin;
+	print $bulttin;
+}
+
+//Les compte comptable
+function getRebrique($name)
+{
+	global $db;
+	$sql = "SELECT rub FROM llx_Paie_Rubriques WHERE name = '$name'";
+	$res = $db->query($sql);
+	if ($res) {
+		$row = ((object)$res)->fetch_assoc();
+	} else
+		print("<br>fail ERR: " . $sql);
+
+	return $row["rub"];
 }
 
 // style
-print'
+print '
 	<style>
 	/* Customize the label (the container) */
 	.ckeckboxContainer {
@@ -1578,24 +1562,25 @@ print'
 //filter by date
 function datefilter()
 {
-    print '<div class="center">';
-    print '<form id="frmfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="filter">';
+	print '<div class="center">';
+	print '<form id="frmfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
+	print '<input type="hidden" name="action" value="filter">';
 
-    // Show navigation bar
+	// Show navigation bar
 	$nav = '<div class="date-container">
 				<div class="inp-wrapper">
 					<div class="date-wrapper">
 						<input type="month" id="date" name="date">
+						
 					</div>
 					<button style="cursor:pointer;" type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>
 				</div>
 			</div>';
-    print $nav;
+	print $nav;
 
-    print '</form>';
-    print '</div>';
+	print '</form>';
+	print '</div>';
 }
 
 print "
@@ -1603,7 +1588,15 @@ print "
         $(document).ready(function(){
             $('#date').val('" . $year . "-" . $month . "');	
         });
-    </script>";
+    </script>
+	<style>
+	@media only screen and (min-width: 977px) {
+		div.div-table-responsive {
+			width: calc(100vw - 285px);
+			overflow-x: scroll;
+		}
+	}
+	</style>";
 
 
 

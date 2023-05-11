@@ -137,4 +137,23 @@ trait CommonIncoterm
 			return -1;
 		}
 	}
+
+	public function set_lieu_livraison($lieuLivraison)
+	{
+		if ($this->id && $this->table_element) {
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+			$sql .= " SET lieuLivraison  = " . $lieuLivraison;
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				return 1;
+			} else {
+				$this->errors[] = $this->db->lasterror();
+				return -1;
+			}
+		} else {
+			return -1;
+		}
+	}
 }

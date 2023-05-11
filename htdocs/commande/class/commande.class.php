@@ -277,6 +277,21 @@ class Commande extends CommonOrder
 	 */
 	public $online_payment_url;
 
+	/**
+	 * @var int CLient à livrer
+	 */
+	public $clientLivrer;
+
+	
+	/**
+	 * @var string adresse client à livrer
+	 */
+	public $adresseClientLivrer;
+	
+	/**
+	 * @var string nom Client à livrer
+	 */
+	public $nomClientLivrer;
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -955,6 +970,7 @@ class Commande extends CommonOrder
 		$sql .= ", fk_multicurrency";
 		$sql .= ", multicurrency_code";
 		$sql .= ", multicurrency_tx";
+		$sql .= ", clientLivrer";
 		$sql .= ")";
 		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($now)."', ".((int) $user->id);
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
@@ -986,6 +1002,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(float) $this->multicurrency_tx;
+		$sql .= ", ". $this->clientLivrer;
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1822,6 +1839,7 @@ class Commande extends CommonOrder
 		$sql = 'SELECT c.rowid, c.entity, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_user_valid, c.fk_user_modif, c.fk_statut';
 		$sql .= ', c.amount_ht, c.total_ht, c.total_ttc, c.total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.deposit_percent, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
 		$sql .= ', c.fk_account';
+		$sql .= ', c.clientLivrer';
 		$sql .= ', c.date_commande, c.date_valid, c.tms';
 		$sql .= ', c.date_livraison as delivery_date';
 		$sql .= ', c.fk_shipping_method';
@@ -1836,12 +1854,15 @@ class Commande extends CommonOrder
 		$sql .= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', ca.code as availability_code, ca.label as availability_label';
 		$sql .= ', dr.code as demand_reason_code';
+		$sql .= ', cl.adresse as adresseClientLivrer';
+		$sql .= ', CONCAT(cl.firstname, " ", cl.lastname) AS nomClientLivrer';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON c.fk_cond_reglement = cr.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON c.fk_mode_reglement = p.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON c.fk_availability = ca.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = dr.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'client_livre as cl ON cl.id = c.clientLivrer';
 
 		if ($id) {
 			$sql .= " WHERE c.rowid=".((int) $id);
@@ -1899,6 +1920,9 @@ class Commande extends CommonOrder
 				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_modification = $this->db->jdate($obj->tms);
 				$this->remise				= $obj->remise;
+				$this->clientLivrer				= $obj->clientLivrer;
+				$this->adresseClientLivrer				= $obj->adresseClientLivrer;
+				$this->nomClientLivrer				= $obj->nomClientLivrer;
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
 				$this->source				= $obj->source;
@@ -2059,7 +2083,7 @@ class Commande extends CommonOrder
 
 		$this->lines = array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext,';
+		$sql = 'SELECT pef.colisage, l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext,';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.fk_remise_except, l.remise_percent, l.subprice, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit,';
@@ -2068,6 +2092,7 @@ class Commande extends CommonOrder
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as pef ON (pef.fk_object = l.fk_product)';
 		$sql .= ' WHERE l.fk_commande = '.((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
@@ -2143,6 +2168,9 @@ class Commande extends CommonOrder
 
 				$line->date_start       = $this->db->jdate($objp->date_start);
 				$line->date_end         = $this->db->jdate($objp->date_end);
+				
+				// colissage
+				$line->colisage         = $objp->colisage;
 
 				// Multicurrency
 				$line->fk_multicurrency = $objp->fk_multicurrency;
@@ -2600,6 +2628,53 @@ class Commande extends CommonOrder
 			if (!$error) {
 				$this->oldcopy = clone $this;
 				$this->date = $date;
+			}
+
+			if (!$notrigger && empty($error)) {
+				// Call trigger
+				$result = $this->call_trigger('ORDER_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			} else {
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1 * $error;
+			}
+		} else {
+			return -2;
+		}
+	}
+	public function set_client_livrer($user, $clientLivrer, $notrigger = 0)
+	{
+		// phpcs:enable
+		if ($user->rights->commande->creer) {
+			$error = 0;
+
+			$this->db->begin();
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+			$sql .= " SET clientLivrer = ". $clientLivrer;
+			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".((int) self::STATUS_DRAFT);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = $this->db->error();
+				$error++;
+			}
+
+			if (!$error) {
+				$this->oldcopy = clone $this;
+				$this->clientLivrer = $clientLivrer;
 			}
 
 			if (!$notrigger && empty($error)) {
@@ -4174,6 +4249,8 @@ class OrderLine extends CommonOrderLine
 	// Start and end date of the line
 	public $date_start;
 	public $date_end;
+	
+	public $colisage;
 
 	public $skip_update_total; // Skip update price total for special lines
 

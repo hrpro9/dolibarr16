@@ -270,6 +270,7 @@ if (empty($reshook)) {
 				$object->date_debut = $date_debut;
 				$object->date_fin = $date_fin;
 				$object->halfday = $halfday;
+				$object->statut = 1;
 
 				$result = $object->create($user);
 				if ($result <= 0) {

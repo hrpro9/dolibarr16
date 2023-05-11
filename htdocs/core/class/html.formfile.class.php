@@ -909,6 +909,8 @@ class FormFile
 						$out .= '</td>';
 					}
 
+					$colspanmore=0;
+					$colspan=0;
 					if (is_object($hookmanager)) {
 						$parameters = array('colspan'=>($colspan + $colspanmore), 'socid'=>(isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id'=>(isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart'=>$modulepart, 'relativepath'=>$relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);

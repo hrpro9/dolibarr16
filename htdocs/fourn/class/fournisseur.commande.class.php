@@ -185,6 +185,9 @@ class CommandeFournisseur extends CommonOrder
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 
+	public $lieuLivraison;
+	public $adresseLivraison;
+
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -342,7 +345,7 @@ class CommandeFournisseur extends CommonOrder
 			return -1;
 		}
 
-		$sql = "SELECT c.rowid, c.entity, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.total_tva,";
+		$sql = "SELECT c.lieuLivraison, lv.adresse as adresseLivraison,  c.rowid, c.entity, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.total_tva,";
 		$sql .= " c.localtax1, c.localtax2, ";
 		$sql .= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
 		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve, c.fk_user_approve2,";
@@ -360,6 +363,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lieu_livraison as lv ON c.lieuLivraison = lv.id';
 
 		if (empty($id)) {
 			$sql .= " WHERE c.entity IN (".getEntity('supplier_order').")";
@@ -445,6 +449,9 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
 			$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 			$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+
+			$this->lieuLivraison 	= $obj->lieuLivraison;
+			$this->adresseLivraison 	= $obj->adresseLivraison;
 
 			$this->extraparams = (array) json_decode($obj->extraparams, true);
 
@@ -1392,6 +1399,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", fk_multicurrency";
 		$sql .= ", multicurrency_code";
 		$sql .= ", multicurrency_tx";
+		$sql .= ", lieuLivraison";
 		$sql .= ") ";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
@@ -1415,6 +1423,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(double) $this->multicurrency_tx;
+		$sql .= ", ".$this->lieuLivraison;
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);

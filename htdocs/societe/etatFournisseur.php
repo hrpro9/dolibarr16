@@ -46,44 +46,75 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 $action = GETPOST('action', 'alpha');
 $fournisseur = GETPOST('fournisseur', 'alpha');
 $product = GETPOST('product', 'alpha');
+$html = "";
 
-
-if ($action == "download")
+if ($action == "getetat")
 {
+   
     $infos = array('La date', 'Quantity', 'Prix');
     $header = array('Fournisseur :', explode(':', $fournisseur)[1], 'Produit :', explode(':', $product)[1]);
-    $spreadsheet = new Spreadsheet();
-	$sheet = $spreadsheet->getActiveSheet();
-    $fileName = 'produit livré.xlsx';
-	for ($i = 0, $l = count($infos); $i < $l; $i++) {
-		$sheet->setCellValueByColumnAndRow($i + 1, 2, $infos[$i]);
-	}
-	for ($i = 0, $l = count($header); $i < $l; $i++) {
-		$sheet->setCellValueByColumnAndRow($i + 1, 1, $header[$i]);
-	}
-
-    $lines = array();
-    $sql = "select cfd.qty, cfd.total_ttc, cf.date_commande from IG_commande_fournisseurdet as cfd INNER JOIN IG_commande_fournisseur as cf ON cf.rowid=cfd.fk_commande where cfd.fk_product =".explode(':', $product)[0]." and cfd.product_type = 0 and cfd.fk_commande in (SELECT rowid FROM `IG_commande_fournisseur` WHERE fk_soc = ".explode(':', $fournisseur)[0]." and fk_statut = 5)
-    ";
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $j = 3;
-        while ($obj = $db->fetch_object($resql))
-        {
-            $sheet->setCellValueByColumnAndRow(1, $j, $obj->date_commande);
-            $sheet->setCellValueByColumnAndRow(2, $j, $obj->qty);
-            $sheet->setCellValueByColumnAndRow(3, $j, $obj->total_ttc . ' MAD');
-            $j++;
+    if (isset($_POST['telecharger'])){
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $fileName = 'produit_livré.xlsx';
+        for ($i = 0, $l = count($infos); $i < $l; $i++) {
+            $sheet->setCellValueByColumnAndRow($i + 1, 2, $infos[$i]);
         }
+        for ($i = 0, $l = count($header); $i < $l; $i++) {
+            $sheet->setCellValueByColumnAndRow($i + 1, 1, $header[$i]);
+        }
+    
+        $lines = array();
+        $sql = "select cfd.qty, cfd.total_ttc, cf.date_commande from llx_commande_fournisseurdet as cfd INNER JOIN llx_commande_fournisseur as cf ON cf.rowid=cfd.fk_commande where cfd.fk_product =".explode(':', $product)[0]." and cfd.product_type = 0 and cfd.fk_commande in (SELECT rowid FROM `llx_commande_fournisseur` WHERE fk_soc = ".explode(':', $fournisseur)[0]." and fk_statut = 5)";
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $j = 3;
+            while ($obj = $db->fetch_object($resql))
+            {
+                $sheet->setCellValueByColumnAndRow(1, $j, $obj->date_commande);
+                $sheet->setCellValueByColumnAndRow(2, $j, $obj->qty);
+                $sheet->setCellValueByColumnAndRow(3, $j, $obj->total_ttc . ' MAD');
+                $j++;
+            }
+        }
+        setlocale(LC_ALL, 'en_US');
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
+        $writer->save('php://output');
+        exit();
     }
+    if (isset($_POST['consulter'])){
+        $html = '<div><div>';
+        for ($i = 0, $l = count($header); $i < $l; $i++) {
+            $html .= "<span>$header[$i]</span>";
+            if (!is_int($i / 2)){
+                $html .= '<br>';
+            }
+        }
+        $html .= "</div><table border='1' style='border-collapse: collapse;'><tr>";
 
-    setlocale(LC_ALL, 'en_US');
-	$writer = new Xlsx($spreadsheet);
-	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-	header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
-	$writer->save('php://output');
-	exit();
+        for ($i = 0, $l = count($infos); $i < $l; $i++) {
+            $html .= "<td>$infos[$i]</td>";
+        }
+        $html .= "</tr>";
+        $lines = array();
+        $sql = "select cfd.qty, cfd.total_ttc, cf.date_commande from llx_commande_fournisseurdet as cfd INNER JOIN llx_commande_fournisseur as cf ON cf.rowid=cfd.fk_commande where cfd.fk_product =".explode(':', $product)[0]." and cfd.product_type = 0 and cfd.fk_commande in (SELECT rowid FROM `llx_commande_fournisseur` WHERE fk_soc = ".explode(':', $fournisseur)[0]." and fk_statut = 5)";
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            while ($obj = $db->fetch_object($resql))
+            {
+                $html .= "<tr><td>$obj->date_commande</td><td>$obj->qty</td><td>$obj->total_ttc MAD</td></tr>";
+            }
+        }
+
+        $html .= "</table></div>";
+
+
+    }
+    
 
 }
 
@@ -93,7 +124,7 @@ llxHeader('', 'Etat Fournisseurs');
 print load_fiche_titre($langs->trans("Etat fournisseur"), '', 'building');
 $fournisseurs = array();
 $products = array();
-$sql = "SELECT rowid, nom as name FROM ".MAIN_DB_PREFIX."societe as s WHERE fournisseur =1";
+$sql = "SELECT rowid, nom as name FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur =1 order by s.nom";
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -120,7 +151,7 @@ if ($resql)
 print '
     <form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">
         <input type="hidden" name="token" value="'.newToken().'">
-        <input type="hidden" name="action" value="download">
+        <input type="hidden" name="action" value="getetat">
         <div>
             <div class="frContainer">
                 <label>Fournisseur : </label>
@@ -145,7 +176,8 @@ print "
             </div>
         </div>
         <div class='btnContainer'>
-            <button type='submit'>Telecharger</button>
+            <button name='telecharger' type='submit'>Telecharger</button>
+            <button name='consulter' type='submit'>Consulter</button>
         </div>";
 print "
     <style>
@@ -170,10 +202,12 @@ print "
             border-radius: 3px;
             font-weight: bold;
             text-transform: uppercase;
-            color: #444;
+            color: #fff;
         }
 
     </style>";
+
+    print $html;
 
 // End of page
 llxFooter();

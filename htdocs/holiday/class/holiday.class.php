@@ -296,7 +296,7 @@ class Holiday extends CommonObject
 		$sql .= " '".$this->db->idate($this->date_debut)."',";
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
 		$sql .= " ".((int) $this->halfday).",";
-		$sql .= " '1',";
+		$sql .= " '$this->statut',";
 		$sql .= " ".((int) $this->fk_validator).",";
 		$sql .= " ".((int) $this->fk_type).",";
 		$sql .= " ".((int) $user->id).",";

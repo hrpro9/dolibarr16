@@ -229,6 +229,7 @@ class pdf_OrderDeVirementGlobal extends ModelePDFUser
 			$totalNet = 0;
 			$objects = array();
 			$name = '';
+			$es=[];
 			foreach ($moreparams as $id) {
 				$object = new User($this->db);
 				$object->fetch($id);
@@ -250,7 +251,7 @@ class pdf_OrderDeVirementGlobal extends ModelePDFUser
 				if ($res) {
 					$row = $res->fetch_assoc();
 					$object->salaryNet = $row["salaireNet"];
-					$totalNet += $object->salaryNet;
+					$totalNet += $row["salaireNet"];
 				}
 
 				$name .= $object->login . "_";
@@ -268,7 +269,7 @@ class pdf_OrderDeVirementGlobal extends ModelePDFUser
 				$objectrefsupplier = dol_sanitizeFileName($object->ref_supplier);
 				$dir = DOL_DATA_ROOT . '/grh/OrdreVirement/';
 
-				$file = $dir . "/i-gouvernancia_" . $dateg . "_OrderDeVirement.pdf";
+				$file = $dir . "/Mafitis_" . $dateg . "_OrderDeVirement.pdf";
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
 

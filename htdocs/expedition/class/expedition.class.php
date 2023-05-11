@@ -135,6 +135,9 @@ class Expedition extends CommonObject
 	public $height_units;
 	public $trueDepth;
 	public $depth_units;
+	public $chauffeur_intern;
+	public $nom_chauffeur;
+	public $id_chauffeur ;
 	// A denormalized value
 	public $trueSize;
 
@@ -302,6 +305,7 @@ class Expedition extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (";
 		$sql .= "ref";
+		$sql .= ",chauffeur_intern";
 		$sql .= ", entity";
 		$sql .= ", ref_customer";
 		$sql .= ", ref_int";
@@ -327,6 +331,7 @@ class Expedition extends CommonObject
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
+		$sql .= ",$this->chauffeur_intern";
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : "null");
 		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
@@ -529,6 +534,8 @@ class Expedition extends CommonObject
 
 		$sql = "SELECT e.rowid, e.entity, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet as fk_project, e.billed";
 		$sql .= ", e.date_valid";
+		$sql .= ", e.chauffeur_intern";
+		$sql .= ", e.id_chauffeur";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql .= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql .= ", e.fk_shipping_method, e.tracking_number";
