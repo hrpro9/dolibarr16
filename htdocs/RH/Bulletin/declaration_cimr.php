@@ -24,8 +24,7 @@ if ($action != 'generate')
             <form method="post">
                 <input type="hidden" name="action" value="generate">
                 <ul class="form-style-1" style="text-align: center;">
-                    <h4 style="text-align: center;" class="field-divided">Declaration CIMR !</h4>
-                
+                    <h4 style="text-align: center;" class="field-divided">Declaration CIMR !</h4>         
                     <li>
                         <label>Trimestre & Année de cotisation <span class="required">* </label>
                         <select name="trimestriel" required>

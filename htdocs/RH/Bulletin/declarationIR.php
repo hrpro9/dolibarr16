@@ -56,38 +56,17 @@
     $restConst=$db->query($sql);
     foreach($restConst as $rowConst)
     {
-        if($rowConst['name']=='MAIN_INFO_PROFID5')
+        switch($rowConst['name'])
         {
-            $ice=$rowConst['value'];
-        }else if($rowConst['name']=='MAIN_INFO_SOCIETE_MAIL')
-        {
-            $societe_mail=$rowConst['value'];
-        }else if($rowConst['name']=='MAIN_INFO_SOCIETE_FAX')
-        {
-            $societe_fax=$rowConst['value'];
-        }else if($rowConst['name']=='MAIN_INFO_SOCIETE_TEL')
-        {
-            $societe_tel=$rowConst['value'];
-        }
-        else if($rowConst['name']=='MAIN_INFO_SOCIETE_ADDRESS')
-        {
-            $societe_address=$rowConst['value']; 
-        }
-        else if($rowConst['name']=='MAIN_INFO_SIREN')
-        {
-            $societe_rc=$rowConst['value'];
-        }
-        else if($rowConst['name']=='MAIN_INFO_RCS')
-        {
-            $societe_cnss=$rowConst['value'];
-        }
-        else if($rowConst['name']=='MAIN_INFO_SOCIETE_NOM')
-        {
-            $societe_raison=$rowConst['value'];
-        }
-        else if($rowConst['name']=='MAIN_INFO_SIRET')
-        {
-            $societe_identifiant_tp=$rowConst['value'];
+            case 'MAIN_INFO_PROFID5' : $ice=$rowConst['value'];break;
+            case 'MAIN_INFO_SOCIETE_MAIL' : $societe_mail=$rowConst['value'];break;
+            case 'MAIN_INFO_SOCIETE_FAX' :  $societe_fax=$rowConst['value']; break;
+            case 'MAIN_INFO_SOCIETE_TEL' : $societe_tel=$rowConst['value'];break;
+            case 'MAIN_INFO_SOCIETE_ADDRESS' : $societe_address=$rowConst['value']; break;
+            case 'MAIN_INFO_SIREN' : $societe_rc=$rowConst['value']; break;
+            case 'MAIN_INFO_RCS' : $societe_cnss=$rowConst['value']; break;
+            case 'MAIN_INFO_SIRET' : $societe_identifiant_tp=$rowConst['value']; break;
+            default: if($rowConst['name']=='MAIN_INFO_SOCIETE_NOM'){ $societe_raison=$rowConst['value']; }break;
         }
     }
     // list employee
