@@ -40,9 +40,9 @@ $id = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('id', 'int'
 $ref = GETPOST('ref', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userdoc'; // To manage different context of search
 
-// Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
+// Define value to know what current user can do on users userid=637
+$canadduser = (!empty($user->admin) || $user->rights->user->user->creer );
+$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire );
 $canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
 $candisableuser = (!empty($user->admin) || $user->rights->user->user->supprimer);
 $canreadgroup = $canreaduser;

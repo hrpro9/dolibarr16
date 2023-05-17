@@ -985,13 +985,31 @@ if ($object->id > 0) {
 			print '<td class="right expectedqty" id="id_'.$obj->rowid.'" title="Stock viewed at last update: '.$obj->qty_stock.'">';
 			$valuetoshow = $obj->qty_stock;
 			// For inventory not yet close, we overwrite with the real value in stock now
-			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
+
+			/*if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
 				if (!empty($conf->productbatch->enabled) && $product_static->hasbatch()) {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 				} else {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
 				}
+			}*/
+
+			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
+				if (!empty($conf->productbatch->enabled) && $product_static->hasbatch()) {
+					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
+				} else {
+					if(isset($product_static->stock_warehouse[$obj->fk_warehouse])) {
+						$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
+					} else {
+						$valuetoshow = 0;
+					}
+				}
 			}
+			
+
+			
+
+			
 			print price2num($valuetoshow, 'MS');
 			print '<input type="hidden" name="stock_qty_'.$obj->rowid.'" value="'.$valuetoshow.'">';
 			print '</td>';
