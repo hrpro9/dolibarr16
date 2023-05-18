@@ -1,32 +1,32 @@
+<?php
 
-    if ((!function_exists('calculateACapitaN')) || (!function_exists('calculateACapitaN1')) || (!function_exists('calculateACapitaN2')) ) {
-      function calculateACapitaN($dateCreation, $anneeDebut, $variableEx,$codecompt) {
-        $valeurn = ($dateCreation == $anneeDebut) ? montantCalcul($codecompt, $anneeDebut) : $variableEx;
-        return $valeurn;
-      }
-      function calculateACapitaN1($dateCreation, $dateCreationN1, $variableEx,$codecompt) {
-        $valeurn1 = ($dateCreation == $dateCreationN1) ? montantCalcul($codecompt, $dateCreationN1) : $variableEx;
-        return $valeurn1;
-      }
-      function calculateACapitaN2($dateCreation, $dateCreationN2, $variableEx,$codecompt) {
-        $valeurn2 = ($dateCreation == $dateCreationN2) ? montantCalcul($codecompt, $dateCreationN2) : $variableEx;
-        return $valeurn2;
-      }
-    }
+// functionDeclarationLaisse.php
 
+    function affichageAnnees() {
+        $anneeDebut = date('Y');
+        $anneeFin = 2015;
+        
+        for ($annee = $anneeDebut; $annee >= $anneeFin; $annee--) {
+          
+            echo '<option value="' . $annee . '">' . $annee . '</option>';
   
+        }
+       }
+    function readMontant($number){
+        $number=!empty($number)?$number:0;
+        echo number_format($number,2);
+       }
   
- 
-  
-
-  
-
-
-   
-    
-    switch ($numero_compte) {
-        case "514":
-        $aCapita = calculateACapitaN($dateCreation, $anneeDebut, $aCapita,'514');
-        $aCapitaN1 = calculateACapitaN1($dateCreation, $dateCreationN1, $aCapitaN1,'514');
-        $aCapitaN2 = calculateACapitaN2($dateCreation, $dateCreationN2, $aCapitaN2,'514');
-        break;
+    function montantCalcul($code_compt,$date)
+        {
+          global $db; // Assurez-vous que la variable $db est accessible dans cette fonction
+          
+          $sql = "SELECT SUM(montant) AS montant FROM llx_accounting_bookkeeping WHERE numero_compte LIKE '$code_compt%' AND YEAR(doc_date)=$date" ;
+          $rest = $db->query($sql);
+          $row = ((object)($rest))->fetch_assoc();
+          $mont = 0; // Initialisez la variable $mont pour éviter une erreur si aucune valeur n'est trouvée
+          $mont = $row['montant'];
+                
+          return $mont;
+        }
+?>
