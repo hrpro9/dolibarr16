@@ -1,0 +1,851 @@
+<?php
+
+
+    // Load Dolibarr environment
+    require '../../main.inc.php';
+    require_once '../../vendor/autoload.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+    require_once('functionDeclarationLaisse.php');
+
+    llxHeader("", "");
+     
+      // 'B' : Brut  / 'AP' : Amort et prov  / 'net' : Net   / 'N1' : Année actuel-1  / 'N2' : Année actuel-2  / 'EP' : Exercice Precedent  / 'E2' :  Exercice n-2 
+
+    $dateChoisis=0;
+    $fraisP_B=$fraisP_AP=$fraisP1_N1=$fraisP1_N2=$fraisP2_N1=$fraisP2_N2=$fraisP_EP=$fraisP_E2=0; //Frais préliminaires 
+    $chargesR_B=$chargesR_AP=$chargesR1_N1=$chargesR1_N2=$chargesR2_N1=$chargesR2_N2=0; //Charges à repartir sur plusieurs exercices
+    $primesR_B=$primesR_AP=$primesR1_N1=$primesR1_N2=$primesR2_N1=$primesR2_N2=$primesR_EP=$primesR_E2=0; //Primes de remboursement des obligations
+    $immReche_B=$immReche_AP=$immReche_AP1=$immReche_AP2=$immReche_N1=$immReche_N2=$immReche_AP1_N1=$immReche_AP1_N2=$immReche_AP2_N1=$immReche_AP2_N2=0; //Immobilisations en recherche et développement	
+    $BMD_B=$BMD_N1=$BMD_N2=$BMD_AP1=$BMD_AP1_N1=$BMD_AP1_N2=$BMD_AP2=$BMD_AP2_N1=$BMD_AP2_N2=0; //Brevets, marques, droits et valeurs similaires
+    $fondsC_B=$fondsC_N1=$fondsC_N2=$fondsC_AP1=$fondsC_AP2=$fondsC_AP1_N1=$fondsC_AP1_N2=$fondsC_AP2_N1=$fondsC_AP2_N2=0; //Fonds commercial
+    $autresImmoInc_B=$autresImmoInc_N1=$autresImmoInc_N2=$autresImmoInc_AP1=$autresImmoInc_AP2=$autresImmoInc_AP1_N1=$autresImmoInc_AP1_N2=$autresImmoInc_AP2_N1=$autresImmoInc_AP2_N2=0; //Autres immobilisations incorporelles
+    $terrains_B=$terrains_AP=$terrains_AP1=$terrains_AP2= //terrains
+    $cons_B=$cons_AP=$cons_AP1=$cons_AP2=0; //Constructions
+    $instalTechMat_B=$instalTechMat_AP=$instalTechMat_AP1=$instalTechMat_AP2=0; //Installations techniques, matériel et outillage
+    $matTransp_B=$matTransp_AP=$matTransp_AP1=$matTransp_AP2=0; //Matériel de transport_brut
+    $mobMatAmenag_B=$mobMatAmenag_AP=$mobMatAmenag_AP1=$mobMatAmenag_AP2=0; //Mobiliers, matériel de bureau et aménagements divers
+    $autresImmoCor_B=$autresImmoCor_AP=$autresImmoCor_AP1=$autresImmoCor_AP2=0; //Autres immobilisations corporelles
+    $immCorEnCours_B=$immCorEnCours_AP=$immCorEnCours_AP1=$immCorEnCours_AP2=0; //Immobilisations corporelles en cours  
+    $pretsImm_B=$pretsImm_AP=0; //Prêts immobilisés
+    $autresCreFin_B=$autresCreFin_AP=0;//Autres créances financières
+    $titresP_B=$titresP_AP=0; //Titres de participation_brut
+    $autresTitrImm_B=0; //Autres titres immobilisés_brut
+    $immNonVal_B=$immNonVal_AP=$immNonVal_net=0; //IMMOBILISATION EN NON VALEUR
+    $immIncor_B=0; //IMMOBILISATIONS INCORPORELLES
+    $immCor_B=0; //IMMOBILISATIONS CORPORELLES
+ 
+
+
+    
+    if(isset($_POST['chargement'])){
+      
+      $dateChoisis=$_POST['date_select'];
+     }
+
+     $sql ="SELECT * FROM llx_accounting_bookkeeping ";
+     $result =$db->query($sql);
+
+     foreach($result as $row){
+
+      
+
+      $datetime = new DateTime($row['doc_date']);
+      $dateCreation = $datetime->format('Y');
+      
+
+      
+        $numero_compte=$row['numero_compte'];
+        $montant=$row['montant'];
+
+        switch($numero_compte){
+          /* ancien methode :
+            case '211' : 
+            if($dateCreation==$anneeDebut){$fraisP_B=montantCalcul('611',$anneeDebut);}
+            if($dateCreation==$dateCreationN1){$fraisP1_N1=montantCalcul('611',$dateCreationN1);}
+            if($dateCreation==$dateCreationN2){$fraisP2_N1=montantCalcul('211',$dateCreationN2);} break;*/
+          case '211' : list($fraisP_B,$fraisP1_N1,$fraisP2_N1) = calculateMontant($dateCreation, $dateChoisis,$fraisP_B,$fraisP1_N1,$fraisP2_N1,'211'); break;
+          case '2811': list($fraisP_AP,$fraisP2_N1,$fraisP2_N2) = calculateMontant($dateCreation, $dateChoisis,$fraisP_AP,$fraisP2_N1,$fraisP2_N2,'2811'); break;
+          case '212' : list($chargesR_B,$chargesR1_N1,$chargesR1_N2) = calculateMontant($dateCreation, $dateChoisis,$chargesR_B,$chargesR1_N1,$chargesR1_N2,'212'); break;
+          case '2812': list($chargesR_B,$chargesR2_N1,$chargesR2_N2) = calculateMontant($dateCreation, $dateChoisis,$chargesR_B,$chargesR2_N1,$chargesR2_N2,'2812'); break;
+          case '213' : list($primesR_B,$primesR1_N1,$primesR1_N2) = calculateMontant($dateCreation, $dateChoisis,$primesR_B,$primesR1_N1,$primesR1_N2,'213'); break;           
+          case '2813': list($primesR_AP,$primesR2_N1,$primesR2_N2) = calculateMontant($dateCreation, $dateChoisis,$primesR_AP,$primesR2_N1,$primesR2_N2,'2813'); break;
+          case '221':  list($immReche_B,$immReche_N1,$immReche_N2) = calculateMontant($dateCreation, $dateChoisis,$immReche_B,$immReche_N1,$immReche_N2,'221'); break;
+          case '2821': list($immReche_AP1,$immReche_AP1_N1,$immReche_AP1_N2) = calculateMontant($dateCreation, $dateChoisis,$immReche_AP1,$immReche_AP1_N1,$immReche_AP1_N2,'2821'); break;
+          case '2921': list($immReche_AP2,$immReche_AP2_N1,$immReche_AP2_N2) = calculateMontant($dateCreation, $dateChoisis,$immReche_AP2,$immReche_AP2_N1,$immReche_AP2_N2,'2921'); break;        
+          case '222':  list($BMD_B,$BMD_N1,$BMD_N2) = calculateMontant($dateCreation, $dateChoisis,$BMD_B,$BMD_N1,$BMD_N2,'222'); break;
+          case '2822': list($BMD_AP1,$BMD_AP1_N1,$BMD_AP1_N2) = calculateMontant($dateCreation, $dateChoisis,$BMD_AP1,$BMD_AP1_N1,$BMD_AP1_N2,'2822'); break;
+          case '2922': list($BMD_AP2,$BMD_AP2_N1,$BMD_AP2_N2) = calculateMontant($dateCreation, $dateChoisis,$BMD_AP2,$BMD_AP2_N1,$BMD_AP2_N2,'2922'); break;
+          case '223':  list($fondsC_B,$fondsC_N1,$fondsC_N2) = calculateMontant($dateCreation, $dateChoisis,$fondsC_B,$fondsC_N1,$fondsC_N2,'223'); break;
+          case '2823': list($fondsC_AP1,$fondsC_AP1_N1,$fondsC_AP1_N2) = calculateMontant($dateCreation, $dateChoisis,$fondsC_AP1,$fondsC_AP1_N1,$fondsC_AP1_N2,'2823'); break;
+          case '2923': list($fondsC_AP2,$fondsC_AP2_N1,$fondsC_AP2_N2) = calculateMontant($dateCreation, $dateChoisis,$fondsC_AP2,$fondsC_AP2_N1,$fondsC_AP2_N2,'2923'); break;
+          case '228':  list($autresImmoInc_B,$autresImmoInc_N1,$autresImmoInc_N2) = calculateMontant($dateCreation, $dateChoisis,$autresImmoInc_B,$autresImmoInc_N1,$autresImmoInc_N2,'223'); break;
+          case '2828': list($autresImmoInc_AP1,$autresImmoInc_AP1_N1,$autresImmoInc_AP1_N2) = calculateMontant($dateCreation, $dateChoisis,$autresImmoInc_AP1,$autresImmoInc_AP1_N1,$autresImmoInc_AP1_N2,'2823'); break;
+          case '2928': list($autresImmoInc_AP2,$autresImmoInc_AP2_N1,$autresImmoInc_AP2_N2) = calculateMontant($dateCreation, $dateChoisis,$autresImmoInc_AP2,$autresImmoInc_AP2_N1,$autresImmoInc_AP2_N2,'2923'); break;   
+  
+          /*
+          case '231': $terrains_B=montantCalcul('2898');break;
+          case '232': $cons_B=montantCalcul('2898');break;
+          case '233': $instalTechMat_B=montantCalcul('2898');break;
+          case '234': $matTransp_B=montantCalcul('2898');break;
+          case '235': $mobMatAmenag_B=montantCalcul('2898');break;
+          case '238': $autresImmoCor_B=montantCalcul('2898');break;
+          case '239': $immCorEnCours_B=montantCalcul('2898');break;
+          case '2831': $terrains_AP1=montantCalcul('2831');break;
+          case '2931': $terrains_AP2=montantCalcul('2931');break;
+          case '2832': $cons_AP1=montantCalcul('2832');break;
+          case '2932': $cons_AP2=montantCalcul('2932');break;
+          case '2833': $instalTechMat_AP1=montantCalcul('2833');break;
+          case '2933': $instalTechMat_AP2=montantCalcul('2933');break;
+          case '2834': $matTransp_AP1=montantCalcul('2834');break;
+          case '2934': $matTransp_AP2=montantCalcul('2934');break;
+          case '2835': $mobMatAmenag_AP1=montantCalcul('2835');break;
+          case '2935': $mobMatAmenag_AP2=montantCalcul('2935');break;
+          case '2838': $autresImmoCor_AP1=montantCalcul('2838');break;
+          case '2938': $autresImmoCor_AP2=montantCalcul('2938');break;
+          case '2839': $immCorEnCours_AP1=montantCalcul('2839');break;
+          case '2939': $immCorEnCours_AP2=montantCalcul('2939');break;
+
+          case '241' : $pretsImm_B=montantCalcul('241');break;
+          case '248' : $autresCreFin_B=montantCalcul('248');break;
+          case '251' : $titresP_B=montantCalcul('251');break;
+          case '258' : $autresTitrImm_B=montantCalcul('258');break;*/
+
+          default:$default=$montant;break;
+
+        }
+
+        // Calcule Exercice Precedent et Exercice n-2 
+        $fraisP_EP=$fraisP1_N1+$fraisP2_N1;
+        $fraisP_E2=$fraisP1_N2+$fraisP2_N2;
+        $chargesR_EP=$chargesR1_N1+$chargesR2_N1;
+        $chargesR_E2=$chargesR1_N2+$chargesR2_N2;
+        $primesR_EP=$primesR1_N1+$primesR1_N2;
+        $primesR_E2=$primesR2_N1+$primesR2_N2;
+        $immReche_EP=$immReche_N1+$immReche_AP1_N1+$immReche_AP2_N1;
+        $immReche_E2=$immReche_N2+$immReche_AP1_N2+$immReche_AP2_N2;
+        $BMD_EP=$BMD_N1+$BMD_AP1_N1+$BMD_AP2_N1;
+        $BMD_E2=$BMD_N2+$BMD_AP1_N2+$BMD_AP2_N2;
+        $fondsC_EP=$fondsC_N1+$fondsC_AP1_N1+$fondsC_AP2_N1;
+        $fondsC_E2=$fondsC_N2+$fondsC_AP1_N2+$fondsC_AP2_N2;
+        $autresImmoInc_EP=$autresImmoInc_N1+$autresImmoInc_AP1_N1+$autresImmoInc_AP2_N1;
+        $autresImmoInc_E2=$autresImmoInc_N2+$autresImmoInc_AP1_N2+$autresImmoInc_AP2_N2;
+
+        // Calcule Amort et porv pour les elements qui ont deux numero de compte a calculer
+        $immReche_AP=-$immReche_AP1-$immReche_AP2;       
+        $BMD_AP=-$BMD_AP1-$BMD_AP2;    
+        $fondsC_AP=-$fondsC_AP1-$fondsC_AP2;  
+        $autresImmoInc_AP=-$autresImmoInc_AP1-$autresImmoInc_AP2;      
+        $terrains_AP=-$terrains_AP1-$terrains_AP2;     
+        $cons_AP=-$cons_AP1-$cons_AP2;      
+        $instalTechMat_AP=-$instalTechMat_AP1-$instalTechMat_AP2;        
+        $matTransp_AP=-$matTransp_AP1-$matTransp_AP2;       
+        $mobMatAmenag_AP=-$mobMatAmenag_AP1-$mobMatAmenag_AP2;      
+        $autresImmoCor_AP=-$autresImmoCor_AP1-$autresImmoCor_AP2; 
+        $immCorEnCours_AP=-$immCorEnCours_AP1-$immCorEnCours_AP2;
+
+        // Calcule IMMOBILISATION EN NON VALEUR brut/amort and prov/net/
+        $immNonVal_B=$fraisP_B+$chargesR_B+$primesR_B;
+        $immNonVal_AP=$fraisP_AP+$chargesR_AP+$primesR_AP;
+        $immNonVal_net=($fraisP_B-($fraisP_AP*-1))+($chargesR_B-($chargesR_AP*-1))+($primesR_B-($primesR_AP*-1));
+
+        // Calcule IMMOBILISATIONS INCORPORELLES brut/amort and prov/net
+        $immIncor_B=$immReche_B+$BMD_B+$fondsC_B+$autresImmoInc_B;
+
+        // Calcule IMMOBILISATIONS_CORPORELLES brut/amort and prov/net
+        $immCor_B=$terrains_B+$cons_B+$instalTechMat_B+$matTransp_B+
+        $mobMatAmenag_B+$autresImmoCor_B+$immCorEnCours_B;
+    
+        
+      
+      
+     }
+
+?>
+
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <meta name="generator" content="PhpSpreadsheet, https://github.com/PHPOffice/PhpSpreadsheet">
+      <meta name="author" content="Microsoft Office User" />
+    <style type="text/css">
+      html { font-family:Calibri, Arial, Helvetica, sans-serif; font-size:11pt; background-color:white }
+      a.comment-indicator:hover + div.comment { background:#ffd; position:absolute; display:block; border:1px solid black; padding:0.5em }
+      a.comment-indicator { background:red; display:inline-block; border:1px solid black; width:0.5em; height:0.5em }
+      div.comment { display:none }
+      table { border-collapse:collapse; page-break-after:always }
+      .gridlines td { border:1px dotted black }
+      .gridlines th { border:1px dotted black }
+      .b { text-align:center }
+      .e { text-align:center }
+      .f { text-align:right }
+      .inlineStr { text-align:left }
+      .n { text-align:right }
+      .s { text-align:left }
+      td.style0 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      th.style0 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      td.style1 { vertical-align:middle; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      th.style1 { vertical-align:middle; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      td.style2 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Tahoma'; font-size:12pt; background-color:white }
+      th.style2 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Tahoma'; font-size:12pt; background-color:white }
+      td.style3 { vertical-align:middle; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      th.style3 { vertical-align:middle; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      td.style4 { vertical-align:middle; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      th.style4 { vertical-align:middle; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      td.style5 { vertical-align:middle; border-bottom:1px solid #000000 !important; border-top:3px double #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      th.style5 { vertical-align:middle; border-bottom:1px solid #000000 !important; border-top:3px double #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      td.style6 { vertical-align:bottom; border-bottom:3px double #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style6 { vertical-align:bottom; border-bottom:3px double #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style7 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Tahoma'; font-size:11pt; background-color:white }
+      th.style7 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Tahoma'; font-size:11pt; background-color:white }
+      td.style8 { vertical-align:bottom; border-bottom:3px double #000000 !important; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style8 { vertical-align:bottom; border-bottom:3px double #000000 !important; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style9 { vertical-align:bottom; border-bottom:3px double #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style9 { vertical-align:bottom; border-bottom:3px double #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style10 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:3px double #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style10 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:3px double #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style11 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style11 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style12 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      th.style12 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:12pt; background-color:white }
+      td.style13 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style13 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style14 { vertical-align:bottom; text-align:center; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style14 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style15 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style15 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style16 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style16 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style17 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style17 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style18 { vertical-align:bottom; text-align:center; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style18 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style19 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style19 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style20 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style20 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style21 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style21 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style22 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style22 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style23 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style23 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style24 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style24 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style25 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style25 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style26 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style26 { vertical-align:bottom; border-bottom:none #000000; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style27 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style27 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style28 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style28 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style29 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style29 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style30 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#808080 }
+      th.style30 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#808080 }
+      td.style31 { vertical-align:bottom; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style31 { vertical-align:bottom; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style32 { vertical-align:bottom; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style32 { vertical-align:bottom; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style33 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style33 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style34 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style34 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style35 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style35 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style36 { vertical-align:bottom; text-align:center; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style36 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style37 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style37 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style38 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style38 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style39 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style39 { vertical-align:bottom; text-align:left; padding-left:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style40 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style40 { vertical-align:bottom; text-align:left; padding-left:9px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style41 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:3px double #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style41 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:3px double #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style42 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:3px double #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style42 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:3px double #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style43 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:3px double #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style43 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:3px double #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style44 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style44 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style45 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:#808080 }
+      th.style45 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:#808080 }
+      td.style46 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style46 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style47 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style47 { vertical-align:bottom; text-align:right; padding-right:0px; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style48 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:#808080 }
+      th.style48 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:#808080 }
+      td.style49 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style49 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style50 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style50 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style51 { vertical-align:bottom; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style51 { vertical-align:bottom; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style52 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      th.style52 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:10pt; background-color:white }
+      td.style53 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style53 { vertical-align:bottom; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style54 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style54 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style55 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style55 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style56 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style56 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style57 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style57 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style58 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style58 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:none #000000; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style59 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style59 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style60 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style60 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:2px solid #000000 !important; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style61 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:2px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style61 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:2px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style62 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style62 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style63 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style63 { vertical-align:middle; text-align:center; border-bottom:1px solid #000000 !important; border-top:1px solid #000000 !important; border-left:1px solid #000000 !important; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style64 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      th.style64 { vertical-align:middle; text-align:center; border-bottom:none #000000; border-top:1px solid #000000 !important; border-left:none #000000; border-right:1px solid #000000 !important; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:#D8D8D8 }
+      td.style65 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt; background-color:white }
+      th.style65 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:11pt; background-color:white }
+      td.style66 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style66 { vertical-align:middle; text-align:right; padding-right:0px; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style67 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style67 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style68 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style68 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style69 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      th.style69 { vertical-align:middle; text-align:left; padding-left:0px; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; font-weight:bold; color:#000000; font-family:'Calibri'; font-size:11pt; background-color:white }
+      td.style70 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:16pt; background-color:white }
+      th.style70 { vertical-align:middle; border-bottom:none #000000; border-top:none #000000; border-left:none #000000; border-right:none #000000; color:#000000; font-family:'Arial Narrow'; font-size:16pt; background-color:white }
+      td.style71 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:16pt; background-color:white }
+      th.style71 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:1px solid #000000 !important; border-right:2px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:16pt; background-color:white }
+      td.style72 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:16pt; background-color:white }
+      th.style72 { vertical-align:middle; text-align:center; border-bottom:2px solid #000000 !important; border-top:2px solid #000000 !important; border-left:1px solid #000000 !important; border-right:1px solid #000000 !important; color:#000000; font-family:'Calibri'; font-size:16pt; background-color:white }
+      table.sheet0 col.col0 { width:211.46666424pt }
+      table.sheet0 col.col1 { width:42pt }
+      table.sheet0 col.col2 { width:42pt }
+      table.sheet0 col.col3 { width:42pt }
+      table.sheet0 col.col4 { width:42pt }
+      table.sheet0 col.col5 { width:42pt }
+      table.sheet0 col.col6 { width:42pt }
+      table.sheet0 tr { height:16.363636363636pt }
+      table.sheet0 tr.row0 { height:22pt }
+      table.sheet0 tr.row3 { height:32pt }
+      table.sheet0 tr.row29 { height:17pt }
+      table.sheet0 tr.row30 { height:17pt }
+      table.sheet0 tr.row46 { height:17pt }
+      table.sheet0 tr.row47 { height:17pt }
+      table.sheet0 tr.row51 { height:17pt }
+      table.sheet0 tr.row52 { height:17pt }
+    </style>
+  </head>
+
+  <body>
+<style>
+
+</style>
+<center>
+  <form method="POST" >
+    <select name="date_select"><?php affichageAnnees()?></select>
+    <button type="submit" name="chargement" 
+    style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;">Chargement</button><br>  
+  </form>
+    <br>
+    <?php
+
+    $date=(!empty($dateChoisis))?$dateChoisis:date('Y');
+    
+    echo'<input type="text" style="text-align:center;font-weight:bold;" value="Année chargé : '.$date.'"disabled/>';
+   
+    ?>
+  <br><br> 
+    <table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
+        <col class="col0">
+        <col class="col1">
+        <col class="col2">
+        <col class="col3">
+        <col class="col4">
+        <col class="col5">
+        <col class="col6">
+        <tbody style="text-align: center;">
+          <tr class="row0">
+            <td class="column0 style72 s style71" colspan="5">BILAN - ACTIF</td>
+            <td class="column5 style70 null"></td>
+            <td class="column6 style70 null"></td>
+          </tr>
+          <tr class="row1">
+            <td class="column0 style68 null"></td>
+            <td class="column1 style69 null"></td>
+            <td class="column2 style68 null"></td>
+            <td class="column3 style67 null"></td>
+            <td class="column5 style65 null"></td>
+            <td class="column6 style65 null"></td>
+          </tr>
+          <tr class="row2">
+            <td class="column0 style64 null style58" rowspan="2"></td>
+            <td class="column1 style63 s style61" colspan="3">Exercice</td>
+            <td class="column4 style60 s style55" rowspan="2">Exercice Précédent</td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style59 s style54" rowspan="2">Exercice N-2</td>
+          </tr>
+          <tr class="row3">
+            <td class="column1 style57 s">Brut</td>
+            <td class="column2 style57 s">Amort. &amp; Prov.</td>
+            <td class="column3 style56 s">Net</td>
+            <td class="column5 style12 null"></td>
+          </tr>
+          <tr class="row4">
+            <td class="column0 style53 s">IMMOBILISATION EN NON VALEUR ( a )</td>
+            <td class="column1 style27 null"><?php readMontant($immNonVal_B)?></td>
+            <td class="column2 style27 null"><?php readMontant($immNonVal_AP)?></td>
+            <td class="column3 style38 null"><?php readMontant($immNonVal_net)?></td>
+            <td class="column4 style28 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style27 null"></td>
+          </tr>
+          <tr class="row5">
+            <td class="column0 style19 s">Frais préliminaires</td>
+            <td class="column1 style52 null"><?php readMontant($fraisP_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($fraisP_AP*-1)?></td>
+            <td class="column3 style18 null"><?php readMontant($fraisP_B-($fraisP_AP*-1))?></td>
+            <td class="column4 style17 null"><?php readMontant($fraisP_EP)?></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"><?php readMontant($fraisP_E2)?></td>
+          </tr>
+          <tr class="row6">
+            <td class="column0 style19 s">Charges à repartir sur plusieurs exercices</td>
+            <td class="column1 style16 null"><?php readMontant($chargesR_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($chargesR_AP*-1)?></td>
+            <td class="column3 style18 null"><?php readMontant($chargesR_B-($chargesR_AP*-1))?></td>
+            <td class="column4 style17 null"><?php readMontant($chargesR_EP)?></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"><?php readMontant($chargesR_E2)?></td>
+          </tr>
+          <tr class="row7">
+            <td class="column0 style15 s">Primes de remboursement des obligations</td>
+            <td class="column1 style11 null"><?php readMontant($primesR_B)?></td>
+            <td class="column2 style11 null"><?php readMontant($primesR_AP*-1)?></td>
+            <td class="column3 style14 null"><?php readMontant($primesR_B-($primesR_AP*-1))?></td>
+            <td class="column4 style13 null"><?php readMontant($primesR_EP)?></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style11 null"><?php readMontant($primesR_E2)?></td>
+          </tr>
+          <tr class="row8">
+            <td class="column0 style27 s">IMMOBILISATIONS INCORPORELLES ( b )</td>
+            <td class="column1 style27 null"><?php readMontant($immIncor_B)?></td>
+            <td class="column2 style27 null"></td>
+            <td class="column3 style38 null"></td>
+            <td class="column4 style28 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style27 null"></td>
+          </tr>
+          <tr class="row9">
+            <td class="column0 style19 s">Immobilisations en recherche et développement</td>
+            <td class="column1 style16 null"><?php readMontant($immReche_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($immReche_AP)?></td>
+            <td class="column3 style18 null"><?php readMontant($immReche_B-$immReche_AP)?></td>  
+            <td class="column4 style17 null"><?php readMontant($immReche_EP)?></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"><?php readMontant($immReche_E2)?></td>
+          </tr>
+          <tr class="row10">
+            <td class="column0 style19 s">Brevets, marques, droits et valeurs similaires</td>
+            <td class="column1 style16 null"><?php readMontant($BMD_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($BMD_AP)?></td>
+            <td class="column3 style18 null"><?php readMontant($BMD_B-$BMD_AP)?></td>
+            <td class="column4 style17 null"><?php readMontant($BMD_EP)?></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"><?php readMontant($BMD_E2)?></td>
+          </tr>
+          <tr class="row11">
+            <td class="column0 style19 s">Fonds commercial</td>
+            <td class="column1 style16 null"><?php readMontant($fondsC_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($fondsC_AP)?></td>
+            <td class="column3 style18 null"><?php readMontant($fondsC_B-$fondsC_AP)?></td>
+            <td class="column4 style17 null"><?php readMontant($fondsC_EP)?></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"><?php readMontant($fondsC_E2)?></td>
+          </tr>
+          <tr class="row12">
+            <td class="column0 style15 s">Autres immobilisations incorporelles</td>
+            <td class="column1 style11 null"><?php readMontant($autresImmoInc_B)?></td>
+            <td class="column2 style11 null"><?php readMontant($autresImmoInc_AP)?></td>
+            <td class="column3 style14 null"><?php readMontant($autresImmoInc_B-$autresImmoInc_AP)?></td>
+            <td class="column4 style13 null"><?php readMontant($autresImmoInc_EP)?></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style11 null"><?php readMontant($autresImmoInc_E2)?></td>
+          </tr>
+          <tr class="row13">
+            <td class="column0 style27 s">IMMOBILISATIONS CORPORELLES ( c )</td>
+            <td class="column1 style27 null"><?php readMontant($immCor_B)?></td>
+            <td class="column2 style27 null"></td>
+            <td class="column3 style38 null"></td>
+            <td class="column4 style28 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style27 null"></td>
+          </tr>
+          <tr class="row14">
+            <td class="column0 style37 s">Terrains</td>
+            <td class="column1 style34 null"><?php readMontant($terrains_B)?></td>
+            <td class="column2 style34 null"><?php readMontant($terrains_AP)?></td>
+            <td class="column3 style36 null"><?php readMontant($terrains_B-$terrains_AP)?></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row15">
+            <td class="column0 style19 s">Constructions</td>
+            <td class="column1 style16 null"><?php readMontant($cons_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($cons_AP)?></td>
+            <td class="column3 style18 null"><?php readMontant($cons_B-$cons_AP)?></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row16">
+            <td class="column0 style19 s">Installations techniques, matériel et outillage</td>
+            <td class="column1 style16 null"><?php readMontant($instalTechMat_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($instalTechMat_AP)?></td>
+            <td class="column3 style18 null"><?php readMontant($instalTechMat_B-$instalTechMat_AP)?></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row17">
+            <td class="column0 style19 s">Matériel de transport</td>
+            <td class="column1 style16 null"><?php readMontant($matTransp_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($matTransp_AP)?></td>
+            <td class="column3 style18 null"><?php readMontant($matTransp_B-$matTransp_AP)?></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row18">
+            <td class="column0 style19 s">Mobiliers, matériel de bureau et aménagements divers</td>
+            <td class="column1 style16 null"><?php readMontant($mobMatAmenag_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($mobMatAmenag_AP)?></td>
+            <td class="column3 style18 null"><?php readMontant($mobMatAmenag_B-$mobMatAmenag_AP)?></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row19">
+            <td class="column0 style19 s">Autres immobilisations corporelles</td>
+            <td class="column1 style16 null"><?php readMontant($autresImmoCor_B)?></td>
+            <td class="column2 style16 null"><?php readMontant($autresImmoCor_AP)?></td>
+            <td class="column3 style18 null"><?php readMontant($autresImmoCor_B-$autresImmoCor_AP)?></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row20">
+            <td class="column0 style15 s">Immobilisations corporelles en cours</td>
+            <td class="column1 style11 null"><?php readMontant($immCorEnCours_B)?></td>
+            <td class="column2 style11 null"><?php readMontant($immCorEnCours_AP)?></td>
+            <td class="column3 style14 null"><?php readMontant($immCorEnCours_B-$immCorEnCours_AP)?></td>
+            <td class="column4 style13 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style11 null"></td>
+          </tr>
+          <tr class="row21">
+            <td class="column0 style27 s">IMMOBILISATIONS FINANCIERES ( d )</td>
+            <td class="column1 style27 null"></td>
+            <td class="column2 style27 null"></td>
+            <td class="column3 style38 null"></td>
+            <td class="column4 style28 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style27 null"></td>
+          </tr>
+          <tr class="row22">
+            <td class="column0 style37 s">Prêts immobilisés</td>
+            <td class="column1 style34 null"><?php readMontant($pretsImm_B)?></td>
+            <td class="column2 style34 null"></td>
+            <td class="column3 style36 null"></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row23">
+            <td class="column0 style19 s">Autres créances financières</td>
+            <td class="column1 style16 null"><?php readMontant($autresCreFin_B)?></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style17 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"></td>
+          </tr>
+          <tr class="row24">
+            <td class="column0 style19 s">Titres de participation</td>
+            <td class="column1 style16 null"><?php readMontant($titresP_B)?></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style17 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"></td>
+          </tr>
+          <tr class="row25">
+            <td class="column0 style15 s">Autres titres immobilisés</td>
+            <td class="column1 style11 null"><?php readMontant($autresTitrImm_B)?></td>
+            <td class="column2 style51 null"></td>
+            <td class="column3 style14 null"></td>
+            <td class="column4 style13 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style11 null"></td>
+          </tr>
+          <tr class="row26">
+            <td class="column0 style27 s">ECARTS DE CONVERSION - ACTIF ( e )</td>
+            <td class="column1 style38 null"></td>
+            <td class="column2 style30 null"></td>
+            <td class="column3 style50 null"></td>
+            <td class="column4 style28 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style27 null"></td>
+          </tr>
+          <tr class="row27">
+            <td class="column0 style23 s">Diminution des créances immobilisées</td>
+            <td class="column1 style49 null"></td>
+            <td class="column2 style48 null"></td>
+            <td class="column3 style47 null"></td>
+            <td class="column4 style21 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style20 null"></td>
+          </tr>
+          <tr class="row28">
+            <td class="column0 style15 s">Augmentation des dettes de financement</td>
+            <td class="column1 style46 null"></td>
+            <td class="column2 style45 null"></td>
+            <td class="column3 style44 null"></td>
+            <td class="column4 style13 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style11 null"></td>
+          </tr>
+          <tr class="row29">
+            <td class="column0 style10 s">TOTAL  I   ( a + b + c + d + e )</td>
+            <td class="column1 style6 null"></td>
+            <td class="column2 style6 null"></td>
+            <td class="column3 style9 null"></td>
+            <td class="column4 style8 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style6 null"></td>
+          </tr>
+          <tr class="row30">
+            <td class="column0 style41 s">STOCKS ( f )</td>
+            <td class="column1 style41 null"></td>
+            <td class="column2 style41 null"></td>
+            <td class="column3 style43 null"></td>
+            <td class="column4 style42 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style41 null"></td>
+          </tr>
+          <tr class="row31">
+            <td class="column0 style37 s">Marchandises</td>
+            <td class="column1 style34 null"></td>
+            <td class="column2 style34 null"></td>
+            <td class="column3 style36 null"></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row32">
+            <td class="column0 style19 s">Matières et fournitures consommables</td>
+            <td class="column1 style16 null"></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style17 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"></td>
+          </tr>
+          <tr class="row33">
+            <td class="column0 style19 s">Produits en cours</td>
+            <td class="column1 style16 null"></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style17 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"></td>
+          </tr>
+          <tr class="row34">
+            <td class="column0 style19 s">Produits intermédiaires et produits residuels</td>
+            <td class="column1 style16 null"></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style17 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"></td>
+          </tr>
+          <tr class="row35">
+            <td class="column0 style40 s">Produits finis</td>
+            <td class="column1 style11 null"></td>
+            <td class="column2 style11 null"></td>
+            <td class="column3 style14 null"></td>
+            <td class="column4 style13 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style11 null"></td>
+          </tr>
+          <tr class="row36">
+            <td class="column0 style39 s">CREANCES DE L'ACTIF CIRCULANT ( g )</td>
+            <td class="column1 style27 null"></td>
+            <td class="column2 style27 null"></td>
+            <td class="column3 style38 null"></td>
+            <td class="column4 style28 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style27 null"></td>
+          </tr>
+          <tr class="row37">
+            <td class="column0 style37 s">Fournisseurs débiteurs, avances et acomptes</td>
+            <td class="column1 style34 null"></td>
+            <td class="column2 style34 null"></td>
+            <td class="column3 style36 null"></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row38">
+            <td class="column0 style19 s">Clients et comptes rattachés</td>
+            <td class="column1 style16 null"></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row39">
+            <td class="column0 style19 s">Personnel</td>
+            <td class="column1 style16 null"></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row40">
+            <td class="column0 style19 s">Etat</td>
+            <td class="column1 style16 null"></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row41">
+            <td class="column0 style19 s">Comptes d'associés</td>
+            <td class="column1 style16 null"></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row42">
+            <td class="column0 style19 s">Autres débiteurs</td>
+            <td class="column1 style16 null"></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style35 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style34 null"></td>
+          </tr>
+          <tr class="row43">
+            <td class="column0 style15 s">Comptes de régularisation actif</td>
+            <td class="column1 style11 null"></td>
+            <td class="column2 style11 null"></td>
+            <td class="column3 style14 null"></td>
+            <td class="column4 style13 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style11 null"></td>
+          </tr>
+          <tr class="row44">
+            <td class="column0 style31 s">TITRES ET VALEURS DE PLACEMENT ( h )</td>
+            <td class="column1 style31 null"></td>
+            <td class="column2 style31 null"></td>
+            <td class="column3 style33 null"></td>
+            <td class="column4 style32 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style31 null"></td>
+          </tr>
+          <tr class="row45">
+            <td class="column0 style27 s">ECART DE CONVERSION - ACTIF ( i )<span style="color:#000000; font-family:'Calibri'; font-size:11pt"> (Elém. Circul.)</span></td>
+            <td class="column1 style27 null"></td>
+            <td class="column2 style30 null"></td>
+            <td class="column3 style29 null"></td>
+            <td class="column4 style28 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style27 null"></td>
+          </tr>
+          <tr class="row46">
+            <td class="column0 style10 s">TOTAL  II   (  f + g + h + i )</td>
+            <td class="column1 style6 null"></td>
+            <td class="column2 style6 null"></td>
+            <td class="column3 style9 null"></td>
+            <td class="column4 style8 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style6 null"></td>
+          </tr>
+          <tr class="row47">
+            <td class="column0 style24 s">TRESORERIE - ACTIF</td>
+            <td class="column1 style24 null"></td>
+            <td class="column2 style24 null"></td>
+            <td class="column3 style26 null"></td>
+            <td class="column4 style25 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style24 null"></td>
+          </tr>
+          <tr class="row48">
+            <td class="column0 style23 s">Chèques et valeurs à encaisser</td>
+            <td class="column1 style20 null"></td>
+            <td class="column2 style20 null"></td>
+            <td class="column3 style22 null"></td>
+            <td class="column4 style21 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style20 null"></td>
+          </tr>
+          <tr class="row49">
+            <td class="column0 style19 s">Banques, T.G &amp; CP</td>
+            <td class="column1 style16 null"></td>
+            <td class="column2 style16 null"></td>
+            <td class="column3 style18 null"></td>
+            <td class="column4 style17 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style16 null"></td>
+          </tr>
+          <tr class="row50">
+            <td class="column0 style15 s">Caisses, régies d'avances et accréditifs</td>
+            <td class="column1 style11 null"></td>
+            <td class="column2 style11 null"></td>
+            <td class="column3 style14 null"></td>
+            <td class="column4 style13 null"></td>
+            <td class="column5 style12 null"></td>
+            <td class="column6 style11 null"></td>
+          </tr>
+          <tr class="row51">
+            <td class="column0 style10 s">TOTAL  III</td>
+            <td class="column1 style6 null"></td>
+            <td class="column2 style6 null"></td>
+            <td class="column3 style9 null"></td>
+            <td class="column4 style8 null"></td>
+            <td class="column5 style7 null"></td>
+            <td class="column6 style6 null"></td>
+          </tr>
+          <tr class="row52">
+            <td class="column0 style5 s">TOTAL GENERAL  I+II+III</td>
+            <td class="column1 style1 null"></td>
+            <td class="column2 style1 null"></td>
+            <td class="column3 style4 null"></td>
+            <td class="column4 style3 null"></td>
+            <td class="column5 style2 null"></td>
+            <td class="column6 style1 null"></td>
+          </tr>
+        </tbody>
+    </table>
+</center>
+    
+
