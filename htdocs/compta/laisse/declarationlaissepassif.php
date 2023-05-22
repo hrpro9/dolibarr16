@@ -5,8 +5,9 @@
   require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
   require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
   require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+  require_once 'functionDeclarationLaisse.php';
   llxHeader("", ""); 
-
+  // ----------------------> $....N1 = Exercice Précédent && $....N2 = Exercice N-2
   $capitauxPropres=$capitauxPropresN1=$capitauxPropresN2=0; // CAPITAUX PROPRES
   $CapitalSocialPersonnel=$CapitalSocialPersonnelN1=$CapitalSocialPersonnelN2=0; // Capital social ou personnel (1)
   $aCapita=$aCapitaN1=$aCapitaN2=0; // Actionnaires, capital souscrit non appelé  dont versé
@@ -30,153 +31,115 @@
   $provisionsPC=$provisionsPCN1=$provisionsPCN2=0; // Provisions pour charges
   $provisionsDPREC=$provisionsDPRECN1=$provisionsDPRECN2=0; // PROVISIONS DURABLES POUR RISQUES ET CHARGES ( d )
   $augmentationDCI=$augmentationDCIN1=$augmentationDCIN2=0; // Augmentation des créances immobilisées
-
-
-  if(isset($_POST['chargement'])){
-   $dateChoisis=$_POST['date_select'];
-  }
-  
-  function affichageAnnees(){
-    $anneeDebut = date('Y');
-    $anneeFin = 2015;
-    for ($annee = $anneeDebut; $annee >= $anneeFin; $annee--) {  
-      echo '<option value="' . $annee . '">' . $annee . '</option>';
-    }
-  }
-  function readMontant($name){
-    $name=!empty($name)?$name:0;
-    echo number_format($name,2);
-  }
-  function montantCalcul($code_compt)
-  {
-    global $db; // Assurez-vous que la variable $db est accessible dans cette fonction 
-    $sql = "SELECT SUM(montant) AS montant FROM llx_accounting_bookkeeping WHERE numero_compte LIKE '$code_compt%'";
-    $rest = $db->query($sql);
-    $row = ((object)($rest))->fetch_assoc();
-    $mont = 0; // Initialisez la variable $mont pour éviter une erreur si aucune valeur n'est trouvée
-    $mont = $row['montant'];
-    return $mont;
-  }
-
+  $diminutionDF=$diminutionDFN1=$diminutionDFN2=0; //Diminution des dettes de financement
+  $ecartsDCP=$ecartsDCPN1=$ecartsDCPN2=0; //ECARTS DE CONVERSION - PASSIF ( e )
+  $totalABCDE=$totalABCDEN1=$totalABCDEN2=0; //TOTAL  I  ( a + b + c + d + e )
+  $fournisseursECR=$fournisseursECRN1=$fournisseursECRN2=0; // Fournisseurs et comptes rattachés
+  $ClientsCAVA=$ClientsCAVAN1=$ClientsCAVAN2=0; // Clients créditeurs, avances et acomptes
+  $personnel=$personnelN1=$personnelN2=0; //Personnel
+  $organismesS=$organismesSN1=$organismesSN2=0; //Organismes sociaux
+  $etat=$etatN1=$etatN2=0;
+  $comptesD=$comptesDN1=$comptesDN2=0; //Comptes d'associés
+  $autresCr=$autresCrN1=$autresCrN2=0; //Autres créanciers
+  $comptesDRP=$comptesDRPN1=$comptesDRPN2=0; // Comptes de regularisation - passif
+  $dettesDPC=$dettesDPCN1=$dettesDPCN2=0;//DETTES DU PASSIF CIRCULANT ( f )
+  $autresPPREC=$autresPPRECN1=$autresPPRECN2=0; // AUTRES PROVISIONS POUR RISQUES ET CHARGES ( g )
+  $ecartsDCP=$ecartsDCPN1=$ecartsDCPN2=0; // ECARTS DE CONVERSION - PASSIF ( h ) (Elem. Circul.)
+  $totalFGH=$totalFGHN1=$totalFGHN2=0; // TOTAL  II  ( f + g + h )
+  $creditsDE=$creditsDEN1=$creditsDEN2=0; // Crédits d'escompte
+  $creditDT=$creditDTN1=$creditDTN2=0; // Crédit de trésorerie
+  $banquesSC=$banquesSCN1=$banquesSCN2=0; //Banques ( soldes créditeurs )
+  $tresorerie=$tresorerieN1=$tresorerieN2=0; // TRESORERIE PASSIF
+  $totalIII=$totalIIIN1=$totalIIIN2=0; // TOTAL  III
+  $total_I_II_III=$total_I_II_IIIN1=$total_I_II_IIIN2=0; // TOTAL   I+II+III
+  $dateChoisis=0;
+  $dateChoisis=(isset($_POST['chargement']))?$_POST['date_select']:$dateChoisis;
   $sql="SELECT * FROM llx_accounting_bookkeeping";
   $rest=$db->query($sql);
   foreach( $rest as $row )
   { 
-    $anneeDebut = (!empty($dateChoisis))?$dateChoisis:date('Y');
-    $datetime = new DateTime($row['date_creation']);
+    $datetime = new DateTime($row['doc_date']);
     $dateCreation = $datetime->format('Y');
-    if($dateCreation==$anneeDebut)
-    {
-      $numero_compte=$row['numero_compte'];
-      $montant=$row['montant'];
-      switch($numero_compte)
-      {
-          case "1119" : $aCapita=montantCalcul('1119');break;
-          case "0" :  $cAppele=montantCalcul('0');break;
-          case "0" :  $DVerse=montantCalcul('0');break;
-          case "112" :  $PrimeDFD=montantCalcul('112');break;
-          case "113" :  $EcartsR=montantCalcul('113');break;
-          case "114" :  $reserveL=montantCalcul('114');break;
-          case "115" :  $autresR=montantCalcul('155');break;
-          case "116" :  $ReportN=montantCalcul('116');break;
-          case "118" :  $resultatNID=montantCalcul('118');break;
-          case "6" :  $resultatNL6=montantCalcul('6');break;
-          case "7" :  $resultatNL7=montantCalcul('7');break;
-          case "131" :  $SubventionsD=montantCalcul('131');break;
-          case "135" :  $provisionsR=montantCalcul('135');break;
-          case "141" :  $empruntsO=montantCalcul('141');break;
-          case "148" :  $autresDF=montantCalcul('148');break;
-          case "151" :  $provisionsPR=montantCalcul('151');break;
-          case "155" :  $provisionsPC=montantCalcul('155');break;
-          case "171" :  $augmentationDCI=montantCalcul('171');break;
-          
-         
-          default : $default=$montant;break;
-      }
-      $capitauxPropres=0;
-      $CapitalSocialPersonnel=(-$aCapita+$cAppele);
-      $resultatNL=(-$resultatNL7-$resultatNL6);
-      $totalCP=$CapitalSocialPersonnel+$aCapita+$cAppele+$DVerse+$PrimeDFD+$EcartsR+$reserveL+$autresR+$resultatNID+$resultatNL;
-      $capitauxPA=$SubventionsD+ $provisionsR;
-      $dettesDF=$empruntsO+$autresDF;
-      $provisionsDPREC=$provisionsPR+$provisionsPC;
-    }else if($dateCreation==($anneeDebut-1)){
-      $numero_compte=$row['numero_compte'];
-      $montant=$row['montant'];
-      switch($numero_compte)
-      {
-        case "1119" : $aCapitaN1=montantCalcul('1119');break;
-        case "0" :  $cAppeleN1=montantCalcul('0');break;
-        case "0" :  $DVerseN1=montantCalcul('0');break;
-        case "112" :  $PrimeDFDN1=montantCalcul('112');break;
-        case "113" :  $EcartsRN1=montantCalcul('113');break;
-        case "114" :  $reserveLN1=montantCalcul('114');break;
-        case "115" :  $autresRN1=montantCalcul('155');break;
-        case "116" :  $ReportNN1=montantCalcul('116');break;
-        case "118" :  $resultatNIDN1=montantCalcul('118');break;
-        case "6" :  $resultatNL6N1=montantCalcul('6');break;
-        case "7" :  $resultatNL7N1=montantCalcul('7');break;
-        case "131" :  $SubventionsDN1=montantCalcul('131');break;
-        case "135" :  $provisionsRN1=montantCalcul('135');break;
-        case "141" :  $empruntsON1=montantCalcul('141');break;
-        case "148" :  $autresDFN1=montantCalcul('148');break;
-        case "151" :  $provisionsPRN1=montantCalcul('151');break;
-        case "155" :  $provisionsPCN1=montantCalcul('155');break;
-        case "171" :  $augmentationDCIN1=montantCalcul('171');break;
-        
-        default : $default=$montant;break;
-      }
-      $capitauxPropresN1=0;
-      $CapitalSocialPersonnelN1=(-$aCapitaN1+$cAppeleN1);
-      $resultatNLN1=(-$resultatNL7N1-$resultatNL6N1);
-      $totalCPN1=$CapitalSocialPersonnelN1+$aCapitaN1+$cAppeleN1+$DVerseN1+$PrimeDFDN1+$EcartsRN1+$reserveLN1+$autresRN1+$resultatNIDN1+$resultatNLN1;
-      $capitauxPAN1=$SubventionsDN1+ $provisionsRN1;
-      $dettesDFN1=$empruntsON1+$autresDFN1;
-      $provisionsDPRECN1=$provisionsPRN1+$provisionsPCN1;
-    }else if($dateCreation==($anneeDebut-2)){
-      $numero_compte=$row['numero_compte'];
-      $montant=$row['montant'];
-      switch($numero_compte)
-      {
-        case "1119" : $aCapitaN2=montantCalcul('1119');break;
-        case "0" :  $cAppeleN2=montantCalcul('0');break;
-        case "0" :  $DVerseN2=montantCalcul('0');break;
-        case "112" :  $PrimeDFDN2=montantCalcul('112');break;
-        case "113" :  $EcartsRN2=montantCalcul('113');break;
-        case "114" :  $reserveLN2=montantCalcul('114');break;
-        case "115" :  $autresRN2=montantCalcul('155');break;
-        case "116" :  $ReportNN2=montantCalcul('116');break;
-        case "118" :  $resultatNIDN2=montantCalcul('118');break;
-        case "6" :  $resultatNL6N2=montantCalcul('6');break;
-        case "7" :  $resultatNL7N2=montantCalcul('7');break;
-        case "131" :  $SubventionsDN2=montantCalcul('131');break;
-        case "135" :  $provisionsRN2=montantCalcul('135');break;
-        case "141" :  $empruntsON2=montantCalcul('141');break;
-        case "148" :  $autresDFN2=montantCalcul('148');break;
-        case "151" :  $provisionsPRN2=montantCalcul('151');break;
-        case "155" :  $provisionsPCN2=montantCalcul('155');break;
-        case "171" :  $augmentationDCIN2=montantCalcul('171');break;
-
-        default : $default=$montant;break;
-      }
-      $capitauxPropresN2=0;
-      $CapitalSocialPersonnelN2=(-$aCapitaN2+$cAppeleN2);
-      $resultatNLN2=(-$resultatNL7N2-$resultatNL6N2);
-      $totalCPN2=$CapitalSocialPersonnelN2+$aCapitaN2+$cAppeleN2+$DVerseN2+$PrimeDFDN2+$EcartsRN2+$reserveLN2+$autresRN2+$resultatNIDN2+$resultatNLN2;
-      $capitauxPAN2=$SubventionsDN2+ $provisionsRN2;
-      $dettesDFN2=$empruntsON2+$autresDFN2;
-      $provisionsDPRECN2=$provisionsPRN2+$provisionsPCN2;
-    } 
-
-
+    $numero_compte = $row['numero_compte'];
+    $montant = $row['montant']; 
+    switch ($numero_compte) {
+      case "1119":list($aCapita, $aCapitaN1, $aCapitaN2)=calculateMontant($dateCreation, $dateChoisis, $aCapita,$aCapitaN1, $aCapitaN2,'1119');break;
+      case "112":list($PrimeDFD, $PrimeDFDN1, $PrimeDFDN2)=calculateMontant($dateCreation, $dateChoisis, $PrimeDFD,$PrimeDFDN1, $PrimeDFDN2,'112');break;
+      case "113":list($EcartsR, $EcartsRN1, $EcartsRN2)=calculateMontant($dateCreation, $dateChoisis, $EcartsR,$EcartsRN1, $EcartsRN2,'113');break;
+      case "114":list($reserveL, $reserveLN1, $reserveLN2)=calculateMontant($dateCreation,$dateChoisis, $reserveL,$reserveLN1, $reserveLN2,'114');break;
+      case "115":list($autresR, $autresRN1, $autresRN2)=calculateMontant($dateCreation,$dateChoisis, $autresR,$autresRN1, $autresRN2,'115');break;
+      case "116":list($ReportN, $ReportNN1, $ReportNN2)=calculateMontant($dateCreation,$dateChoisis, $ReportN,$ReportNN1, $ReportNN2,'116');break;
+      case "118":list($resultatNID, $resultatNIDN1, $resultatNIDN2)=calculateMontant($dateCreation,$dateChoisis, $resultatNID,$resultatNIDN1, $resultatNIDN2,'118');break;
+      case "6":list($resultatNL6, $resultatNL6N1, $resultatNL6N2)=calculateMontant($dateCreation,$dateChoisis, $resultatNL6,$resultatNL6N1, $resultatNL6N2,'6');break;
+      case "7":list($resultatNL7, $resultatNL7N1, $resultatNL7N2)=calculateMontant($dateCreation,$dateChoisis, $resultatNL7,$resultatNL7N1, $resultatNL7N2,'7');break;
+      case "131":list($SubventionsD, $SubventionsDN1, $SubventionsDN2)=calculateMontant($dateCreation,$dateChoisis, $SubventionsD,$SubventionsDN1, $SubventionsDN2,'131');break;
+      case "135":list($provisionsR, $provisionsRN1, $provisionsRN2)=calculateMontant($dateCreation,$dateChoisis, $provisionsR,$provisionsRN1, $provisionsRN2,'135');break;
+      case "141":list($empruntsO, $empruntsON1, $empruntsON2)=calculateMontant($dateCreation,$dateChoisis, $empruntsO,$empruntsON1, $empruntsON2,'141');break;
+      case "148":list($autresDF, $autresDFN1, $autresDFN2)=calculateMontant($dateCreation,$dateChoisis, $autresDF,$autresDFN1, $autresDFN2,'148');break;
+      case "151":list($provisionsPR, $provisionsPRN1, $provisionsPRN2)=calculateMontant($dateCreation,$dateChoisis, $provisionsPR,$provisionsPRN1, $provisionsPRN2,'151');break;
+      case "155":list($autresP, $autresPN1, $autresPN2)=calculateMontant($dateCreation,$dateChoisis, $autresP,$autresPN1, $autresPN2,'155');break;
+      case "171" :list($augmentationDCI, $augmentationDCIN1, $augmentationDCIN2)=calculateMontant($dateCreation,$dateChoisis, $augmentationDCI,$augmentationDCIN1, $augmentationDCIN2,'171');break; 
+      case "172" :list($diminutionDF, $diminutionDFN1, $diminutionDFN2)=calculateMontant($dateCreation,$dateChoisis, $diminutionDF,$diminutionDFN1, $diminutionDFN2,'172');break; 
+      case "441" :list($fournisseursECR, $fournisseursECRN1, $fournisseursECRN2)=calculateMontant($dateCreation,$dateChoisis, $fournisseursECR,$fournisseursECRN1, $fournisseursECRN2,'441');break; 
+      case "442" :list($ClientsCAVA, $ClientsCAVAN1, $ClientsCAVAN2)=calculateMontant($dateCreation,$dateChoisis, $ClientsCAVA,$ClientsCAVAN1, $ClientsCAVAN2,'442');break;
+      case "443" :list($personnel, $personnelN1,$personnelN2)=calculateMontant($dateCreation,$dateChoisis, $personnel,$personnelN1, $personnelN2,'443');break;
+      case "444" :list($organismesS, $organismesSN1, $organismesSN2)=calculateMontant($dateCreation,$dateChoisis, $organismesS,$organismesSN1, $organismesSN2,'444');break;
+      case "445" :list($etat, $etatN1, $etatN2)=calculateMontant($dateCreation,$dateChoisis, $etat,$etatN1, $etatN2,'445');break;
+      case "446" :list($comptesD, $comptesDN1, $comptesDN2)=calculateMontant($dateCreation,$dateChoisis, $comptesD,$comptesDN1, $comptesDN2,'446');break;
+      case "448" :list($autresCr, $autresCrN1, $autresCrN2)=calculateMontant($dateCreation,$dateChoisis, $autresCr,$autresCrN1, $autresCrN2,'448');break;
+      case "449" :list($comptesDRP, $comptesDRPN1, $comptesDRPN2)=calculateMontant($dateCreation,$dateChoisis, $comptesDRP,$comptesDRPN1, $comptesDRPN2,'449');break;
+      case "45" :list($autresPPREC, $autresPPRECN1, $autresPPRECN2)=calculateMontant($dateCreation,$dateChoisis, $autresPPREC,$autresPPRECN1, $autresPPRECN2,'45');break;
+      case "47" :list($ecartsDCP, $ecartsDCPN1, $ecartsDCPN2)=calculateMontant($dateCreation,$dateChoisis,$ecartsDCP,$ecartsDCPN1,$ecartsDCPN2,'47');break;
+      case "552" :list($creditsDE, $creditsDEN1, $creditsDEN2)=calculateMontant($dateCreation,$dateChoisis,$creditsDE,$creditsDEN1,$creditsDEN2,'552');break;
+      case "553" :list($creditDT, $creditDTN1, $creditDTN2)=calculateMontant($dateCreation,$dateChoisis,$creditDT,$creditDTN1,$creditDTN2,'553');break;
+      case "554" :list($banquesSC, $banquesSCN1, $banquesSCN2)=calculateMontant($dateCreation,$dateChoisis,$banquesSC,$banquesSCN1,$banquesSCN2,'554');break;
+    }
+   // ----------------------> Exercice
+   $capitauxPropres=$CapitalSocialPersonnel+$aCapita+$cAppele+$DVerse+$PrimeDFD+$EcartsR+$reserveL+$autresR+$resultatNID+$resultatNL;
+   $CapitalSocialPersonnel=(-$aCapita+$cAppele);
+   $resultatNL=(-$resultatNL7-$resultatNL6);
+   $totalCP= $capitauxPropres;
+   $capitauxPA=$SubventionsD+ $provisionsR;
+   $dettesDF=$empruntsO+$autresDF;
+   $provisionsDPREC=$provisionsPR+$provisionsPC;
+   $ecartsDCP=$augmentationDCI+$diminutionDF;
+   $totalABCDE=$totalCP+$capitauxPA+$dettesDF+$provisionsDPREC+$ecartsDCP;
+   $dettesDPC=$fournisseursECR+$ClientsCAVA+$organismesS+$organismesS+$etat+$comptesD+$autresCr+$comptesDRP;
+   $totalFGH=$dettesDPC+$autresPPREC+$ecartsDCP;
+   $tresorerie=$creditsDE+$creditDT+$banquesSC;
+   $totalIII= $tresorerie;
+   $total_I_II_III= $totalABCDE+$totalFGH+$totalIII;
+   // ----------------------> Exercice Précédent
+   $capitauxPropresN1=$CapitalSocialPersonnelN1+$aCapitaN1+$cAppeleN1+$DVerseN1+$PrimeDFDN1+$EcartsRN1+$reserveLN1+$autresRN1+$resultatNIDN1+$resultatNLN1;
+   $CapitalSocialPersonnelN1=(-$aCapitaN1+$cAppeleN1);
+   $resultatNLN1=(-$resultatNL7N1-$resultatNL6N1);
+   $totalCPN1=$capitauxPropresN1;
+   $capitauxPAN1=$SubventionsDN1+ $provisionsRN1;
+   $dettesDFN1=$empruntsON1+$autresDFN1;
+   $provisionsDPRECN1=$provisionsPRN1+$provisionsPCN1;
+   $ecartsDCPN1=$augmentationDCIN1+$diminutionDFN1;
+   $totalABCDEN1=$totalCPN1+$capitauxPAN1+$dettesDFN1+$provisionsDPRECN1+$ecartsDCPN1;
+   $dettesDPCN1=$fournisseursECRN1+$ClientsCAVAN1+$organismesSN1+$organismesSN1+$etatN1+$comptesDN1+$autresCrN1+$comptesDRPN1;
+   $totalFGHN1=$dettesDPCN1+$autresPPRECN1+=$ecartsDCPN1;
+   $tresorerieN1=$creditsDEN1+$creditDTN1+$banquesSCN1;
+   $totalIIIN1=$tresorerieN1;
+   $total_I_II_IIIN1=$totalABCDEN1+$totalFGHN1+$totalIIIN1;
+   // ----------------------> Exercice N-2
+   $capitauxPropresN2=$CapitalSocialPersonnelN2+$aCapitaN2+$cAppeleN2+$DVerseN2+$PrimeDFDN2+$EcartsRN2+$reserveLN2+$autresRN2+$resultatNIDN2+$resultatNLN2;
+   $CapitalSocialPersonnelN2=(-$aCapitaN2+$cAppeleN2);
+   $resultatNLN2=(-$resultatNL7N2-$resultatNL6N2);
+   $totalCPN2= $capitauxPropresN2;
+   $capitauxPAN2=$SubventionsDN2+ $provisionsRN2;
+   $dettesDFN2=$empruntsON2+$autresDFN2;
+   $provisionsDPRECN2=$provisionsPRN2+$provisionsPCN2;
+   $ecartsDCPN2=$augmentationDCIN2+$diminutionDFN2;
+   $totalABCDEN2=$totalCPN2+$capitauxPAN2+$dettesDFN2+$provisionsDPRECN2+$ecartsDCPN2;
+   $dettesDPCN2=$fournisseursECRN2+$ClientsCAVAN2+$organismesSN2+$organismesSN2+$etatN2+$comptesDN2+$autresCrN2+$comptesDRPN2;
+   $totalFGHN2=$dettesDPCN2+$autresPPRECN2+=$ecartsDCPN2;
+   $tresorerieN2=$creditsDEN2+$creditDTN2+$banquesSCN2;
+   $totalIIIN2=$tresorerieN2;
+   $total_I_II_IIIN2=$totalABCDEN2+$totalFGHN2+$totalIIIN2;
   }
-  
-  
-  
-
-   
-
-  
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -424,56 +387,53 @@
             <td class="column6 style81 null"></td>
           </tr>
           <tr class="row2">
-            <td class="column0 style80 null style79" colspan="3"></td>
+            <!-- <td class="column0 style80 null style79" colspan="3"></td> !-->
+            <td class="column0 style80 null style79" ></td>
             <td class="column3 style78 s">Exercice</td>
             <td class="column4 style77 s">Exercice Précédent</td>
-            <td class="column5 style15 null"></td>
             <td class="column6 style76 s">Exercice N-2</td>
           </tr>
           <tr class="row3">
             <td class="column0 style47 s">CAPITAUX PROPRES</td>
-            <td class="column1 style75 null"></td>
-            <td class="column2 style74 null"></td>
+           
             <td class="column3 style53 null"><?php readMontant(($capitauxPropres*-1*-1))?></td>
             <td class="column4 style52 null"><?php readMontant(($capitauxPropresN1*-1*-1))?></td>
-            <td class="column5 style8 null"></td>
+           
             <td class="column6 style51 null"><?php readMontant(($capitauxPropresN2*-1*-1))?></td>
           </tr>
           <tr class="row4">
             <td class="column0 style59 s">Capital social ou personnel (1)</td>
-            <td class="column1 style58 null"></td>
-            <td class="column2 style57 null"></td>
+            
             <td class="column3 style50 null"><?php readMontant(($CapitalSocialPersonnel*-1*-1))?></td>
             <td class="column4 style22 null"><?php readMontant(($CapitalSocialPersonnelN1*-1*-1))?></td>
-            <td class="column5 style15 null"></td>
+            
             <td class="column6 style21 null"><?php readMontant(($CapitalSocialPersonnelN2*-1*-1))?></td>
           </tr>
           <tr class="row5">
             <td class="column0 style26 s">moins : Actionnaires, capital souscrit non appelé    dont versé</td>
-            <td class="column1 style25 null"></td>
-            <td class="column2 style24 null"></td>
+            
             <td class="column3 style23 null"><?php readMontant(($aCapita*-1*-1))?></td>
             <td class="column4 style22 null"><?php readMontant(($aCapitaN1*-1*-1))?></td>
-            <td class="column5 style15 null"></td>
+            
             <td class="column6 style21 null"><?php readMontant(($aCapitaN2*-1*-1))?></td>
           </tr>
           <tr class="row6">
             <td class="column0 style26 s">Moins : Capital appelé </td>
             <td class="column1 style25 null"></td>
             <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"><?php readMontant(($cAppele*-1*-1))?></td>
-            <td class="column4 style22 null"><?php readMontant(($cAppeleN1*-1*-1))?></td>
+            <td class="column3 style23 null"></td>
+            <td class="column4 style22 null"></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"><?php readMontant(($cAppeleN2*-1*-1))?></td>
+            <td class="column6 style21 null"></td>
           </tr>
           <tr class="row7">
             <td class="column0 style26 s">Moins : Dont versé </td>
             <td class="column1 style25 null"></td>
             <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"><?php readMontant(($DVerse*-1*-1))?></td>
-            <td class="column4 style22 null"><?php readMontant(($DVerseN1*-1*-1))?></td>
+            <td class="column3 style23 null"></td>
+            <td class="column4 style22 null"></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"><?php readMontant(($DVerseN2*-1*-1))?></td>
+            <td class="column6 style21 null"></td>
           </tr>
           <tr class="row8">
             <td class="column0 style26 s">Prime d'emission, de fusion, d'apport</td>
@@ -650,10 +610,10 @@
             <td class="column0 style41 s">ECARTS DE CONVERSION - PASSIF ( e )</td>
             <td class="column1 style40 null"></td>
             <td class="column2 style39 null"></td>
-            <td class="column3 style32 null"></td>
-            <td class="column4 style31 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($ecartsDCP*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($ecartsDCPN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style30 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($ecartsDCPN2*-1*-1))?></td>
           </tr>
           <tr class="row28">
             <td class="column0 style59 s">Augmentation des créances immobilisées</td>
@@ -668,181 +628,181 @@
             <td class="column0 style20 s">Diminution des dettes de financement</td>
             <td class="column1 style19 null"></td>
             <td class="column2 style18 null"></td>
-            <td class="column3 style17 null"></td>
-            <td class="column4 style16 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($diminutionDF*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($diminutionDFN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style14 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($diminutionDFN2*-1*-1))?></td>
           </tr>
           <tr class="row30">
             <td class="column0 style13 s">TOTAL  I  ( a + b + c + d + e )</td>
             <td class="column1 style12 null"></td>
             <td class="column2 style11 null"></td>
-            <td class="column3 style38 null"></td>
-            <td class="column4 style37 null"></td>
-            <td class="column5 style8 null"></td>
-            <td class="column6 style36 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($totalABCDE*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($totalABCDEN1*-1*-1))?></td>
+            <td class="column5 style15 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($totalABCDEN2*-1*-1))?></td>
           </tr>
           <tr class="row31">
             <td class="column0 style56 s">DETTES DU PASSIF CIRCULANT ( f )</td>
             <td class="column1 style55 null"></td>
             <td class="column2 style54 null"></td>
-            <td class="column3 style53 null"></td>
-            <td class="column4 style52 null"></td>
-            <td class="column5 style8 null"></td>
-            <td class="column6 style51 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($dettesDPC*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($dettesDPCN1*-1*-1))?></td>
+            <td class="column5 style15 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($dettesDPCN2*-1*-1))?></td>
           </tr>
           <tr class="row32">
             <td class="column0 style29 s">Fournisseurs et comptes rattachés</td>
             <td class="column1 style28 null"></td>
             <td class="column2 style27 null"></td>
-            <td class="column3 style50 null"></td>
-            <td class="column4 style49 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($fournisseursECR*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($fournisseursECRN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style48 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($fournisseursECRN2*-1*-1))?></td>
           </tr>
           <tr class="row33">
             <td class="column0 style26 s">Clients créditeurs, avances et acomptes</td>
             <td class="column1 style25 null"></td>
             <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($ClientsCAVA*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($ClientsCAVAN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($ClientsCAVAN2*-1*-1))?></td>
           </tr>
           <tr class="row34">
             <td class="column0 style26 s">Personnel</td>
             <td class="column1 style25 null"></td>
             <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($personnel*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($personnelN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($personnelN2*-1*-1))?></td>
           </tr>
           <tr class="row35">
             <td class="column0 style26 s">Organismes sociaux</td>
             <td class="column1 style25 null"></td>
             <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($organismesS*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($organismesSN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($organismesSN2*-1*-1))?></td>
           </tr>
           <tr class="row36">
             <td class="column0 style26 s">Etat</td>
             <td class="column1 style25 null"></td>
             <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($etat*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($etatN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($etatN2*-1*-1))?></td>
           </tr>
           <tr class="row37">
             <td class="column0 style26 s">Comptes d'associés</td>
             <td class="column1 style25 null"></td>
             <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($comptesD*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($comptesDN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($comptesDN2*-1*-1))?></td>
           </tr>
           <tr class="row38">
             <td class="column0 style26 s">Autres créanciers</td>
             <td class="column1 style25 null"></td>
             <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($autresCr*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($autresCrN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($autresCrN2*-1*-1))?></td> 
           </tr>
           <tr class="row39">
             <td class="column0 style20 s">Comptes de regularisation - passif</td>
             <td class="column1 style19 null"></td>
             <td class="column2 style18 null"></td>
-            <td class="column3 style17 null"></td>
-            <td class="column4 style16 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($comptesDRP*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($comptesDRPN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style14 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($comptesDRPN2*-1*-1))?></td> 
           </tr>
           <tr class="row40">
             <td class="column0 style47 s">AUTRES PROVISIONS POUR RISQUES ET CHARGES ( g )</td>
             <td class="column1 style46 null"></td>
             <td class="column2 style45 null"></td>
-            <td class="column3 style44 null"></td>
-            <td class="column4 style43 null"></td>
-            <td class="column5 style8 null"></td>
-            <td class="column6 style42 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($autresPPREC*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($autresPPRECN1*-1*-1))?></td>
+            <td class="column5 style15 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($autresPPRECN2*-1*-1))?></td> 
           </tr>
           <tr class="row41">
             <td class="column0 style41 s">ECARTS DE CONVERSION - PASSIF ( h )<span style="color:#000000; font-family:'Calibri'; font-size:10pt"> (Elem. Circul.)</span></td>
             <td class="column1 style40 null"></td>
             <td class="column2 style39 null"></td>
-            <td class="column3 style32 null"></td>
-            <td class="column4 style31 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($ecartsDCP*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($ecartsDCPN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style30 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($ecartsDCPN2*-1*-1))?></td> 
           </tr>
           <tr class="row42">
             <td class="column0 style13 s">TOTAL  II  ( f + g + h )</td>
             <td class="column1 style12 null"></td>
             <td class="column2 style11 null"></td>
-            <td class="column3 style38 null"></td>
-            <td class="column4 style37 null"></td>
-            <td class="column5 style8 null"></td>
-            <td class="column6 style36 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($totalFGH*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($totalFGHN1*-1*-1))?></td>
+            <td class="column5 style15 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($totalFGHN2*-1*-1))?></td> 
           </tr>
           <tr class="row43">
             <td class="column0 style35 s">TRESORERIE PASSIF</td>
             <td class="column1 style34 null"></td>
             <td class="column2 style33 null"></td>
-            <td class="column3 style32 null"></td>
-            <td class="column4 style31 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($tresorerie*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($tresorerieN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style30 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($tresorerieN2*-1*-1))?></td> 
           </tr>
           <tr class="row44">
             <td class="column0 style29 s">Crédits d'escompte</td>
             <td class="column1 style28 null"></td>
             <td class="column2 style27 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($creditsDE*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($creditsDEN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($creditsDEN2*-1*-1))?></td> 
           </tr>
           <tr class="row45">
             <td class="column0 style26 s">Crédit de trésorerie</td>
             <td class="column1 style25 null"></td>
             <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($creditDT*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($creditDTN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($creditDTN2*-1*-1))?></td> 
           </tr>
           <tr class="row46">
             <td class="column0 style20 s">Banques ( soldes créditeurs )</td>
             <td class="column1 style19 null"></td>
             <td class="column2 style18 null"></td>
-            <td class="column3 style17 null"></td>
-            <td class="column4 style16 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($banquesSC*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($banquesSCN1*-1*-1))?></td>
             <td class="column5 style15 null"></td>
-            <td class="column6 style14 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($banquesSCN2*-1*-1))?></td> 
           </tr>
           <tr class="row47">
             <td class="column0 style13 s">TOTAL  III</td>
             <td class="column1 style12 null"></td>
             <td class="column2 style11 null"></td>
-            <td class="column3 style10 null"></td>
-            <td class="column4 style9 null"></td>
-            <td class="column5 style8 null"></td>
-            <td class="column6 style7 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($totalIII*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($totalIIIN1*-1*-1))?></td>
+            <td class="column5 style15 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($totalIIIN2*-1*-1))?></td> 
           </tr>
           <tr class="row48">
             <td class="column0 style6 s">TOTAL   I+II+III</td>
             <td class="column1 style6 null"></td>
             <td class="column2 style5 null"></td>
-            <td class="column3 style4 null"></td>
-            <td class="column4 style3 null"></td>
-            <td class="column5 style2 null"></td>
-            <td class="column6 style1 null"></td>
+            <td class="column3 style23 null"><?php readMontant(($total_I_II_III*-1*-1))?></td>
+            <td class="column4 style22 null"><?php readMontant(($total_I_II_IIIN1*-1*-1))?></td>
+            <td class="column5 style15 null"></td>
+            <td class="column6 style21 null"><?php readMontant(($total_I_II_IIIN2*-1*-1))?></td> 
           </tr>
         </tbody>
     </table>

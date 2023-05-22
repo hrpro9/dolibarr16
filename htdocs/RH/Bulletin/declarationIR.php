@@ -416,7 +416,9 @@
             $refTaux = $dom->createElement('refTaux');
             $PersonnelPermanent->appendChild($refTaux);
             // Create a code element
-            $code = $dom->createElement('code',' ');
+            $paramfraispro = $TtMtRevenuBrutImposablePP <= 78000 ? 35 : 25;
+            $codefrais=($paramfraispro==35)?'TPP.35.2009':'TPP.25.2009';
+            $code = $dom->createElement('code',$codefrais);
             $refTaux->appendChild($code);
             // Create a listElementsExonere element
             if(!empty($listElementsExonere))
