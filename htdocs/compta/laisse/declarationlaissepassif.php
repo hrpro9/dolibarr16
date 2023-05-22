@@ -372,7 +372,7 @@
         <col class="col5">
         <col class="col6">
         <tbody style="text-align: center;">
-          <tr class="row0">
+        <tr class="row0">
             <td class="column0 style86 s style85" colspan="5">BILAN - PASSIF</td>
             <td class="column5 style84 null"></td>
             <td class="column6 style84 null"></td>
@@ -387,34 +387,37 @@
             <td class="column6 style81 null"></td>
           </tr>
           <tr class="row2">
-            <!-- <td class="column0 style80 null style79" colspan="3"></td> !-->
-            <td class="column0 style80 null style79" ></td>
+            <td class="column0 style80 null style79" colspan="3"></td>
             <td class="column3 style78 s">Exercice</td>
             <td class="column4 style77 s">Exercice Précédent</td>
+            <td class="column5 style15 null"></td>
             <td class="column6 style76 s">Exercice N-2</td>
           </tr>
           <tr class="row3">
             <td class="column0 style47 s">CAPITAUX PROPRES</td>
-           
+            <td class="column1 style75 null"></td>
+            <td class="column2 style74 null"></td>
             <td class="column3 style53 null"><?php readMontant(($capitauxPropres*-1*-1))?></td>
             <td class="column4 style52 null"><?php readMontant(($capitauxPropresN1*-1*-1))?></td>
-           
+            <td class="column5 style8 null"></td>
             <td class="column6 style51 null"><?php readMontant(($capitauxPropresN2*-1*-1))?></td>
           </tr>
           <tr class="row4">
             <td class="column0 style59 s">Capital social ou personnel (1)</td>
-            
+            <td class="column1 style58 null"></td>
+            <td class="column2 style57 null"></td>
             <td class="column3 style50 null"><?php readMontant(($CapitalSocialPersonnel*-1*-1))?></td>
             <td class="column4 style22 null"><?php readMontant(($CapitalSocialPersonnelN1*-1*-1))?></td>
-            
+            <td class="column5 style15 null"></td>
             <td class="column6 style21 null"><?php readMontant(($CapitalSocialPersonnelN2*-1*-1))?></td>
           </tr>
           <tr class="row5">
             <td class="column0 style26 s">moins : Actionnaires, capital souscrit non appelé    dont versé</td>
-            
+            <td class="column1 style25 null"></td>
+            <td class="column2 style24 null"></td>
             <td class="column3 style23 null"><?php readMontant(($aCapita*-1*-1))?></td>
             <td class="column4 style22 null"><?php readMontant(($aCapitaN1*-1*-1))?></td>
-            
+            <td class="column5 style15 null"></td>
             <td class="column6 style21 null"><?php readMontant(($aCapitaN2*-1*-1))?></td>
           </tr>
           <tr class="row6">
