@@ -1,5 +1,8 @@
 <?php
  // Load Dolibarr environment
+
+use Stripe\Terminal\Location;
+
  require '../../main.inc.php';
  require_once '../../vendor/autoload.php';
  require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
@@ -9,10 +12,11 @@
 
  if(isset($_POST['ajouter']))
  {
-    $annee_select=$_POST['annee_select'];
+
+   
     $a=0;
     
-  
+    $annee=$_POST['annee'];
     $janv=$_POST['janv'];
     $fevr=$_POST['fevr'];
     $mars=$_POST['mars'];
@@ -30,41 +34,96 @@
     // Assuming you have a database connection established
 
     // Check if record with the same year exists
-    $yearExistsQuery = "SELECT annee FROM llx_objectif_annuel WHERE annee = '$annee_select'";
-    $result = $db->query($yearExistsQuery);  
-    if (mysqli_num_rows($result) > 0) {
-        // Year already exists, handle the error or take appropriate action
-        print '
-        <div class="alert" style="background-color: #f8d7da;border: 1px solid #f5c6cb;padding: 10px; color: #721c24;width:180px;">cette mois exist deja.</div>
-            ';
-    } else {
-    // Insert the new record
-    $insertQuery = "INSERT INTO llx_objectif_annuel (janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre, total, annee) 
-                    VALUES ('$janv', '$fevr', '$mars', '$avril', '$mai', '$juin', '$juillet', '$aout', '$septembre', '$octobre', '$novembre', '$decembre', '$toal', '$annee_select')";
-     $res = $db->query($insertQuery);
+
+    if(isset($_GET['id'])){
+
+      
+        $id=$_POST['id'];
+
+       
+     
+
+        $pdo_sql = "UPDATE llx_objectif_annuel SET janvier='$janv', février='$fevr', mars='$mars', avril='$avril',
+                    mai='$mai', juin='$juin', juillet='$juillet', août='$aout', septembre='$septembre', octobre='$octobre',
+                    novembre='$novembre', décembre='$decembre', total='$toal', annee= '$annee' WHERE id=$id";
+        $result = $db->query($pdo_sql);
+
+       /*
+
+        if (isset($result) ) {
+            header("location:saiseobjet.php");
+        } */
+
+        
+        
+        
+       
+    }
+    else{
+
+        $annee_select=$_POST['annee_select'];
+
+        $yearExistsQuery = "SELECT annee FROM llx_objectif_annuel WHERE annee = '$annee_select'";
+        $result = $db->query($yearExistsQuery);  
+        if (mysqli_num_rows($result) > 0) {
+            // Year already exists, handle the error or take appropriate action
+            print '
+            <div class="alert" style="background-color: #f8d7da;border: 1px solid #f5c6cb;padding: 10px; color: #721c24;width:180px;">cette annee exist deja.</div>
+                ';
+        } else {
+    
+        // Insert the new record
+        $insertQuery = "INSERT INTO llx_objectif_annuel (janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre, total, annee) 
+                        VALUES ('$janv', '$fevr', '$mars', '$avril', '$mai', '$juin', '$juillet', '$aout', '$septembre', '$octobre', '$novembre', '$decembre', '$toal', '$annee_select')";
+         $res = $db->query($insertQuery);
+    
+        }
+    
+
     }
 
 
-
-   
-
-
+  
  }
+
+
+
+    if (isset($_GET['id'])) {
+        $id = $_GET['id'];
+        $pdo_sql = "SELECT * FROM llx_objectif_annuel WHERE id=$id";
+        $result = $db->query($pdo_sql);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $annee = $row['annee'];
+            $janv = $row['janvier'];
+            $fevr = $row['février'];
+            $mars = $row['mars'];
+            $avril=$row['avril'];
+            $mai=$row['mai'];
+            $juin=$row['juin'];
+            $juillet=$row['juillet'];
+            $août=$row['août'];
+            $septembre=$row['septembre'];
+            $octobre=$row['octobre'];
+            $novembre=$row['novembre'];
+            $décembre=$row['décembre'];
+        }
+    }
+
+
+   // action="saiseobjet.php?<?php if(isset($_GET['id'])){echo"id=update";}?
+  
+
 
   function affichageAnnees(){
     $anneeDebut = date('Y');
     $anneeFin =date('Y')+1;
 
     for ($annee = $anneeDebut; $annee <= $anneeFin; $annee++) {  
-      echo '<option value="' . $annee . '"> Année chargé :  ' . $annee . '</option>';
+      echo '<option value="' . $annee . '"> ' . $annee . '</option>';
     }
 
   }
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -108,9 +167,27 @@
 
 
     <h1>Saisie objet Annuel</h1>
-    <form action="<?php $_SERVER["PHP_SELF"]?>" method="post">
-    <select name="annee_select"><?php affichageAnnees()?></select>
-    <table id="customers">
+
+   
+
+
+    <form  method="post" >
+    <?php
+
+            if (isset($_GET['id'])) 
+            {
+                echo '<input type="text" min="0" step="any" name="v" id="mai" readonly oninput="sumValues()" value="' . (isset($annee) ? 'annee modifier : '.$annee : '') . '">';
+              
+            }else{
+              ?>
+                <select name="annee_select" required>
+                <option value="" > Année choisi : </option>
+                   <?php affichageAnnees() ?>
+                </select><?php
+            }
+        ?>
+   
+    <table id="customers" >
         <tr>        
             <th>Janvier</th>
             <th>Février</th>
@@ -126,30 +203,100 @@
             <th>Décembre</th>
         </tr>
         <tr>
-          
-            <td><input type="text" min="0" step="any" name="janv" id="janv" oninput="sumValues()" value="0"></td>
-            <td><input type="text" min="0" step="any" name="fevr" id="fevr" oninput="sumValues()" value="0"></td>
-            <td><input type="text" min="0" step="any" name="mars" id="mars" oninput="sumValues()" value="0"></td>
-            <td><input type="text" min="0" step="any" name="avril" id="avril" oninput="sumValues()" value="0"></td>
-            <td><input type="text" min="0" step="any" name="mai" id="mai" oninput="sumValues()"></td>
-            <td><input type="text" min="0" step="any" name="juin" id="juin" oninput="sumValues()"></td>
-            <td><input type="text" min="0" step="any" name="juillet" id="juillet" oninput="sumValues()"></td>
-            <td><input type="text" min="0" step="any" name="aout" id="aout" oninput="sumValues()"></td>
-            <td><input type="text" min="0" step="any" name="septembre" id="septembre" oninput="sumValues()"></td>
-            <td><input type="text" min="0" step="any" name="octobre" id="octobre" oninput="sumValues()"></td>
-            <td><input type="text" min="0" step="any" name="novembre" id="novembre" oninput="sumValues()"></td>
-            <td><input type="text" min="0" step="any" name="decembre" id="decembre" oninput="sumValues()"></td>
+            <input type="hidden" name="id" value="<?php echo isset($_GET['id']) ? $_GET['id'] : ''; ?>">
+            <input type="hidden" name="annee" value="<?php echo isset($annee) ? $annee : ''; ?>">
+            <?php
+            if (isset($_GET['id'])) 
+            {
+                if (01>=date('m') || $annee>date('Y') ){echo '<td><input type="text" min="0" step="any" name="janv" id="janv"  oninput="sumValues()" value="' . (isset($janv) ? $janv : '') . '"></td>'; }
+                else{echo '<td><input type="text" min="0" step="any" name="janv" id="janv" readonly oninput="sumValues()" value="' . (isset($janv) ? $janv : '') . '"></td>'; }
+                if (02>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="fevr" id="fevr" oninput="sumValues()" value="' . (isset($fevr) ? $fevr : '') . '"></td>';  }
+                else{  echo '<td><input type="text" min="0" step="any" name="fevr" id="fevr" readonly oninput="sumValues()" value="' . (isset($fevr) ? $fevr : '') . '"></td>'; }
+                if (03>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="mars" id="mars" oninput="sumValues()" value="' . (isset($mars) ? $mars : '') . '"></td>';  }
+                else{  echo '<td><input type="text" min="0" step="any" name="mars" id="mars" readonly oninput="sumValues()" value="' . (isset($mars) ? $mars : '') . '"></td>'; }
+                if (04>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="avril" id="avril" oninput="sumValues()" value="' . (isset($avril) ? $avril : '') . '"></td>';}
+                else{ echo '<td><input type="text" min="0" step="any" name="avril" id="avril" readonly oninput="sumValues()" value="' . (isset($avril) ? $avril : '') . '"></td>';}
+                if (05>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="mai" id="mai" oninput="sumValues()" value="' . (isset($mai) ? $mai : '') . '"></td>';}
+                else{ echo '<td><input type="text" min="0" step="any" name="mai" id="mai" readonly oninput="sumValues()" value="' . (isset($mai) ? $mai : '') . '"></td>';}
+                if (06>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="juin" id="juin" oninput="sumValues()" value="' . (isset($juin) ? $juin : '') . '"></td>';}
+                else{ echo '<td><input type="text" min="0" step="any" name="juin" id="juin" readonly oninput="sumValues()" value="' . (isset($juin) ? $juin : '') . '"></td>';}
+                if (07>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="juillet" id="juillet" oninput="sumValues()" value="' . (isset($juillet) ? $juillet : '') . '"></td>';}
+                else{ echo '<td><input type="text" min="0" step="any" name="juillet" id="juillet" readonly oninput="sumValues()" value="' . (isset($juillet) ? $juillet : '') . '"></td>';}
+                if (date('m') <= 8 || $annee > date('Y')) {
+                    echo '<td><input type="text" min="0" step="any" name="aout" id="aout" oninput="sumValues()" value="' . (isset($août) ? $août : '') . '"></td>';
+                } else {
+                    echo '<td><input type="text" min="0" step="any" name="aout" id="aout" readonly oninput="sumValues()" value="' . (isset($août) ? $août : '') . '"></td>';
+                }
+                if (date('m') <= 9 || $annee > date('Y')) {
+                    echo '<td><input type="text" min="0" step="any" name="septembre" id="septembre" oninput="sumValues()" value="' . (isset($septembre) ? $septembre : '') . '"></td>';
+                } else {
+                    echo '<td><input type="text" min="0" step="any" name="septembre" id="septembre" readonly oninput="sumValues()" value="' . (isset($septembre) ? $septembre : '') . '"></td>';
+                }
+                if (date('m') <= 10 || $annee > date('Y')) {
+                    echo '<td><input type="text" min="0" step="any" name="octobre" id="octobre" oninput="sumValues()" value="' . (isset($octobre) ? $octobre : '') . '"></td>';
+                } else {
+                    echo '<td><input type="text" min="0" step="any" name="octobre" id="octobre" readonly oninput="sumValues()" value="' . (isset($octobre) ? $octobre : '') . '"></td>';
+                }
+                if (date('m') <= 11 || $annee > date('Y')) {
+                    echo '<td><input type="text" min="0" step="any" name="novembre" id="novembre" oninput="sumValues()" value="' . (isset($novembre) ? $novembre : '') . '"></td>';
+                } else {
+                    echo '<td><input type="text" min="0" step="any" name="novembre" id="novembre" readonly oninput="sumValues()" value="' . (isset($novembre) ? $novembre : '') . '"></td>';
+                }
+                if (date('m') <= 12 || $annee > date('Y')) {
+                    echo '<td><input type="text" min="0" step="any" name="decembre" id="decembre" oninput="sumValues()" value="' . (isset($décembre) ? $décembre : '') . '"></td>';
+                } else {
+                    echo '<td><input type="text" min="0" step="any" name="decembre" id="decembre" readonly oninput="sumValues()" value="' . (isset($décembre) ? $décembre : '') . '"></td>';
+                }
+            /*    if (08>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="août" id="août" oninput="sumValues()" value="' . (isset($août) ? $août : '') . '"></td>';}
+                else{ echo '<td><input type="text" min="0" step="any" name="août" id="août" readonly oninput="sumValues()" value="' . (isset($août) ? $août : '') . '"></td>';}
+                if (09>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="septembre" id="septembre" oninput="sumValues()" value="' . (isset($septembre) ? $septembre : '') . '"></td>';}
+                else{ echo '<td><input type="text" min="0" step="any" name="septembre" id="septembre" readonly oninput="sumValues()" value="' . (isset($septembre) ? $septembre : '') . '"></td>';}
+                if (10>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="octobre" id="octobre" oninput="sumValues()" value="' . (isset($octobre) ? $octobre : '') . '"></td>';}
+                else{ echo '<td><input type="text" min="0" step="any" name="octobre" id="octobre" readonly oninput="sumValues()" value="' . (isset($octobre) ? $octobre : '') . '"></td>';}
+                if (11>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="novembre" id="novembre" oninput="sumValues()" value="' . (isset($novembre) ? $novembre : '') . '"></td>';}
+                else{ echo '<td><input type="text" min="0" step="any" name="novembre" id="novembre" readonly oninput="sumValues()" value="' . (isset($novembre) ? $novembre : '') . '"></td>';}
+                if (12>=date('m') || $annee>date('Y') ){ echo '<td><input type="text" min="0" step="any" name="décembre" id="décembre" oninput="sumValues()" value="' . (isset($décembre) ? $décembre : '') . '"></td>';}
+                else{ echo '<td><input type="text" min="0" step="any" name="décembre" id="décembre" readonly oninput="sumValues()" value="' . (isset($décembre) ? $décembre : '') . '"></td>';}*/
+            }else{
+                echo '<td><input type="text" min="0" step="any" name="janv" id="janv" oninput="sumValues()" value="' . (isset($janv) ? $janv : '') . '"></td>'; 
+                echo '<td><input type="text" min="0" step="any" name="fevr" id="fevr" oninput="sumValues()" value="' . (isset($fevr) ? $fevr : '') . '"></td>'; 
+                echo '<td><input type="text" min="0" step="any" name="mars" id="mars" oninput="sumValues()" value="' . (isset($mars) ? $mars : '') . '"></td>'; 
+                echo '<td><input type="text" min="0" step="any" name="avril" id="avril" oninput="sumValues()" value="' . (isset($avril) ? $avril : '') . '"></td>';
+                echo '<td><input type="text" min="0" step="any" name="mai" id="mai" oninput="sumValues()" value="' . (isset($mai) ? $mai : '') . '"></td>'; 
+                echo '<td><input type="text" min="0" step="any" name="juin" id="juin" oninput="sumValues()" value="' . (isset($juin) ? $juin : '') . '"></td>'; 
+                echo '<td><input type="text" min="0" step="any" name="juillet" id="juillet" oninput="sumValues()" value="' . (isset($juillet) ? $juillet : '') . '"></td>'; 
+                echo '<td><input type="text" min="0" step="any" name="août" id="août" oninput="sumValues()" value="' . (isset($août) ? $août : '') . '"></td>'; 
+                echo '<td><input type="text" min="0" step="any" name="septembre" id="septembre" oninput="sumValues()" value="' . (isset($septembre) ? $septembre : '') . '"></td>'; 
+                echo '<td><input type="text" min="0" step="any" name="octobre" id="octobre" oninput="sumValues()" value="' . (isset($octobre) ? $octobre : '') . '"></td>'; 
+                echo '<td><input type="text" min="0" step="any" name="novembre" id="novembre" oninput="sumValues()" value="' . (isset($novembre) ? $novembre : '') . '"></td>';
+                echo '<td><input type="text" min="0" step="any" name="janv" id="janv" oninput="sumValues()" value="' . (isset($décembre) ? $décembre : '') . '"></td>';
+            }
+           
+           
+           
+           
+           ?>
+           
+       
            
         </tr>
     </table>
     <p id="result"></p>
-    <input type="submit" name="ajouter" value="Ajouter" style="background: rgb(38,60,92);padding: 8px 15px 8px 15px;border: none;color: #fff;" />
-   
-   
-   
+
+    <button type="submit" name="ajouter"  style="background: rgb(38,60,92);padding: 8px 15px 8px 15px;border: none;color: #fff;" >
+    <?php
+
+    if (isset($_GET['id'])) 
+    {
+        echo 'modifier';
+    }else{
+        echo "ajouter";
+    }
+    ?>
+ 
+    </button>
+
 </form>
-
-
 
 <script>
     function sumValues() {
@@ -168,16 +315,11 @@
         var sum = janv + fevr + mars + avril + mai + juin + juillet + aout + septembre + octobre + novembre + decembre;
        document.getElementById("result").textContent = "Total mois : " + sum ;
     }
- 
 </script>
 
 
 
-
-
-
-<form action="<?php $_SERVER["PHP_SELF"]?>" method="post" style="margin-top: 50px;" >
-<h2>List objet Annuel</h2>
+<h2>Liste objet Annuel</h2>
     <table id="customers" >
         <tr>        
         <th>annee</th>
@@ -200,26 +342,29 @@
                            $anneenow = date('Y');
                            $sql = "SELECT *  FROM llx_objectif_annuel WHERE annee>=$anneenow  ";
                            $rest = $db->query($sql);
-                           
+                       
                            foreach ($rest as $row) {
+                          
+                            $id=$row['id'];
                            ?>
                                <tr>
-                                   <th scope="row">
-                                    
-                                       <?= $row['annee'] ?>
+                                   <th scope="row"> 
+                                 
+                                    <?= $row['annee'] ?>
                                    </th>
                                   
                                    <td>
-                                       <?= $row['janvier'] ?>
+                                   <?= $row['janvier'] ?>
+                                  
                                    </td>
                                    <td>
-                                       <?= $row['février'] ?>
+                                   <?= $row['février'] ?>
                                    </td>
                                    <td>
-                                       <?= $row['mars'] ?>
+                                   <?= $row['mars'] ?>
                                    </td>
                                    <td>
-                                       <?= $row['avril'];  ?>
+                                   <?= $row['avril'];  ?>
                                    </td>
                                    <td>
                                    <?= $row['mai'] ?>
@@ -249,7 +394,10 @@
                                    <?= $row['total'] ?>
                                    </td>
                                    <td>
-                                   <input type="submit" name="update" value="Update" style="background: #04AA6D;padding: 8px 15px 8px 15px;border: none;color: #fff;" />
+
+                                    <a href="saiseobjet.php?id=<?=$id?>"  > <input type="button"  value="modifier" style="background: #04AA6D;padding: 8px 15px 8px 15px;border: none;color: #fff;" /></a>
+                                  
+                                  
                                    </td>
                                </tr>
                            <?php
@@ -318,7 +466,7 @@
    
    
   
-</form>
+
 
 
 
