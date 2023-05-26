@@ -998,7 +998,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// 	print '</td></tr>';
 	// }
 
-	// // Categories
+	// Categories 
 	// if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 	// 	print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td><td>';
 	// 	$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
@@ -2048,7 +2048,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// print '</td>';
 			// print '</tr>';
 
-			// Categories
+		//	Categories
 			// if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			// 	print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 			// 	print '<td>';

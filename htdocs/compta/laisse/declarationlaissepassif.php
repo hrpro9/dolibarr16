@@ -6,7 +6,63 @@
   require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
   require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
   require_once 'functionDeclarationLaisse.php';
+
+
+  $object = new User($db);
+  $id=$user->id;
+  
+  function GenerateDocuments()
+{
+    global $day, $month, $year, $start, $prev_year;
+    print '<form id="frmgen" name="builddoc" method="post">';
+    print '<input type="hidden" name="token" value="' . newToken() . '">';
+    print '<input type="hidden" name="action" value="builddoc">';
+    print '<input type="hidden" name="model" value="Passif">';
+    print '<div class="right"  style="margin-bottom: 100px; margin-right: 20%;">
+    <input type="submit" id="btngen" class="button" name="save" value="génerer">';
+    print '</form>';
+}
+
+
+  function ShowDocuments()
+  {
+      global $db, $object, $conf, $month, $prev_year, $societe, $showAll, $prev_month, $prev_year, $start;
+      print '<div class="fichecenter"><divclass="fichehalfleft">';
+      $formfile = new FormFile($db);
+      $subdir = '';
+      $filedir = DOL_DATA_ROOT . '/';
+      $urlsource = $_SERVER['PHP_SELF'] . '';
+      $genallowed = 0;
+      $delallowed = 1;
+      $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
+
+   
+
+    // if ($societe !== null && isset($societe->default_lang)) {
+    //   print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+    // } else {
+    //     print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
+    // }
+
+     print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+  }
+
+  
+
   llxHeader("", ""); 
+
+
+  
+// Actions to build doc
+$action = GETPOST('action', 'aZ09');
+$upload_dir = DOL_DATA_ROOT . '/';
+$permissiontoadd = 1;
+$donotredirect = 1;
+
+include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
+
+
+
   // ----------------------> $....N1 = Exercice Précédent && $....N2 = Exercice N-2
   $capitauxPropres=$capitauxPropresN1=$capitauxPropresN2=0; // CAPITAUX PROPRES
   $CapitalSocialPersonnel=$CapitalSocialPersonnelN1=$CapitalSocialPersonnelN2=0; // Capital social ou personnel (1)
@@ -814,3 +870,9 @@
   </body>
 
 </html>
+<?php
+
+   GenerateDocuments();
+  ShowDocuments();
+
+?>

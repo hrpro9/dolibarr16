@@ -46,7 +46,6 @@ if ($action == 'builddoc' && $permissiontoadd) {
 			dol_print_error('Object must have been loaded by a fetch');
 			exit;
 		}*/
-
 		// Save last template used to generate document
 		if (GETPOST('model', 'alpha')) {
 			$object->setDocModel($user, GETPOST('model', 'alpha'));
@@ -94,12 +93,18 @@ if ($action == 'builddoc' && $permissiontoadd) {
 			$moreparams = null;
 		}
 
+      
+       
+
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+       
 		if ($result <= 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = '';
+            
+            setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';		
 		} else {
-			if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
+         
+            if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
 				setEventMessages($langs->trans("FileGenerated"), null);
 
 				/*$urltoredirect = $_SERVER['REQUEST_URI'];
@@ -108,8 +113,12 @@ if ($action == 'builddoc' && $permissiontoadd) {
 
 				header('Location: '.$urltoredirect.'#builddoc');
 				exit;*/
-			}
+		
+            }
+         
 		}
+      
+
 	}
 }
 

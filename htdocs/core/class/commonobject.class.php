@@ -5418,7 +5418,7 @@ abstract class CommonObject
 						// Other module use prefix_modele.modules.php
 						$file = $prefix."_".$modele.".modules.php";
 					}
-
+					
 					// On verifie l'emplacement du modele
 					$file = dol_buildpath($reldir.$modelspath.$file, 0);
 					if (file_exists($file)) {
@@ -5435,10 +5435,10 @@ abstract class CommonObject
 			// If generator was found
 			if ($filefound) {
 				global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
-
 				require_once $file;
-
+				
 				$obj = new $classname($this->db);
+				
 
 				// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 				if ($obj->type == 'odt' && empty($srctemplatepath)) {

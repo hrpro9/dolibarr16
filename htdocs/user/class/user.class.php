@@ -4006,7 +4006,6 @@ class User extends CommonObject
 		}
 
 		$modelpath = "core/modules/user/doc/";
-
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
