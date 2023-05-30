@@ -50,6 +50,7 @@ if ($action == 'builddoc' && $permissiontoadd) {
 		if (GETPOST('model', 'alpha')) {
 			$object->setDocModel($user, GETPOST('model', 'alpha'));
 		}
+       
 
 		// Special case to force bank account
 		//if (property_exists($object, 'fk_bank'))
@@ -93,7 +94,9 @@ if ($action == 'builddoc' && $permissiontoadd) {
 			$moreparams = null;
 		}
 
-      
+        
+
+       
        
 
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
@@ -117,6 +120,8 @@ if ($action == 'builddoc' && $permissiontoadd) {
             }
          
 		}
+       
+       
       
 
 	}

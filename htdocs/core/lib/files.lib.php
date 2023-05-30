@@ -162,7 +162,12 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 						if ($loadsize || $sortcriteria == 'size') $filesize = dol_filesize($path . "/" . $file);
 
 						//set filter if we work with it
-						if ($_SESSION["filterDoc"] != null) $filter = "MonthDate";
+						if (isset($_SESSION["filterDoc"]) && $_SESSION["filterDoc"] != null) {
+							$filter = "MonthDate";
+						}
+
+						// if ($_SESSION["filterDoc"] != null) $filter = "MonthDate";
+						
 
 						if (!$filter || preg_match('/' . $filter . '/i', $file))    // We do not search key $filter into $path, only into $file
 						{
@@ -3021,6 +3026,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = DOL_DATA_ROOT . '/grh/Etats/AMO/' . $original_file;
 	}
 
+	// Passif docs
+	elseif ($modulepart == 'Passif') {
+		if ($fuser->rights->salaries->read) {
+			$accessallowed = 1;
+		}
+		$original_file = DOL_DATA_ROOT . '/test/' . $original_file;
+	}
+
 	// Etat Mensuel CNSS docs
 	elseif ($modulepart == 'EtatMensuelIR') {
 		if ($fuser->rights->salaries->read) {
@@ -3044,6 +3057,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->user->dir_output . '/' . $original_file;
 	}
+
+
 
 	// GENERIC Wrapping
 	// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser

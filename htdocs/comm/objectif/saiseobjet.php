@@ -51,10 +51,39 @@ use Stripe\Terminal\Location;
             <div class="alert" style="background-color: #f8d7da;border: 1px solid #f5c6cb;padding: 10px; color: #721c24;width:180px;">cette annee exist deja.</div>
                 ';
         } else {
-        // Insert the new record
-        $insertQuery = "INSERT INTO llx_objectif_annuel (janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre, total, annee) 
-                        VALUES ('$janv', '$fevr', '$mars', '$avril', '$mai', '$juin', '$juillet', '$août', '$septembre', '$octobre', '$novembre', '$décembre', '$toal', '$annee_select')";
-         $res = $db->query($insertQuery);
+            // Insert the new record
+            $insertQuery = "INSERT INTO llx_objectif_annuel (janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre, total, annee) 
+                            VALUES ('$janv', '$fevr', '$mars', '$avril', '$mai', '$juin', '$juillet', '$août', '$septembre', '$octobre', '$novembre', '$décembre', '$toal', '$annee_select')";
+            $res = $db->query($insertQuery);
+        
+
+            $sql = "SELECT * FROM llx_usergroup_user WHERE fk_usergroup = 6";
+            $rest = $db->query($sql);       
+            foreach ($rest as $row) {
+                $sql = "SELECT rowid,lastname, firstname FROM llx_user WHERE rowid = " . $row['fk_user'] . " ORDER BY lastname ASC";
+                $userData = $db->query($sql)->fetch_assoc();
+                
+                //    $lastname = $userData['lastname'];
+                //    $firstname = $userData['firstname'];
+                   $idrow = $userData['rowid'];
+
+                   $insertQuerycommercial = "INSERT INTO llx_objectif_annuel_commercial (rowid,janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre, total, annee) 
+                   VALUES ('$idrow','0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '$annee_select')";
+                   $rescommercial = $db->query($insertQuerycommercial);
+            }
+
+
+            if ($res) {
+                $redirectUrl = DOL_URL_ROOT.'/comm/objectif/saiseobjet.php?idmenu=21951&leftmenu=';
+                echo "<script>window.location.href = '$redirectUrl';</script>";
+               exit;
+            } 
+
+
+
+
+
+
         }
     }
  }
@@ -239,7 +268,7 @@ use Stripe\Terminal\Location;
         </tr>
         <?php
          $anneenow = date('Y');
-         $sql = "SELECT *  FROM llx_objectif_annuel WHERE annee>=$anneenow  ";
+         $sql = "SELECT *  FROM llx_objectif_annuel WHERE annee>=$anneenow ORDER BY annee DESC ";
          $rest = $db->query($sql);
      
          foreach ($rest as $row) {

@@ -646,7 +646,16 @@ class FormFile
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/usergroup/modules_usergroup.class.php';
 					$modellist = ModelePDFUserGroup::liste_modeles($this->db);
 				}
-			} else {
+			}
+			// elseif ($modulepart == 'Passif') {
+			// 	if (is_array($genallowed)) {
+			// 		$modellist = $genallowed;
+			// 	} else {
+			// 		include_once DOL_DOCUMENT_ROOT.'/core/modules/user/modules_user.class.php';
+			// 		$modellist = ModelePDFUser::liste_modeles($this->db);
+			// 	}
+			// }
+			 else {
 				$submodulepart = $modulepart;
 
 				// modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'

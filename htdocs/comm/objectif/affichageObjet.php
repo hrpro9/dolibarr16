@@ -56,14 +56,27 @@
         color: white;
         }
     </style>
+     <link rel="stylesheet" href="style.css">   
  </head>
     <body>
-        <h1>Affichage  objectif </h1>
-        
+        <center>
+
+         
         <form method="POST" >
-        <select name="annee_select" required>  <option value="" > Année choisi : </option> <?php affichageAnnees() ?> </select>
-            <button type="submit" name="chargement" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;">Chargement</button><br>  
+
+        <ul class="form-style-1" style="text-align: center;">
+                        <li>
+                        <label>Affichage  Objectif <span class="required">* </label>
+                        <select name="annee_select" required>  <option value="" > Année choisi : </option> <?php affichageAnnees() ?> </select>
+                        </li>
+                        <li style="margin-top: 18px;">
+                            <input type="submit" name="chargement" value="Chargement" />
+                        </li>      
+                    </ul>
         </form>
+
+        </center>
+       
 
         <?php
                 if(isset($_POST['chargement']))
@@ -75,6 +88,8 @@
                         }
 
                     ?>
+                      <h3>Affichage  objectif Annuel</h3>
+
                         <table id="customers" style="margin-top: 30px;">
                                     <tr>        
                                         <th>annee</th>
@@ -95,25 +110,27 @@
                                     <tr>
                                         
                                         <?php
-                                          echo '<td>'.$datechoisier.'</td>';
+                                        //   echo '<td>'.$datechoisier.'</td>';
                                           $sql="SELECT * FROM llx_objectif_annuel WHERE annee= $datechoisier";
                                           $rest=$db->query($sql);
                                           $param_p = ((object)($rest))->fetch_assoc();
                                         
 
-                                            print ' <td>'.$param_p["janvier"].'</td>
-                                                    <td>'.$param_p["février"].'</td>
-                                                    <td>'.$param_p["mars"].'</td>
-                                                    <td>'.$param_p["avril"].'</td>
-                                                    <td>'.$param_p["mai"].'</td>
-                                                    <td>'.$param_p["juin"].'</td>
-                                                    <td>'.$param_p["juillet"].'</td>
-                                                    <td>'.$param_p["août"].'</td>
-                                                    <td>'.$param_p["septembre"].'</td>
-                                                    <td>'.$param_p["octobre"].'</td>
-                                                    <td>'.$param_p["novembre"].'</td>
-                                                    <td>'.$param_p["décembre"].'</td>
-                                                    <td>'.$param_p["total"].'</td>
+                                            print '
+                                             <td>'.(isset($param_p["annee"])?$param_p["annee"]:'').'</td>
+                                            <td>'.(isset($param_p["janvier"])?$param_p["janvier"]:'').'</td>
+                                            <td>'.(isset($param_p["février"])?$param_p["février"]:'').'</td>
+                                            <td>'.(isset($param_p["mars"])?$param_p["mars"]:'').'</td>
+                                            <td>'.(isset($param_p["avril"])?$param_p["avril"]:'').'</td>
+                                            <td>'.(isset($param_p["mai"])?$param_p["mai"]:'').'</td>
+                                            <td>'.(isset($param_p["juin"])?$param_p["juin"]:'') .'</td>
+                                            <td>'.(isset($param_p["juillet"])?$param_p["juillet"]:'') .'</td>
+                                            <td>'. (isset( $param_p["août"])? $param_p["août"]:'').'</td>
+                                            <td>'.(isset($param_p["septembre"])?$param_p["septembre"]:'') .'</td>
+                                            <td>'.(isset($param_p["octobre"])? $param_p["octobre"]:'').'</td>
+                                            <td>'.(isset($param_p["novembre"])?$param_p["novembre"]:'') .'</td>
+                                            <td>'.(isset($param_p["décembre"])?$param_p["décembre"]:'') .'</td>
+                                            <td>'.(isset($param_p["total"])?$param_p["total"]:'').'</td>
                                             ';
                                           
                                         ?>      
@@ -122,7 +139,7 @@
 
 
 
-                            <h1>Affichage  objectif Commercial </h1>
+                            <h3>Affichage  objectif Commercial </h3>
 
 
                             <table id="customers" style="margin-top: 30px;">

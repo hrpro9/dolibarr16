@@ -6,7 +6,7 @@
   require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
   require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
   require_once 'functionDeclarationLaisse.php';
-
+ 
 
   $object = new User($db);
   $id=$user->id;
@@ -30,7 +30,7 @@
       print '<div class="fichecenter"><divclass="fichehalfleft">';
       $formfile = new FormFile($db);
       $subdir = '';
-      $filedir = DOL_DATA_ROOT . '/';
+      $filedir = DOL_DATA_ROOT . '/test/';
       $urlsource = $_SERVER['PHP_SELF'] . '';
       $genallowed = 0;
       $delallowed = 1;
@@ -38,13 +38,13 @@
 
    
 
-    // if ($societe !== null && isset($societe->default_lang)) {
-    //   print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
-    // } else {
-    //     print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
-    // }
+    if ($societe !== null && isset($societe->default_lang)) {
+      print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+    } else {
+        print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
+    }
 
-     print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+   //  print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
   }
 
   
@@ -55,7 +55,7 @@
   
 // Actions to build doc
 $action = GETPOST('action', 'aZ09');
-$upload_dir = DOL_DATA_ROOT . '/';
+$upload_dir = DOL_DATA_ROOT . '/test/';
 $permissiontoadd = 1;
 $donotredirect = 1;
 
@@ -865,14 +865,15 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           </tr>
         </tbody>
     </table>
+    
     </center>
-
+    <div style="width: 550px;">
+     <?php
+      GenerateDocuments();
+      ShowDocuments();
+     ?>
+    </div>
+  
   </body>
 
 </html>
-<?php
-
-   GenerateDocuments();
-  ShowDocuments();
-
-?>

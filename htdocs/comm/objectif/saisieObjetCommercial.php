@@ -95,25 +95,27 @@
                                     <tr>
                                         
                                         <?php
-                                          echo '<td>'.$datechoisier.'</td>';
+                                        //   echo '<td>'.$datechoisier.'</td>';
                                           $sql="SELECT * FROM llx_objectif_annuel WHERE annee= $datechoisier";
                                           $rest=$db->query($sql);
                                           $param_p = ((object)($rest))->fetch_assoc();
                                         
 
-                                            print ' <td>'.$param_p["janvier"].'</td>
-                                                    <td>'.$param_p["février"].'</td>
-                                                    <td>'.$param_p["mars"].'</td>
-                                                    <td>'.$param_p["avril"].'</td>
-                                                    <td>'.$param_p["mai"].'</td>
-                                                    <td>'.$param_p["juin"].'</td>
-                                                    <td>'.$param_p["juillet"].'</td>
-                                                    <td>'.$param_p["août"].'</td>
-                                                    <td>'.$param_p["septembre"].'</td>
-                                                    <td>'.$param_p["octobre"].'</td>
-                                                    <td>'.$param_p["novembre"].'</td>
-                                                    <td>'.$param_p["décembre"].'</td>
-                                                    <td>'.$param_p["total"].'</td>
+                                            print ' 
+                                                    <td>'.(isset($param_p["annee"])?$param_p["annee"]:'').'</td>
+                                                    <td>'.(isset($param_p["janvier"])?$param_p["janvier"]:'').'</td>
+                                                    <td>'.(isset($param_p["février"])?$param_p["février"]:'').'</td>
+                                                    <td>'.(isset($param_p["mars"])?$param_p["mars"]:'').'</td>
+                                                    <td>'.(isset($param_p["avril"])?$param_p["avril"]:'').'</td>
+                                                    <td>'.(isset($param_p["mai"])?$param_p["mai"]:'').'</td>
+                                                    <td>'.(isset($param_p["juin"])?$param_p["juin"]:'') .'</td>
+                                                    <td>'.(isset($param_p["juillet"])?$param_p["juillet"]:'') .'</td>
+                                                    <td>'. (isset( $param_p["août"])? $param_p["août"]:'').'</td>
+                                                    <td>'.(isset($param_p["septembre"])?$param_p["septembre"]:'') .'</td>
+                                                    <td>'.(isset($param_p["octobre"])? $param_p["octobre"]:'').'</td>
+                                                    <td>'.(isset($param_p["novembre"])?$param_p["novembre"]:'') .'</td>
+                                                    <td>'.(isset($param_p["décembre"])?$param_p["décembre"]:'') .'</td>
+                                                    <td>'.(isset($param_p["total"])?$param_p["total"]:'').'</td>
                                             ';
                                           
                                         ?>      
@@ -177,23 +179,46 @@
                        //  <td><input type="number" min="0" step="any" name="novembre[]" oninput="sumValues()" value=""></td>
                        //  <td><input type="number" min="0" step="any" name="décembre[]" oninput="sumValues()" value=""></td>
                        
-                      
-                    
+                       $ExistsQuery = "SELECT * FROM llx_objectif_annuel_commercial WHERE annee =$datechoisier AND rowid= $idrow";
+                       $resultQuery = $db->query($ExistsQuery);  
+                       $param_pr = ((object)($resultQuery))->fetch_assoc();
+                       
                         echo '<tr>
                         <input type="hidden" name="idrow[]" value="' . $idrow . '">
                             <td>' . $lastname . ' ' . $firstname . '</td> 
-                            <td><input  type="number" min="0" step="any" name="janv[]" id="janv[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="fevr[]" id="fevr[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="mars[]" id="mars[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="avril[]" id="avril[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="mai[]" id="mai[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="juin[]" id="juin[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="juillet[]" id="juillet[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="août[]" id="août[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="septembre[]" id="septembre[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="octobre[]" id="octobre[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="novembre[]" id="novembre[]" oninput="sumValues()" value=""></td>
-                            <td><input  type="number" min="0" step="any" name="décembre[]" id="décembre[]" oninput="sumValues()" value=""></td>
+
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            
+                            <td><input '.( $t=(01>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number"  min="0" step="any" name="janv[]" id="janv[]" oninput="sumValues()" value="'.(isset($param_pr['janvier']) ? $param_pr['janvier'] : '').'"></td>
+                            <td><input '.( $t=(02>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="fevr[]" id="fevr[]" oninput="sumValues()" value="' . (isset($param_pr['février']) ? $param_pr['février'] : '') . '"></td>
+                            <td><input '.( $t=(03>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="mars[]" id="mars[]" oninput="sumValues()" value="' . (isset($param_pr['mars']) ? $param_pr['mars'] : '') . '"></td>
+                            <td><input '.( $t=(04>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="avril[]" id="avril[]" oninput="sumValues()" value="' . (isset($param_pr['avril']) ? $param_pr['avril'] : '') . '"></td>
+                            <td><input '.( $t=(05>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="mai[]" id="mai[]" oninput="sumValues()" value="' . (isset($param_pr['mai']) ? $param_pr['mai'] : '') . '"></td>
+                            <td><input '.( $t=(06>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="juin[]" id="juin[]" oninput="sumValues()" value="' . (isset($param_pr['juin']) ? $param_pr['juin'] : '') . '"></td>
+                            <td><input '.( $t=(07>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="juillet[]" id="juillet[]" oninput="sumValues()" value="' . (isset($param_pr['juillet']) ? $param_pr['juillet'] : '') . '"></td>
+                            <td><input '.( $t=(8>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="août[]" id="août[]" oninput="sumValues()" value="' . (isset($param_pr['août']) ? $param_pr['août'] : '') . '"></td>
+                            <td><input '.( $t=(9>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="septembre[]" id="septembre[]" oninput="sumValues()" value="' . (isset($param_pr['septembre']) ? $param_pr['septembre'] : '') . '"></td>
+                            <td><input '.( $t=(10>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="octobre[]" id="octobre[]" oninput="sumValues()" value="' . (isset($param_pr['octobre']) ? $param_pr['octobre'] : '') . '"></td>
+                            <td><input '.( $t=(11>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="novembre[]" id="novembre[]" oninput="sumValues()" value="' . (isset($param_pr['novembre']) ? $param_pr['novembre'] : '') . '"></td>
+                            <td><input '.( $t=(12>=date('m') || $datechoisier>date('Y')) ? '' :  'readonly').'  type="number" min="0" step="any" name="décembre[]" id="décembre[]" oninput="sumValues()" value="' . (isset($param_pr['décembre']) ? $param_pr['décembre'] : '') . '"></td>
                         
                         </tr>';
    
@@ -219,8 +244,8 @@
                 <input type="hidden" name="decembreresult" id="decembreresult" value="">
 
 
-                 <input type="submit" name="ajouter" value="Ajouter" style="margin-top: 18px;background: rgb(38,60,92);padding: 8px 15px 8px 15px;border: none;color: #fff;" />
-                 </form>
+                <input type="submit" name="ajouter" value="Ajouter" style="margin-top: 18px;background: rgb(38,60,92);padding: 8px 15px 8px 15px;border: none;color: #fff;" />
+                </form>
                  
                
 
@@ -457,7 +482,7 @@
              
                     
                  //   echo $_POST['janv[$key]'];
-                 $annee = $_POST['annee'];
+               
 
              
 
@@ -481,33 +506,35 @@
                         $toal= $janv+$fevr+$mars+$avril+$mai+$juin+$juillet+$août+$septembre+$octobre+$novembre+$décembre;
 
 
-
-                        $ExistsQuery = "SELECT annee FROM llx_objectif_annuel_commercial WHERE annee =$annee";
-                        $resultQuery = $db->query($ExistsQuery);  
-                        if (mysqli_num_rows($resultQuery) > 0) {
-                            // Year already exists, handle the error or take appropriate action
+                      
+                        // $ExistsQuery = "SELECT * FROM llx_objectif_annuel_commercial WHERE annee =$annee";
+                        // $resultQuery = $db->query($ExistsQuery);  
+                       
+                        // if (mysqli_num_rows($resultQuery) > 0) {
+                        //     // Year already exists, handle the error or take appropriate action
 
                             $pdo_sql = "UPDATE llx_objectif_annuel_commercial SET rowid='$rowid',janvier='$janv', février='$fevr', mars='$mars', avril='$avril',
                             mai='$mai', juin='$juin', juillet='$juillet', août='$août', septembre='$septembre', octobre='$octobre',
-                            novembre='$novembre', décembre='$décembre', total='$toal', annee= '$annee' WHERE rowid=$rowid";
+                            novembre='$novembre', décembre='$décembre', total='$toal', annee= '$annee' WHERE rowid=$rowid AND  annee= $annee ";
                             $result = $db->query($pdo_sql);
 
                             $updatedonne=1;
 
 
-                        } 
-                        else {
-                            $insertQuery = "INSERT INTO llx_objectif_annuel_commercial (rowid,janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre, total, annee) 
-                            VALUES ('$rowid','$janv', '$fevr', '$mars', '$avril', '$mai', '$juin', '$juillet', '$août', '$septembre', '$octobre', '$novembre', '$décembre', '$toal', '$annee')";
-                            $res = $db->query($insertQuery);
-                        }
+                        // } 
+                        // else {
+                            // $insertQuery = "INSERT INTO llx_objectif_annuel_commercial (rowid,janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre, total, annee) 
+                            // VALUES ('$rowid','$janv', '$fevr', '$mars', '$avril', '$mai', '$juin', '$juillet', '$août', '$septembre', '$octobre', '$novembre', '$décembre', '$toal', '$annee')";
+                            // $res = $db->query($insertQuery);
+                        // }
                     }
 
                     if( $updatedonne==1)
                     {
+                        $annee = $_POST['annee'];
 
                         print '
-                        <div class="alert" style="background-color: #f8d7da;border: 1px solid #f5c6cb;padding: 10px; color: #721c24;width:180px;"> update   .</div>
+                        <div class="alert" style="background-color: #f8d7da;border: 1px solid #f5c6cb;padding: 10px; color: #721c24;width:310px;margin-top:15px;"> Modifier l objectif commercial de l année : '.$annee.'   </div>
                             ';
                     }
              
