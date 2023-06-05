@@ -1,6 +1,6 @@
 <?php
 
-// Load Dolibarr environment
+// Load Dolibarr environment f
 require '../../main.inc.php';
 require_once '../../vendor/autoload.php';
 
