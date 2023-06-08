@@ -109,7 +109,7 @@ use Stripe\Terminal\Location;
         }
     }
   function affichageAnnees(){
-    $anneeDebut = date('Y');
+    $anneeDebut = date('Y')-1;
     $anneeFin =date('Y')+1;
     for ($annee = $anneeDebut; $annee <= $anneeFin; $annee++) {  
       echo '<option value="' . $annee . '"> ' . $annee . '</option>';
@@ -181,29 +181,29 @@ use Stripe\Terminal\Location;
             <?php
             if (isset($_GET['id'])) 
             {
-                if (01>=date('m') || $annee>date('Y') ){echo '<td><input  type="number" min="0" step="any" name="janv" id="janv"  oninput="sumValues()" value="' . (isset($janv) ? $janv : '') . '"></td>'; }
+                if (01>=date('m') || $annee>date('Y')-2 ){echo '<td><input  type="number" min="0" step="any" name="janv" id="janv"  oninput="sumValues()" value="' . (isset($janv) ? $janv : '') . '"></td>'; }
                 else{echo '<td><input type="number" min="0" step="any" name="janv" id="janv" readonly oninput="sumValues()" value="' . (isset($janv) ? $janv : '') . '"></td>'; }
-                if (02>=date('m') || $annee>date('Y') ){ echo '<td><input type="number" min="0" step="any" name="fevr" id="fevr" oninput="sumValues()" value="' . (isset($fevr) ? $fevr : '') . '"></td>';  }
+                if (02>=date('m') || $annee>date('Y')-2 ){ echo '<td><input type="number" min="0" step="any" name="fevr" id="fevr" oninput="sumValues()" value="' . (isset($fevr) ? $fevr : '') . '"></td>';  }
                 else{  echo '<td><input type="number" min="0" step="any" name="fevr" id="fevr" readonly oninput="sumValues()" value="' . (isset($fevr) ? $fevr : '') . '"></td>'; }
-                if (03>=date('m') || $annee>date('Y') ){ echo '<td><input type="number" min="0" step="any" name="mars" id="mars" oninput="sumValues()" value="' . (isset($mars) ? $mars : '') . '"></td>';  }
+                if (03>=date('m') || $annee>date('Y')-2 ){ echo '<td><input type="number" min="0" step="any" name="mars" id="mars" oninput="sumValues()" value="' . (isset($mars) ? $mars : '') . '"></td>';  }
                 else{  echo '<td><input type="number" min="0" step="any" name="mars" id="mars" readonly oninput="sumValues()" value="' . (isset($mars) ? $mars : '') . '"></td>'; }
-                if (04>=date('m') || $annee>date('Y') ){ echo '<td><input type="number" min="0" step="any" name="avril" id="avril" oninput="sumValues()" value="' . (isset($avril) ? $avril : '') . '"></td>';}
+                if (04>=date('m') || $annee>date('Y')-2 ){ echo '<td><input type="number" min="0" step="any" name="avril" id="avril" oninput="sumValues()" value="' . (isset($avril) ? $avril : '') . '"></td>';}
                 else{ echo '<td><input type="number" min="0" step="any" name="avril" id="avril" readonly oninput="sumValues()" value="' . (isset($avril) ? $avril : '') . '"></td>';}
-                if (05>=date('m') || $annee>date('Y') ){ echo '<td><input type="number" min="0" step="any" name="mai" id="mai" oninput="sumValues()" value="' . (isset($mai) ? $mai : '') . '"></td>';}
+                if (05>=date('m') || $annee>date('Y')-2 ){ echo '<td><input type="number" min="0" step="any" name="mai" id="mai" oninput="sumValues()" value="' . (isset($mai) ? $mai : '') . '"></td>';}
                 else{ echo '<td><input type="number" min="0" step="any" name="mai" id="mai" readonly oninput="sumValues()" value="' . (isset($mai) ? $mai : '') . '"></td>';}
-                if (06>=date('m') || $annee>date('Y') ){ echo '<td><input type="number" min="0" step="any" name="juin" id="juin" oninput="sumValues()" value="' . (isset($juin) ? $juin : '') . '"></td>';}
+                if (06>=date('m') || $annee>date('Y')-2 ){ echo '<td><input type="number" min="0" step="any" name="juin" id="juin" oninput="sumValues()" value="' . (isset($juin) ? $juin : '') . '"></td>';}
                 else{ echo '<td><input type="number" min="0" step="any" name="juin" id="juin" readonly oninput="sumValues()" value="' . (isset($juin) ? $juin : '') . '"></td>';}
-                if (07>=date('m') || $annee>date('Y') ){ echo '<td><input type="number" min="0" step="any" name="juillet" id="juillet" oninput="sumValues()" value="' . (isset($juillet) ? $juillet : '') . '"></td>';}
+                if (07>=date('m') || $annee>date('Y')-2 ){ echo '<td><input type="number" min="0" step="any" name="juillet" id="juillet" oninput="sumValues()" value="' . (isset($juillet) ? $juillet : '') . '"></td>';}
                 else{ echo '<td><input type="number" min="0" step="any" name="juillet" id="juillet" readonly oninput="sumValues()" value="' . (isset($juillet) ? $juillet : '') . '"></td>';}
-                if (date('m') <= 8 || $annee > date('Y')) { echo '<td><input type="number" min="0" step="any" name="août" id="août" oninput="sumValues()" value="' . (isset($août) ? $août : '') . '"></td>'; }
+                if (date('m') <= 8 || $annee > date('Y')-2) { echo '<td><input type="number" min="0" step="any" name="août" id="août" oninput="sumValues()" value="' . (isset($août) ? $août : '') . '"></td>'; }
                 else { echo '<td><input type="number" min="0" step="any" name="août" id="août" readonly oninput="sumValues()" value="' . (isset($août) ? $août : '') . '"></td>';}
-                if (date('m') <= 9 || $annee > date('Y')) { echo '<td><input type="number" min="0" step="any" name="septembre" id="septembre" oninput="sumValues()" value="' . (isset($septembre) ? $septembre : '') . '"></td>';} 
+                if (date('m') <= 9 || $annee > date('Y')-2) { echo '<td><input type="number" min="0" step="any" name="septembre" id="septembre" oninput="sumValues()" value="' . (isset($septembre) ? $septembre : '') . '"></td>';} 
                 else { echo '<td><input type="number" min="0" step="any" name="septembre" id="septembre" readonly oninput="sumValues()" value="' . (isset($septembre) ? $septembre : '') . '"></td>';  }
-                if (date('m') <= 10 || $annee > date('Y')) {   echo '<td><input type="number" min="0" step="any" name="octobre" id="octobre" oninput="sumValues()" value="' . (isset($octobre) ? $octobre : '') . '"></td>';   }
+                if (date('m') <= 10 || $annee > date('Y')-2) {   echo '<td><input type="number" min="0" step="any" name="octobre" id="octobre" oninput="sumValues()" value="' . (isset($octobre) ? $octobre : '') . '"></td>';   }
                 else { echo '<td><input type="number" min="0" step="any" name="octobre" id="octobre" readonly oninput="sumValues()" value="' . (isset($octobre) ? $octobre : '') . '"></td>';   }
-                if (date('m') <= 11 || $annee > date('Y')) { echo '<td><input type="number" min="0" step="any" name="novembre" id="novembre" oninput="sumValues()" value="' . (isset($novembre) ? $novembre : '') . '"></td>';   } 
+                if (date('m') <= 11 || $annee > date('Y')-2) { echo '<td><input type="number" min="0" step="any" name="novembre" id="novembre" oninput="sumValues()" value="' . (isset($novembre) ? $novembre : '') . '"></td>';   } 
                 else {  echo '<td><input type="number" min="0" step="any" name="novembre" id="novembre" readonly oninput="sumValues()" value="' . (isset($novembre) ? $novembre : '') . '"></td>';      }
-                if (date('m') <= 12 || $annee > date('Y')) {  echo '<td><input type="number" min="0" step="any" name="décembre" id="décembre" oninput="sumValues()" value="' . (isset($décembre) ? $décembre : '') . '"></td>'; } 
+                if (date('m') <= 12 || $annee > date('Y')-2) {  echo '<td><input type="number" min="0" step="any" name="décembre" id="décembre" oninput="sumValues()" value="' . (isset($décembre) ? $décembre : '') . '"></td>'; } 
                 else {  echo '<td><input type="number" min="0" step="any" name="décembre" id="décembre" readonly oninput="sumValues()" value="' . (isset($décembre) ? $décembre : '') . '"></td>';  }
             }else{
                 echo '<td><input  type="number" min="0" step="any" name="janv" id="janv" oninput="sumValues()" value="' . (isset($janv) ? $janv : '') . '"></td>'; 
@@ -267,7 +267,8 @@ use Stripe\Terminal\Location;
             <th>action</th>
         </tr>
         <?php
-         $anneenow = date('Y');
+         $anneenow = date('Y')-1;
+       
          $sql = "SELECT *  FROM llx_objectif_annuel WHERE annee>=$anneenow ORDER BY annee DESC ";
          $rest = $db->query($sql);
      
@@ -331,7 +332,7 @@ use Stripe\Terminal\Location;
 
         </tr> 
       <?php
-         $anneenow = date('Y')-1;
+         $anneenow = date('Y')-2;
          $sql = "SELECT *  FROM llx_objectif_annuel WHERE annee<=$anneenow ";
          $rest = $db->query($sql);
          

@@ -10,7 +10,7 @@
  
 
  function affichageAnnees(){
-    $anneeDebut = date('Y');
+    $anneeDebut = date('Y')-1;
     $anneeFin =date('Y')+1;
     for ($annee = $anneeDebut; $annee <= $anneeFin; $annee++) {  
       echo '<option value="' . $annee . '"> ' . $annee . '</option>';
