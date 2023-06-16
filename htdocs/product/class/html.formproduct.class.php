@@ -260,6 +260,7 @@ class FormProduct
 		}
 
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '').' id="'.$htmlname.'" name="'.($htmlname.($disabled ? '_disabled' : '')).'">';
+	
 		if ($empty) {
 			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
 		}
@@ -289,8 +290,11 @@ class FormProduct
 		}
 		$out .= '</select>';
 		if ($disabled) {
+			
 			$out .= '<input type="hidden" name="'.$htmlname.'" value="'.(($selected > 0) ? $selected : '').'">';
 		}
+
+	
 
 		$parameters = array(
 			'selected' => $selected,
@@ -309,6 +313,11 @@ class FormProduct
 			'stockMin' => $stockMin,
 			'orderBy' => $orderBy
 		);
+
+		// foreach ($parameters['selected'] as $optionValue => $optionText) {
+		// 	echo '<option value="' . $optionValue . '">' . $optionText . '</option>';
+		// }
+		
 
 		$reshook = $hookmanager->executeHooks('selectWarehouses', $parameters, $this);
 		if ($reshook > 0) {

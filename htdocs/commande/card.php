@@ -1279,6 +1279,8 @@ if (empty($reshook)) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
+		
+
 		// Check parameters
 		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
@@ -2041,9 +2043,10 @@ if ($action == 'create' && $usercancreate) {
 					$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
 				}
 				$formquestion = array(
-					// 'text' => $langs->trans("ConfirmClone"),
-					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+                  
+					// 'text' => $langs->trans("ConfirmClone"),  // Choisissez la donnée à copier 
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),// Cloner l'objet avec ces attributs principaux	
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),// Mise à jour des prix avec les prix connus actuels	
 					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int') ? GETPOST('idwarehouse', 'int') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 				);
 			}
