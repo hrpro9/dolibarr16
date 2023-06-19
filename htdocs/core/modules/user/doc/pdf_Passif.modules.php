@@ -38,9 +38,6 @@ require_once DOL_DOCUMENT_ROOT . '/user/class/userbankaccount.class.php';
 
 
 
-
-
-
 /**
  *	Class to generate the supplier invoices PDF with the template canelle
  */
@@ -231,7 +228,7 @@ class pdf_Passif extends ModelePDFUser
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : '';
-				$dir = DOL_DATA_ROOT . '/test/';
+				$dir = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/';
 			
 				$file = $dir . "/Passif_" . $name . ".pdf";
 				// $file = $dir . "/Passif.pdf";
@@ -276,6 +273,7 @@ class pdf_Passif extends ModelePDFUser
 
 			
 
+				
 
 				$pdf->Open();
 				$pagenb = 0;
@@ -287,31 +285,7 @@ class pdf_Passif extends ModelePDFUser
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
-
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
-
-				
-				// Set $this->atleastonediscount if you have at least one discount
-				for ($i = 0; $i < $nblines; $i++) {
-					if ($object->lines[$i]->remise_percent) {
-						$this->atleastonediscount++;
-					}
-				}
-				if (empty($this->atleastonediscount)) {
-					$delta = ($this->postotalht - $this->posxdiscount);
-					$this->posxpicture += $delta;
-					$this->posxtva += $delta;
-					$this->posxup += $delta;
-					$this->posxqty += $delta;
-					$this->posxunit += $delta;
-					$this->posxdiscount += $delta;
-					// post of fields after are not modified, stay at same position
-				}
-
-				$object->rowid = $object->id;
-
-				
-				include_once DOL_DOCUMENT_ROOT . '/compta/laisse/codePassif.php';
 
 				// New page
 				$pdf->AddPage();
@@ -327,7 +301,10 @@ class pdf_Passif extends ModelePDFUser
 		
 				// body
 
-				
+
+
+				include DOL_DOCUMENT_ROOT . '/compta/laisse/codeLaisse.php';
+
 				$table =
 				 '
 				 <style>
@@ -355,96 +332,303 @@ class pdf_Passif extends ModelePDFUser
 					}
 				</style>
 						
-				<table style="font-family: Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;">
+				<table style="font-family: Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;margin-bottom:50px;">
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color:rgb(38,60,92);color:white;">&nbsp;</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color:rgb(38,60,92);color:white;">Exercice</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: rgb(38,60,92);color:white;">Exercice Précédent</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: rgb(38,60,92);color:white;">Exercice N-2</th>
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color:rgb(38,60,92);color:white;">Exercice</th>
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color: rgb(38,60,92);color:white;">Exercice Précédent</th>
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color: rgb(38,60,92);color:white;">Exercice N-2</th>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">CAPITAUX PROPRES</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.readMontant(($aCapita*-1*-1)) .'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($capitauxPropres*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($capitauxPropresN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($capitauxPropresN2*-1*-1,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Capital social ou personnel (1)</td>
-				<td>'.readMontant(($aCapitaN1*-1*-1)).'</td>
-				<td>00</td>
-				<td>00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($CapitalSocialPersonnel*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($CapitalSocialPersonnelN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($CapitalSocialPersonnelN2*-1*-1,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">moins : Actionnaires, capital souscrit non appelé dont versé</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($aCapita,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($aCapitaN1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($aCapitaN2,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Moins : Capital appelé</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;"></td>
+				<td style="border: 1px solid #ddd;padding: 8px;"></td>
+				<td style="border: 1px solid #ddd;padding: 8px;"></td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Moins : Dont versé</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;"></td>
+				<td style="border: 1px solid #ddd;padding: 8px;"></td>
+				<td style="border: 1px solid #ddd;padding: 8px;"></td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Prime d emission, de fusion, d apport</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($PrimeDFD*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($PrimeDFDN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($PrimeDFDN2*-1*-1,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Ecarts de reévaluation</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($EcartsR*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($EcartsRN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($EcartsRN2*-1*-1,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Réserve légale</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($reserveL*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($reserveLN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($reserveLN2*-1*-1,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Autres reserves</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresR*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresRN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresRN2*-1*-1,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Report à nouveau (2)</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">Report à nouveau (2)</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ReportN*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ReportNN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ReportNN2*-1*-1,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Résultat nets en instance d affectation (2)</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($resultatNID*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($resultatNIDN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($resultatNIDN2*-1*-1,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Résultat net de l exercice (2)</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($resultatNL*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($resultatNLN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($resultatNLN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">TOTAL DES CAPITAUX PROPRES ( a )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalCP*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalCPN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalCPN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">CAPITAUX PROPRES ASSIMILES ( b )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($capitauxPA*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($capitauxPAN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($capitauxPAN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Subventions d investissement</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($SubventionsD*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($SubventionsDN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($SubventionsDN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Provisions réglementées</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsR*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsRN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsRN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">DETTES DE FINANCEMENT ( c )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($dettesDF*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($dettesDFN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($dettesDFN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Emprunts obligataires</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($empruntsO*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($empruntsON1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($empruntsON2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Autres dettes de financement</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresDF*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresDFN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresDFN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">PROVISIONS DURABLES POUR RISQUES ET CHARGES ( d )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsDPREC*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsDPRECN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsDPRECN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Provisions pour risques</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsPR*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsPRN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsPRN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Provisions pour charges</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsPC*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsPCN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($provisionsPCN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">ECARTS DE CONVERSION - PASSIF ( e )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ecartsDCP*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ecartsDCPN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ecartsDCPN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Augmentation des créances immobilisées</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($augmentationDCI*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($augmentationDCIN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($augmentationDCIN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Diminution des dettes de financement</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($diminutionDF*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($diminutionDFN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($diminutionDFN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">TOTAL  I  ( a + b + c + d + e )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalABCDE*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalABCDEN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalABCDEN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">DETTES DU PASSIF CIRCULANT ( f )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($dettesDPC*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($dettesDPCN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($dettesDPCN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Fournisseurs et comptes rattachés</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($fournisseursECR*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($fournisseursECRN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($fournisseursECRN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Clients créditeurs, avances et acomptes</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ClientsCAVA*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ClientsCAVAN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ClientsCAVAN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Personnel</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($personnel*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($personnelN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($personnelN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Organismes sociaux</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($organismesS*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($organismesSN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($organismesSN2*-1*-1,2).'</td>
 				</tr>
 
-				</table>'; // Replace with your actual table HTML
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color:rgb(38,60,92);color:white;">&nbsp;</th>
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color:rgb(38,60,92);color:white;">Exercice</th>
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color: rgb(38,60,92);color:white;">Exercice Précédent</th>
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color: rgb(38,60,92);color:white;">Exercice N-2</th>
+				</tr>
+
+
+
+
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Etat </td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($etat*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($etatN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($etatN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Comptes d associés </td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($comptesD*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($comptesDN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($comptesDN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Autres créanciers </td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresCr*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresCrN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresCrN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Comptes de regularisation - passif </td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($comptesDRP*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($comptesDRPN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($comptesDRPN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">AUTRES PROVISIONS POUR RISQUES ET CHARGES ( g )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresPPREC*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresPPRECN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($autresPPRECN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">ECARTS DE CONVERSION - PASSIF ( h )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ecartsDCP*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ecartsDCPN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($ecartsDCPN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">TOTAL  II  ( f + g + h )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalFGH*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalFGHN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalFGHN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">TRESORERIE PASSIF</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($tresorerie*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($tresorerieN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($tresorerieN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Crédits d escompte</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($creditsDE*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($creditsDEN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($creditsDEN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Crédit de trésorerie</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($creditDT*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($creditDTN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($creditDTN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Banques ( soldes créditeurs )</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($banquesSC*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($banquesSCN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($banquesSCN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">TOTAL  III</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalIII*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalIIIN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($totalIIIN2*-1*-1,2).'</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">TOTAL   I+II+III</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($total_I_II_III*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($total_I_II_IIIN1*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($total_I_II_IIIN2*-1*-1,2).'</td>
+				</tr>
+
+				
+			
+				
+				
+				
+			
+				
+				</table>
+
+				'
+				; // Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
-				$pdf->SetY($pdf->GetY() + 5);
+				$pdf->SetY($pdf->GetY() + 6);
 				$pdf->SetX($this->posxdesc + 6);
 				$pdf->writeHTML($table);
 

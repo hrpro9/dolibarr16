@@ -32,16 +32,13 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
 
 require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
-require_once DOL_DOCUMENT_ROOT . '/user/class/userbankaccount.class.php'; 
-
-
-
+require_once DOL_DOCUMENT_ROOT . '/user/class/userbankaccount.class.php';
 
 
 /**
  *	Class to generate the supplier invoices PDF with the template canelle
  */
-class pdf_Active extends ModelePDFUser
+class pdf_Passif extends ModelePDFUser
 {
 	/**
 	 * @var DoliDb Database handler
@@ -228,7 +225,7 @@ class pdf_Active extends ModelePDFUser
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : '';
-				$dir = DOL_DATA_ROOT . '/billanLaisse/billan_Active/';
+				$dir = DOL_DATA_ROOT . '/test2/';
 			
 				$file = $dir . "/Active_" . $name . ".pdf";
 				// $file = $dir . "/Passif.pdf";
@@ -273,13 +270,12 @@ class pdf_Active extends ModelePDFUser
 
 			
 
-				
 
 				$pdf->Open();
 				$pagenb = 0;
 				$pdf->SetDrawColor(128, 128, 128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset('Bilan Passif'));
+				$pdf->SetTitle($outputlangs->convToOutputCharset('Bilan Active'));
 				$pdf->SetSubject($outputlangs->transnoentities("EtatAMO"));
 				$pdf->SetCreator("Dolibarr " . DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
@@ -298,97 +294,70 @@ class pdf_Active extends ModelePDFUser
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-		
+
 				// body
-
-
-
-				include DOL_DOCUMENT_ROOT . '/compta/laisse/codeLaisse.php';
-
 				$table =
 				 '
-				 <style>
-					#customers {
-					font-family: Arial, Helvetica, sans-serif;
-					border-collapse: collapse;
-					width: 100%;
-					}
-
-					#customers td, #customers th {
-					border: 1px solid #ddd;
-					padding: 8px;
-					}
-
-					#customers tr:nth-child(even){background-color: #f2f2f2;}
-
-					#customers tr:hover {background-color: #ddd;}
-
-					#customers th {
-					padding-top: 12px;
-					padding-bottom: 12px;
-					text-align: left;
-					background-color: #04AA6D;
-					color: white;
-					}
-				</style>
-						
-				<table style="font-family: Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;">
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color:rgb(38,60,92);color:white;">&nbsp;</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color:rgb(38,60,92);color:white;">Exercice</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: rgb(38,60,92);color:white;">Exercice Précédent</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: rgb(38,60,92);color:white;">Exercice N-2</th>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">CAPITAUX PROPRES</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($capitauxPropres*-1*-1,2).'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($capitauxPropresN1*-1*-1,2).'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($capitauxPropresN2*-1*-1,2).'</td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">Capital social ou personnel (1)</td>
-				<td>'.number_format($CapitalSocialPersonnel*-1*-1,2).'</td>
-				<td>'.number_format($CapitalSocialPersonnelN1*-1*-1,2).'</td>
-				<td>'.number_format($CapitalSocialPersonnelN2*-1*-1,2).'</td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">moins : Actionnaires, capital souscrit non appelé dont versé</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($aCapita,2).'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($aCapitaN1,2).'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($aCapitaN2,2).'</td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">Moins : Capital appelé</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">Moins : Dont versé</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">Prime d emission, de fusion, d apport</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">Ecarts de reévaluation</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
-				</tr>
-			
-				
-				
-				
-			
-				
-				</table>
-
+				 
+				 <style type="text/css">
+				 table.tableizer-table {
+					 font-size: 8px;
+					 border-bottom:1px solid #000;
+					 border-collapse: collapse;
+					 width:100%;
+				 } 
+				 .tableizer-table td {
+					 padding: 4px;
+					 margin: 3px;
+					 border-left: 1px solid #000;
+					 border-right: 1px solid #000;
+				 }
+				 .tableizer-table th {
+					 background-color: #104E8B; 
+					 color: #FFF;
+					 font-weight: bold;
+				 }
+				 .row-bordered{
+					 border-top: 1px solid #000;
+					 border-bottom: 1px solid #000;
+				 }
+				 .row-content{
+					 background-color: rgb(214, 214, 214);
+				 }
+				 .importent-cell{
+					 background-color: rgb(122, 166, 202);
+					 font-weight: bold;
+				 }
+				 .white-cell{
+					 background-color: white;
+					 font-weight: bold;
+				 }
+				 .center-row td{
+					 text-align: center;
+				 }
+				 .right-td{
+					 text-align: right;
+				 }
+				 .rub-td{
+					 width:40px;
+				 }
+				 .disignation-parent-td{
+					 width:190px;
+				 }
+				 .disignation-td{
+					 width:130px;
+				 }
+				 .nombre-td{
+					 width:60px;
+				 }
+				 </style>
+					 <table class="tableizer-table">
+						 <thead><tr class="tableizer-firstrow"><th colspan="7" style="width:100%;"></th></tr></thead>
+						 <tbody>
+							  <tr class="importent-cell row-bordered"><td class="rub-td">&nbsp;</td><td class="disignation-parent-td" colspan="2">&nbsp;</td><td class="white-cell"></td><td></td><td class="white-cell" colspan="2"></td></tr>
+							  <tr class="importent-cell row-bordered"><td>&nbsp;</td><td colspan="2">Nom</td><td class="white-cell">active</td><td>active</td><td class="white-cell" colspan="2">active</td></tr>
+						</tbody>
+					</table>	  
 				'
 				; // Replace with your actual table HTML
 

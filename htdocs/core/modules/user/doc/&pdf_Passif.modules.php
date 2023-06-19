@@ -38,10 +38,13 @@ require_once DOL_DOCUMENT_ROOT . '/user/class/userbankaccount.class.php';
 
 
 
+
+
+
 /**
  *	Class to generate the supplier invoices PDF with the template canelle
  */
-class pdf_Active extends ModelePDFUser
+class pdf_Passif extends ModelePDFUser
 {
 	/**
 	 * @var DoliDb Database handler
@@ -228,9 +231,9 @@ class pdf_Active extends ModelePDFUser
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : '';
-				$dir = DOL_DATA_ROOT . '/billanLaisse/billan_Active/';
+				$dir = DOL_DATA_ROOT . '/test/';
 			
-				$file = $dir . "/Active_" . $name . ".pdf";
+				$file = $dir . "/Passif_" . $name . ".pdf";
 				// $file = $dir . "/Passif.pdf";
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
@@ -273,7 +276,6 @@ class pdf_Active extends ModelePDFUser
 
 			
 
-				
 
 				$pdf->Open();
 				$pagenb = 0;
@@ -285,7 +287,31 @@ class pdf_Active extends ModelePDFUser
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
+
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
+
+				
+				// Set $this->atleastonediscount if you have at least one discount
+				for ($i = 0; $i < $nblines; $i++) {
+					if ($object->lines[$i]->remise_percent) {
+						$this->atleastonediscount++;
+					}
+				}
+				if (empty($this->atleastonediscount)) {
+					$delta = ($this->postotalht - $this->posxdiscount);
+					$this->posxpicture += $delta;
+					$this->posxtva += $delta;
+					$this->posxup += $delta;
+					$this->posxqty += $delta;
+					$this->posxunit += $delta;
+					$this->posxdiscount += $delta;
+					// post of fields after are not modified, stay at same position
+				}
+
+				$object->rowid = $object->id;
+
+				
+				include_once DOL_DOCUMENT_ROOT . '/compta/laisse/codePassif.php';
 
 				// New page
 				$pdf->AddPage();
@@ -301,10 +327,7 @@ class pdf_Active extends ModelePDFUser
 		
 				// body
 
-
-
-				include DOL_DOCUMENT_ROOT . '/compta/laisse/codeLaisse.php';
-
+				
 				$table =
 				 '
 				 <style>
@@ -341,21 +364,21 @@ class pdf_Active extends ModelePDFUser
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">CAPITAUX PROPRES</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($capitauxPropres*-1*-1,2).'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($capitauxPropresN1*-1*-1,2).'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($capitauxPropresN2*-1*-1,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">'.readMontant(($aCapita*-1*-1)) .'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Capital social ou personnel (1)</td>
-				<td>'.number_format($CapitalSocialPersonnel*-1*-1,2).'</td>
-				<td>'.number_format($CapitalSocialPersonnelN1*-1*-1,2).'</td>
-				<td>'.number_format($CapitalSocialPersonnelN2*-1*-1,2).'</td>
+				<td>'.readMontant(($aCapitaN1*-1*-1)).'</td>
+				<td>00</td>
+				<td>00</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">moins : Actionnaires, capital souscrit non appelé dont versé</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($aCapita,2).'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($aCapitaN1,2).'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;">'.number_format($aCapitaN2,2).'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Moins : Capital appelé</td>
@@ -381,16 +404,44 @@ class pdf_Active extends ModelePDFUser
 				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
 				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
 				</tr>
-			
-				
-				
-				
-			
-				
-				</table>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Réserve légale</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Autres reserves</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Report à nouveau (2)</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Report à nouveau (2)</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Résultat nets en instance d affectation (2)</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<td style="border: 1px solid #ddd;padding: 8px;">Résultat net de l exercice (2)</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				<td style="border: 1px solid #ddd;padding: 8px;">00</td>
+				</tr>
 
-				'
-				; // Replace with your actual table HTML
+				</table>'; // Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
 				$pdf->SetY($pdf->GetY() + 5);

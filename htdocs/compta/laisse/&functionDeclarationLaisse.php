@@ -1,5 +1,5 @@
 <?php
-function affichageAnnees(){
+  function affichageAnnees(){
     $anneeDebut = date('Y');
     $anneeFin = 2015;
     for ($annee = $anneeDebut; $annee >= $anneeFin; $annee--) {  

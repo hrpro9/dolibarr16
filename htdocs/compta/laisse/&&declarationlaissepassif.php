@@ -1,22 +1,22 @@
 <?php
-
- require_once 'codeLaisse.php';
+  // Load Dolibarr environment
+  require_once 'codePassif.php';
+ 
 
   $object = new User($db);
   $id=$user->id;
   
-  function GenerateDocuments($dateChoisist)
- {
+  function GenerateDocuments()
+{
     global $day, $month, $year, $start, $prev_year;
     print '<form id="frmgen" name="builddoc" method="post">';
     print '<input type="hidden" name="token" value="' . newToken() . '">';
     print '<input type="hidden" name="action" value="builddoc">';
     print '<input type="hidden" name="model" value="Passif">';
-    print '<input type="hidden" name="valeurdatechoise" value="'.$dateChoisist.'">';
     print '<div class="right"  style="margin-bottom: 100px; margin-right: 20%;">
     <input type="submit" id="btngen" class="button" name="save" value="génerer">';
     print '</form>';
- }
+}
 
 
   function ShowDocuments()
@@ -25,7 +25,7 @@
       print '<div class="fichecenter"><divclass="fichehalfleft">';
       $formfile = new FormFile($db);
       $subdir = '';
-      $filedir = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/';
+      $filedir = DOL_DATA_ROOT . '/test/';
       $urlsource = $_SERVER['PHP_SELF'] . '';
       $genallowed = 0;
       $delallowed = 1;
@@ -50,7 +50,7 @@
   
 // Actions to build doc
 $action = GETPOST('action', 'aZ09');
-$upload_dir = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/';
+$upload_dir = DOL_DATA_ROOT . '/test/';
 $permissiontoadd = 1;
 $donotredirect = 1;
 
@@ -728,20 +728,12 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
     </table>
     
     </center>
-
-        
-  <div style="width: 650px; margin: 0 auto; text-align: center;">
-    <div style="margin-top: 10px;margin-right : 80px;">
-      <?php  GenerateDocuments($dateChoisis); ?>
+    <div style="width: 550px;">
+     <?php
+      GenerateDocuments();
+      ShowDocuments();
+     ?>
     </div>
-
-    <div style="margin-top: -90px;margin-left : 80px;">
-      <?php   ShowDocuments(); ?>
-    </div>
-  </div>
-
-
-    
   
   </body>
 

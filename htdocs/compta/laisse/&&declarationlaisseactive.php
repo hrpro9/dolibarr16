@@ -9,60 +9,59 @@
     require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
     require_once('functionDeclarationLaisse.php');
 
-    $object = new User($db);
-    $id=$user->id;
-    
-  function GenerateDocuments($dateChoisist)
-  {
-     global $day, $month, $year, $start, $prev_year;
-     print '<form id="frmgen" name="builddoc" method="post">';
-     print '<input type="hidden" name="token" value="' . newToken() . '">';
-     print '<input type="hidden" name="action" value="builddoc">';
-     print '<input type="hidden" name="model" value="Active">';
-     print '<input type="hidden" name="valeurdatechoise" value="'.$dateChoisist.'">';
-     print '<div class="right"  style="margin-bottom: 100px; margin-right: 20%;">
-     <input type="submit" id="btngen" class="button" name="save" value="génerer">';
-     print '</form>';
-  }
- 
- 
-   function ShowDocuments()
-   {
-       global $db, $object, $conf, $month, $prev_year, $societe, $showAll, $prev_month, $prev_year, $start;
-       print '<div class="fichecenter"><divclass="fichehalfleft">';
-       $formfile = new FormFile($db);
-       $subdir = '';
-       $filedir = DOL_DATA_ROOT . '/billanLaisse/billan_Active/';
-       $urlsource = $_SERVER['PHP_SELF'] . '';
-       $genallowed = 0;
-       $delallowed = 1;
-       $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
- 
-    
- 
-     if ($societe !== null && isset($societe->default_lang)) {
-       print $formfile->showdocuments('Active', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
-     } else {
-         print $formfile->showdocuments('Active', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
-     }
- 
-    //  print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
-   }
- 
-
-    llxHeader("", "");
 
     
+  $object = new User($db);
+  $id=$user->id;
   
+  function GenerateDocuments()
+{
+    global $day, $month, $year, $start, $prev_year;
+    print '<form id="frmgen" name="builddoc" method="post">';
+    print '<input type="hidden" name="token" value="' . newToken() . '">';
+    print '<input type="hidden" name="action" value="builddoc">';
+    print '<input type="hidden" name="model" value="Active">';
+    print '<div class="right"  style="margin-bottom: 100px; margin-right: 20%;">
+    <input type="submit" id="btngen" class="button" name="save" value="génerer">';
+    print '</form>';
+}
+
+
+  function ShowDocuments()
+  {
+      global $db, $object, $conf, $month, $prev_year, $societe, $showAll, $prev_month, $prev_year, $start;
+      print '<div class="fichecenter"><divclass="fichehalfleft">';
+      $formfile = new FormFile($db);
+      $subdir = '';
+      $filedir = DOL_DATA_ROOT . '/test2/';
+      $urlsource = $_SERVER['PHP_SELF'] . '';
+      $genallowed = 0;
+      $delallowed = 1;
+      $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
+
+   
+
+    if ($societe !== null && isset($societe->default_lang)) {
+      print $formfile->showdocuments('Active', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+    } else {
+        print $formfile->showdocuments('Active', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
+    }
+
+   //  print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+  }
+
+llxHeader("", "");
+
 // Actions to build doc
 $action = GETPOST('action', 'aZ09');
-$upload_dir = DOL_DATA_ROOT . '/billanLaisse/billan_Active/';
+$upload_dir = DOL_DATA_ROOT . '/test2/';
 $permissiontoadd = 1;
 $donotredirect = 1;
 
 include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
      
   // 'B' : Brut  / 'AP' : Amort et prov  / 'net' : Net   / 'N1' : Année actuel-1  / 'N2' : Année actuel-2  / 'EP' : Exercice Precedent  / 'E2' :  Exercice n-2 
+
 
     $dateChoisis=0;
     $fraisP_B=$fraisP_AP=$fraisP1_N1=$fraisP1_N2=$fraisP2_N1=$fraisP2_N2=0; //Frais préliminaires 
@@ -617,7 +616,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
    
     ?>
   <br><br> 
-    <table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines" >
+    <table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
         <col class="col0">
         <col class="col1">
         <col class="col2">
@@ -1093,24 +1092,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column5 style2 null"></td>
             <td class="column6 style1 null"><?php readMontant($totalGen_E2)?></td>
           </tr>
+
+
+       
         </tbody>
     </table>
 </center>
     
-<div style="width: 650px; margin: 0 auto; text-align: center;">
-  <div style="margin-top: 10px;margin-right : 80px;">
-    <?php GenerateDocuments($dateChoisis); ?>
+  <div style="width: 550px;">
+    <?php
+       GenerateDocuments();
+       ShowDocuments();
+    ?>
   </div>
-
-  <div style="margin-top: -90px;margin-left : 80px;">
-    <?php ShowDocuments(); ?>
-  </div>
-</div>
-
-
-
-
-
-    </body>
+</body>
 
 </html>
