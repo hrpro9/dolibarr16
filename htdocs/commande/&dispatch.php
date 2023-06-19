@@ -35,11 +35,7 @@
  * \brief 	Page to show customer order
  */
 
-require_once '../main.inc.php';
-
-
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmargin.class.php';
@@ -77,7 +73,6 @@ if (!empty($conf->productbatch->enabled)) {
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('orderid', 'int'));
 $ref = GETPOST('ref', 'alpha');
-
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -94,18 +89,10 @@ $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : 
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
-
-
-
-
-
-
 // Security check
 if (!empty($user->socid)) {
     $socid = $user->socid;
 }
-
-
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ordercard', 'globalcard'));
@@ -113,7 +100,6 @@ $hookmanager->initHooks(array('ordercard', 'globalcard'));
 $result = restrictedArea($user, 'commande', $id);
 
 $object = new Commande($db);
-
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -140,10 +126,6 @@ $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatede
 $error = 0;
 
 $date_delivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
-
-
-
-
 
 
 /*
@@ -211,44 +193,23 @@ $now = dol_now();
 
 if ($object->id > 0) {
 
-    // $orders = array();
-    // $sql = "SELECT p.ref, det.total_ttc, det.qty, det.total_tva, det.price, s.reel, en.ref as entrepot, ed.qty as expedite  FROM llx_expedition as e";
-    // $sql .= ' right JOIN '.MAIN_DB_PREFIX.'expeditiondet as ed ON (e.rowid = ed.fk_expedition)';
-    // $sql .= ' right JOIN '.MAIN_DB_PREFIX.'commandedet as det ON (det.rowid = ed.fk_origin_line)';
-    // $sql .= ' right JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = det.fk_product)';
-    // $sql .= ' right JOIN '.MAIN_DB_PREFIX.'product_stock as s  ON (s.fk_product = det.fk_product)';
-    // $sql .= ' right JOIN '.MAIN_DB_PREFIX.'entrepot as en  ON (en.rowid = s.fk_entrepot)';
-    // $sql .= " WHERE det.fk_commande = '$object->id'";
-    // $total_ttc = 0;
-    // $total_tva= 0;    $res = $db->query($sql);
-    // if ($res->num_rows) {
-    //     while ($row = $res->fetch_assoc()) {
-    //         $total_ttc += $row['total_ttc'];
-    //         $total_tva += $row['total_tva'];
-    //         array_push($orders, [$row['ref'], $row['price'], $row['qty'], $row['total_tva'], $row['total_ttc'], $row['reel'], $row['expedite'], $row['entrepot']]);
-    //     }
-    // }
-
-    
-
-   
-
     $orders = array();
-    $sql = "SELECT p.ref, det.tva_tx, det.qty, det.price, en.ref as entrepot FROM llx_commandedet as det";
-    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = det.fk_product)';
-    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s  ON (s.fk_product = det.fk_product)';
-    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as en  ON (en.rowid = s.fk_entrepot)';
-    $sql .= " WHERE det.fk_commande = '$object->id' and p.fk_product_type=0 ";
-    $res = $db->query($sql);
+    $sql = "SELECT p.ref, det.total_ttc, det.qty, det.total_tva, det.price, s.reel, en.ref as entrepot, ed.qty as expedite  FROM llx_expedition as e";
+    $sql .= ' right JOIN '.MAIN_DB_PREFIX.'expeditiondet as ed ON (e.rowid = ed.fk_expedition)';
+    $sql .= ' right JOIN '.MAIN_DB_PREFIX.'commandedet as det ON (det.rowid = ed.fk_origin_line)';
+    $sql .= ' right JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = det.fk_product)';
+    $sql .= ' right JOIN '.MAIN_DB_PREFIX.'product_stock as s  ON (s.fk_product = det.fk_product)';
+    $sql .= ' right JOIN '.MAIN_DB_PREFIX.'entrepot as en  ON (en.rowid = s.fk_entrepot)';
+    $sql .= " WHERE det.fk_commande = '$object->id'";
+    $total_ttc = 0;
+    $total_tva= 0;    $res = $db->query($sql);
     if ($res->num_rows) {
         while ($row = $res->fetch_assoc()) {
-            array_push($orders, [$row['ref'], $row['price'], $row['qty'],  $row['tva_tx'], $row['entrepot']]);
-           
+            $total_ttc += $row['total_ttc'];
+            $total_tva += $row['total_tva'];
+            array_push($orders, [$row['ref'], $row['price'], $row['qty'], $row['total_tva'], $row['total_ttc'], $row['reel'], $row['expedite'], $row['entrepot']]);
         }
     }
-
-
-    
 
 
     $product_static = new Product($db);
@@ -264,6 +225,9 @@ if ($object->id > 0) {
 
     $head = commande_prepare_head($object);
     print dol_get_fiche_head($head, 'dispatch', $langs->trans("CustomerOrder"), -1, 'order');
+
+
+
 
     // Order card
 
@@ -281,134 +245,49 @@ if ($object->id > 0) {
 
 
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-    
-    $totalPrice = 0;
-    $entrepots = [];
-   
-    
+
+
+    print '<div class="fichecenter">';
+    print '<div class="underbanner clearboth"></div>';
+    print '<div class="fichecenter">';
+
+    print '<table class="border allwidth">';
+    print "<tr>
+				<th>product</th>
+				<th>prix</th>
+				<th>Quantity</th>
+				<th>Total TVA</th>
+				<th>Total TTC</th>
+				<th>Quantity Dsiponible</th>
+				<th>entrepot</th>
+			</tr>";
     foreach ($orders as $key => $value) {
-        array_push($entrepots, $value[$key]);
+        print '<tr>';
+        print '<td>'.$value[0]. '</td>';
+        print '<td>'.$value[1]. '</td>';
+        print '<td>'.$value[2]. '</td>';
+        print '<td>'.number_format($value[3], 2, ',').'</td>';
+        print '<td>'.number_format($value[4], 2, ','). '</td>';
+        print '<td>'.$value[5]. '</td>';
+        print '<td>'.$value[7]. '</td>';
+        print '</tr>';
     }
-    foreach ($orders as $key => $order) {
-        $entrepot[$order[4]][] = $order;
-    }
 
-    $i = [];
-
-    foreach ($entrepot as $key => $values) {
-        if (!in_array($key, $i)) {
-            
-            echo '<div class="fichecenter">';
-            echo '<div class="underbanner clearboth"></div>';
-            echo '<div class="fichecenter">';
-            echo '<table class="border allwidth">';
-            echo "<h2>Entrepôt: $key</h2>";
-            echo "<tr>
-                    <th>Product</th>
-                    <th>Quantite</th>
-                    <th>Quantity à Livré</th>
-                    <th>prix TTC</th>
-                    <th>TVA</th>
-                    <th>Total TTC</th>
-                </tr>";
-        }
-
-        foreach ($values as $value) {
-            $quantiteLivrer = intval($value[2] < $value[3] ? $value[2] : $value[3]);
-            $price = $quantiteLivrer * $value[1];
-
-            echo '<tr>';
-            echo '<td>' . $value[0] . '</td>';
-            echo '<td>' . $value[2] . '</td>';
-            echo '<td>' . $quantiteLivrer . '</td>';
-            echo '<td>' . $value[1] . '</td>';
-            echo '<td>' . intval($value[3]) . '%</td>';
-            echo '<td>' . $price . '</td>';
-            echo '</tr>';
-
-            $totalPrice += $price;
-        }
-
-        $i[] = $key;
-    }
-    echo '</table>';
-
-
-
-
-
-    // foreach ($orders as $key => $order) {
-    //     $entrepot[$order[$key]] = $order;
-    // }
-
-    
-    // $i=[];
-    
-    // foreach ($entrepot as $key => $value) {
-    //     $quantiteLivrer = intval($value[2] < $value[3] ? $value[2] : $value[3]);
-    //     $price = $quantiteLivrer * $value[1];
-
-
-        
-
-    //     if(!in_array($value[4], $i))
-    //     {
-    //         print'<div class="fichecenter">';
-    //         print '<div class="underbanner clearboth"></div>';
-    //         print '<div class="fichecenter">';
-        
-    //         print '<table class="border allwidth">';
-    //         print "<h2>Entrepôt : ".$value[4]."</h2>";
-    //         print "<tr>
-    //                     <th>product</th>
-    //                     <th>Quantite</th>
-    //                     <th>Quantity à Livré</th>
-    //                     <th>prix TTC</th>
-    //                     <th>TVA</th>
-    //                     <th>Total TTC</th>
-    //                 </tr>";
-
-
-    //     }
-      
-        
-            
-    //         print '<tr>';
-    //         print '<td>'.$value[0]. '</td>';
-    //         print '<td>'.$value[2]. '</td>';
-    //         print '<td>'. $quantiteLivrer .'</td>';
-    //         print '<td>'. $value[1] .'</td>';
-    //         print '<td>'.intval($value[3]). '%</td>';
-    //         print '<td>'. $price . '</td>';
-    //         print '</tr>';
-       
-       
-    //     $totalPrice = $totalPrice + $price;
-
-       
-
-    //     $i[]=$value[4];
-
-    // }   
-    // print '</table>';
-
-    
+    print '</table>';
     print "
     <div class='details'>
-        <h4>Total produits : ".count($orders)."  </h4>
-        <h4>Total TTC : ". $totalPrice."  </h4>
+        <h3>Total produits : ".count($orders)."  </h3>
+        <h3>Total Total Tva : $total_tva DH</h3>
+        <h3>Total Ttc : $total_ttc DH</h3>
 
     </div>";
-    
     print '<div>';
-
-  
-    
-
-  
 
     print dol_get_fiche_end();
 }
+
+
+
 print "
 	<style>
     .details{
@@ -447,81 +326,10 @@ print "
 		border-bottom: none !important;
 		height: auto;
 	}
+
+
+
 </style>";
-
-
-$object = new User($db);
-
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('orderid', 'int'));
-
-$sql="SELECT * FROM llx_commande WHERE rowid=$id";
-$rest=$db->query($sql);
-if($rest)
-{
-    $param=$rest->fetch_assoc();
-    $importref=$param['ref'];
-}else{
-    $importref='';
-}
-
-
-
-
-
-
-
-function GenerateDocuments($importref)
-{
-    global $day, $month, $year, $start, $prev_year;
-    print '<form id="frmgen" name="builddoc" method="post">';
-    print '<input type="hidden" name="token" value="' . newToken() . '">';
-    print '<input type="hidden" name="action" value="builddoc">';
-    print '<input type="hidden" name="model" value="Dispatche">';
-    print '<input type="hidden" name="importref" value="'.$importref.'">';
-    print '<div class="right"  style="margin-bottom: 100px; margin-right: 20%;">
-    <input type="submit" id="btngen" class="button" name="save" value="génerer">';
-    print '</form>';
-}
-   
-
-
- function ShowDocuments($importref)
- {
-    
-    global $db, $object,$conf, $month, $prev_year, $societe, $showAll, $prev_month, $prev_year, $start;
-    print '<div class="fichecenter"><divclass="fichehalfleft">';
-    $formfile = new FormFile($db);
-   
-    $subdir = $importref."/";
-
-    $filedir = DOL_DATA_ROOT . '/commande/dispatch/'.$importref.'/';
-    $urlsource = $_SERVER['PHP_SELF'] . '';
-    $genallowed = 0;
-    $delallowed = 1;
-    $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
-
-   if ($societe !== null && isset($societe->default_lang)) {
-     print $formfile->showdocuments('Dispatche', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
-   } else {
-       print $formfile->showdocuments('Dispatche', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
-   }
-  //  print $formfile->showdocuments('Passif', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
- }
-
-
- 
-
-$action = GETPOST('action', 'aZ09');
-$upload_dir = DOL_DATA_ROOT . '/commande/dispatch/'.$importref.'/';
-$permissiontoadd = 1;
-$donotredirect = 1;
-
-include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
-
-
-GenerateDocuments($importref);
-ShowDocuments($importref);
-
 
 
 // End of page

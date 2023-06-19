@@ -46,11 +46,11 @@ if ($action == 'builddoc' && $permissiontoadd) {
 			dol_print_error('Object must have been loaded by a fetch');
 			exit;
 		}*/
-
 		// Save last template used to generate document
 		if (GETPOST('model', 'alpha')) {
 			$object->setDocModel($user, GETPOST('model', 'alpha'));
 		}
+       
 
 		// Special case to force bank account
 		//if (property_exists($object, 'fk_bank'))
@@ -94,12 +94,20 @@ if ($action == 'builddoc' && $permissiontoadd) {
 			$moreparams = null;
 		}
 
+        
+
+       
+       
+
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+       
 		if ($result <= 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = '';
+            
+            setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';		
 		} else {
-			if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
+         
+            if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
 				setEventMessages($langs->trans("FileGenerated"), null);
 
 				/*$urltoredirect = $_SERVER['REQUEST_URI'];
@@ -108,12 +116,16 @@ if ($action == 'builddoc' && $permissiontoadd) {
 
 				header('Location: '.$urltoredirect.'#builddoc');
 				exit;*/
-			}
+		
+            }
+         
 		}
+       
+       
+      
+
 	}
 }
-
-
 
 // Delete file in doc form
 if ($action == 'remove_file' && $permissiontoadd) {
@@ -128,7 +140,6 @@ if ($action == 'remove_file' && $permissiontoadd) {
 
 		$langs->load("other");
 		$filetodelete = GETPOST('file', 'alpha');
-       
 		$file = $upload_dir.'/'.$filetodelete;
 		$dirthumb = dirname($file).'/thumbs/'; // Chemin du dossier contenant la vignette (if file is an image)
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
@@ -157,46 +168,8 @@ if ($action == 'remove_file' && $permissiontoadd) {
 		$urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
 		$urltoredirect = preg_replace('/action=remove_file&?/', '', $urltoredirect);
 
-		
-
-        // now it's safe to call header()
-     //  header('Location: '.$urltoredirect);
-
-        // $urltoredirectt = DOL_URL_ROOT.'/compta/laisse/declarationlaissepassif.php?idmenu=21966&leftmenu=';
-        // echo "<script>window.location.href = '$urltoredirect ';</script>";
-        // exit;
-
-        $id = GETPOST('id');
-        $file = GETPOST('file');
-
-        if( empty($id) )
-        {
-            global $db;
-            $file = GETPOST('file');
-            $parts = explode('/', $file);
-            $valeur = $parts[0];
-            $sql="SELECT rowid FROM llx_commande WHERE ref='$valeur'";
-            $rest=$db->query($sql);
-            if($rest->num_rows>0)
-            {
-                $param=$rest->fetch_assoc();
-                $rowid=$param['rowid'];  
-
-                $urltoredirect = DOL_URL_ROOT.'/commande/dispatch.php?id='.$rowid;
-                echo "<script>window.location.href = '$urltoredirect';</script>";
-            }else{
-                echo "<script>window.location.href = '$urltoredirect ';</script>";
-            }
-                
-         
-        }else{
-            echo "<script>window.location.href = '$urltoredirect ';</script>";
-        }
-
-
-        // echo "<script>window.location.href = '$urltoredirect ';</script>";
-
-
+		header('Location: '.$urltoredirect);
+		exit;
 	} else {
 		setEventMessages('BugFoundVarUploaddirnotDefined', null, 'errors');
 	}
