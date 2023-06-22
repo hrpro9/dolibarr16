@@ -434,6 +434,22 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		}
 		print '</td>';
 	}
+	// ------entrepot -------
+	print '<td >';
+	$coldisplay++;
+	$positiverates = '';
+    global $db;
+	$sql="SELECT fk_default_warehouse FROM llx_product WHERE ref='".$line->ref."'";
+	$rest=$db->query($sql);
+	foreach($rest as $row)
+	{
+		$sql="SELECT ref FROM llx_entrepot WHERE rowid='".$row['fk_default_warehouse']."'";
+	    $rest=$db->query($sql);
+		$param=$rest->fetch_assoc();
+		echo $param['ref'];
+	}
+	print '</td>';
+	// ------ -------
 
 	print '<td class="linecoledit center">';
 	$coldisplay++;
@@ -472,13 +488,31 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		$coldisplay++;
 	}
 } else {
+	// ------entrepot -------
+	print '<td >';
+	$coldisplay++;
+	$positiverates = '';
+    global $db;
+	$sql="SELECT fk_default_warehouse FROM llx_product WHERE ref='".$line->ref."'";
+	$rest=$db->query($sql);
+	foreach($rest as $row)
+	{
+		$sql="SELECT ref FROM llx_entrepot WHERE rowid='".$row['fk_default_warehouse']."'";
+	    $rest=$db->query($sql);
+		$param=$rest->fetch_assoc();
+		echo $param['ref'];
+	}
+	print '</td>';
+	// ------  -------
+
 	print '<td colspan="3"></td>';
 	$coldisplay = $coldisplay + 3;
 }
 
 if ($action == 'selectlines') { ?>
-	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php print $i + 1; ?>]" value="<?php print $line->id; ?>" ></td>
-<?php }
+ 	<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php print $i + 1; ?>]" value="<?php print $line->id; ?>"></td>
+<?php
+}
 
 print "</tr>\n";
 

@@ -230,7 +230,7 @@ class pdf_Passif extends ModelePDFUser
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : '';
 				$dir = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/';
 			
-				$file = $dir . "/Passif_" . $name . ".pdf";
+				$file = $dir . "/Billan Passif.pdf";
 				// $file = $dir . "/Passif.pdf";
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
@@ -303,7 +303,7 @@ class pdf_Passif extends ModelePDFUser
 
 
 
-				include DOL_DOCUMENT_ROOT . '/compta/laisse/codeLaisse.php';
+				include DOL_DOCUMENT_ROOT . '/compta/laisse/codeLaissePassif.php';
 
 				$table =
 				 '
@@ -484,6 +484,12 @@ class pdf_Passif extends ModelePDFUser
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($augmentationDCIN2*-1*-1,2).'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color:rgb(38,60,92);color:white;">&nbsp;</th>
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color:rgb(38,60,92);color:white;">Exercice</th>
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color: rgb(38,60,92);color:white;">Exercice Précédent</th>
+				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color: rgb(38,60,92);color:white;">Exercice N-2</th>
+				</tr>
+				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Diminution des dettes de financement</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($diminutionDF*-1*-1,2).'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($diminutionDFN1*-1*-1,2).'</td>
@@ -525,15 +531,6 @@ class pdf_Passif extends ModelePDFUser
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($organismesSN1*-1*-1,2).'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($organismesSN2*-1*-1,2).'</td>
 				</tr>
-
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: left;background-color:rgb(38,60,92);color:white;">&nbsp;</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color:rgb(38,60,92);color:white;">Exercice</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color: rgb(38,60,92);color:white;">Exercice Précédent</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align:center;background-color: rgb(38,60,92);color:white;">Exercice N-2</th>
-				</tr>
-
-
 
 
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
@@ -631,10 +628,16 @@ class pdf_Passif extends ModelePDFUser
 				$pdf->SetY($pdf->GetY() + 6);
 				$pdf->SetX($this->posxdesc + 6);
 				$pdf->writeHTML($table);
-
+			
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+
+
+
+
+
+
 
 				$pdf->Close();
 
@@ -770,6 +773,118 @@ class pdf_Passif extends ModelePDFUser
 		if ($current_y < $pdf->getY()) {
 			$top_shift = $pdf->getY() - $current_y;
 		}
+
+		$ltrdirection=0;
+		if ($showaddress) {
+			// Sender properties
+			$carac_emetteur = '';
+			// Add internal contact of proposal if defined
+			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
+			if (count($arrayidcontact) > 0) {
+				$object->fetch_user($arrayidcontact[0]);
+				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+			}
+
+			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
+
+			// ---Émetteur---
+
+			// Show sender
+			$posy = 48 + $top_shift;
+			$posx = $this->marge_gauche;
+			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+				$posx = $this->page_largeur - $this->marge_droite - 80;
+			}
+			$hautcadre = 40;
+
+			// Show sender frame
+			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx, $posy - 5);
+				$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, $ltrdirection);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetFillColor(230, 230, 230);
+				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+				$pdf->SetTextColor(0, 0, 60);
+			}
+
+			// Show sender name
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+				$pdf->SetXY($posx + 2, $posy + 3);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, $ltrdirection);
+				$posy = $pdf->getY();
+			}
+
+			// Show sender information
+			$pdf->SetXY($posx + 2, $posy);
+			$pdf->SetFont('', '', $default_font_size - 1);
+			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+
+
+			// If CUSTOMER contact defined, we use it
+			$usecontact = false;
+			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
+			if (count($arrayidcontact) > 0) {
+				$usecontact = true;
+				$result = $object->fetch_contact($arrayidcontact[0]);
+			}
+
+			// Recipient name
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+				$thirdparty = $object->contact;
+			} else {
+				$thirdparty = $object->thirdparty;
+			}
+
+			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+
+			$mode =  'target';
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
+
+			// Show recipient
+			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
+			if ($this->page_largeur < 210) {
+				$widthrecbox = 84; // To work with US executive format
+			}
+			// $posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 48;
+			// $posy += $top_shift;
+			// $posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
+			// if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			// 	$posx = $this->marge_gauche;
+			// }
+
+			// Show recipient frame
+			// if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
+			// 	$pdf->SetTextColor(0, 0, 0);
+			// 	$pdf->SetFont('', '', $default_font_size - 2);
+			// 	$pdf->SetXY($posx + 2, $posy - 5);
+			// 	$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
+			// 	$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			// }
+
+			// // Show recipient name
+			// $pdf->SetXY($posx + 2, $posy + 3);
+			// $pdf->SetFont('', 'B', $default_font_size);
+			// $pdf->MultiCell($widthrecbox, 2, $nom_soc, 0, $ltrdirection);
+
+			// $posy = $pdf->getY();
+
+			// // Show recipient information
+			// $pdf->SetFont('', '', $default_font_size - 1);
+			// $pdf->SetXY($posx + 2, $posy);
+			// $pdf->MultiCell($widthrecbox, 4,$address_soc, 0, $ltrdirection);
+
+			// $posy = $pdf->getY();
+
+			// // Show recipient information
+			// $pdf->SetFont('', '', $default_font_size - 1);
+			// $pdf->SetXY($posx + 2, $posy);
+			// $pdf->MultiCell($widthrecbox, 4, $town_soc, 0, $ltrdirection);
+		}
+		$pdf->SetTextColor(0, 0, 0);
 
 		return $top_shift;
 	}

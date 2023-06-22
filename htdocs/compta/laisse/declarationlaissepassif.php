@@ -1,6 +1,6 @@
 <?php
 
- require_once 'codeLaisse.php';
+require_once 'codeLaissePassif.php';
 
   $object = new User($db);
   $id=$user->id;

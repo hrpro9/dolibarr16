@@ -142,6 +142,9 @@ class FormProduct
 		}
 		$sql .= " ORDER BY ".$orderBy;
 
+		
+	
+
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -717,6 +720,8 @@ class FormProduct
 				$sql .= " WHERE ps.fk_product IN (".$this->db->sanitize($productIdList).")";
 			}
 			$sql .= " ORDER BY e.ref, pb.batch";
+
+			
 
 			dol_syslog(get_class($this).'::loadLotStock', LOG_DEBUG);
 			$resql = $this->db->query($sql);

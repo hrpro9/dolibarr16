@@ -72,8 +72,8 @@ require_once 'functionDeclarationLaisse.php';
     $numero_compte = $row['numero_compte'];
     $montant = $row['montant']; 
     switch ($numero_compte) {
-    //   case "1119":list($aCapita, $aCapitaN1, $aCapitaN2)=calculateMontant($dateCreation, $dateChoisis, $aCapita,$aCapitaN1, $aCapitaN2,'1119');break;
-      case "611":list($aCapita, $aCapitaN1, $aCapitaN2)=calculateMontant($dateCreation, $dateChoisis, $aCapita,$aCapitaN1, $aCapitaN2,'611');break;
+      case "1119":list($aCapita, $aCapitaN1, $aCapitaN2)=calculateMontant($dateCreation, $dateChoisis, $aCapita,$aCapitaN1, $aCapitaN2,'1119');break;
+      // case "611":list($aCapita, $aCapitaN1, $aCapitaN2)=calculateMontant($dateCreation, $dateChoisis, $aCapita,$aCapitaN1, $aCapitaN2,'611');break;
       case "112":list($PrimeDFD, $PrimeDFDN1, $PrimeDFDN2)=calculateMontant($dateCreation, $dateChoisis, $PrimeDFD,$PrimeDFDN1, $PrimeDFDN2,'112');break;
       case "113":list($EcartsR, $EcartsRN1, $EcartsRN2)=calculateMontant($dateCreation, $dateChoisis, $EcartsR,$EcartsRN1, $EcartsRN2,'113');break;
       case "114":list($reserveL, $reserveLN1, $reserveLN2)=calculateMontant($dateCreation,$dateChoisis, $reserveL,$reserveLN1, $reserveLN2,'114');break;

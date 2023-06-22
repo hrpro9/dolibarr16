@@ -2594,6 +2594,8 @@ class Form
 			$sql .= ' AND e.statut IN ('.$this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))).')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
 		}
 
+		
+
 		// include search in supplier ref
 		if (!empty($conf->global->MAIN_SEARCH_PRODUCT_BY_FOURN_REF)) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
@@ -5160,6 +5162,8 @@ class Form
 				$jsforcursor .= 'jQuery("html,body,#id-container").addClass("cursorwait");'."\n";
 			}
 
+		
+
 			$formconfirm .= '
                     resizable: false,
                     height: "'.$height.'",
@@ -5295,8 +5299,10 @@ class Form
 
 			$formconfirm .= "<!-- end formconfirm -->\n";
 		}
-
+		
 		return $formconfirm;
+
+		
 	}
 
 
