@@ -34,16 +34,18 @@
     $reExI_IIToEx=$reExI_IIExPre=$reExI_IIExN2=0;//III - RESULTAT D'EXPLOITATION  ( I - II )
     $prTPPaLex=$prTPCLExPr=$prTPToEx=$prTPExPre=$prTPExN2=0;//Produits des titres de partic. et autres titres immo
     $gaChPaLex=$gaChCLExPr=$gaChToEx=$gaChExPre=$gaChExN2=0;//Gains de change
-    $inAPFPaLex=$inAPFCLExPr=$inAPFToEx=$inAPFExPre=$inAPFExN2=0;//Intérêts et autres produits financiers
-    $reFTChPaLex=$reFTChCLExPr=$reFTChToEx=$reFTChExPre=$reFTChExN2=0;//Reprises financières; transfert de charges
-    $totalIVPaLex=$totalIVCLExPr=$totalIVToEx=$totalIVExPre=$totalIVExN2=0;//TOTAL  IV
-    $chiPaLex=$chiCLExPr=$chiToEx=$chiExPre=$chiExN2=0;//Charges d'intérêts
-    $peChPaLex=$peChCLExPr=$peChToEx=$peChExPre=$peChExN2=0;//Pertes de changes
-    
-
-
-    
-    
+    $inAPFPaLex=$inAPFCLExPr=$inAPFToEx=$inAPFExPre=$inAPFExN2=0; //Intérêts et autres produits financiers
+    $reFTChPaLex=$reFTChCLExPr=$reFTChToEx=$reFTChExPre=$reFTChExN2=0; //Reprises financières; transfert de charges
+    $totalIVPaLex=$totalIVCLExPr=$totalIVToEx=$totalIVExPre=$totalIVExN2=0; //TOTAL  IV
+    $chiPaLex=$chiCLExPr=$chiToEx=$chiExPre=$chiExN2=0; //Charges d'intérêts
+    $peChPaLex=$peChCLExPr=$peChToEx=$peChExPre=$peChExN2=0; //Pertes de changes
+    $auChFPaLex=$auChFCLExPr=$auChFToEx=$auChFExPre=$auChFExN2=0;//Autres charges financières
+    $doFPaLex= $doFCLExPr= $doFToEx= $doFExPre= $doFExN2=0;//Dotations financières
+    $totalVPaLex=$totalVCLExPr=$totalVToEx=$totalVExPre=$totalVExN2=0;// TOTAL V
+    $reFToEx= $reFExPre= $reFExN2=0;//RESULTAT FINANCIER ( IV - V )
+    $reCoToEx=$reCoExPre=$reCoExN2=0;//RESULTAT COURANT ( III - V I)
+    $reTCToEx=$reTCExPre=$reTCExN2=0;//RESULTAT COURANT ( Report )
+   
     
 
 
@@ -103,6 +105,12 @@
             case '738' : list($inAPFToEx,$inAPFExPre,$inAPFExN2) = calculateMontant($dateCreation, $dateChoisis,$inAPFToEx,$inAPFExPre,$inAPFExN2,'738'); break;
             case '6318' : list($chiCLExPr) = calculateMontant($dateCreation, $dateChoisis,$chiCLExPr,0,0,'6318'); break;   
             case '631' : list($chiToEx,$chiExPre,$chiExN2) = calculateMontant($dateCreation, $dateChoisis,$chiToEx,$chiExPre,$chiExN2,'631'); break;
+            case '6338' : list($peChCLExPr) = calculateMontant($dateCreation, $dateChoisis,$peChCLExPr,0,0,'6338'); break;   
+            case '633' : list($peChToEx,$peChExPre,$peChExN2) = calculateMontant($dateCreation, $dateChoisis,$peChToEx,$peChExPre,$peChExN2,'633'); break;
+            case '6388' : list($auChFCLExPr) = calculateMontant($dateCreation, $dateChoisis,$auChFCLExPr,0,0,'6388'); break;   
+            case '638' : list($auChFToEx,$auChFExPre,$auChFExN2) = calculateMontant($dateCreation, $dateChoisis,$auChFToEx,$auChFExPre,$auChFExN2,'638'); break;
+            case '6398' : list($doFCLExPr) = calculateMontant($dateCreation, $dateChoisis,$doFCLExPr,0,0,'6398'); break;   
+            case '639' : list($doFToEx,$doFExPre,$doFExN2) = calculateMontant($dateCreation, $dateChoisis,$doFToEx,$doFExPre,$doFExN2,'639'); break;
             default:$default=$montant;break;
         }
         $veMarchPaLex=$veMarchToEx-$veMarchCLExPr; //ventes de marchandises  Propres à l'exercice        
@@ -163,6 +171,27 @@
         $totalIVExPre=$prTPExPre+$gaChExPre+$inAPFExPre+$reFTChExPre;
         $totalIVExN2=$prTPExN2+$gaChExN2+$inAPFExN2+$reFTChExN2;
         $chiPaLex=$chiToEx+$chiCLExPr;//Charges d'intérêts
+        $peChPaLex=$peChToEx - $peChCLExPr; //Pertes de changes
+        $auChFPaLex=$auChFToEx-$auChFCLExPr;//Autres charges financières
+        $doFPaLex=  $doFToEx-$doFCLExPr;//Dotations financières
+         // TOTAL V
+        $totalVPaLex= $chiPaLex+ $peChPaLex+$auChFPaLex+ $doFPaLex;
+        $totalVCLExPr=$chiCLExPr+$peChCLExPr+$auChFCLExPr+ $doFCLExPr;
+        $totalVToEx=$chiToEx+$peChToEx+$auChFToEx+$doFToEx;
+        $totalVExPre=$chiExPre+$peChExPre+$auChFExPre+ $doFExPre;
+        $totalVExN2=$chiExN2+$peChExN2+$auChFExN2+$doFExN2;
+        //RESULTAT FINANCIER ( IV - V )
+        $reFToEx=$totalIVToEx-$totalVToEx;
+        $reFExPre=$totalIVExPre-$totalVExPre;
+        $totalVExN2=$totalIVExN2-$totalVExN2;
+        //RESULTAT COURANT ( III - V I)
+        $reCoToEx=$reExI_IIToEx+$prTPToEx+$gaChToEx+$inAPFToEx+$reFTChToEx+$totalIVToEx+$chiToEx+$peChToEx+$auChFToEx+ $doFToEx+$totalVToEx+$reFToEx;
+        $reCoExPre=$reExI_IIExPre+$prTPExPre+$gaChExPre+$inAPFExPre+$reFTChExPre+$totalIVExPre+$chiExPre+$peChExPre+$auChFExPre+ $doFExPre+$totalVExPre+$reFExPre;
+        $reCoExN2=$reExI_IIExN2+$prTPExN2+$gaChExN2+$inAPFExN2+$reFTChExN2+$totalIVExN2+$chiExN2+$peChExN2+$auChFExN2+ $doFExN2+$totalVExN2+$reFExN2;
+        //RESULTAT COURANT ( Report )
+        $reTCToEx=$reCoToEx;
+        $reTCExPre=$reCoExPre;
+        $reTCExN2=$reCoExN2;
 
     }
 
