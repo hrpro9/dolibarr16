@@ -3043,24 +3043,34 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/' . $original_file;
 	}
 
-		// diclration passif  docs
-		elseif ($modulepart == 'Active') {
-			if ($fuser->rights->salaries->read) {
-				$accessallowed = 1;
-			}
-			$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Active/' . $original_file;
+	// diclration passif  docs
+	elseif ($modulepart == 'Active') {
+		if ($fuser->rights->salaries->read) {
+			$accessallowed = 1;
 		}
+		$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Active/' . $original_file;
+	}
 
-		//  dispatch  docs
-		elseif ($modulepart == 'Dispatche') {
-			if ($fuser->rights->salaries->read) {
-				$accessallowed = 1;
-			}
-			
-			
-			$original_file = DOL_DATA_ROOT . '/commande/dispatch/'. $original_file;
-
+	//  dispatch  docs
+	elseif ($modulepart == 'Dispatche') {
+		if ($fuser->rights->salaries->read) {
+			$accessallowed = 1;
 		}
+		
+		
+		$original_file = DOL_DATA_ROOT . '/commande/dispatch/'. $original_file;
+
+	}
+	//  Hors Taxes  docs
+	elseif ($modulepart == 'HorsTaxes') {
+		if ($fuser->rights->salaries->read) {
+			$accessallowed = 1;
+		}
+		
+		
+		$original_file = DOL_DATA_ROOT . '/billanLaisse/HorsTaxes/'. $original_file;
+
+	}
 	//  dispatch  docs
 	elseif ($modulepart == 'fournisseurco') {
 		if ($fuser->rights->salaries->read) {

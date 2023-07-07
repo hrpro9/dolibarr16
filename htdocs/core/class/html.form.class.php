@@ -5072,12 +5072,12 @@ class Form
 						$more .= $input['value'];
 						$more .= '</div></div>'."\n";
 					} elseif ($input['type'] == 'onecolumn') {
-						$moreonecolumn .= '<div class="margintoponly">';
+						$moreonecolumn .= '<div class="margintoponly">';    
 						$moreonecolumn .= $input['value'];
 						$moreonecolumn .= '</div>'."\n";
 					} elseif ($input['type'] == 'hidden') {
 						// Do nothing more, already added by a previous loop
-					} elseif ($input['type'] == 'separator') {
+					} elseif ($input['type'] == 'separator') {                
 						$more .= '<br>';
 					} else {
 						$more .= 'Error type '.$input['type'].' for the confirm box is not a supported type';
@@ -5127,7 +5127,7 @@ class Form
 					if (isset($input['inputko']) && $input['inputko'] == 1) {
 						array_push($inputko, $input['name']);
 					}
-				}
+				}  
 			}
 
 			// Show JQuery confirm box.

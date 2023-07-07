@@ -2025,6 +2025,7 @@ if ($action == 'create' && $usercancreate) {
 				$text .= '<br>';
 				$text .= $notify->confirmMessage('ORDER_VALIDATE', $object->socid, $object);
 			}
+			
 
 			$qualified_for_stock_change = 0;
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
@@ -2042,12 +2043,14 @@ if ($action == 'create' && $usercancreate) {
 				if ($conf->browser->name == 'ie') {
 					$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
 				}
+				
 				$formquestion = array(
                   
 					// 'text' => $langs->trans("ConfirmClone"),  // Choisissez la donnée à copier 
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),// Cloner l'objet avec ces attributs principaux	
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),// Mise à jour des prix avec les prix connus actuels	
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int') ? GETPOST('idwarehouse', 'int') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					// array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int') ? GETPOST('idwarehouse', 'int') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int') ? GETPOST('idwarehouse', 'int') : '2', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 				);
 			}
 
@@ -2148,7 +2151,7 @@ if ($action == 'create' && $usercancreate) {
 
 					$formquestion[] = array(
 						'type' => 'onecolumn',
-						'value' => '
+						'value' => '         
 							<script>
 								$(document).ready(function() {
 									$("[name=generate_deposit]").change(function () {
@@ -2198,7 +2201,8 @@ if ($action == 'create' && $usercancreate) {
 					// 'text' => $langs->trans("ConfirmClone"),
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					// array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockIncrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse') ? GETPOST('idwarehouse') : '2', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 				);
 			}
 
@@ -2215,7 +2219,7 @@ if ($action == 'create' && $usercancreate) {
 		/*
 		 * Confirmation de l'annulation
 		 */
-		if ($action == 'cancel') { 
+		if ($action == 'cancel') {  
 			$qualified_for_stock_change = 0;
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(2);
@@ -2223,7 +2227,7 @@ if ($action == 'create' && $usercancreate) {
 				$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
-			$text = $langs->trans('ConfirmCancelOrder', $object->ref);
+			$text = $langs->trans('ConfirmCancelOrder', $object->ref); 
 			$formquestion = array();
 			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 				$langs->load("stocks");

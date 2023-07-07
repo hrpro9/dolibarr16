@@ -704,6 +704,7 @@ class Commande extends CommonOrder
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
+			
 			return -1;
 		}
 	}
@@ -907,6 +908,7 @@ class Commande extends CommonOrder
 	 */
 	public function create($user, $notrigger = 0)
 	{
+		
 		global $conf, $langs, $mysoc;
 		$error = 0;
 
@@ -991,7 +993,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : "null");
 		$sql .= ", ".($this->fk_delivery_address > 0 ? ((int) $this->fk_delivery_address) : 'NULL');
 		$sql .= ", ".(!empty($this->shipping_method_id) && $this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'NULL');
-		$sql .= ", ".(!empty($this->warehouse_id) && $this->warehouse_id > 0 ? ((int) $this->warehouse_id) : 'NULL');
+		$sql .= ", ".(!empty($this->warehouse_id) && $this->warehouse_id > 0 ? ((int) $this->warehouse_id) : 'NULL');	
 		$sql .= ", ".($this->remise_absolue > 0 ? $this->db->escape($this->remise_absolue) : 'NULL');
 		$sql .= ", ".($this->remise_percent > 0 ? $this->db->escape($this->remise_percent) : 0);
 		$sql .= ", ".(int) $this->fk_incoterms;
@@ -1004,6 +1006,8 @@ class Commande extends CommonOrder
 		$sql .= ", ".(float) $this->multicurrency_tx;
 		$sql .= ", ". $this->clientLivrer;
 		$sql .= ")";
+
+
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1864,6 +1868,7 @@ class Commande extends CommonOrder
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'client_livre as cl ON cl.id = c.clientLivrer';
 
+
 		if ($id) {
 			$sql .= " WHERE c.rowid=".((int) $id);
 		} else {
@@ -1879,6 +1884,8 @@ class Commande extends CommonOrder
 		if ($notused) {
 			$sql .= " AND c.ref_int='".$this->db->escape($notused)."'";
 		}
+
+		
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

@@ -620,7 +620,7 @@ class ExtraFields
 					} else {
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$attrname;
 					}
-					
+					 
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
 					/*if ($resql < 0) {

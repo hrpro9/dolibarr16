@@ -45,9 +45,27 @@
     $reFToEx= $reFExPre= $reFExN2=0;//RESULTAT FINANCIER ( IV - V )
     $reCoToEx=$reCoExPre=$reCoExN2=0;//RESULTAT COURANT ( III - V I)
     $reTCToEx=$reTCExPre=$reTCExN2=0;//RESULTAT COURANT ( Report )
-   
-    
+    $proDCIPaLex=$proDCICLExPr=$proDCIToEx=$proDCIExPre=$proDCIExN2=0;//Produits des cessions d'immobilisations
+    $subDEPaLex=$subDECLExPr=$subDEToEx=$subDEExPre=$subDEExN2=0;//Subventions d'équilibre
+    $reSDPaLex=$reSDCLExPr=$reSDToEx=$reSDExPre=$reSDExN2=0;//Reprises sur subventions d'investissement
+    $auPrCPaLex=$auPrCCLExPr=$auPrCToEx=$auPrCExPre=$auPrCExN2=0;//Autres produits non courants
+    $reCTCPaLex=$reCTCCLExPr=$reCTCToEx=$reCTCExPre=$reCTCExN2=0;//Reprises non courantes; transferts de charges
+    $totalVIIIPaLex=$totalVIIICLExPr=$totalVIIIToEx=$totalVIIIExPre=$totalVIIIExN2=0;//TOTAL  VIII
+    $vaNAICPaLex=$vaNAICCLExPr=$vaNAICToEx=$vaNAICExPre=$vaNAICExN2=0; //Valeurs nettes d'amortis. des immos cédées
+    $suAcPaLex=$suAcCLExPr=$suAcToEx=$suAcExPre=$suAcExN2=0; //Subventions accordées
+    $auCNCPaLex=$auCNCCLExPr=$auCNCToEx=$auCNCExPre=$auCNCExN2=0; //Autres charges non courantes
+    $daCAPPaLex=$daCAPCLExPr=$daCAPToEx=$daCAPExPre=$daCAPExN2=0; //Dotations non courantes aux amortiss. et prov.
+    $totalIXPaLex=$totalIXCLExPr=$totalIXToEx=$totalIXExPre=$totalIXExN2=0;//TOTAL  IX
+    $XReNCToEx=$XReNCExPre=$XReNCExN2=0;//X - RESULTAT NON COURANT ( VIII- IV )
+    $xiResulAIToEx=$xiResulAIExPre=$xiResulAIExN2=0;//XI - RESULTAT AVANT IMPOTS ( VII+ X )
+    $xiiIMSLRPaLex= $xiiIMSLRCLExPr= $xiiIMSLRToEx= $xiiIMSLRExPre= $xiiIMSLRExN2=0;//XII - IMPOTS SUR LES RESULTATS
+    $xiiReNToEx=$xiiReNExPre=$xiiReNExN2=0;// XIII - RESULTAT NET ( XI - XII )
+    $xivToDPrToEx=$xivToDPrExPre=$xivToDPrExN2=0;//XIV - TOTAL DES PRODUITS ( I + IV + VIII )
+    $xvToDCHToEx=$xvToDCHExPre=$xvToDCHExN2=0;//XV - TOTAL DES CHARGES ( II + V + IX + XII )
+    $xviReNToEx=$xviReNExPre=$xviReNExN2=0;//XVI - RESULTAT NET ( XIV - XV )
 
+    
+    
 
   $dateChoisis=0;
   $dateChoisis=(isset($_POST['chargement']))?$_POST['date_select']:0;
@@ -111,6 +129,26 @@
             case '638' : list($auChFToEx,$auChFExPre,$auChFExN2) = calculateMontant($dateCreation, $dateChoisis,$auChFToEx,$auChFExPre,$auChFExN2,'638'); break;
             case '6398' : list($doFCLExPr) = calculateMontant($dateCreation, $dateChoisis,$doFCLExPr,0,0,'6398'); break;   
             case '639' : list($doFToEx,$doFExPre,$doFExN2) = calculateMontant($dateCreation, $dateChoisis,$doFToEx,$doFExPre,$doFExN2,'639'); break;
+            case '7518' : list($proDCICLExPr) = calculateMontant($dateCreation, $dateChoisis,$proDCICLExPr,0,0,'7518'); break;   
+            case '751' : list($proDCIToEx,$proDCIExPre,$proDCIExN2) = calculateMontant($dateCreation, $dateChoisis,$proDCIToEx,$proDCIExPre,$proDCIExN2,'751'); break;
+            case '7568' : list($subDECLExPr) = calculateMontant($dateCreation, $dateChoisis,$subDECLExPr,0,0,'7568'); break;   
+            case '756' : list($subDEToEx,$subDEExPre,$subDEExN2) = calculateMontant($dateCreation, $dateChoisis,$subDEToEx,$subDEExPre,$subDEExN2,'756'); break;
+            case '7578' : list($reSDCLExPr) = calculateMontant($dateCreation, $dateChoisis,$reSDCLExPr,0,0,'7578'); break;   
+            case '757' : list($reSDToEx,$reSDExPre,$reSDExN2) = calculateMontant($dateCreation, $dateChoisis,$reSDToEx,$reSDExPre,$reSDExN2,'757'); break;
+            case '7588' : list($auPrCCLExPr) = calculateMontant($dateCreation, $dateChoisis,$auPrCCLExPr,0,0,'7588'); break;   
+            case '758' : list($auPrCToEx,$auPrCExPre,$auPrCExN2) = calculateMontant($dateCreation, $dateChoisis,$auPrCToEx,$auPrCExPre,$auPrCExN2,'758'); break;
+            case '7598' : list($reCTCCLExPr) = calculateMontant($dateCreation, $dateChoisis,$reCTCCLExPr,0,0,'7598'); break;   
+            case '759' : list($reCTCToEx,$reCTCExPre,$reCTCExN2) = calculateMontant($dateCreation, $dateChoisis,$reCTCToEx,$reCTCExPre,$reCTCExN2,'759'); break;
+            case '6518' : list($vaNAICCLExPr) = calculateMontant($dateCreation, $dateChoisis,$vaNAICCLExPr,0,0,'6518'); break;   
+            case '651' : list($vaNAICToEx,$vaNAICExPre,$vaNAICExN2) = calculateMontant($dateCreation, $dateChoisis,$vaNAICToEx,$vaNAICExPre,$vaNAICExN2,'651'); break;
+            case '6568' : list($vaNAICCLExPr) = calculateMontant($dateCreation, $dateChoisis,$vaNAICCLExPr,0,0,'6568'); break;   
+            case '656' : list($vaNAICToEx,$vaNAICExPre,$vaNAICExN2) = calculateMontant($dateCreation, $dateChoisis,$vaNAICToEx,$vaNAICExPre,$vaNAICExN2,'656'); break;
+            case '6588' : list($auCNCCLExPr) = calculateMontant($dateCreation, $dateChoisis,$auCNCCLExPr,0,0,'6588'); break;   
+            case '658' : list($auCNCToEx,$auCNCExPre,$auCNCExN2) = calculateMontant($dateCreation, $dateChoisis,$auCNCToEx,$auCNCExPre,$auCNCExN2,'658'); break;
+            case '6598' : list($daCAPCLExPr) = calculateMontant($dateCreation, $dateChoisis,$daCAPCLExPr,0,0,'6598'); break;   
+            case '659' : list($daCAPToEx,$daCAPExPre,$daCAPExN2) = calculateMontant($dateCreation, $dateChoisis,$daCAPToEx,$daCAPExPre,$daCAPExN2,'659'); break;
+            case '6708' : list($xiiIMSLRCLExPr) = calculateMontant($dateCreation, $dateChoisis,$xiiIMSLRCLExPr,0,0,'6708'); break;   
+            case '67' : list($xiiIMSLRToEx,$xiiIMSLRExPre,$xiiIMSLRExN2) = calculateMontant($dateCreation, $dateChoisis,$xiiIMSLRToEx,$xiiIMSLRExPre,$xiiIMSLRExN2,'67'); break;
             default:$default=$montant;break;
         }
         $veMarchPaLex=$veMarchToEx-$veMarchCLExPr; //ventes de marchandises  Propres à l'exercice        
@@ -192,7 +230,52 @@
         $reTCToEx=$reCoToEx;
         $reTCExPre=$reCoExPre;
         $reTCExN2=$reCoExN2;
-
+        $proDCIPaLex=$proDCIToEx-$proDCICLExPr;//Produits des cessions d'immobilisations
+        $subDEPaLex=$subDEToEx-$subDECLExPr;//Subventions d'équilibre
+        $reSDPaLex=$reSDToEx-$reSDCLExPr;//Reprises sur subventions d'investissement
+        $auPrCPaLex=$auPrCToEx-$auPrCCLExPr;//Autres produits non courants
+        $reCTCPaLex=$reCTCToEx-$reCTCCLExPr;//Reprises non courantes; transferts de charges
+        //TOTAL  VIII
+        $totalVIIIPaLex=$proDCIPaLex+$subDEPaLex+$reSDPaLex+$auPrCPaLex+$reCTCPaLex;
+        $totalVIIICLExPr=$proDCICLExPr+$subDECLExPr+$reSDCLExPr+$auPrCCLExPr+$reCTCCLExPr;
+        $totalVIIIToEx=$proDCIToEx+$subDEToEx+$reSDToEx+$auPrCToEx+$reCTCToEx;
+        $totalVIIIExPre=$proDCIExPre+$subDEExPre+$reSDExPre+$auPrCExPre+$reCTCExPre;
+        $totalVIIIExN2=$proDCIExN2+$subDEExN2+$reSDExN2+$auPrCExN2+$reCTCExN2;
+        $vaNAICPaLex=$vaNAICToEx-$vaNAICCLExPr; //Valeurs nettes d'amortis. des immos cédées
+        $suAcPaLex=$suAcToEx-$suAcCLExPr;//Subventions accordées
+        $auCNCPaLex=$auCNCToEx-$auCNCCLExPr;//Autres charges non courantes
+        $daCAPPaLex=$daCAPToEx-$daCAPCLExPr; //Dotations non courantes aux amortiss. et prov.
+        //TOTAL  IX
+        $totalIXPaLex=$vaNAICPaLex+$suAcPaLex+$auCNCPaLex+$daCAPPaLex;
+        $totalIXCLExPr=$vaNAICCLExPr+$suAcCLExPr+$auCNCCLExPr+$daCAPCLExPr;
+        $totalIXToEx=$vaNAICToEx+$suAcToEx+$auCNCToEx+$daCAPToEx;
+        $totalIXExPre=$vaNAICExPre+$suAcExPre+$auCNCExPre+$daCAPExPre;
+        $totalIXExN2=$vaNAICExN2+$suAcExN2+$auCNCExN2+$daCAPExN2;
+        //X - RESULTAT NON COURANT ( VIII- IV )
+        $XReNCToEx=$totalVIIIToEx-$totalIXToEx;
+        $XReNCExPre=$totalVIIIExPre-$totalIXExPre;
+        $XReNCExN2=$totalVIIIExN2-$totalIXExN2;
+        //XI - RESULTAT AVANT IMPOTS ( VII+ X )
+        $xiResulAIToEx=$reTCToEx+$proDCIToEx+$subDEToEx+$reSDToEx+$auPrCToEx+$reCTCToEx+$totalVIIIToEx+$vaNAICToEx+$suAcToEx+$auCNCToEx+$daCAPToEx+$totalIXToEx+ $XReNCToEx;
+        $xiResulAIExPre=$reTCExPre+$proDCIExPre+$subDEExPre+$reSDExPre+$auPrCExPre+$reCTCExPre+$totalVIIIExPre+$vaNAICExPre+$suAcExPre+$auCNCExPre+$daCAPExPre+$totalIXExPre+$XReNCExPre;
+        $xiResulAIExN2=$reTCExN2+$proDCIExN2+$subDEExN2+$reSDExN2+$auPrCExN2+$reCTCExN2+$totalVIIIExN2+$vaNAICExN2+$suAcExN2+$auCNCExN2+$daCAPExN2+$totalIXExN2+$XReNCExN2;
+        $xiiIMSLRPaLex= $xiiIMSLRToEx- $xiiIMSLRCLExPr;//XII - IMPOTS SUR LES RESULTATS
+        // XIII - RESULTAT NET ( XI - XII )
+        $xiiReNToEx=$xiResulAIToEx-$xiiIMSLRToEx;
+        $xiiReNExPre=$xiResulAIExPre-$xiiIMSLRExPre;
+        $xiiReNExN2=$xiResulAIExN2-$xiiIMSLRExN2;
+        //XIV - TOTAL DES PRODUITS ( I + IV + VIII )
+        $xivToDPrToEx=$totalIToEx+$totalIVToEx+$totalVIIIToEx;
+        $xivToDPrExPre=$totalIExPre+$totalIVExPre+$totalVIIIExPre;
+        $xivToDPrExN2=$totalIExN2+$totalIVExN2+$totalVIIIExN2;
+        // XV - TOTAL DES CHARGES ( II + V + IX + XII )
+        $xvToDCHToEx=$xiiIMSLRToEx+$totalIXToEx+$totalVToEx+$totalIIToEx;
+        $xvToDCHExPre=$xiiIMSLRExPre+$totalIXExPre+$totalVExPre+$totalIIExPre;
+        $xvToDCHExN2=$xiiIMSLRExN2+$totalIXExN2+$totalVExN2+$totalIIExN2;
+        //XVI - RESULTAT NET ( XIV - XV )
+        $xviReNToEx= $xivToDPrToEx- $xvToDCHToEx;
+        $xviReNExPre=$xivToDPrExPre-$xvToDCHExPre;
+        $xviReNExN2=$xivToDPrExN2-$xvToDCHExN2;
     }
 
 

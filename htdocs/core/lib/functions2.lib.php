@@ -2344,6 +2344,8 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 			$totalnb += $nb;
 		}
+
+		
 		//else dol_print_error($db);
 
 		// Check and clean orphelins

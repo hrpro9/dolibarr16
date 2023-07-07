@@ -10130,6 +10130,8 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}
 
+		
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
