@@ -41,6 +41,7 @@ class FormProduct
 
 	// Cache arrays
 	public $cache_warehouses = array();
+
 	public $cache_lot = array();
 
 
@@ -240,6 +241,8 @@ class FormProduct
 		if (!empty($fk_product) && $fk_product > 0) {
 			$this->cache_warehouses = array();
 		}
+
+	
 
 		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $orderBy);
 		$nbofwarehouses = count($this->cache_warehouses);

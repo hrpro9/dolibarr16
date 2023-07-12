@@ -320,6 +320,7 @@ class modShipmentPackage extends DolibarrModules
 			'type'=>'left',                          // This is a Top menu entry
 			'titre'=>'ShipmentPackage',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
+	
 			'mainmenu'=>'products',
 			'leftmenu'=>'shipmentpackage',
 			'url'=>'/shipmentpackage/shipmentpackageindex.php',

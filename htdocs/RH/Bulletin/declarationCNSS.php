@@ -108,15 +108,19 @@ if ($action != 'generate')
                         </thead>
                         <tbody>
                             <?php
+                            $i=0;
                             //comparison between n°cnss from llx_cnss_temporary and n cnss temporary
                             $sql = "SELECT *  FROM llx_Paie_UserInfo,llx_cnss_temporary WHERE cnss=n_cnss_temporary";
                             $rest_cnss = $db->query($sql);
                             foreach ($rest_cnss as $user) {
                                 $param = '';
-                                $sql = "SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $user['userid'] . " ";
+                                $sql = "SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $user['userid'] . " AND year=" . $user['annee'] . " AND month=" . $user['mois'] . " ";
                                 $rest_ef = $db->query($sql);
                                 $param = ((object)($rest_ef))->fetch_assoc();
-                                $ValueGenerer=$user['n_num_affilie'];
+                                if(!empty($param))
+                                {
+                                    $i=$param;
+                                }
                             ?>
                                 <tr>
                                     <th scope="row">
@@ -162,10 +166,30 @@ if ($action != 'generate')
                                     <td>
                                         <?php
                                         $param = '';
-                                        $sql = "SELECT *  FROM llx_Paie_MonthDeclaration WHERE userid=" . $user['userid'] . " ";
+                                        $sql = "SELECT *  FROM llx_Paie_MonthDeclaration WHERE userid=" . $user['userid'] . " AND year=" . $user['annee'] . " AND month=" . $user['mois'] . " ";
                                         $rest_cs = $db->query($sql);
                                         $param = ((object)($rest_cs))->fetch_assoc();
-                                        echo $param['workingDays'];
+
+                                        $sql = "SELECT *  FROM llx_const WHERE rowid=901";
+                                        $rest_c = $db->query($sql);
+                                        $param_c = ((object)($rest_c))->fetch_assoc();
+
+                                        if($param['salaireBrut'] > $param_c['value'])
+                                        {
+                                            if (!is_float($param['workingDays'])) { 
+                                                $intWorkingDays = ceil($param['workingDays']);
+                                                echo $intWorkingDays;
+                                            }else{
+                                                echo $param['workingDays'];
+                                            }
+                                        }else{
+                                            if (!is_float($param['workingDays'])) { 
+                                                $intWorkingDays = floor($param['workingDays']);
+                                                echo $intWorkingDays;
+                                            }else{
+                                                echo $param['workingDays'];
+                                            }
+                                        }
                                         ?>
                                     </td>
                                     <td>
@@ -187,44 +211,76 @@ if ($action != 'generate')
                                         <?php
                                         //L_Situation
                                         //Get user extra informations from database
-                                        $sql = "SELECT l_situation FROM " . MAIN_DB_PREFIX . "user_extrafields WHERE fk_object=" . $user['userid'];
+                                        // $sql = "SELECT l_situation FROM " . MAIN_DB_PREFIX . "user_extrafields WHERE fk_object=" . $user['userid'];
+                                        $sql = "SELECT l_situation FROM llx_user_extrafields WHERE fk_object=" . $user['userid'] . " ";
                                         $res = $db->query($sql);
                                         $extrafields = ((object)($res))->fetch_assoc();
                                         $r_d_st = $extrafields['l_situation'];
-                                        switch( $r_d_st)
-                                        {
-                                            case 1 : $situaEmploye='SOrtant';break;
-                                            case 2 : $situaEmploye='DEcédé';break;
-                                            case 3 : $situaEmploye='maTemité';break;
-                                            case 4 : $situaEmploye='maladie';break;
-                                            case 5 : $situaEmploye='Accident de Travail';break;
-                                            case 6 : $situaEmploye='Maintenu Sans Salaire';break;
-                                            case 7 : $situaEmploye='Maladie Professionnelle';break;
-                                            default : $situaEmploye='non renseigné';break;
+
+                                        switch ($r_d_st) {
+                                            case 1:
+                                                $param_st = "SO";
+                                                break;
+                                            case 2:
+                                                $param_st = "DE";
+                                                break;
+                                            case 3:
+                                                $param_st = "IT";
+                                                break;
+                                            case 4:
+                                                $param_st = "IL";
+                                                break;
+                                            case 5:
+                                                $param_st = "AT";
+                                                break;
+                                            case 6:
+                                                $param_st = "CS";
+                                                break;
+                                            case 7:
+                                                $param_st = "MS";
+                                                break;
+                                            case 8:
+                                                $param_st = "MP";
+                                                break;
+                                            default:
+                                                $param_st = "non_renseigne";
                                         }
-                                        echo  $situaEmploye;
+
+                                        echo   $param_st ;
                                         ?>
                                     </td>
                                 </tr>
                             <?php
                             }
+                        
                             ?>
                         </tbody>
                     </table>
-                    <?php
-
-                    if(!empty($ValueGenerer)  )
-                    {
-                        print_r(' <input type="submit" name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;" />');
-                    }
+                 <?php
+                 if(!empty($i))
+                 {
+                    ?>
+                      <input type="submit" name="Generer" value="Génerer" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;" />
+                      <?php
+                 }
+                 ?>
                   
-             
-            
-                    
+                <?php
             }
                 ?>
                 <?php
                 if (isset($_POST['Generer'])) {
+                    $n_t_Salaire_Plaf =0;
+                    $n_t_salaire_reel =0;
+                    $n_t_jour_declares=0;
+                    $n_t_af_a_reverser =0;
+                    $n_t_af_net_a_payer=0;
+                    $n_t_af_a_deduire =0;
+                    $n_t_af_payer=0;
+                    $n_t_enfants=0;
+                    $n_t_num_imm=0;
+                    $n_nb_salaries=0;
+                    $n_t_S_Ctr =0;
                     //open file 
                     // "C:/xampp/htdocs/dolibarr16/htdocs/RH/Bulletin/files/fileDs.txt";
                     $fileNameWrite = DOL_DOCUMENT_ROOT . '/RH/Bulletin/files/fileDs.txt';
@@ -246,7 +302,7 @@ if ($action != 'generate')
                     // ----> b02 <----
                     foreach ($rest_cnss as $user) {
                         $param = '';
-                        $sql = "SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $user['userid'] . " ";
+                        $sql = "SELECT *  FROM llx_Paie_MonthDeclarationRubs WHERE userid=" . $user['userid'] . " AND year=" . $user['annee'] . " AND month=" . $user['mois'] . " ";
                         $rest_ef = $db->query($sql);
                         $param = ((object)($rest_ef))->fetch_assoc();
                         //n_num_affilie
@@ -296,10 +352,36 @@ if ($action != 'generate')
                         $n_t_af_a_reverser = $n_t_af_a_reverser;
                         //n_jour_declares
                         $param_dl = '';
-                        $sql5 = "SELECT *  FROM llx_Paie_MonthDeclaration WHERE userid=" . $user['userid'] . " ";
+                        $sql5 = "SELECT *  FROM llx_Paie_MonthDeclaration WHERE userid=" . $user['userid'] . " AND year=" . $user['annee'] . " AND month=" . $user['mois'] . " ";
                         $rest_dl = $db->query($sql5);
                         $param_dl = ((object)($rest_dl))->fetch_assoc();
-                        $n_jour_declares = $param_dl['workingDays'];
+                        // $n_jour_declares = $param_dl['workingDays'];
+
+
+                        $sql = "SELECT *  FROM llx_const WHERE rowid=901";
+                        $rest_c = $db->query($sql);
+                        $param_c = ((object)($rest_c))->fetch_assoc();
+
+                        if($param_dl['salaireBrut'] > $param_c['value'])
+                        {
+                            if (!is_float($param_dl['workingDays'])) { 
+                                $intWorkingDays = ceil($param_dl['workingDays']);
+                                $n_jour_declares = $intWorkingDays;
+                            }else{
+                                $n_jour_declares = $param_dl['workingDays'];
+                            }
+                        }else{
+                            if (!is_float($param_dl['workingDays'])) { 
+                                $intWorkingDays = floor($param_dl['workingDays']);
+                                $n_jour_declares = $intWorkingDays;
+                            }else{
+                                $n_jour_declares =  $param_dl['workingDays'];
+                            }
+                        }
+
+
+
+
                         //n_t_jour_declares
                         $n_t_jour_declares = $n_t_jour_declares + $n_jour_declares;
                         $n_t_jour_declares = $n_t_jour_declares;
@@ -322,11 +404,19 @@ if ($action != 'generate')
                         //L_Situation
                         $param_st = '';
                         //Get user extra informations from database
-                        $sql = "SELECT l_situation FROM " . MAIN_DB_PREFIX . "user_extrafields WHERE fk_object=" . $user['userid'];
+                        // $sql = "SELECT l_situation FROM " . MAIN_DB_PREFIX . "user_extrafields WHERE fk_object=" . $user['userid'];
+                        // $sql = "SELECT l_situation FROM llx_user_extrafields WHERE fk_object==" . $user['userid'] . " ";
+                        // $res = $db->query($sql);
+                        // $extrafields = ((object)($res))->fetch_assoc();
+                        // $r_d_st = $extrafields['l_situation'];
+
+                        $sql = "SELECT l_situation FROM llx_user_extrafields WHERE fk_object=" . $user['userid'] . " ";
                         $res = $db->query($sql);
-                        $extrafields = ((object)($res))->fetch_assoc();
-                        $r_d_st = $extrafields['l_situation'];
+                        $row = $res->fetch_assoc();
+                        $r_d_st = $row['l_situation'];
+
                         //le Rang de la situation
+                      
                         switch ($r_d_st) {
                             case 1:
                                 $param_st = "SO";
@@ -355,15 +445,29 @@ if ($action != 'generate')
                             default:
                                 $param_st = "non_renseigne";
                         }
-                        if ($param_st['l_situation'] == "non_renseigne") {
-                            for ($i = 1; $i < 2; $i++) {
-                                $param_st['l_situation'] = ' ';
-                                $y = " " . $param_st['l_situation'];
-                                $n_st = $y;
+                        // if ($param_st['l_situation'] == "non_renseigne") {
+                        //     for ($i = 1; $i < 2; $i++) {
+                        //         $param_st['l_situation'] = ' ';
+                        //         $y = " " . $param_st['l_situation'];
+                        //         $n_st = $y;
+                        //     }
+                        // } else {
+                        //     $n_st = $param_st['l_situation'];
+                        // }
+
+                        if ($param_st == "non_renseigne") {
+                                for ($i = 1; $i < 2; $i++) {
+                                    $param_st['l_situation'] = ' ';
+                                    $y = " " . $param_st['l_situation'];
+                                    $n_st = $y;
+                                }
+                            
+                         } else {
+                                $n_st = $param_st;
                             }
-                        } else {
-                            $n_st = $param_st['l_situation'];
-                        }
+                        
+
+
                         //S_Ctr
                         $S_Ctr = $n_num_assure + $n_af_a_reverser + $n_jour_declares + $n_salaire_reel + $Salaire_Plaf + $r_d_st;
                         //n_t_S_Ctr
@@ -545,6 +649,67 @@ if ($action != 'generate')
                         "B03" . $n_num_affilie . $l_periode . $n_nb_salaries . $n_t_enfants . $n_t_af_payer . $n_t_af_a_deduire . $n_t_af_net_a_payer . $x_n_t_num_imm . $n_t_af_a_reverser .
                         $n_t_jour_declares . $n_t_salaire_reel . $n_t_Salaire_Plaf . $n_t_S_Ctr . $espace . "\n";
                     fwrite($myfile, $b03);
+
+                     // ----> b04 <----
+                    //  $param_cnss_t = '';
+                    //  $n_t_Salaire_Plaf_en = 0;
+                    //  $n_t_S_Ctr_en = 0;
+                    //  $sql = "SELECT *  FROM llx_cnss_temporary";
+                    //  $rest_cnss_t = $db->query($sql);
+                    //  $param_cnss = ((object)($rest_cnss_t))->fetch_assoc();
+                    //  //n_num_affilie
+                    //  $n_num_affilie = $param_cnss['n_num_affilie'];
+                    //  //l_periode
+                    //  $l_periode = $param_cnss['date'];
+                    //  //date_cnss_t
+                    //  $date_cnss_t = $param_cnss['annee'] . '-' . $param_cnss['mois'];
+
+                    //  $sql = "SELECT *  FROM llx_Paie_UserInfo,llx_cnss_temporary  WHERE cnss=n_cnss_temporary ";
+                    //  $rest_cnss1 = $db->query($sql);
+                    //  $param_cnss1 = ((object)($rest_cnss1))->fetch_assoc();
+                    //  foreach ($rest_cnss as $info_cnss) {
+
+                    //     $sql = "SELECT *  FROM llx_Paie_UserInfo WHERE fk_object=". $info_cnss['userid'];
+                    //     $rest_cnss = $db->query($sql);
+
+
+                    //  }
+
+
+
+
+                    //  $sql = "SELECT *  FROM llx_Paie_UserInfo ";
+                    //  $rest_cnss = $db->query($sql);
+
+                    //  foreach ($rest_cnss as $info_cnss) {
+                    //     //cin
+                    //     $param_cin = '';
+                    //     $sql = "SELECT * FROM llx_user_extrafields WHERE rowid=" . $info_cnss['userid'];
+                    //     $rest_cin = $db->query($sql);
+                    //     $row = $rest_cin->fetch_assoc();
+                    
+                    //     if ($row !== null) {
+                            
+                    //         //write b04 in file declares entrants
+                    //         $b04 = "B04" . $n_num_affilie . $l_periode . $row['cin'] . "\n";
+                    //         fwrite($myfile, $b04);
+                    //     } else {
+                    //         // Handle the case when no row is returned from the query
+                    //     }
+                    // }
+                            
+                
+
+
+
+
+
+
+
+
+
+
+                    
                     // ----> b04 <----
                     $param_cnss_t = '';
                     $n_t_Salaire_Plaf_en = 0;
@@ -558,26 +723,59 @@ if ($action != 'generate')
                     $l_periode = $param_cnss['date'];
                     //date_cnss_t
                     $date_cnss_t = $param_cnss['annee'] . '-' . $param_cnss['mois'];
-                    $sql = "SELECT *  FROM llx_Paie_UserInfo ";
+                    $sql = "SELECT *  FROM llx_Paie_UserInfo ,llx_cnss_temporary  WHERE cnss=n_cnss_temporary ";
                     $rest_cnss = $db->query($sql);
                     foreach ($rest_cnss as $info_cnss) {
                         //cin
                         $param_cin = '';
-                        $sql = "SELECT *  FROM llx_user_extrafields WHERE rowid=" . $info_cnss['userid'] . " ";
+                        $sql = "SELECT *  FROM llx_user_extrafields WHERE fk_object =" . $info_cnss['userid'] . " ";
                         $rest_cin = $db->query($sql);
                         $param_cin = ((object)($rest_cin))->fetch_assoc();
                         // $n_cin=;
                         //n_num_assure declares entrants
                         $n_num_assure = $info_cnss['cnss'];
+
+                     
                         //n_jour_declares declares entrants
+                        $sql = "SELECT *  FROM llx_cnss_temporary WHERE n_cnss_temporary=" . $info_cnss['cnss'] . " ";
+                        $rest_cnss_t = $db->query($sql);
+                        $param_cnss = ((object)($rest_cnss_t))->fetch_assoc();
+
+                      
+
                         $param_dl = '';
-                        $sql5 = "SELECT *  FROM llx_Paie_MonthDeclaration WHERE userid=" . $info_cnss['userid'] . " ";
+                        $sql5 = "SELECT *  FROM llx_Paie_MonthDeclaration WHERE userid=" . $info_cnss['userid'] . " AND year=" . $param_cnss['annee'] . " AND month=" . $param_cnss['mois'] . " ";
                         $rest_dl = $db->query($sql5);
                         $param_dl = ((object)($rest_dl))->fetch_assoc();
-                        $n_jour_declares = $param_dl['workingDays'];
-                        //n_salaire_reel  declares entrants
+
+                        $param_dl['workingDays'] = empty($param_dl['workingDays'])?0:$param_dl['workingDays'] ;    
+                        $param_dl['salaireBrut'] = empty($param_dl['salaireBrut'])?0:$param_dl['salaireBrut'] ;
                         $param_dl['salaireBrut'] = $param_dl['salaireBrut'] * 100;
                         $n_salaire_reel = $param_dl['salaireBrut'];
+
+                        $sql = "SELECT *  FROM llx_const WHERE rowid=901";
+                        $rest_c = $db->query($sql);
+                        $param_c = ((object)($rest_c))->fetch_assoc();
+
+                        if($param_dl['salaireBrut'] > $param_c['value'])
+                        {
+                            if (!is_float($param_dl['workingDays'])) { 
+                                $intWorkingDays = ceil($param_dl['workingDays']);
+                                $n_jour_declares = $intWorkingDays;
+                            }else{
+                                $n_jour_declares = $param_dl['workingDays'];
+                            }
+                        }else{
+                            if (!is_float($param_dl['workingDays'])) { 
+                                $intWorkingDays = floor($param_dl['workingDays']);
+                                $n_jour_declares = $intWorkingDays;
+                            }else{
+                                $n_jour_declares =  $param_dl['workingDays'];
+                            }
+                        }
+                        //n_salaire_reel  declares entrants
+
+                       
                         //Salaire_Plaf  declares entrants
                         $sql = "SELECT * FROM llx_Paie_Rub WHERE rub=700";
                         $res = $db->query($sql);
@@ -585,8 +783,16 @@ if ($action != 'generate')
                         $tauxcnss = $param_cnss["percentage"] / 100;
                         $maxcnss = ($param_cnss["plafond"] / $tauxcnss) * 100;
                         $Salaire_Plaf = $param_dl['salaireBrut'] > $maxcnss ? $maxcnss : $param_dl['salaireBrut'];
+
+                        
+                     
+                      
+
                         //S_Ctr  declares entrants
-                        $S_Ctr = $n_num_assure + $n_jour_declares + $n_salaire_reel + $Salaire_Plaf;
+                        // $S_Ctr = $n_num_assure + $n_jour_declares + $n_salaire_reel + $Salaire_Plaf;
+                        $S_Ctr = intval($n_num_assure) + intval($n_jour_declares) + intval($n_salaire_reel) + intval($Salaire_Plaf);
+
+                    
                         //import data from user
                         $param_date = '';
                         $sql = "SELECT *  FROM llx_user WHERE rowid=" . $info_cnss['userid'] . " ";
@@ -600,9 +806,15 @@ if ($action != 'generate')
                             $one_date = strtotime($date_cnss_t);
                             $two_date = strtotime($date_user);
                             $day_num = $one_date - $two_date;
+
+                           
+
                             //days entrants
                             $day = floor($day_num / (60 * 60 * 24));
-                            if ($day > 0 && $day <= 30) {
+
+                          
+
+                            // if ($day > 0 && $day <= 30) {
                                 //n_t_num_immatriculations  declares entrants
                                 $x_n_t_num_imm_en = $n_t_num_imm_en + $n_num_assure;
                                 $n_t_num_imm_en = $x_n_t_num_imm_en;
@@ -694,7 +906,7 @@ if ($action != 'generate')
                                 $b04 =
                                     "B04" . $n_num_affilie . $l_periode . $n_num_assure . $l_nom . $l_prenom . $param_cin['cin'] . $n_jour_declares . $n_salaire_reel . $Salaire_Plaf . $S_Ctr . $espace . "\n";
                                 fwrite($myfile, $b04);
-                            }
+                            // }
                         }
                     }
 

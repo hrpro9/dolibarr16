@@ -1175,7 +1175,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
-	} elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate) {
+	}
+	 elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate) {
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 
 		$qualified_for_stock_change = 0;
@@ -1191,7 +1192,9 @@ if (empty($reshook)) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 				$action = '';
+			
 			}
+			
 		}
 
 		if (!$error) {
@@ -1268,7 +1271,8 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'confirm_modif' && $usercancreate) {
+	} 
+	elseif ($action == 'confirm_modif' && $usercancreate) {
 		// Go back to draft status
 		$idwarehouse = GETPOST('idwarehouse');
 
@@ -2050,8 +2054,9 @@ if ($action == 'create' && $usercancreate) {
 					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),// Cloner l'objet avec ces attributs principaux	
 					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),// Mise à jour des prix avec les prix connus actuels	
 					// array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int') ? GETPOST('idwarehouse', 'int') : 'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int') ? GETPOST('idwarehouse', 'int') : '2', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+					array('type' => 'other', 'name' => 'idwarehouse', 'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse', 'int') ? GETPOST('idwarehouse', 'int') : 2, 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 				);
+				
 			}
 
 			// mandatoryPeriod
@@ -2065,6 +2070,9 @@ if ($action == 'create' && $usercancreate) {
 					}
 				}
 			}
+
+			
+			
 			if ($nbMandated > 0) $text .= '<div><span class="clearboth nowraponall warning">' . $langs->trans("mandatoryPeriodNeedTobeSetMsgValidate") . '</span></div>';
 
 

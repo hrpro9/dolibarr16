@@ -28,41 +28,43 @@
  */
 function testbuildmoduleAdminPrepareHead()
 {
-	global $langs, $conf;
+	// global $langs, $conf;
 
-	$langs->load("testbuildmodule@testbuildmodule");
+	// $langs->load("testbuildmodule@testbuildmodule");
 
-	$h = 0;
-	$head = array();
+	// $h = 0;
+	// $head = array();
 
-	$head[$h][0] = dol_buildpath("/testbuildmodule/admin/setup.php", 1);
-	$head[$h][1] = $langs->trans("Settings");
-	$head[$h][2] = 'settings';
-	$h++;
+	// $head[$h][0] = dol_buildpath("/testbuildmodule/admin/setup.php", 1);
+	// $head[$h][1] = $langs->trans("Settings");
+	// $head[$h][2] = 'settings';
+	// $h++;
 
-	/*
-	$head[$h][0] = dol_buildpath("/testbuildmodule/admin/myobject_extrafields.php", 1);
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'myobject_extrafields';
-	$h++;
-	*/
+	// /*
+	// $head[$h][0] = dol_buildpath("/testbuildmodule/admin/myobject_extrafields.php", 1);
+	// $head[$h][1] = $langs->trans("ExtraFields");
+	// $head[$h][2] = 'myobject_extrafields';
+	// $h++;
+	// */
 
-	$head[$h][0] = dol_buildpath("/testbuildmodule/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;
+	// $head[$h][0] = dol_buildpath("/testbuildmodule/admin/about.php", 1);
+	// $head[$h][1] = $langs->trans("About");
+	// $head[$h][2] = 'about';
+	// $h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	//$this->tabs = array(
-	//	'entity:+tabname:Title:@testbuildmodule:/testbuildmodule/mypage.php?id=__ID__'
-	//); // to add new tab
-	//$this->tabs = array(
-	//	'entity:-tabname:Title:@testbuildmodule:/testbuildmodule/mypage.php?id=__ID__'
-	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'testbuildmodule@testbuildmodule');
+	// // Show more tabs from modules
+	// // Entries must be declared in modules descriptor with line
+	// //$this->tabs = array(
+	// //	'entity:+tabname:Title:@testbuildmodule:/testbuildmodule/mypage.php?id=__ID__'
+	// //); // to add new tab
+	// //$this->tabs = array(
+	// //	'entity:-tabname:Title:@testbuildmodule:/testbuildmodule/mypage.php?id=__ID__'
+	// //); // to remove a tab
+	// complete_head_from_modules($conf, $langs, null, $head, $h, 'testbuildmodule@testbuildmodule');
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'testbuildmodule@testbuildmodule', 'remove');
+	// complete_head_from_modules($conf, $langs, null, $head, $h, 'testbuildmodule@testbuildmodule', 'remove');
 
-	return $head;
+	// return $head;
+
+	echo 'tetst';
 }
