@@ -85,17 +85,61 @@ $now = dol_now();
 
 
 /*
- * View
- */
+ * View 
+*/
 
 $form = new Form($db);
 $formfile = new FormFile($db);
 
 llxHeader("", $langs->trans("CalculeSalaireArea"));
 
-print load_fiche_titre($langs->trans("CalculeSalaireArea"), '', 'calculesalaire.png@calculesalaire');
+// print load_fiche_titre($langs->trans("Calcule salaire de base & nouvelle prime "), '', 'calculesalaire.png@calculesalaire');
+
+
+
+
+print load_fiche_titre($langs->trans("Calcule salaire de base "), '', 'hrm');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
+
+$urltoredirect = DOL_URL_ROOT.'/custom/calculesalaire/calcul_salaire_base.php';
+$urltoredirectPrime=DOL_URL_ROOT.'\custom\calculesalaire\calcul_new_prime.php';
+
+// salaire de base
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder nohover centpercent">';
+print '<tr class="liste_titre"><th colspan="3">Salaire de base</th></tr>';
+print '<tr class="oddeven">';
+print '<td>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoredirect . '">Calculer salaire de base</a></span></div>';
+print '<span class="opacitymedium"></span>';
+print '</td>';
+print '</tr>';
+print '</table></div><br>';
+
+
+
+// nouvelle prime        
+print load_fiche_titre($langs->trans("Calcule  nouvelle prime"), '', 'hrm');
+
+
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder nohover centpercent">';
+print '<tr class="liste_titre"><th colspan="3">Nouvelle prime</th></tr>';
+print '<tr class="oddeven">';
+print '<td>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoredirectPrime . '">Calcule nouvelle prime</a></span></div>';
+print '<span class="opacitymedium"></span>';
+
+print '</td>';
+print '</tr>';
+print '</table></div><br>';
+print '</div><div class="fichetwothirdright">';
+
+
+
+
 
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT

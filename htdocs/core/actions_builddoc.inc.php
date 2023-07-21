@@ -118,6 +118,7 @@ if ($action == 'builddoc' && $permissiontoadd) {
 // Delete file in doc form
 if ($action == 'remove_file' && $permissiontoadd) {
 	if (!empty($upload_dir)) {
+        
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if (empty($object->id) || !$object->id > 0) {

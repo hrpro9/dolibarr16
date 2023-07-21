@@ -3035,21 +3035,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = DOL_DATA_ROOT . '/grh/Etats/IR/' . $original_file;
 	}
 
-	// diclration passif  docs
-	elseif ($modulepart == 'Passif') {
-		if ($fuser->rights->salaries->read) {
-			$accessallowed = 1;
-		}
-		$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/' . $original_file;
-	}
+	
 
-	// diclration passif  docs
-	elseif ($modulepart == 'Active') {
-		if ($fuser->rights->salaries->read) {
-			$accessallowed = 1;
-		}
-		$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Active/' . $original_file;
-	}
+	
 
 	//  dispatch  docs
 	elseif ($modulepart == 'Dispatche') {
@@ -3061,16 +3049,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = DOL_DATA_ROOT . '/commande/dispatch/'. $original_file;
 
 	}
-	//  Hors Taxes  docs
-	elseif ($modulepart == 'HorsTaxes') {
-		if ($fuser->rights->salaries->read) {
-			$accessallowed = 1;
-		}
-		
-		
-		$original_file = DOL_DATA_ROOT . '/billanLaisse/HorsTaxes/'. $original_file;
-
-	}
+	
 	//  dispatch  docs
 	elseif ($modulepart == 'fournisseurco') {
 		if ($fuser->rights->salaries->read) {
@@ -3097,7 +3076,132 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->user->dir_output . '/' . $original_file;
 	}
 
-	// GENERIC Wrapping
+
+		
+		
+		elseif ($modulepart == 'Cheque') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			
+			
+			$original_file = DOL_DATA_ROOT . '/facture/reglement/'. $original_file;
+	
+		}
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diclration passif  docs
+elseif ($modulepart == 'Passif') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/' . $original_file;
+}
+
+// diclration passif  docs
+elseif ($modulepart == 'Active') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Active/' . $original_file;
+}
+
+//  Hors Taxes  docs
+elseif ($modulepart == 'HorsTaxes') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	
+	
+	$original_file = DOL_DATA_ROOT . '/billanLaisse/HorsTaxes/'. $original_file;
+
+}
+
+//  ESG  docs
+elseif ($modulepart == 'Esg') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	
+	
+	$original_file = DOL_DATA_ROOT . '/billanLaisse/Esg/'. $original_file;
+
+}
+
+//  Cpc  docs
+elseif ($modulepart == 'Cpc') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	
+	
+	$original_file = DOL_DATA_ROOT . '/billanLaisse/Cpc/'. $original_file;
+
+}
+
+// GENERIC Wrapping
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+		
+	
+		
+	
+		
 	// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser
 	// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
 	// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser

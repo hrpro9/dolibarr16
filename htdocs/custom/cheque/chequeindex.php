@@ -93,12 +93,9 @@ $formfile = new FormFile($db);
 
 llxHeader("", $langs->trans("ChequeArea"));
 
-// print load_fiche_titre($langs->trans("ChequeArea"), '', 'cheque.png@cheque');
+print load_fiche_titre($langs->trans("List Règlements"), '', 'object_cheque_over.png@cheque');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
-
-
 
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT

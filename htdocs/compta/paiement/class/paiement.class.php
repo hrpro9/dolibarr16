@@ -1261,7 +1261,45 @@ class Paiement extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		$url = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id;
+
+		
+		
+			
+		
+			
+		if($withpicto == 5) {
+			$url = DOL_URL_ROOT.'/custom/cheque/cardCheque.php?id='.$this->id;
+		} else {
+			$url = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id;
+		}
+	
+		
+		
+	
+		
+	
+	
+		
+		
+	
+		
+		
+	
+		
+		
+	
+		
+		
+	
+		
+		
+			
+	
+		
+		
+	
+		
+	
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';

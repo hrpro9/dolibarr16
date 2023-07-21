@@ -45,7 +45,7 @@ class modCheque extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500110; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 500100; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
 
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'cheque';
@@ -173,10 +173,10 @@ class modCheque extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array();
-		// Example:
-		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@cheque:$user->rights->cheque->read:/cheque/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@cheque:$user->rights->othermodule->read:/cheque/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+// 		Example:
+// 		$this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@cheque:$user->rights->cheque->read:/cheque/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
+// 		$this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@cheque:$user->rights->othermodule->read:/cheque/mynewtab2.php?id=__ID__');  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+// 		$this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
 		//
 		// Where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
@@ -244,8 +244,8 @@ class modCheque extends DolibarrModules
 			//  0 => array(
 			//      'label' => 'MyJob label',
 			//      'jobtype' => 'method',
-			//      'class' => '/cheque/class/paiment.class.php',
-			//      'objectname' => 'Paiment',
+			//      'class' => '/cheque/class/paiement.class.php',
+			//      'objectname' => 'Paiement',
 			//      'method' => 'doScheduledJob',
 			//      'parameters' => '',
 			//      'comment' => 'Comment',
@@ -268,18 +268,18 @@ class modCheque extends DolibarrModules
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of Cheque'; // Permission label
-		$this->rights[$r][4] = 'paiment';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->cheque->paiment->read)
+		$this->rights[$r][4] = 'paiement';
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->cheque->paiement->read)
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update objects of Cheque'; // Permission label
-		$this->rights[$r][4] = 'paiment';
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->cheque->paiment->write)
+		$this->rights[$r][4] = 'paiement';
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->cheque->paiement->write)
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete objects of Cheque'; // Permission label
-		$this->rights[$r][4] = 'paiment';
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->cheque->paiment->delete)
+		$this->rights[$r][4] = 'paiement';
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->cheque->paiement->delete)
 		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 
@@ -299,52 +299,52 @@ class modCheque extends DolibarrModules
 			'langs'=>'cheque@cheque', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->cheque->enabled', // Define condition to show or hide menu entry. Use '$conf->cheque->enabled' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->cheque->paiment->read' if you want your menu with a permission rules
+			'perms'=>'1', // Use 'perms'=>'$user->rights->cheque->paiement->read' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END MODULEBUILDER TOPMENU */
-		/* BEGIN MODULEBUILDER LEFTMENU PAIMENT
+		/* BEGIN MODULEBUILDER LEFTMENU PAIEMENT
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=cheque',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Left menu entry
-			'titre'=>'Paiment',
+			'titre'=>'Paiement',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu'=>'cheque',
-			'leftmenu'=>'paiment',
+			'leftmenu'=>'paiement',
 			'url'=>'/cheque/chequeindex.php',
 			'langs'=>'cheque@cheque',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->cheque->enabled',  // Define condition to show or hide menu entry. Use '$conf->cheque->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->cheque->paiment->read',			                // Use 'perms'=>'$user->rights->cheque->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->cheque->paiement->read',			                // Use 'perms'=>'$user->rights->cheque->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=cheque,fk_leftmenu=paiment',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=cheque,fk_leftmenu=paiement',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_Paiment',
+			'titre'=>'List_Paiement',
 			'mainmenu'=>'cheque',
-			'leftmenu'=>'cheque_paiment_list',
-			'url'=>'/cheque/paiment_list.php',
+			'leftmenu'=>'cheque_paiement_list',
+			'url'=>'/cheque/paiement_list.php',
 			'langs'=>'cheque@cheque',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->cheque->enabled',  // Define condition to show or hide menu entry. Use '$conf->cheque->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->cheque->paiment->read',			                // Use 'perms'=>'$user->rights->cheque->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->cheque->paiement->read',			                // Use 'perms'=>'$user->rights->cheque->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=cheque,fk_leftmenu=paiment',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=cheque,fk_leftmenu=paiement',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_Paiment',
+			'titre'=>'New_Paiement',
 			'mainmenu'=>'cheque',
-			'leftmenu'=>'cheque_paiment_new',
-			'url'=>'/cheque/paiment_card.php?action=create',
+			'leftmenu'=>'cheque_paiement_new',
+			'url'=>'/cheque/paiement_card.php?action=create',
 			'langs'=>'cheque@cheque',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->cheque->enabled',  // Define condition to show or hide menu entry. Use '$conf->cheque->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->cheque->paiment->write',			                // Use 'perms'=>'$user->rights->cheque->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->cheque->paiement->write',			                // Use 'perms'=>'$user->rights->cheque->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -355,10 +355,10 @@ class modCheque extends DolibarrModules
             'fk_menu'=>'fk_mainmenu=cheque',
             // This is a Left menu entry
             'type'=>'left',
-            'titre'=>'List Paiment',
+            'titre'=>'List Paiement',
             'mainmenu'=>'cheque',
-            'leftmenu'=>'cheque_paiment',
-            'url'=>'/cheque/paiment_list.php',
+            'leftmenu'=>'cheque_paiement',
+            'url'=>'/cheque/paiement_list.php',
             // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'langs'=>'cheque@cheque',
             'position'=>1100+$r,
@@ -372,13 +372,13 @@ class modCheque extends DolibarrModules
         );
         $this->menu[$r++]=array(
             // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=cheque,fk_leftmenu=cheque_paiment',
+            'fk_menu'=>'fk_mainmenu=cheque,fk_leftmenu=cheque_paiement',
             // This is a Left menu entry
             'type'=>'left',
-            'titre'=>'New Paiment',
+            'titre'=>'New Paiement',
             'mainmenu'=>'cheque',
-            'leftmenu'=>'cheque_paiment',
-            'url'=>'/cheque/paiment_card.php?action=create',
+            'leftmenu'=>'cheque_paiement',
+            'url'=>'/cheque/paiement_card.php?action=create',
             // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'langs'=>'cheque@cheque',
             'position'=>1100+$r,
@@ -391,72 +391,72 @@ class modCheque extends DolibarrModules
             'user'=>2
         );
 
-		/* END MODULEBUILDER LEFTMENU PAIMENT */
+		/* END MODULEBUILDER LEFTMENU PAIEMENT */
 		// Exports profiles provided by this module
 		$r = 1;
-		/* BEGIN MODULEBUILDER EXPORT PAIMENT */
+		/* BEGIN MODULEBUILDER EXPORT PAIEMENT */
 		/*
 		$langs->load("cheque@cheque");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='PaimentLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='paiment@cheque';
+		$this->export_label[$r]='PaiementLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r]='paiement@cheque';
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'Paiment'; $keyforclassfile='/cheque/class/paiment.class.php'; $keyforelement='paiment@cheque';
+		$keyforclass = 'Paiement'; $keyforclassfile='/cheque/class/paiement.class.php'; $keyforelement='paiement@cheque';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		//$keyforclass = 'PaimentLine'; $keyforclassfile='/cheque/class/paiment.class.php'; $keyforelement='paimentline@cheque'; $keyforalias='tl';
+		//$keyforclass = 'PaiementLine'; $keyforclassfile='/cheque/class/paiement.class.php'; $keyforelement='paiementline@cheque'; $keyforalias='tl';
 		//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='paiment'; $keyforaliasextra='extra'; $keyforelement='paiment@cheque';
+		$keyforselect='paiement'; $keyforaliasextra='extra'; $keyforelement='paiement@cheque';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$keyforselect='paimentline'; $keyforaliasextra='extraline'; $keyforelement='paimentline@cheque';
+		//$keyforselect='paiementline'; $keyforaliasextra='extraline'; $keyforelement='paiementline@cheque';
 		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r] = array('paimentline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		//$this->export_dependencies_array[$r] = array('paiementline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		//$this->export_special_array[$r] = array('t.field'=>'...');
 		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'paiment as t';
-		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'paiment_line as tl ON tl.fk_paiment = t.rowid';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'paiement as t';
+		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_line as tl ON tl.fk_paiement = t.rowid';
 		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('paiment').')';
+		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('paiement').')';
 		$r++; */
-		/* END MODULEBUILDER EXPORT PAIMENT */
+		/* END MODULEBUILDER EXPORT PAIEMENT */
 
 		// Imports profiles provided by this module
 		$r = 1;
-		/* BEGIN MODULEBUILDER IMPORT PAIMENT */
+		/* BEGIN MODULEBUILDER IMPORT PAIEMENT */
 		/*
 		$langs->load("cheque@cheque");
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='PaimentLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='paiment@cheque';
-		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'cheque_paiment', 'extra' => MAIN_DB_PREFIX.'cheque_paiment_extrafields');
+		$this->import_label[$r]='PaiementLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->import_icon[$r]='paiement@cheque';
+		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'cheque_paiement', 'extra' => MAIN_DB_PREFIX.'cheque_paiement_extrafields');
 		$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
 		$import_sample = array();
-		$keyforclass = 'Paiment'; $keyforclassfile='/cheque/class/paiment.class.php'; $keyforelement='paiment@cheque';
+		$keyforclass = 'Paiement'; $keyforclassfile='/cheque/class/paiement.class.php'; $keyforelement='paiement@cheque';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinimport.inc.php';
 		$import_extrafield_sample = array();
-		$keyforselect='paiment'; $keyforaliasextra='extra'; $keyforelement='paiment@cheque';
+		$keyforselect='paiement'; $keyforaliasextra='extra'; $keyforelement='paiement@cheque';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
-		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'cheque_paiment');
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'cheque_paiement');
 		$this->import_regex_array[$r] = array();
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('t.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
 			't.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->CHEQUE_PAIMENT_ADDON) ? 'mod_paiment_standard' : $conf->global->CHEQUE_PAIMENT_ADDON),
-				'path'=>"/core/modules/commande/".(empty($conf->global->CHEQUE_PAIMENT_ADDON) ? 'mod_paiment_standard' : $conf->global->CHEQUE_PAIMENT_ADDON).'.php'
-				'classobject'=>'Paiment',
-				'pathobject'=>'/cheque/class/paiment.class.php',
+				'class'=>(empty($conf->global->CHEQUE_PAIEMENT_ADDON) ? 'mod_paiement_standard' : $conf->global->CHEQUE_PAIEMENT_ADDON),
+				'path'=>"/core/modules/commande/".(empty($conf->global->CHEQUE_PAIEMENT_ADDON) ? 'mod_paiement_standard' : $conf->global->CHEQUE_PAIEMENT_ADDON).'.php'
+				'classobject'=>'Paiement',
+				'pathobject'=>'/cheque/class/paiement.class.php',
 			),
 			't.fk_soc' => array('rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
 			't.fk_user_valid' => array('rule' => 'fetchidfromref', 'file' => '/user/class/user.class.php', 'class' => 'User', 'method' => 'fetch', 'element' => 'user'),
 			't.fk_mode_reglement' => array('rule' => 'fetchidfromcodeorlabel', 'file' => '/compta/paiement/class/cpaiement.class.php', 'class' => 'Cpaiement', 'method' => 'fetch', 'element' => 'cpayment'),
 		);
 		$r++; */
-		/* END MODULEBUILDER IMPORT PAIMENT */
+		/* END MODULEBUILDER IMPORT PAIEMENT */
 	}
 
 	/**
@@ -494,16 +494,16 @@ class modCheque extends DolibarrModules
 		// Document templates
 		$moduledir = dol_sanitizeFileName('cheque');
 		$myTmpObjects = array();
-		$myTmpObjects['Paiment'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+		$myTmpObjects['Paiement'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Paiment') {
+			if ($myTmpObjectKey == 'Paiement') {
 				continue;
 			}
 			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_paiments.odt';
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_paiements.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
-				$dest = $dirodt.'/template_paiments.odt';
+				$dest = $dirodt.'/template_paiements.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

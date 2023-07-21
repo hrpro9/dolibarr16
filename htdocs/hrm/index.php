@@ -93,6 +93,7 @@ llxHeader('', $title, '');
 print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 
 
+
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
@@ -101,6 +102,8 @@ if (!empty($setupcompanynotcomplete)) {
 	llxFooter();
 	exit;
 }
+
+
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -142,6 +145,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 		print '<br>';
 	}
 }
+
 
 
 if (!empty($conf->holiday->enabled)) {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DeclarationReleveDeduction>
+  <identifiantFiscal>001687825000004</identifiantFiscal>
+  <annee>2023</annee>
+  <periode>01</periode>
+  <regime>2</regime>
+  <releveDeductions/>
+</DeclarationReleveDeduction>
+    

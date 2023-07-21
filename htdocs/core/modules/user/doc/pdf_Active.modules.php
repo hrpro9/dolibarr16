@@ -1,29 +1,5 @@
-<?php
-/* Copyright (C) 2010-2011  Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2010-2014  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- * or see https://www.gnu.org/
- */
 
-/**
- *	\file       htdocs/core/modules/supplier_invoice/doc/pdf_canelle.modules.php
- *	\ingroup    fournisseur
- *	\brief      Class file to generate the supplier invoices with the canelle model
- */
+<?php
 
 
 require_once DOL_DOCUMENT_ROOT . '/core/modules/user/modules_user.class.php';
@@ -35,12 +11,6 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/userbankaccount.class.php'; 
 
 
-
-
-
-/**
- *	Class to generate the supplier invoices PDF with the template canelle
- */
 class pdf_Active extends ModelePDFUser
 {
 	/**
@@ -153,7 +123,7 @@ class pdf_Active extends ModelePDFUser
 		$this->option_logo = 1; // Affiche logo
 		$this->option_tva = 1; // Gere option tva FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Affiche mode reglement
-		$this->option_condreg = 1; // Affiche conditions reglement 
+		$this->option_condreg = 1; // Affiche conditions reglement
 		$this->option_codeproduitservice = 1; // Affiche code produit-service
 		$this->option_multilang = 1; // Dispo en plusieurs langues
 
@@ -205,7 +175,7 @@ class pdf_Active extends ModelePDFUser
 	 *  @param		int					$hideref			Do not show ref
 	 *  @return		int										1=OK, 0=KO
 	 */
-	public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams)
+	public function write_file($object, $outputlangs = "", $srctemplatepath = "", $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams)
 	{
 		// phpcs:enable
 		global $object, $user, $langs, $conf, $mysoc, $hookmanager, $nblines, $action, $prev_month, $prev_year, $periode, $year, $db, $amoSalariale, $amoPatronale;
@@ -303,10 +273,10 @@ class pdf_Active extends ModelePDFUser
 
 
 
-				include DOL_DOCUMENT_ROOT . '/compta/laisse/codeLaisseActive.php';
+				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/codeLaisseActive.php';
 
 				$table =
-				 '
+				'
 				 <style>
 					#customers {
 					font-family: Arial, Helvetica, sans-serif;
@@ -1035,40 +1005,6 @@ class pdf_Active extends ModelePDFUser
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			// $posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 48;
-			// $posy += $top_shift;
-			// $posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			// if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
-			// 	$posx = $this->marge_gauche;
-			// }
-
-			// Show recipient frame
-			// if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
-			// 	$pdf->SetTextColor(0, 0, 0);
-			// 	$pdf->SetFont('', '', $default_font_size - 2);
-			// 	$pdf->SetXY($posx + 2, $posy - 5);
-			// 	$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
-			// 	$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
-			// }
-
-			// // Show recipient name
-			// $pdf->SetXY($posx + 2, $posy + 3);
-			// $pdf->SetFont('', 'B', $default_font_size);
-			// $pdf->MultiCell($widthrecbox, 2, $nom_soc, 0, $ltrdirection);
-
-			// $posy = $pdf->getY();
-
-			// // Show recipient information
-			// $pdf->SetFont('', '', $default_font_size - 1);
-			// $pdf->SetXY($posx + 2, $posy);
-			// $pdf->MultiCell($widthrecbox, 4,$address_soc, 0, $ltrdirection);
-
-			// $posy = $pdf->getY();
-
-			// // Show recipient information
-			// $pdf->SetFont('', '', $default_font_size - 1);
-			// $pdf->SetXY($posx + 2, $posy);
-			// $pdf->MultiCell($widthrecbox, 4, $town_soc, 0, $ltrdirection);
 		}
 		$pdf->SetTextColor(0, 0, 0);
 
@@ -1092,3 +1028,5 @@ class pdf_Active extends ModelePDFUser
 		return pdf_pagefoot($pdf, $outputlangs, '', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }
+
+			
