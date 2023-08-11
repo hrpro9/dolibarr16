@@ -273,7 +273,7 @@ class pdf_Esg extends ModelePDFUser
 
 
 
-				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/codeESG.php';
+				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/ESG/codeESG.php';
 
 				$table =
 				'

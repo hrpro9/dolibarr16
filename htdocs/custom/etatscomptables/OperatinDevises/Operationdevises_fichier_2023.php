@@ -1,0 +1,20 @@
+<?php $Operationdevises0 = 54;
+$Operationdevises1 = 54;
+$Operationdevises2 = 54;
+$Operationdevises3 = 54;
+$Operationdevises4 = 54;
+$Operationdevises5 = 54;
+$Operationdevises6 = 444;
+$Operationdevises7 = 54;
+$Operationdevises8 = 54;
+$Operationdevises9 = 54;
+$Operationdevises10 = 54;
+$Operationdevises11 = 54;
+$Operationdevises12 = 2023;
+$sum1 = 714;
+$sum2 = 324;
+$sum3 = 390;
+$sum4 = 0;
+$sum5 = 390;
+$sum6 = 0;
+?>

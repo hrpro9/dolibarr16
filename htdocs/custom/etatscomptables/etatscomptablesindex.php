@@ -98,7 +98,7 @@ llxHeader("", $langs->trans("EtatsComptablesArea"));
 // print '<div class="fichecenter"><div class="fichethirdleft">';
 
 $chemin_fichier = DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Passif.modules.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/codepdfpassif.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/Passif/codepdfpassif.php';
 
 
 
@@ -155,6 +155,135 @@ elseif ($modulepart == \'Cpc\') {
 
 }
 
+//  CreditBail  docs
+elseif ($modulepart == \'CreditBail\') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	
+	
+	$original_file = DOL_DATA_ROOT . \'/billanLaisse/CreditBail/\'. $original_file;
+
+}
+//  Retratsdimm  docs
+elseif ($modulepart == \'Retratsdimm\') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	$original_file = DOL_DATA_ROOT . \'/billanLaisse/Retratsdimm/\'. $original_file;
+
+}
+//  TitresParticipation  docs
+elseif ($modulepart == \'TitresParticipation\') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	$original_file = DOL_DATA_ROOT . \'/billanLaisse/TitresParticipation/\'. $original_file;
+
+}
+
+//  TitresParticipation  docs
+elseif ($modulepart == \'CapitalSocial\') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	$original_file = DOL_DATA_ROOT . \'/billanLaisse/CapitalSocial/\'. $original_file;
+
+}
+
+//  Amortisement  docs
+elseif ($modulepart == \'Amortisement\') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	$original_file = DOL_DATA_ROOT . \'/billanLaisse/Amortisement/\'. $original_file;
+
+}
+//  Provisions  docs
+elseif ($modulepart == \'Provisions\') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	$original_file = DOL_DATA_ROOT . \'/billanLaisse/Provisions/\'. $original_file;
+}
+//  Fusion  docs
+elseif ($modulepart == \'Fusion\') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	$original_file = DOL_DATA_ROOT . \'/billanLaisse/Fusion/\'. $original_file;
+}
+//  Autrecreditbail  docs
+elseif ($modulepart == \'Autrecreditbail\') {
+	if ($fuser->rights->salaries->read) {
+		$accessallowed = 1;
+	}
+	$original_file = DOL_DATA_ROOT . \'/billanLaisse/Autrecreditbail/\'. $original_file;
+
+}
+//  Etatdesinterets  docs
+elseif ($modulepart == \'Etatdesinterets\') {
+if ($fuser->rights->salaries->read) {
+	$accessallowed = 1;
+}
+$original_file = DOL_DATA_ROOT . \'/billanLaisse/Etatdesinterets/\'. $original_file;
+}
+//  OperationDevises  docs
+elseif ($modulepart == \'OperationDevises\') {
+if ($fuser->rights->salaries->read) {
+	$accessallowed = 1;
+}
+$original_file = DOL_DATA_ROOT . \'/billanLaisse/OperationDevises/\'. $original_file;
+}
+
+//  Etatderogations  docs
+elseif ($modulepart == \'Etatderogations\') {
+if ($fuser->rights->salaries->read) {
+	$accessallowed = 1;
+}
+$original_file = DOL_DATA_ROOT . \'/billanLaisse/Etatderogations/\'. $original_file;
+}
+
+//  Etatchangment  docs
+elseif ($modulepart == \'Etatchangment\') {
+if ($fuser->rights->salaries->read) {
+	$accessallowed = 1;
+}
+$original_file = DOL_DATA_ROOT . \'/billanLaisse/Etatchangment/\'. $original_file;
+}
+
+//  Etatlimpot  docs
+elseif ($modulepart == \'Etatlimpot\') {
+if ($fuser->rights->salaries->read) {
+	$accessallowed = 1;
+}
+$original_file = DOL_DATA_ROOT . \'/billanLaisse/Etatlimpot/\'. $original_file;
+}
+
+//  Principalesmethodes  docs
+elseif ($modulepart == \'Principalesmethodes\') {
+if ($fuser->rights->salaries->read) {
+	$accessallowed = 1;
+}
+$original_file = DOL_DATA_ROOT . \'/billanLaisse/Principalesmethodes/\'. $original_file;
+}
+
+//  Etatdetaillesetock  docs
+elseif ($modulepart == \'Etatdetaillesetock\') {
+if ($fuser->rights->salaries->read) {
+	$accessallowed = 1;
+}
+$original_file = DOL_DATA_ROOT . \'/billanLaisse/Etatdetaillesetock/\'. $original_file;
+}
+
+//  Detailtaxe  docs
+elseif ($modulepart == \'Detailtaxe\') {
+if ($fuser->rights->salaries->read) {
+	$accessallowed = 1;
+}
+$original_file = DOL_DATA_ROOT . \'/billanLaisse/Detailtaxe/\'. $original_file;
+}
+
 // GENERIC Wrapping
 
 ';
@@ -171,7 +300,7 @@ file_put_contents($fichierLib, $contenuLib);
 
 
 $chemin_fichierActive = DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Active.modules.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/codepdfactif.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/Actif/codepdfactif.php';
 
 if(!file_exists($chemin_fichierActive)){
 	$fileactive = fopen($chemin_fichierActive, 'w');
@@ -181,7 +310,7 @@ if(!file_exists($chemin_fichierActive)){
 
 
 $chemin_fichierhorttaxes = DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_HorsTaxes.modules.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/codepdfhorstaxes.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/HORTAXES/codepdfhorstaxes.php';
 
 if(!file_exists($chemin_fichierhorttaxes)){
 	$filehortaxes = fopen($chemin_fichierhorttaxes, 'w');
@@ -192,7 +321,7 @@ if(!file_exists($chemin_fichierhorttaxes)){
 
 
 $chemin_fichierEsg = DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Esg.modules.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/codepdfEsg.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/ESG/codepdfEsg.php';
 
 if(!file_exists($chemin_fichierEsg)){
 	$fileEsg = fopen($chemin_fichierEsg, 'w');
@@ -201,7 +330,7 @@ if(!file_exists($chemin_fichierEsg)){
 }
 
 $chemin_fichierCpc = DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Cpc.modules.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/codepdfCpc.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/Cpc/codepdfCpc.php';
 
 if(!file_exists($chemin_fichierCpc)){
 	$fileCpc = fopen($chemin_fichierCpc, 'w');
@@ -209,26 +338,183 @@ if(!file_exists($chemin_fichierCpc)){
 	fclose($fileCpc);
 }
 
+$chemin_fichierCreditbail = DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_CreditBail.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/CreditBail/codepdfactifCreditBail.php';
 
+if(!file_exists($chemin_fichierCreditbail)){
+	$fileCreditbail = fopen($chemin_fichierCreditbail, 'w');
+	fwrite($fileCreditbail, $contentacreditbail);
+	fclose($fileCreditbail);
+}
+
+$chemin_fichierRetratsdimm = DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Retratsdimm.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/Retratsdimm/codepdfRetratsdimm.php';
+
+if(!file_exists($chemin_fichierRetratsdimm)){
+	$fileRetratsdimm = fopen($chemin_fichierRetratsdimm, 'w');
+	fwrite($fileRetratsdimm, $contentRetratsdimm);
+	fclose($fileRetratsdimm);
+}
+
+$chemin_fichierTitresParticpation= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_TitresParticipation.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/TitresParticipation/codepdfTitresParticpation.php';
+
+if(!file_exists($chemin_fichierTitresParticpation)){
+	$fileTitresParticpation = fopen($chemin_fichierTitresParticpation, 'w');
+	fwrite($fileTitresParticpation, $contentTitresParticpation);
+	fclose($fileTitresParticpation);
+}
+
+$chemin_fichierCapitalSocial= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_CapitalSocial.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/CapitalSocial/codepdfCapitalSocial.php';
+
+if(!file_exists($chemin_fichierCapitalSocial)){
+	$fileCapitalSocial = fopen($chemin_fichierCapitalSocial, 'w'); 
+	fwrite($fileCapitalSocial, $contentTitresParticpation);
+	fclose($fileCapitalSocial);
+}
+
+$chemin_fichierAmortisement= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Amortisement.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/Amortissemen/codepdfAmortisement.php';
+
+if(!file_exists($chemin_fichierAmortisement)){
+	$fileAmortisement = fopen($chemin_fichierAmortisement, 'w'); 
+	fwrite($fileAmortisement, $contentAmortisement);
+	fclose($fileAmortisement);
+}
+
+$chemin_fichierProvisions= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Provisions.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/Provision/codepdfProfisions.php';
+
+if(!file_exists($chemin_fichierProvisions)){
+	$fileProvisions = fopen($chemin_fichierProvisions, 'w'); 
+	fwrite($fileProvisions, $contentProvisions);
+	fclose($fileProvisions);
+}
+
+$chemin_fichierFusion= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Fusion.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/Fusion/codepdfFusion.php';
+
+if(!file_exists($chemin_fichierFusion)){
+	$fileFusion = fopen($chemin_fichierFusion, 'w'); 
+	fwrite($fileFusion, $contentFusion);
+	fclose($fileFusion);
+}
+
+$chemin_fichierAutrecreditbail= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Autrecreditbail.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/AutrescreditBail/codepdfAutrecreditbail.php';
+
+if(!file_exists($chemin_fichierAutrecreditbail)){
+	$fileAutrecreditbail = fopen($chemin_fichierAutrecreditbail, 'w'); 
+	fwrite($fileAutrecreditbail, $contentAutrecreditbail);
+	fclose($fileAutrecreditbail);
+}
+
+$chemin_fichierEtatdesinterets= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Etatdesinterets.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/EtatDesInterets/codepdfEtatdesinterets.php';
+
+if(!file_exists($chemin_fichierEtatdesinterets)){
+	$fileEtatdesinterets = fopen($chemin_fichierEtatdesinterets, 'w'); 
+	fwrite($fileEtatdesinterets, $contentEtatdesinterets);
+	fclose($fileEtatdesinterets);
+}
+
+$chemin_fichierOperationDevises= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_OperationDevises.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/OperatinDevises/codepdfOperationDevises.php';
+
+if(!file_exists($chemin_fichierOperationDevises)){
+	$fileOperationDevises = fopen($chemin_fichierOperationDevises, 'w'); 
+	fwrite($fileOperationDevises, $contentOperationDevises);
+	fclose($fileOperationDevises);
+}
+
+$chemin_fichierEtatderogations= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Etatderogations.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/EtatDerogations/codepdfEtatderogations.php';
+
+if(!file_exists($chemin_fichierEtatderogations)){
+	$fileEtatderogations = fopen($chemin_fichierEtatderogations, 'w'); 
+	fwrite($fileEtatderogations, $contentEtatderogations);
+	fclose($fileEtatderogations);
+}
+
+
+$chemin_fichierEtatchangments= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Etatchangment.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/EtatChangements/codepdfEtatchangment.php';
+
+if(!file_exists($chemin_fichierEtatchangments)){
+	$fileEtatchangment = fopen($chemin_fichierEtatchangments, 'w'); 
+	fwrite($fileEtatchangment, $contentEtatchangment);
+	fclose($fileEtatchangment);
+}
+
+$chemin_fichierEtatlimpot= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Etatlimpot.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/EtatLimpot/codepdfEtatlimpot.php';
+
+if(!file_exists($chemin_fichierEtatlimpot)){
+	$fileEtatlimpot = fopen($chemin_fichierEtatlimpot, 'w'); 
+	fwrite($fileEtatlimpot, $contentEtatlimpot);
+	fclose($fileEtatlimpot);
+}
+
+$chemin_fichierPrincipalesMethodes= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Principalesmethodes.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/PrincipalesMethodes/codepdfPrincipalesmethodes.php';
+
+if(!file_exists($chemin_fichierPrincipalesMethodes)){
+	$filePrincipalesMethodes = fopen($chemin_fichierPrincipalesMethodes, 'w'); 
+	fwrite($filePrincipalesMethodes, $contentPrincipalesmethodes);
+	fclose($filePrincipalesMethodes);
+}
+
+$chemin_fichierEtatdetaillesetock= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Etatdetaillesetock.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/EtatDetailleStock/codepdfEtatdetaillesetock.php';
+
+if(!file_exists($chemin_fichierEtatdetaillesetock)){
+	$fileEtatdetaillesetock = fopen($chemin_fichierEtatdetaillesetock, 'w'); 
+	fwrite($fileEtatdetaillesetock, $contentEtatdetaillesetock);
+	fclose($fileEtatdetaillesetock);
+}
+
+$chemin_fichierDetailtaxe= DOL_DOCUMENT_ROOT .'/core/modules/user/doc/pdf_Detailtaxe.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/etatscomptables/DetatlTaxe/codepdfDetailtaxe.php';
+
+if(!file_exists($chemin_fichierDetailtaxe)){
+	$fileDetailtaxe = fopen($chemin_fichierDetailtaxe, 'w'); 
+	fwrite($fileDetailtaxe, $contentDetailtaxe);
+	fclose($fileDetailtaxe);
+}
 
 }
 
 
 
-
-		// Écriture du code dans le fichier
-		file_put_contents($fichierLib, $contenuLib);
+// Écriture du code dans le fichier
+file_put_contents($fichierLib, $contenuLib);
 
 print load_fiche_titre($langs->trans("Etats Comptables"), '', 'hrm');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-$urltoredirectPassif = DOL_URL_ROOT.'\custom\etatscomptables\declarationlaissepassif.php';
-$urltoredirectActif = DOL_URL_ROOT.'\custom\etatscomptables\declarationlaisseactive.php';
-$urltoredirectirHorsTaxes=DOL_URL_ROOT.'\custom\etatscomptables\HORSTAXES.php';
-$urltoredirectirCPC=DOL_URL_ROOT.'\custom\etatscomptables\declarationCPC.php';
-$urltoredirectirESG=DOL_URL_ROOT.'\custom\etatscomptables\declarationESG.php';
-
+$urltoredirectPassif = DOL_URL_ROOT.'\custom\etatscomptables\Passif\declarationlaissepassif.php';
+$urltoredirectActif = DOL_URL_ROOT.'\custom\etatscomptables\Actif\declarationlaisseactive.php';
+$urltoredirectirHorsTaxes=DOL_URL_ROOT.'\custom\etatscomptable\HORTAXES\HORSTAXES.php';
+$urltoredirectirCPC=DOL_URL_ROOT.'\custom\etatscomptables\Cpc\declarationCPC.php';
+$urltoredirectirESG=DOL_URL_ROOT.'\custom\etatscomptables\ESG\declarationESG.php';
+$urltoredirectircreditbail=DOL_URL_ROOT.'\custom\etatscomptables\CreditBail\declarationCreditBail.php';
+$urltoredirectirRetratsdimm=DOL_URL_ROOT.'\custom\etatscomptables\Retratsdimm\declarationRetratsDimmobilistion.php';
+$urltoreTitresParticipation=DOL_URL_ROOT.'\custom\etatscomptables\TitresParticipation\declarationTitresParticipation.php';
+$urltoreCapitalSocial=DOL_URL_ROOT.'\custom\etatscomptables\CapitalSocial\declarationCapitalSocial.php';
+$urltoreAmortissemen=DOL_URL_ROOT.'\custom\etatscomptables\Amortissemen\declarationamortismon.php';
+$urltoreProvision=DOL_URL_ROOT.'\custom\etatscomptables\Provision\declarationProvision.php';
+$urltoreFusion=DOL_URL_ROOT.'\custom\etatscomptables\Fusion\declarationFusion.php';
+$urltoreAutrecreditbail=DOL_URL_ROOT.'\custom\etatscomptables\AutrescreditBail\declarationAutrescreditBail.php';
+$urltoreEtatdesinterets=DOL_URL_ROOT.'\custom\etatscomptables\EtatDesInterets\declarationEtatDesInterets.php';
+$urltoreOperationDevises=DOL_URL_ROOT.'\custom\etatscomptables\OperatinDevises\declarationOprerationDevises.php';
+$urltoreEtatderogations=DOL_URL_ROOT.'\custom\etatscomptables\EtatDerogations\declarationEtatDerogations.php';
+$urltoreEtatchangment=DOL_URL_ROOT.'\custom\etatscomptables\EtatChangements\declarationEtatChangement.php';
+$urltoreEtatlimpot=DOL_URL_ROOT.'\custom\etatscomptables\EtatLimpot\declarationEtatLimpot.php';
+$urltorePrincipalesMethodes=DOL_URL_ROOT.'\custom\etatscomptables\PrincipalesMethodes\declarationPrincipalesMethodes.php';
+$urltoreEtatdetaillesetock=DOL_URL_ROOT.'\custom\etatscomptables\EtatDetailleStock\declaationEtatDetailleStock.php';
+$urltoreDetailtaxe=DOL_URL_ROOT.'\custom\etatscomptables\DetatlTaxe\declarationDetatlTaxe.php';
 // Bilan - Passif/Actif-Hors - Taxes-C.P.C-E.S.G
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">';
@@ -245,6 +531,39 @@ print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave 
 C.P.C</a></span></div>';
 print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoredirectirESG . '">
 E.S.G</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoredirectircreditbail . '">
+BIENS EN CREDIT BAIL</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoredirectirRetratsdimm . '">
+RETRAITS D IMMOBILISATIONS</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreTitresParticipation . '">
+TABLEAU DES TITRES DE PARTICIPATION</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreCapitalSocial . '">
+ETAT DE REPARTITION DU CAPITAL SOCIAL</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreAmortissemen . '">
+TABLEAU DES AMORTISSEMENTS</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreProvision . '">
+TABLEAU DES PROVISIONS</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreFusion . '">
+ETAT DES PLUS-VALUES CONSTATEES EN CAS DE FUSION</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreAutrecreditbail . '">
+TABLEAU DES LOCATIONS ET BAUX AUTRES QUE LE CREDIT-BAIL</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreEtatdesinterets . '">
+ETAT DES INTERETS DES EMPRUNTS CONTRACTES AUPRES DES ASSOCIES ET DES TIERS AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreOperationDevises . '">
+TABLEAU DES OPERATIONS EN DEVISES COMPTABILISEES PENDANT L EXERCICE</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreEtatderogations . '">
+ETAT DES DEROGATIONS</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreEtatchangment . '">
+ETAT DES CHANGEMENTS DE METHODES</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreEtatlimpot . '">
+ETAT POUR LE CALCUL DE LIMPOT SUR LES SOCIETES -
+ENTREPRISES ENCOURAGEES</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltorePrincipalesMethodes . '">
+PRINCIPALES METHODES D EVALUATION SPECIFIQUES A L ENTREPRISE</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreEtatdetaillesetock . '">
+ETAT DETAILLE DES STOCKS</a></span></div>';
+print '<div class="valignmiddle div-balanceofleave"><span class="balanceofleave valignmiddle"><a href="' . $urltoreDetailtaxe . '">
+DETAIL DE LA TAXE SUR LA VALEUR AJOUTEE</a></span></div>';
 print '<span class="opacitymedium"></span>';
 print '</td>';
 print '</tr>';

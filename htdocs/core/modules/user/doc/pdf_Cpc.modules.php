@@ -273,7 +273,7 @@ class pdf_Cpc extends ModelePDFUser
 
 
 
-				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/codeCPC.php';
+				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Cpc/codeCPC.php';
 
 				$table =
 				'
@@ -766,7 +766,6 @@ class pdf_Cpc extends ModelePDFUser
 			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format(-($repriseExpl_EP),2).'</td>
 			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format(-($repriseExpl_E2),2).'</td>
 			</tr>
-			
 			<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 			<td style="border: 1px solid #ddd;padding: 8px;">- Reprises</td>
 			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($reprise_E,2).'</td>
@@ -809,8 +808,6 @@ class pdf_Cpc extends ModelePDFUser
 			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($revenuCrean_EP,2).'</td>
 			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($revenuCrean_E2,2).'</td>
 			</tr>
-
-			
 			<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 			<td style="border: 1px solid #ddd;padding: 8px;">- Produits nets sur cessions de titres et valeurs de placement</td>
 			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($produitNet_E,2).'</td>

@@ -273,7 +273,7 @@ class pdf_Passif extends ModelePDFUser
 
 
 
-				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/codeLaissePassif.php';
+				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Passif/codeLaissePassif.php';
 
 				$table =
 				'

@@ -1,0 +1,25 @@
+<?php $PrincipalesMethodes0 = "4";
+$PrincipalesMethodes1 = "1";
+$PrincipalesMethodes2 = "1";
+$PrincipalesMethodes3 = "1";
+$PrincipalesMethodes4 = "1";
+$PrincipalesMethodes5 = "1";
+$PrincipalesMethodes6 = "1";
+$PrincipalesMethodes7 = "1";
+$PrincipalesMethodes8 = "1";
+$PrincipalesMethodes9 = "50";
+$PrincipalesMethodes10 = "1";
+$PrincipalesMethodes11 = "1";
+$PrincipalesMethodes12 = "1";
+$PrincipalesMethodes13 = "1";
+$PrincipalesMethodes14 = "1";
+$PrincipalesMethodes15 = "1";
+$PrincipalesMethodes16 = "1";
+$PrincipalesMethodes17 = "1";
+$PrincipalesMethodes18 = "1";
+$PrincipalesMethodes19 = "11";
+$PrincipalesMethodes20 = "1";
+$PrincipalesMethodes21 = "1";
+$PrincipalesMethodes22 = "70";
+$PrincipalesMethodes23 = 2023;
+?>

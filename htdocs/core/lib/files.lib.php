@@ -202,6 +202,29 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 								);
 							};
 						}
+
+						// if ($filter == "MonthDate") {
+						// 	$exploded = explode('_', $file);
+						// 	if (isset($exploded[1])) {
+						// 		$date = $exploded[1];
+						// 		if ($date == $_SESSION["filterDoc"]) {
+						// 			preg_match('/([^\/]+)\/[^\/]+$/', $path . '/' . $file, $reg);
+						// 			$level1name = (isset($reg[1]) ? $reg[1] : '');
+						
+						// 			$file_list[] = array(
+						// 				"name" => $file,
+						// 				"path" => $path,
+						// 				"level1name" => $level1name,
+						// 				"relativename" => ($relativename ? $relativename . '/' : '') . $file,
+						// 				"fullname" => $path . '/' . $file,
+						// 				"date" => $filedate,
+						// 				"size" => $filesize,
+						// 				"type" => 'file'
+						// 			);
+						// 		}
+						// 	}
+						// }
+						
 					}
 				}
 			}
@@ -3067,107 +3090,163 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->user->dir_output . '/' . $original_file;
 	}
-
 	// Fiche du Personnel
 	elseif ($modulepart == 'FichePersonnel') {
 		if ($fuser->rights->salaries->read) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->user->dir_output . '/' . $original_file;
+	}	
+	elseif ($modulepart == 'Cheque') {
+		if ($fuser->rights->salaries->read) {
+			$accessallowed = 1;
+		}
+		$original_file = DOL_DATA_ROOT . '/facture/reglement/'. $original_file;
+
 	}
 
+		// diclration passif  docs
+		elseif ($modulepart == 'Passif') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/' . $original_file;
+		}
 
-		
-		
-		elseif ($modulepart == 'Cheque') {
+		// diclration passif  docs
+		elseif ($modulepart == 'Active') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Active/' . $original_file;
+		}
+
+		//  Hors Taxes  docs
+		elseif ($modulepart == 'HorsTaxes') {
 			if ($fuser->rights->salaries->read) {
 				$accessallowed = 1;
 			}
 			
 			
-			$original_file = DOL_DATA_ROOT . '/facture/reglement/'. $original_file;
-	
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/HorsTaxes/'. $original_file;
+
 		}
-	
-		
 
+		//  ESG  docs
+		elseif ($modulepart == 'Esg') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			
+			
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/Esg/'. $original_file;
 
+		}
 
+		//  Cpc  docs
+		elseif ($modulepart == 'Cpc') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			
+			
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/Cpc/'. $original_file;
 
+		}
 
+		//  CreditBail  docs
+		elseif ($modulepart == 'CreditBail') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			
+			
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/CreditBail/'. $original_file;
 
+		}
+		//  Retratsdimm  docs
+		elseif ($modulepart == 'Retratsdimm') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/Retratsdimm/'. $original_file;
 
+		}
+		//  TitresParticipation  docs
+		elseif ($modulepart == 'TitresParticipation') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/TitresParticipation/'. $original_file;
 
+		}
 
+		//  TitresParticipation  docs
+		elseif ($modulepart == 'CapitalSocial') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/CapitalSocial/'. $original_file;
 
+		}
 
+		//  Amortisement  docs
+		elseif ($modulepart == 'Amortisement') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/Amortisement/'. $original_file;
 
+		}
 
+		//  Amortisement  docs
+		elseif ($modulepart == 'Provisions') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/Provisions/'. $original_file;
 
+		}
 
+		//  Fusion  docs
+		elseif ($modulepart == 'Fusion') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/Fusion/'. $original_file;
 
+		}
 
+		//  Autrecreditbail  docs
+		elseif ($modulepart == 'Autrecreditbail') {
+			if ($fuser->rights->salaries->read) {
+				$accessallowed = 1;
+			}
+			$original_file = DOL_DATA_ROOT . '/billanLaisse/Autrecreditbail/'. $original_file;
 
-
-
-
-
-
-
-
-
-
-
-// diclration passif  docs
-elseif ($modulepart == 'Passif') {
-	if ($fuser->rights->salaries->read) {
-		$accessallowed = 1;
-	}
-	$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/' . $original_file;
-}
-
-// diclration passif  docs
-elseif ($modulepart == 'Active') {
-	if ($fuser->rights->salaries->read) {
-		$accessallowed = 1;
-	}
-	$original_file = DOL_DATA_ROOT . '/billanLaisse/billan_Active/' . $original_file;
-}
-
-//  Hors Taxes  docs
-elseif ($modulepart == 'HorsTaxes') {
-	if ($fuser->rights->salaries->read) {
-		$accessallowed = 1;
-	}
-	
-	
-	$original_file = DOL_DATA_ROOT . '/billanLaisse/HorsTaxes/'. $original_file;
-
-}
-
-//  ESG  docs
-elseif ($modulepart == 'Esg') {
-	if ($fuser->rights->salaries->read) {
-		$accessallowed = 1;
-	}
-	
-	
-	$original_file = DOL_DATA_ROOT . '/billanLaisse/Esg/'. $original_file;
-
-}
-
-//  Cpc  docs
-elseif ($modulepart == 'Cpc') {
-	if ($fuser->rights->salaries->read) {
-		$accessallowed = 1;
-	}
-	
-	
-	$original_file = DOL_DATA_ROOT . '/billanLaisse/Cpc/'. $original_file;
-
-}
+		}
 
 // GENERIC Wrapping
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

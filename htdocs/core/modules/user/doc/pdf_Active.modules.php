@@ -273,7 +273,7 @@ class pdf_Active extends ModelePDFUser
 
 
 
-				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/codeLaisseActive.php';
+				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Actif/codeLaisseActive.php';
 
 				$table =
 				'

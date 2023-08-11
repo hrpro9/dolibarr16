@@ -228,9 +228,9 @@ class pdf_Active extends ModelePDFUser
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : '';
-				$dir = DOL_DATA_ROOT . '/billanLaisse/billan_Active/';
+				$dir = DOL_DATA_ROOT . '/billanLaisse/Provisions/';
 			
-				$file = $dir . "/Billan Actif" . ".pdf";
+				$file = $dir . "/Provisions" . ".pdf";
 				// $file = $dir . "/Passif.pdf";
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
