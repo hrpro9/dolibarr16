@@ -251,7 +251,7 @@ class pdf_Detailtaxe extends ModelePDFUser
 				$pagenb = 0;
 				$pdf->SetDrawColor(128, 128, 128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset('Detailtaxe'));
+				$pdf->SetTitle($outputlangs->convToOutputCharset('Detail taxe'));
 				$pdf->SetSubject($outputlangs->transnoentities(""));
 				$pdf->SetCreator("Dolibarr " . DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
@@ -259,7 +259,8 @@ class pdf_Detailtaxe extends ModelePDFUser
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
-
+				// New page
+			
 
 
 				$pdf->AddPage();
@@ -329,7 +330,7 @@ $table =
 	<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Février</font></i></b></td>';
 	
 	for ($i = 4; $i <= 7; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde2 . '</font></i></td>
@@ -339,7 +340,7 @@ $table =
 	<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Mars</font></i></b></td>';
 	
 	for ($i = 8; $i <= 11; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde3 . '</font></i></td>
@@ -349,7 +350,7 @@ $table =
 	<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Avril</font></i></b></td>';
 
 	for ($i = 12; $i <= 15; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde4 . '</font></i></td>
@@ -359,7 +360,7 @@ $table =
 	<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Mai</font></i></b></td>';
 
 		for ($i = 16; $i <= 19; $i++) {
-			$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 		}
 
 		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde5 . '</font></i></td>
@@ -369,7 +370,7 @@ $table =
 	<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Juin</font></i></b></td>';
 
 	for ($i = 20; $i <= 23; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde6 . '</font></i></td>
@@ -379,7 +380,7 @@ $table =
 	<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Juillet</font></i></b></td>';
 
 	for ($i = 24; $i <= 27; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde7 . '</font></i></td>
@@ -389,7 +390,7 @@ $table =
 	<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Août</font></i></b></td>';
 
 	for ($i = 28; $i <= 31; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde8 . '</font></i></td>
@@ -398,7 +399,7 @@ $table =
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Septembre</font></i></b></td>';
 
 	for ($i = 32; $i <= 35; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde9 . '</font></i></td>
@@ -408,7 +409,7 @@ $table =
 	<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Octobre</font></i></b></td>';
 
 	for ($i = 36; $i <= 39; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde10 . '</font></i></td>
@@ -417,7 +418,7 @@ $table =
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Novembre</font></i></b></td>';
 
 	for ($i = 40; $i <= 43; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde11 . '</font></i></td>
@@ -427,7 +428,7 @@ $table =
 	<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=bottom><b><i><font face="Calibri" size=3>Décembre</font></i></b></td>';
 
 	for ($i = 44; $i <= 47; $i++) {
-		$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
+	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=bottom bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . ${'detatTaxe' . $i} . '</font></i></td>' . "\n";
 	}
 
 	$table .= '<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=bottom sdval="0" sdnum="1033;0;#,##0.00"><i><font face="Calibri" size=3>' . $Solde12 . '</font></i></td>
@@ -526,8 +527,8 @@ $table =
 		<tr>
 			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="33" align="left" valign=middle><b><font face="Calibri">A. T.V.A. Facturée</font></b></td>
 			<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><b><font face="Calibri">'.($TF_SADDL*-1).'</font></b></td>
-			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><br></font></b></td>
-			<td align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><br></font></b></td>
+			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><b><font face="Calibri">'.$detatTaxeValeur1.'<br></font></b></td>
+			<td align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><b><font face="Calibri">'.$detatTaxeValeur2.'<br></font></b></td>
 			<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><b><font face="Calibri">'. ($TF_SFDE *-1). '</font></b></td>
 	
 		</tr>
@@ -543,7 +544,7 @@ $table =
 			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="33" align="left" valign=middle><font face="Calibri">- sur charges</font></td> 
 			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri">'.$SC_SADDL.'</font></td>
 			<td style="border-top: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri">'.$SC_OCDL.'</font></td>
-			<td align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri"><br></font></td>
+			<td align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri">'.$detatTaxeValeur3.'<br></font></td>
 			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri">'.$SC_SFDE.'</font></td>
 			
 		</tr>
@@ -551,7 +552,7 @@ $table =
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="33" align="left" valign=middle><font face="Calibri">- sur immobilisations</font></td> 
 			<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri">'.$SIM_SADDL.'</font></td>
 			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri">'.$SIM_OCDL.'</font></td>
-			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri"><br></font></td>
+			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri">'.$detatTaxeValeur4.'<br></font></td>
 			<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri">'.$SIM_SFDE.'</font></td>
 
 		</tr>
@@ -581,6 +582,7 @@ $table =
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+
 
 				$pdf->Close();
 

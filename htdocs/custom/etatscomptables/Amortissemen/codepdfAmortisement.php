@@ -202,8 +202,9 @@ class pdf_Amortisement extends ModelePDFUser
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : \'\';
 				$dir = DOL_DATA_ROOT . \'/billanLaisse/Amortisement/\';
+				$year=GETPOST(\'valeurdatechoise\');
 			
-				$file = $dir . "/AMORTISSEMENTS" . ".pdf";
+				$file = $dir . "/AMORTISSEMENTS".$year . ".pdf";
 			
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
@@ -275,8 +276,8 @@ class pdf_Amortisement extends ModelePDFUser
 				// body
 
 
-
-				include DOL_DOCUMENT_ROOT . \'/custom/etatscomptables/Amortissemen/codeamortismon.php\';
+				$year=GETPOST(\'valeurdatechoise\');
+				include DOL_DOCUMENT_ROOT . \'/custom/etatscomptables/Amortissemen/Amortisement_fichier_\'.$year.\'.php\';
 
 				$table =
 				\'
@@ -319,158 +320,132 @@ class pdf_Amortisement extends ModelePDFUser
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">IMMOBILISATION EN NON-VALEURS</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($IENV_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($IENV_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($IENV_ASISo,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($II_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Frais préliminaires</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$FP_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($FP_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon1,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$FP_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Charges à répartir sur plusieurs exercices</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$CARSPE_DDLEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($CARSPE_ASISo,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon2,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$CARSPE_CDFEx,2).\'</td>
 				</tr>
 
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;"></td>
-				</tr>
+				
 
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Primes de remboursement obligations</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$PDRO_DDLEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$PDRO_ASISo,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon3,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$PDRO_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">IMMOBILISATIONS INCORPORELLES</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($II_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($II_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($II_ASISo,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($II_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Immobilisation en recherche et développement</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$IERED_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($IERED_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon4,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$IERED_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Brevets, marques, droits et valeurs similaires</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$BMDEVS_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($BMDEVS_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon5,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$BMDEVS_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Fonds commercial</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$FC_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($FC_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon6,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$FC_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Autres immobilisations incorporelles</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$AII_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($AII_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon7,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$AII_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">IMMOBILISATIONS CORPORELLES</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($IC_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($IC_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($IC_ASISo,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($IC_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Terrains</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$TER_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($TER_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon8,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$TER_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Constructions</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$CONS_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($CONS_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon9,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$CONS_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Installations techniques, matériel et outillage</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$ITMEO_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($ITMEO_CDEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon10,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$ITMEO_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Matériel  de transport</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$MDT_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($MDT_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon11,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$MDT_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Mobilier, matériel  de bureau et aménagement</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$MMDBEA_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($MMDBEA_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon12,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$MMDBEA_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Autres immobilisations corporelles</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$AIC_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($AIC_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon13,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$AIC_CDFEx,2).\'</td>
 				</tr>
 
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding:0px;">
-				<th  style="padding-top: 0px;padding-bottom: 0px;text-align: center;background-color:rgb(38,60,92);color:white;">Nature</th>
-				<th  style="padding-top: 0px;padding-bottom: 0px;text-align: center;background-color:rgb(38,60,92);color:white;">Cumul début exercice</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: center;background-color:rgb(38,60,92);color:white;">Dotation de l exercice</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: center;background-color:rgb(38,60,92);color:white;">Amortissements sur immobilisations sorties</th>
-				<th  style="padding-top: 12px;padding-bottom: 12px;text-align: center;background-color: rgb(38,60,92);color:white;">Cumul d amortissement fin exercice</th>
-				</tr>
+			
 
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">- Immobilisations corporelles en cours</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$ICEC_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($ICEC_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($amortismon14,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(-$ICEC_CDFEx,2).\'</td>
 				</tr>
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">Total</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($TOTAl_CDEx,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($TOTAl_DDLEx,2).\'</td>
-				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format(0,2).\'</td>
+				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($TOTAl_ASISo,2).\'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($TOTAl_CDFEx,2).\'</td>
 				</tr>
 				

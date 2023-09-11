@@ -205,8 +205,6 @@ class pdf_Cheque extends ModelePDFUser
 
 		if (true) {
 			// $name = sprintf("%02d", $prev_month) . "-$prev_year";
-		
-
 			// Definition of $dir and $file
 			if ($object->specimen) {
 				$dir = $conf->fournisseur->facture->dir_output;

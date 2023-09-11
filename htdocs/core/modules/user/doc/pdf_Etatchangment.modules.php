@@ -276,14 +276,15 @@ class pdf_Etatchangment extends ModelePDFUser
 				$year=GETPOST('year');
 
 				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/EtatChangements/EtatChangment_fichier_'.$year.'.php';
+
 				$table =
-			'
-			<style >			
+				'
+				<style >			
 				.gridlines td { border:1px dotted black }
 				.gridlines th { border:1px dotted black }
-			</style>
-			
-			<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
+				</style>
+										
+				<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
 				<col class="col0">
 				<col class="col1">
 				<col class="col2">
@@ -383,15 +384,13 @@ class pdf_Etatchangment extends ModelePDFUser
 				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'EtatChangment' . $i}.'</td>' . "\n";
 			}
 			$table .= '</tr>';
-			
-
-			
 
 			$table .= '
 			
 			</tbody>
-			</table>';
-            // Replace with your actual table HTML
+			</table>
+				'
+				; // Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
 				$pdf->SetY($pdf->GetY() + 6);

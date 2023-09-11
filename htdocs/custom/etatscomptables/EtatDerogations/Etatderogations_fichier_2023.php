@@ -1,8 +1,8 @@
-<?php $Etatderogations0 = 45;
-$Etatderogations1 = 5445;
-$Etatderogations2 = 68;
-$Etatderogations3 = 5;
-$Etatderogations4 = 5;
-$Etatderogations5 = 2;
+<?php $Etatderogations0 = "i";
+$Etatderogations1 = "i";
+$Etatderogations2 = "i";
+$Etatderogations3 = "i";
+$Etatderogations4 = "i";
+$Etatderogations5 = "i";
 $Etatderogations6 = 2023;
 ?>

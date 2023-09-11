@@ -11,7 +11,7 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/userbankaccount.class.php'; 
 
 
-class pdf_Provisions extends ModelePDFUser
+class pdf_Provision extends ModelePDFUser
 {
 	/**
 	 * @var DoliDb Database handler
@@ -198,10 +198,12 @@ class pdf_Provisions extends ModelePDFUser
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : '';
-				$dir = DOL_DATA_ROOT . '/billanLaisse/Provisions/';
+				$dir = DOL_DATA_ROOT . '/billanLaisse/Provision/';
+
+				$year=GETPOST('valeurdatechoise');
 			
-				$file = $dir . "/PROVISIONS" . ".pdf";
-				// $file = $dir . "/Passif.pdf";
+				$file = $dir . "/PROVISIONS". $year . ".pdf";
+			
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
 
@@ -211,6 +213,8 @@ class pdf_Provisions extends ModelePDFUser
 					return 0;
 				}
 			}
+
+			
 
 			
 
@@ -301,6 +305,7 @@ class pdf_Provisions extends ModelePDFUser
 					color: white;
 					}
 				</style>
+						
 				<table style="font-family: Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;margin-bottom:50px;">
 
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding:0px;">
@@ -439,7 +444,6 @@ class pdf_Provisions extends ModelePDFUser
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($TAB_MFX,2).'</td>
 				</tr>	
 				</table>
-
 				'
 				; // Replace with your actual table HTML
 

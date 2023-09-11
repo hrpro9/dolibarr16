@@ -337,7 +337,7 @@ class Account extends CommonObject
 
 
 	const STATUS_OPEN = 0;
-	const STATUS_CLOSED = 1;
+	const STATUS_CLOSED = 1; 
 
 
 	/**
@@ -350,7 +350,7 @@ class Account extends CommonObject
 		global $langs;
 
 		$this->db = $db;
-
+    
 		$this->solde = 0;
 
 		$this->type_lib = array(
@@ -528,7 +528,7 @@ class Account extends CommonObject
 	 *  @param	float		$amount_main_currency	Amount
 	 *  @return	int							Rowid of added entry, <0 if KO
 	 */
-	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
+	public function addline($date, $oper, $label, $id_doc, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
 	{
 		// Deprecation warning
 		if (is_numeric($oper)) {
@@ -543,6 +543,7 @@ class Account extends CommonObject
 		$emetteur = trim($emetteur);
 		$banque = trim($banque);
 		$label = trim($label);
+	
 
 		$now = dol_now();
 
@@ -586,6 +587,8 @@ class Account extends CommonObject
 		$accline->datev = $datev;
 		$accline->label = $label;
 		$accline->amount = $amount;
+		
+		$accline->id_doc = $id_doc;
 		$accline->amount_main_currency = $amount_main_currency;
 		$accline->fk_user_author = $user->id;
 		$accline->fk_account = $this->id;
@@ -1868,9 +1871,17 @@ class AccountLine extends CommonObject
 	 */
 	public $label;
 
+
+
 	public $note;
 
+	/**
+	 * @var int bank transaction lines label
+	 */
+	public $id_doc;
 
+
+	
 
 	/**
 	 *  Constructor
@@ -1950,6 +1961,8 @@ class AccountLine extends CommonObject
 				$this->bank_account_ref   = $obj->bank_account_ref;
 				$this->bank_account_label = $obj->bank_account_label;
 
+				
+
 				$ret = 1;
 			}
 			$this->db->free($result);
@@ -1981,6 +1994,9 @@ class AccountLine extends CommonObject
 		$sql .= ", rappro";
 		$sql .= ", numero_compte";
 		$sql .= ", num_releve";
+
+		$sql .= ", id_doc";
+
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->dateo)."'";
@@ -1997,6 +2013,13 @@ class AccountLine extends CommonObject
 		$sql .= ", ".(int) $this->rappro;
 		$sql .= ", ".($this->numero_compte ? "'".$this->db->escape($this->numero_compte)."'" : "''");
 		$sql .= ", ".($this->num_releve ? "'".$this->db->escape($this->num_releve)."'" : "null");
+
+		$sql .= ", ".($this->id_doc ? "'".$this->db->escape($this->id_doc)."'" : "null");
+
+		
+
+		
+		
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);

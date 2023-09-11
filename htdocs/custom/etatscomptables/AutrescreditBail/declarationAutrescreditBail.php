@@ -262,7 +262,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
         <col class="col14">
         <center>
         
-        <input type="date" name="autrecreditBail248"  id="autrecreditBail248" value="<?php if(isset($autrecreditBail248)){ echo $autrecreditBail248;} ?>"  placeholder ="Année" required style="margin-top: 18px;font-size:95%; background: #ededed; font-weight:bolder; padding: 8px 15px 8px 15px; border: block; ">
+        <input type="date" required name="autrecreditBail248"  id="autrecreditBail248" value="<?php if(isset($autrecreditBail248)){ echo $autrecreditBail248;} ?>"  placeholder ="Année" required style="margin-top: 18px;font-size:95%; background: #ededed; font-weight:bolder; padding: 8px 15px 8px 15px; border: block; ">
         <input type="hidden" name="check"  value="true">
         </center>
         <tbody>
@@ -325,19 +325,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
                 <?php
                 for ($i = 0; $i <= 13; $i++) {
                     if ($i === 8) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 9 || $i === 10) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -351,19 +351,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 14; $i <= 26; $i++) {
                     if ($i === 22) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 23 || $i === 24) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -376,19 +376,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 27; $i <= 39; $i++) {
                     if ($i === 35) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 36 || $i === 37) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -401,19 +401,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 40; $i <= 52; $i++) {
                     if ($i === 48) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 49 || $i === 50) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -426,19 +426,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 53; $i <= 65; $i++) {
                     if ($i === 61) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 62 || $i === 63) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -451,19 +451,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 66; $i <= 78; $i++) {
                     if ($i === 74) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 75 || $i === 76) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -476,19 +476,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 79; $i <= 91; $i++) {
                     if ($i === 87) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 88 || $i === 89) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -501,19 +501,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 92; $i <= 104; $i++) {
                     if ($i === 100) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 101 || $i === 102) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -526,19 +526,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 105; $i <= 117; $i++) {
                     if ($i === 113) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 114 || $i === 115) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -551,19 +551,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 118; $i <= 130; $i++) {
                     if ($i === 126) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 127 || $i === 128) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -576,19 +576,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 131; $i <= 143; $i++) {
                     if ($i === 139) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 140 || $i === 141) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -601,19 +601,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 144; $i <= 156; $i++) {
                     if ($i === 152) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 153 || $i === 154) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -626,19 +626,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 157; $i <= 169; $i++) {
                     if ($i === 165) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 166 || $i === 167) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -651,19 +651,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 170; $i <= 182; $i++) {
                     if ($i === 178) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 179 || $i === 180) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -676,19 +676,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 183; $i <= 195; $i++) {
                     if ($i === 191) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 192 || $i === 193) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -701,19 +701,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 196; $i <= 208; $i++) {
                     if ($i === 204) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 205 || $i === 206) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -726,19 +726,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 209; $i <= 221; $i++) {
                     if ($i === 217) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 218 || $i === 219) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -751,19 +751,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 222; $i <= 234; $i++) {
                     if ($i === 230) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 231 || $i === 232) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
@@ -776,19 +776,19 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
           <?php
                 for ($i = 235; $i <= 247; $i++) {
                     if ($i === 243) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 52px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i === 244 || $i === 245) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 61px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 115px;" name="autrecreditBail' . $i . '" id="autrecreditBail' . $i . '" value="';
                         if (isset(${"autrecreditBail" . $i})) {
                             echo ${"autrecreditBail" . $i};
                         }

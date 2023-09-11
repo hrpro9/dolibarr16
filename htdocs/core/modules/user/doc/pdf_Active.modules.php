@@ -199,9 +199,13 @@ class pdf_Active extends ModelePDFUser
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : '';
 				$dir = DOL_DATA_ROOT . '/billanLaisse/billan_Active/';
+
+				$year=GETPOST('valeurdatechoise');
 			
-				$file = $dir . "/Billan Actif" . ".pdf";
-				// $file = $dir . "/Passif.pdf";
+				
+			
+				$file = $dir . "/Billan Actif".$year . ".pdf";
+			
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
 
@@ -270,8 +274,6 @@ class pdf_Active extends ModelePDFUser
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
 		
 				// body
-
-
 
 				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Actif/codeLaisseActive.php';
 

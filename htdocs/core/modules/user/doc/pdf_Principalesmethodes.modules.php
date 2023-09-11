@@ -1,5 +1,4 @@
 
-
 <?php
 
 
@@ -252,7 +251,7 @@ class pdf_Principalesmethodes extends ModelePDFUser
 				$pagenb = 0;
 				$pdf->SetDrawColor(128, 128, 128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset('Principales methodes'));
+				$pdf->SetTitle($outputlangs->convToOutputCharset('Principales Methodes'));
 				$pdf->SetSubject($outputlangs->transnoentities(""));
 				$pdf->SetCreator("Dolibarr " . DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
@@ -277,14 +276,16 @@ class pdf_Principalesmethodes extends ModelePDFUser
 				$year=GETPOST('year');
 
 				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/PrincipalesMethodes/PrincipalesMethodes_fichier_'.$year.'.php';
+
 				$table =
-			    '
-					<style >			
-						.gridlines td { border:1px dotted black }
-						.gridlines th { border:1px dotted black }
-					</style>	
-					
-					<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
+				'
+				<style >			
+				.gridlines td { border:1px dotted black }
+				.gridlines th { border:1px dotted black }
+			</style>
+									
+		
+			<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
 						<col class="col0">
 						<col class="col1">
 						<col class="col2">
@@ -423,8 +424,8 @@ class pdf_Principalesmethodes extends ModelePDFUser
 			
 				</tbody>
 				</table>
-				';
-            // Replace with your actual table HTML
+				'
+				; // Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
 				$pdf->SetY($pdf->GetY() + 6);

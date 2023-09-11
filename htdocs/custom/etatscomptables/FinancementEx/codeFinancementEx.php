@@ -9,14 +9,57 @@ require_once '../functionDeclarationLaisse.php';
 
 
 $dateChoisis=(isset($_POST['chargement']))?$_POST['date_select']:0;
+$dateChoisisN1=$dateChoisis-1;
 
 
 if($dateChoisis!=0)
 {
+	$PassifN1 = DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Passif/Passif_fichier_'.$dateChoisisN1.'.php';
+	$ActifN1 = DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Actif/Active_fichier_'.$dateChoisisN1.'.php';
+    if (file_exists($PassifN1) && file_exists($ActifN1)) {
+        include $PassifN1;
+		include $ActifN1;
+
+		// Financement Permanent
+		$FPN1_E=$FPN1_EP=0;
+		$FPN1_E= (isset($totalABCDE))?($totalABCDE*-1*-1):0;
+		$FPN1_EP= (isset($totalABCDEN1))?($totalABCDEN1*-1*-1):0;
+		//Moins actif immobilisé
+		$MAIN1_E=$MAIN1_EP=0;
+		$MAIN1_E=(isset($total1_net))?($total1_net):0;
+		$MAIN1_EP=(isset($total1_EP))?($total1_EP):0;
+		//Fonds de roulement fonctionnel (1-2) (A)
+		$FDRFN1_E=$FDRFN1_EP=0;
+		$FDRFN1_E=$FPN1_E-$MAIN1_E ;
+		$FDRFN1_EP=$FPN1_EP-$MAIN1_EP;
+		// Actif circulant
+		$ACN1_E=$ACN1_EP=0;
+		$ACN1_E=(isset($total2_net))?($total2_net):0;
+		$ACN1_EP=(isset($total2_EP))?($total2_EP):0;
+		// 	Moins passif circulant
+		$MPCN1_E=$MPCN1_EP=0;
+		$MPCN1_E=(isset($totalFGH))?($totalFGH*-1*-1):0;
+		$MPCN1_EP=(isset($totalFGHN1))?($totalFGHN1*-1*-1):0;
+		// Besoin de financement global (4-5) (B)
+		$BDFGN1_E=$BDFGN1_EP=$BDFGN1_VE=$BDFGN1_VR=0;
+		$BDFGN1_E=$ACN1_E-$MPCN1_E;
+		$BDFGN1_EP=$ACN1_EP-$MPCN1_EP;
+		//TRESORERIE NETTE (Actif-Passif) = A-B
+		$TNN1_E=$TNN1_EP=$TNN1_VE=$TNN1_VR=0;
+		$TNN1_E=$FDRFN1_E-$BDFGN1_E;
+		$TNN1_EP=$FDRFN1_EP-$BDFGN1_EP;
+
+		$BDFGN1_VE=($BDFGN1_E>$BDFGN1_EP)?$BDFGN1_E-$BDFGN1_EP:0;
+		$BDFGN1_VR=($BDFGN1_E>$BDFGN1_EP)?0:$BDFGN1_EP-$BDFGN1_E;
+
+		$TNN1_VE=($TNN1_E>$TNN1_EP)?$TNN1_E-$TNN1_EP:0;
+		$TNN1_VR=($TNN1_E>$TNN1_EP)?0:$TNN1_EP-$TNN1_E;
+	}  
+
 	include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Passif/Passif_fichier_'.$dateChoisis.'.php';
 	include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Actif/Active_fichier_'.$dateChoisis.'.php';
+	include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/ImmobilisationsFinancieres/ImmobilisationsFinancieres_fichier_'.$dateChoisis.'.php';
 }
-
 
 	// E : Exercice
 	// EP : Exercice précédent
@@ -51,13 +94,16 @@ if($dateChoisis!=0)
 	$TN_E=$TN_EP=$TN_VE=$TN_VR=0;
 	$TN_E=$FDRF_E-$BDFG_E;
 	$TN_EP=$FDRF_EP-$BDFG_EP;
+
+
+	
     // EE : Exercice Emplois
 	// ER : Exercice Ressources
 	// EPE : Exercice précédent Emplois
 	// EPR : Exercice précédent Ressources
 	//Capacité d'autofinancement
 	$CDA_ER=$CDA_EPR=0;
-	$CDA_ER=(isset($CAF_E))?($CAF_E):0;;
+	$CDA_ER=(isset($CAF_E))?($CAF_E):0;
 	$CDA_EPR=(isset($CAF_EP))?($CAF_EP):0;
 	//Autofinancement (A)
 	$AU_ER=$AU_EPR=0;	
@@ -82,13 +128,18 @@ if($dateChoisis!=0)
 	$TRS_ER=$TRS_EPR=0;
 	//Acquisitions d'immobilisations incorporelles
 	$ADII_EE=$ADII_EPE=0;
+	$EENV_EE=$EENV_ER=0;// Emplois en non valeurs (H)
+	$EENV_EE=(isset($IENV_AA))?($IENV_AA):0;
+	//VARIATION DU BESOIN DE FINANCEMENT GLOBAL (B.F.G)
+	$VDBDFG_EE=$VDBDFG_ER=$VDBDFG_EPE=$VDBDFG_EPR=0;
+	//IV- VARIATION DE LA TRESORERIE
+	$VDLT_EE=$VDLT_ER=$VDLT_EPE=$VDLT_EPR=0;
 
+	//Acquisitions d'immobilisation financières --> 24-25
 
-	
+	$TOTALIIEMPLOISSTABLES_EE=$TOTALIIEMPLOISSTABLES_ER=$TOTALIIEMPLOISSTABLES_EPE=$TOTALIIEMPLOISSTABLES_EPR=0;//TOTAL II - EMPLOIS STABLES (E+F+G+H)
 
-
-	
-
+	$TOTALGENERAL_EE=$TOTALGENERAL_ER=$TOTALGENERAL_EPE=$TOTALGENERAL_EPR=0;//TOTAL GENERAL
 
 
 
@@ -142,6 +193,20 @@ if($dateChoisis!=0)
 		$ADCPEA_EPR=$ADCA_EPR+$SDI_EPR;
 		$TRS_ER=$AU_ER+$CERDI_ER+$ADCPEA_ER;
 	    $TRS_EPR=$AU_EPR+$CERDI_EPR+$ADCPEA_EPR;
+		$VDBDFG_EE=$BDFG_VE;
+		$VDBDFG_ER=$BDFG_VR;
+		$VDBDFG_EPE=(isset($BDFGN1_VE))?($BDFGN1_VE):0;
+		$VDBDFG_EPR=(isset($BDFGN1_VR))?($BDFGN1_VR):0;
+
+		$VDLT_EE=$TN_VE;
+		$VDLT_ER=$TN_VR;
+		$VDLT_EPE=(isset($TNN1_VE))?($TNN1_VE):0;
+		$VDLT_EPR=(isset($TNN1_VR))?($TNN1_VR):0;
+
+		$TOTALGENERAL_EE=$VDLT_EE+$VDBDFG_EE+$TOTALIIEMPLOISSTABLES_EE;
+		$TOTALGENERAL_ER=$VDLT_ER+$VDBDFG_ER+$TOTALIIEMPLOISSTABLES_ER+$TRS_ER;
+		$TOTALGENERAL_EPE=$VDLT_EPE+$VDBDFG_EPE+$TOTALIIEMPLOISSTABLES_EPE;
+		$TOTALGENERAL_EPR=$VDLT_EPR+$VDBDFG_EPR+$TOTALIIEMPLOISSTABLES_EPR+$TRS_EPR;
 	}
 
   if(isset($_POST['chargement']))
@@ -195,6 +260,28 @@ if($dateChoisis!=0)
 	$data .= '$ADCPEA_EPR = ' . $ADCPEA_EPR . ";\n";
 	$data .= '$TRS_ER = ' . $TRS_ER . ";\n";
 	$data .= '$TRS_EPR = ' . $TRS_EPR . ";\n";
+
+	$data .= '$EENV_EE = ' . $EENV_EE . ";\n";
+
+	$data .= '$VDBDFG_EE = ' . $VDBDFG_EE . ";\n";
+	$data .= '$VDBDFG_ER = ' . $VDBDFG_ER . ";\n";
+	$data .= '$VDBDFG_EPE = ' . $VDBDFG_EPE . ";\n";
+	$data .= '$VDBDFG_EPR = ' . $VDBDFG_EPR . ";\n";
+
+	$data .= '$VDLT_EE = ' . $VDLT_EE . ";\n";
+	$data .= '$VDLT_ER = ' . $VDLT_ER . ";\n";
+	$data .= '$VDLT_EPE = ' . $VDLT_EPE . ";\n";
+	$data .= '$VDLT_EPR = ' . $VDLT_EPR . ";\n";
+
+	$data .= '$TOTALIIEMPLOISSTABLES_EE = ' . $TOTALIIEMPLOISSTABLES_EE . ";\n";
+	$data .= '$TOTALIIEMPLOISSTABLES_ER = ' . $TOTALIIEMPLOISSTABLES_ER . ";\n";
+	$data .= '$TOTALIIEMPLOISSTABLES_EPE = ' . $TOTALIIEMPLOISSTABLES_EPE . ";\n";
+	$data .= '$TOTALIIEMPLOISSTABLES_EPR = ' . $TOTALIIEMPLOISSTABLES_EPR . ";\n";
+
+	$data .= '$TOTALGENERAL_EE = ' . $TOTALGENERAL_EE . ";\n";
+	$data .= '$TOTALGENERAL_ER = ' . $TOTALGENERAL_ER . ";\n";
+	$data .= '$TOTALGENERAL_EPE = ' . $TOTALGENERAL_EPE . ";\n";
+	$data .= '$TOTALGENERAL_EPR = ' . $TOTALGENERAL_EPR . ";\n";
 
 
 

@@ -199,7 +199,7 @@ llxHeader("", "");
             <td class="column0 style14 null">Financement permanent</td>
             <?php
             for ($i = 0; $i <=1; $i++) {
-                echo '<td class="column1 style15 null"><input min="0" type="number" style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
+                echo '<td class="column1 style15 null"><input min="0" type="number" required style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
                 if (isset(${"Operationdevises" . $i})) {
                     echo ${"Operationdevises" . $i};
                 }
@@ -212,7 +212,7 @@ llxHeader("", "");
             <td class="column0 style14 null">Immobilisations brutes</td>
             <?php
             for ($i = 2; $i <=3; $i++) {
-                echo '<td class="column1 style15 null"><input min="0" type="number" style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
+                echo '<td class="column1 style15 null"><input min="0" type="number" required style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
                 if (isset(${"Operationdevises" . $i})) {
                     echo ${"Operationdevises" . $i};
                 }
@@ -224,7 +224,7 @@ llxHeader("", "");
             <td class="column0 style14 null">Rentrées sur immobilisations</td>
             <?php
             for ($i = 4; $i <=5; $i++) {
-                echo '<td class="column1 style15 null"><input min="0" type="number" style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
+                echo '<td class="column1 style15 null"><input min="0" type="number" required style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
                 if (isset(${"Operationdevises" . $i})) {
                     echo ${"Operationdevises" . $i};
                 }
@@ -237,7 +237,7 @@ llxHeader("", "");
             <td class="column0 style14 null">Remboursement des dettes de financement</td>
             <?php
             for ($i = 6; $i <=7; $i++) {
-                echo '<td class="column1 style15 null"><input min="0" type="number" style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
+                echo '<td class="column1 style15 null"><input min="0" type="number" required style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
                 if (isset(${"Operationdevises" . $i})) {
                     echo ${"Operationdevises" . $i};
                 }
@@ -250,7 +250,7 @@ llxHeader("", "");
             <td class="column0 style14 null">Produits</td>
             <?php
             for ($i =8; $i <=9; $i++) {
-                echo '<td class="column1 style15 null"><input min="0" type="number" style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
+                echo '<td class="column1 style15 null"><input min="0" type="number" required style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
                 if (isset(${"Operationdevises" . $i})) {
                     echo ${"Operationdevises" . $i};
                 }
@@ -263,7 +263,7 @@ llxHeader("", "");
             <td class="column0 style14 null">Charges</td>
             <?php
             for ($i = 10; $i <=11; $i++) {
-                echo '<td class="column1 style15 null"><input min="0" type="number" style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
+                echo '<td class="column1 style15 null"><input min="0" type="number" required style="width: 125px;" name="Operationdevises' . $i . '" id="Operationdevises' . $i . '" value="';
                 if (isset(${"Operationdevises" . $i})) {
                     echo ${"Operationdevises" . $i};
                 }

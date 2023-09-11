@@ -323,10 +323,10 @@
     $data .= '$auPrExExPre = ' . $auPrExExPre . ";\n";
     $data .= '$auPrExExN2 = ' . $auPrExExN2 . ";\n";
     $data .= '$reExTchPaLex = ' . $reExTchPaLex . ";\n";
-    $data .= '$reExTchCLExPr = ' . $reExTchCLExPr . ";\n";
-    $data .= '$reExTchToEx = ' . $reExTchToEx . ";\n";
-    $data .= '$reExTchExPre = ' . $reExTchExPre . ";\n";
-    $data .= '$reExTchExN2 = ' . $reExTchExN2 . ";\n";
+    // $data .= '$reExTchCLExPr = ' . $reExTchCLExPr . ";\n";
+    // $data .= '$reExTchToEx = ' . $reExTchToEx . ";\n";
+    // $data .= '$reExTchExPre = ' . $reExTchExPre . ";\n";
+    // $data .= '$reExTchExN2 = ' . $reExTchExN2 . ";\n";
     $data .= '$totalIPaLex = ' . $totalIPaLex . ";\n";
     $data .= '$totalICLExPr = ' . $totalICLExPr . ";\n";
     $data .= '$totalIToEx = ' . $totalIToEx . ";\n";

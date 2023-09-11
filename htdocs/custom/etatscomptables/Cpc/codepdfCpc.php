@@ -202,8 +202,10 @@ class pdf_Cpc extends ModelePDFUser
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : \'\';
 				$dir = DOL_DATA_ROOT . \'/billanLaisse/Cpc/\';
+
+				$year=GETPOST(\'valeurdatechoise\');
 			
-				$file = $dir . "/Cpc" . ".pdf";
+				$file = $dir . "/Cpc".$year . ".pdf";
 				
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
@@ -277,6 +279,8 @@ class pdf_Cpc extends ModelePDFUser
 
 
 				include DOL_DOCUMENT_ROOT . \'/custom/etatscomptables/Cpc/codeCPC.php\';
+
+				htdocs\custom\etatscomptables\Cpc\Cpc_fichier_2023.php
 
 				$table =
 				\'

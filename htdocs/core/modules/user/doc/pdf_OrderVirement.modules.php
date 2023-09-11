@@ -11,7 +11,7 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/userbankaccount.class.php'; 
 
 
-class pdf_Credit extends ModelePDFUser
+class pdf_OrderVirement extends ModelePDFUser
 {
 	/**
 	 * @var DoliDb Database handler
@@ -198,10 +198,32 @@ class pdf_Credit extends ModelePDFUser
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : '';
-				$dir = DOL_DATA_ROOT . '/billanLaisse/CreditBail/';
-			
-				$file = $dir . "/CreditBail.pdf";
-				// $file = $dir . "/Passif.pdf";
+				$dir = DOL_DATA_ROOT . '/OrderVirement/';
+				// global $db;
+				// $sql = "SELECT * FROM llx_bank ORDER BY rowid DESC LIMIT 1 ";
+				// $res_bank_o= $db->query($sql);
+				// if ($res_bank_o) {
+				// 	$parambank = $res_bank_o->fetch_assoc();
+				// 	$rowidbank = $parambank['rowid'];
+				// } 
+				// $file = $dir . "/".$rowidbank. "OrderVirement.pdf";
+
+				// $dir = DOL_DATA_ROOT . '/OrderVirement/';
+				// $baseFileName = 'OrderVirement';
+
+				// // Check if the base file already exists
+				// $nextFileNumber = 1;
+				// $nextFileName =  $nextFileNumber . $baseFileName .'.pdf';
+
+				// while (file_exists($dir . $nextFileName)) {
+				// 	$nextFileNumber++;
+				// 	$nextFileName = $nextFileNumber .  $baseFileName .'.pdf';
+				// }
+				// $file = $dir . $nextFileName;
+				$id_doc = GETPOST('id_doc', 'alpha');
+
+				$file = $dir . "/".$id_doc. "OrderVirement.pdf";
+
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
 
@@ -249,8 +271,8 @@ class pdf_Credit extends ModelePDFUser
 				$pagenb = 0;
 				$pdf->SetDrawColor(128, 128, 128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset('Bilan Passif'));
-				$pdf->SetSubject($outputlangs->transnoentities("EtatAMO"));
+				$pdf->SetTitle($outputlangs->convToOutputCharset('Ordre de virement'));
+				$pdf->SetSubject($outputlangs->transnoentities(""));
 				$pdf->SetCreator("Dolibarr " . DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
@@ -259,7 +281,7 @@ class pdf_Credit extends ModelePDFUser
 
 				// New page
 				$pdf->AddPage();
-				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+			//	if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$totalNet = 0;
 				$top = $this->_pagehead($pdf, $object, 1, $outputlangs, $totalNet, $periode);
@@ -273,114 +295,102 @@ class pdf_Credit extends ModelePDFUser
 
 
 
-		
+				$amountStr = GETPOST('amount', 'alpha'); // Get the amount as a string
+				$account_from = GETPOST('account_from', 'int');
+	            $account_to = GETPOST('account_to', 'int');
 
-				$table =
-				'
-				<style >			
-				.gridlines td { border:1px dotted black }
-				.gridlines th { border:1px dotted black }
-			</style>
+				$amount = floatval(str_replace(',', '.', $amountStr)); // Convert it to a float
+
+				// Check if the conversion was successful
+			
+				$formatter = new NumberFormatter("fr", NumberFormatter::SPELLOUT);
+				$inWords = $formatter->format($amount);
+
+				// Capitalize the entire string
+				$inWords = ucwords($inWords);
+
+
+
+
+
+				global $db;
+
+				
+
+				$sql = "SELECT * FROM llx_bank_account WHERE rowid='" . $account_from . "'";
+				$res_account_from = $db->query($sql);
+
+				if ($res_account_from) {
+					$param = $res_account_from->fetch_assoc();
+					$proprio = $param['proprio'];
+					$ribFrom = $param['number'];
+					$NomBank = $param['bank'];
+					$domiciliation = $param['domiciliation'];
+				} 
+
+				$sql = "SELECT * FROM llx_bank_account WHERE rowid='" . $account_to . "'";
+				$res_account_to = $db->query($sql);
+
+				if ($res_account_to) {
+					$paramTo = $res_account_to->fetch_assoc();
+					$ribTo = $paramTo['number'];
+					$proprio = $paramTo['proprio'];
+					$NomBankTo = $paramTo['bank'];
+					$domiciliationTO = $paramTo['domiciliation'];
+				} 
+
+				
+				// $t = $domiciliationTO;
+				// $address = '';
+				// // Use a regular expression to extract the address
+				// if (preg_match('/^(.*?)\s+\d{5}/', $t, $matches)) {
+				//    $address = $matches[1];
+				//     // This will output: "Centre d'affaire LOT ESPERANCE II AIN SEBAA"
+				// }
+				
+				
+				
+
+				
+
+
+
+				$table = '
+				</br></br></br></br></br></br>
+				<h1 style="text-align: center; margin-bottom: 150px; font-size: 30px;">
+			    	<span style="border-bottom: 1px solid black;">Ordre de virement</span>
+				</h1>
+				</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
+				<p>Veuillez procéder au virement en faveur du bénéficiaire : <span style="font-weight: bold; font-size: 10px;">'.$proprio.'</span> </p>
+				</br></br></br>
+				<h4>' . $NomBank .' '. $domiciliation . ' </h4>
+				<h4> - RIB ' . $ribFrom . '</h4>
+
+				</br></br>
+				<h4 style="text-align: right;">le montant de  <span style="font-weight: bold; font-size: 15px;">' . number_format($amount, 2, ',', '.') . '</span>  ' . $inWords . ' dirhams </h4>
+				</br></br>
+				<h4>Le compte à débité est : ' . $NomBankTo  .' '. $domiciliationTO . ' </h4>
+				<h4>RIB = ' . $ribTo . '</h4>
+				</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
+				<p style="text-align: right;"><span style="border-bottom: 1px solid black;">Signature et cachet de l\'entreprise déclarante</span></p>
+				';
+
 									
-			<table class="sheet0 gridlines">
-				<col class="col0">
-				<col class="col1">
-				<col class="col2">
-				<col class="col3">
-				<col class="col4">
-				<col class="col5">
-				<col class="col6">
-				<col class="col7">
-				<col class="col8">
-				<col class="col9">
-				<col class="col10">
-				<col class="col11">
-				
-				<tbody>
-				<tr class="row0">
-					<td class="column0 style1 s style3" colspan="11">TABLEAU DES BIENS EN CREDIT BAIL</td>
-					
-				</tr>
-				<tr class="row1">
-					<td class="column0 style6 f"></td>
-					<td class="column1 style7 null"></td>
-					<td class="column2 style7 null"></td>
-					<td class="column3 style7 null"></td>
-					<td class="column4 style7 null"></td>
-					<td class="column5 style7 null"></td>
-					<td class="column6 style7 null"></td>
-					<td class="column7 style7 null"></td>
-					<td class="column8 style7 null"></td>
-					<td class="column9 style8 null"></td>
-					<td class="column10 style9 f"></td>
-					
-				</tr>
-				<tr class="row2">
-					<td class="column0 style11 s style16" rowspan="2">Rubriques</td>
-					<td class="column1 style11 s style16" rowspan="2">Date de la 1ère échéance</td>
-					<td class="column2 style11 s style16" rowspan="2">Durée du contrat en mois</td>
-					<td class="column3 style11 s style16" rowspan="2">Valeur estimée du bien à la date du contrat</td>
-					<td class="column4 style11 s style16" rowspan="2">Durée théorique d amortis. du bien</td>
-					<td class="column5 style11 s style16" rowspan="2">Cumul des exercices précédents des redevances</td>
-					<td class="column6 style11 s style16" rowspan="2">Montant de lexercice des redevances</td>
-					<td class="column7 style12 s style13" colspan="2">Redevances restant à payer</td>
-					<td class="column9 style11 s style16" rowspan="2">Prix d achat résiduel en fin de contrat</td>
-					<td class="column10 style11 s style16" rowspan="2">Observations</td>
-				
-				</tr>
-				<tr class="row3">
-					<td class="column7 style17 s">à moins d un an</td>
-					<td class="column8 style18 s">à plus d un an</td>
-					
-				</tr>
-				<tr class="row4">
-					<td class="column0 style19 s">1</td>
-					<td class="column1 style19 s">2</td>
-					<td class="column2 style19 s">3</td>
-					<td class="column3 style19 s">4</td>
-					<td class="column4 style19 s">5</td>
-					<td class="column5 style19 s">6</td>
-					<td class="column6 style19 s">7</td>
-					<td class="column7 style20 s">8</td>
-					<td class="column8 style19 s">9</td>
-					<td class="column9 style19 s">10</td>
-					<td class="column10 style19 s">11</td>
-			
-				</tr>
-		
-
-			
-			
-				</tbody>
-			</table>
-			
 
 				
-			
-				
-				
-				
-			
-				
-				
 
-				'
-				; // Replace with your actual table HTML
+
+				
+				// Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
 				$pdf->SetY($pdf->GetY() + 6);
 				$pdf->SetX($this->posxdesc + 6);
 				$pdf->writeHTML($table);
-			
+
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
-
-
-
-
-
-
 
 				$pdf->Close();
 
@@ -474,7 +484,7 @@ class pdf_Credit extends ModelePDFUser
 		}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
-		$pdf->MultiCell(200, 2, "Billan Passif", 0, "C");
+		$pdf->MultiCell(200, 2, " ", 0, "C");
 		$pdf->SetFont('', '', $default_font_size + 3);
 		$pdf->MultiCell(200, 30, $periode, 0, "C");
 
@@ -592,7 +602,6 @@ class pdf_Credit extends ModelePDFUser
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			
 		}
 		$pdf->SetTextColor(0, 0, 0);
 
@@ -616,5 +625,5 @@ class pdf_Credit extends ModelePDFUser
 		return pdf_pagefoot($pdf, $outputlangs, '', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }
-?>
+
 			

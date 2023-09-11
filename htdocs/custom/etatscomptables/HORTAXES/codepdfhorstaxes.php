@@ -202,8 +202,10 @@ class pdf_HorsTaxes extends ModelePDFUser
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : \'\';
 				$dir = DOL_DATA_ROOT . \'/billanLaisse/HorsTaxes/\';
+
+				$year=GETPOST(\'valeurdatechoise\');
 			
-				$file = $dir . "/Hors Taxes.pdf";
+				$file = $dir . "/Hors Taxes".$year.".pdf";
 				// $file = $dir . "/Passif.pdf";
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}

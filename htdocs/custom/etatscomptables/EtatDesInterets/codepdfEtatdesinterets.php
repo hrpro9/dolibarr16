@@ -302,7 +302,7 @@ class pdf_Etatdesinterets extends ModelePDFUser
 				<col class="col10">
 				<tbody>
 			<tr class="row0">
-				<td class="column0 style1 s style3" colspan="10">TABLEAU DES LOCATIONS ET BAUX AUTRES QUE LE CREDIT-BAIL</td>
+				<td class="column0 style1 s style3" colspan="15">TABLEAU DES LOCATIONS ET BAUX AUTRES QUE LE CREDIT-BAIL</td>
 			</tr>
 			<tr class="row1">
 			    <td class="column0 style6 f"></td>
@@ -392,25 +392,7 @@ class pdf_Etatdesinterets extends ModelePDFUser
 				$table .= \'<td class="column\' . ($i + 2) . \' style16 null">\'.${\'etatDesInterets\' . $i}.\'</td>\' . "\n";
 			}
 			$table .= \'</tr>\';
-			$table .= \'
-			<tr class="row2">
-							<td class="column0 style11 s">Nom et prénoms</td>
-							<td class="column2 style12 s">Raison sociale</td>
-							<td class="column3 style12 s">Adresse</td>
-							<td class="column4 style12 s">IF</td>
-							<td class="column5 style12 s">N° CIN</td>
-							<td class="column6 style12 s">Montant du prêt</td>
-							<td class="column7 style12 s">Date du prêt</td>
-							<td class="column8 style12 s">Durée du prêt en mois</td>
-							<td class="column9 style12 s">Taux d intérêt annuel</td>
-							<td class="column6 style12 s">Charge financière globale</td>
-							<td class="column8 style12 s">Remboursement exercices antérieurs Principal</td>	
-							<td class="column9 style12 s">Remboursement exercices antérieurs Intérêt</td>
-							<td class="column8 style12 s">Remboursement exercice actuel Principal</td>	
-							<td class="column9 style12 s">Remboursement exercice actuel Intérêt</td>
-							<td class="column9 style12 s">RObservations</td>
-						</tr>
-			\';
+			
 			$table .= \'<tr class="row14">\';
 			for ($i = 136; $i <= 150; $i++) {
 				$table .= \'<td class="column\' . ($i + 2) . \' style16 null">\'.${\'etatDesInterets\' . $i}.\'</td>\' . "\n";

@@ -129,7 +129,7 @@ class pdf_Etatdetaillesetock extends ModelePDFUser
 
 		// Define column position
 		$this->posxdesc = $this->marge_gauche + 1;
-		$this->posxtva = 200;
+		$this->posxtva = 112;
 		$this->posxup = 126;
 		$this->posxqty = 145;
 		$this->posxunit = 162;
@@ -251,7 +251,7 @@ class pdf_Etatdetaillesetock extends ModelePDFUser
 				$pagenb = 0;
 				$pdf->SetDrawColor(128, 128, 128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset(''));
+				$pdf->SetTitle($outputlangs->convToOutputCharset('Etat detaille setock'));
 				$pdf->SetSubject($outputlangs->transnoentities(""));
 				$pdf->SetCreator("Dolibarr " . DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
@@ -276,13 +276,16 @@ class pdf_Etatdetaillesetock extends ModelePDFUser
 				$year=GETPOST('year');
 
 				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/EtatDetailleStock/codeEtatDetailleStock.php';
+			
+
+				
 
 				$table =
 				'
 				<style >			
-					.gridlines td { border:1px dotted black }
-					.gridlines th { border:1px dotted black }
-			    </style>
+				.gridlines td { border:1px dotted black }
+				.gridlines th { border:1px dotted black }
+			</style>
 									
 			<table class="sheet0 gridlines">
 			<col class="col0">
@@ -648,6 +651,10 @@ class pdf_Etatdetaillesetock extends ModelePDFUser
 			
 			</tbody>
 		</table>
+		
+
+			
+
 		
 
 			

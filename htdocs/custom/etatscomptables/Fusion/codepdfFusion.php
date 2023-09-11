@@ -365,42 +365,42 @@ class pdf_Fusion extends ModelePDFUser
 				<tr class="row4">
 				<td class="column0 style15 n">1</td>
 				<td class="column1 style15 s">Agencements-Installations</td>\';
-				for ($i = 32; $i < 40; $i++) {
+				for ($i = 33; $i < 41; $i++) {
 					$table .= \'<td class="column\' . ($i + 2) . \' style16 null">\' . ${\'fusion\' . $i} . \'</td>\' . "\n";
 				}
 					$table .= \'	</tr>
 				<tr class="row4">
 				<td class="column0 style15 n">1</td>
 				<td class="column1 style15 s">Brevets</td>\';
-				for ($i = 39; $i < 47; $i++) {
+				for ($i = 41; $i < 49; $i++) {
 					$table .= \'<td class="column\' . ($i + 2) . \' style16 null">\' . ${\'fusion\' . $i} . \'</td>\' . "\n";
 				}
 					$table .= \'	</tr>
 				<tr class="row4">
 				<td class="column0 style15 n">1</td>
 				<td class="column1 style15 s">Autres éléments amortissables</td>\';
-				for ($i = 46; $i < 54; $i++) {
+				for ($i = 49; $i < 57; $i++) {
 					$table .= \'<td class="column\' . ($i + 2) . \' style16 null">\' . ${\'fusion\' . $i} . \'</td>\' . "\n";
 				}
 					$table .= \'	</tr>
 				<tr class="row4">
 				<td class="column0 style15 n">1</td>
 				<td class="column1 style15 s">Titres de participation</td>\';
-				for ($i = 53; $i < 61; $i++) {
+				for ($i = 57; $i < 65; $i++) {
 					$table .= \'<td class="column\' . ($i + 2) . \' style16 null">\' . ${\'fusion\' . $i} . \'</td>\' . "\n";
 				}
 					$table .= \'	</tr>
 				<tr class="row4">
 				<td class="column0 style15 n">1</td>
 				<td class="column1 style15 s">Fonds de commerce</td>\';
-				for ($i = 60; $i < 68; $i++) {
+				for ($i = 65; $i < 73; $i++) {
 					$table .= \'<td class="column\' . ($i + 2) . \' style16 null">\' . ${\'fusion\' . $i} . \'</td>\' . "\n";
 				}
 					$table .= \'	</tr>
 				<tr class="row4">
 				<td class="column0 style15 n">1</td>
 				<td class="column1 style15 s">Autres éléments non amortissables</td>\';
-				for ($i = 67; $i < 75; $i++) {
+				for ($i = 73; $i < 81; $i++) {
 					$table .= \'<td class="column\' . ($i + 2) . \' style16 null">\' . ${\'fusion\' . $i} . \'</td>\' . "\n";
 				}
 					$table .= \'	</tr>

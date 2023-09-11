@@ -251,7 +251,7 @@ class pdf_Retratsdimm extends ModelePDFUser
 				$pagenb = 0;
 				$pdf->SetDrawColor(128, 128, 128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset('CreditBail'));
+				$pdf->SetTitle($outputlangs->convToOutputCharset(' '));
 				$pdf->SetSubject($outputlangs->transnoentities(""));
 				$pdf->SetCreator("Dolibarr " . DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
@@ -275,7 +275,7 @@ class pdf_Retratsdimm extends ModelePDFUser
 
 				$year=GETPOST('year');
 
-				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/RetratsDimmobilisation_fichier_'.$year.'.php';
+				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Retratsdimm/RetratsDimmobilisation_fichier_'.$year.'.php';
 
 				$table =
 				'
@@ -298,7 +298,7 @@ class pdf_Retratsdimm extends ModelePDFUser
 			<col class="col10">
 	<tbody>
 	  <tr class="row0">
-		<td class="column0 style1 s style3" colspan="8">TABLEAU DES PLUS OU MOINS VALUES SUR CESSIONS OU RETRAITS D\'\IMMOBILISATIONS</td>
+		<td class="column0 style1 s style3" colspan="8">TABLEAU DES PLUS OU MOINS VALUES SUR CESSIONS OU RETRAITS D IMMOBILISATIONS</td>
 
 	  </tr>
 	  <tr class="row1">

@@ -30,6 +30,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", "multicurrency"));
@@ -56,11 +57,20 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+
+
 if ($action == 'add') {
 	$langs->load("errors");
 
 	$dateo = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 	$label = GETPOST('label', 'alpha');
+
+
+	$id_doc = GETPOST('id_doc', 'int');
+
+	
+
+
 	$amount = price2num(GETPOST('amount', 'alpha'), 'MT', 2);
 	$amountto = price2num(GETPOST('amountto', 'alpha'), 'MT', 2);
 
@@ -80,14 +90,16 @@ if ($action == 'add') {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TransferTo")), null, 'errors');
 	}
+	
 	if (!$error) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-		$accountfrom = new Account($db);
-		$accountfrom->fetch(GETPOST('account_from', 'int'));
-
 		$accountto = new Account($db);
 		$accountto->fetch(GETPOST('account_to', 'int'));
+
+
+		$accountfrom = new Account($db);
+		$accountfrom->fetch(GETPOST('account_from', 'int'));
 
 		if ($accountto->currency_code == $accountfrom->currency_code) {
 			$amountto = $amount;
@@ -123,14 +135,16 @@ if ($action == 'add') {
 				$typeto = 'LIQ';
 			}
 
+			
+
 			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, price2num(-1 * $amount), '', '', $user);
+				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, $id_doc, price2num(-1 * $amount), '', '', $user);
 			}
 			if (!($bank_line_id_from > 0)) {
 				$error++;
 			}
 			if (!$error) {
-				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, $amountto, '', '', $user);
+				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label,$id_doc, $amountto, '', '', $user);
 			}
 			if (!($bank_line_id_to > 0)) {
 				$error++;
@@ -155,6 +169,10 @@ if ($action == 'add') {
 				$mesgs = str_replace('{s2}', '<a href="bankentries_list.php?id='.$accountto->id.'">'.$accountto->label.'</a>', $mesgs);
 				setEventMessages($mesgs, null, 'mesgs');
 				$db->commit();
+
+
+
+
 			} else {
 				setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
 				$db->rollback();
@@ -235,19 +253,91 @@ print '		<script type="text/javascript">
         	});
     		</script>';
 
+
+
+$object = new User($db);
+$id=$user->id;
+
+
+
+function GenerateDocuments()
+{
+  global $amount, $account_from, $account_to, $id_doc;
+  print ' <form id="frmgen" name="builddoc" method="post">';     
+  print '<input type="hidden" name="token" value="' . newToken() . '">';
+  print '<input type="hidden" name="amount" value="' . $amount . '">';
+  print '<input type="hidden" name="account_from" value="' . $account_from . '">';
+  print '<input type="hidden" name="account_to" value="' . $account_to . '">';
+  print '<input type="hidden" name="id_doc" value="' . $id_doc . '">';
+  print '<input type="hidden" name="action" value="builddoc">';
+  print '<input type="hidden" name="model" value="OrderVirement">';
+  print '<div class="center"  style="margin-bottom: 100px; margin-right: 20%;">
+  <input type="submit" id="btngen" class="button" name="save" value="Generate Documents">';
+  print '</form>';
+}
+ 
+
+
+
+
+function ShowDocuments()
+{
+  global $db, $object, $conf, $month, $prev_year, $societe, $showAll, $prev_month, $prev_year, $start;
+  print '<div class="fichecenter"><divclass="fichehalfleft">';
+  $formfile = new FormFile($db);
+  $subdir ='';
+  $filedir = DOL_DATA_ROOT . '/OrderVirement/';
+  $urlsource = $_SERVER['PHP_SELF'] . '';
+  $genallowed = 0;
+  $delallowed = 1;
+  $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
+
+  if ($societe !== null && isset($societe->default_lang)) {
+    print $formfile->showdocuments('OrderVirement', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+  } else {
+    print $formfile->showdocuments('OrderVirement', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
+  }
+}
+
+
+// Actions to build doc
+$action = GETPOST('action', 'aZ09');
+$upload_dir = DOL_DATA_ROOT . '/OrderVirement/';
+$permissiontoadd = 1;
+$donotredirect = 1;
+
+include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
+
+
 $form = new Form($db);
+
+
 
 $account_from = '';
 $account_to = '';
 $label = '';
 $amount = '';
 $amountto = '';
+$sql = "SELECT * FROM llx_bank ORDER BY id_doc DESC LIMIT 1 ";
+$res_bank= $db->query($sql);
+if ($res_bank) {
+	$parambank = $res_bank->fetch_assoc();
+	$id_docbank = $parambank['id_doc'];
+} 
+if(($id_docbank==0) || empty($id_docbank))
+{
+	$id_doc=1;
+}else{
+	$id_doc=$id_docbank+1;
+}
+
 
 if ($error) {
 	$account_from = GETPOST('account_from', 'int');
 	$account_to = GETPOST('account_to', 'int');
 	$label = GETPOST('label', 'alpha');
 	$amount = GETPOST('amount', 'alpha');
+	$id_doc = GETPOST('id_doc', 'alpha');
 }
 
 print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'bank_account');
@@ -255,43 +345,61 @@ print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'bank_acco
 print '<span class="opacitymedium">'.$langs->trans("TransferDesc").'</span>';
 print "<br><br>";
 
-print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
+if ($action == 'add') {
 
-print '<input type="hidden" name="action" value="add">';
+	$account_from = GETPOST('account_from', 'int');
+	$account_to = GETPOST('account_to', 'int');
+	$label = GETPOST('label', 'alpha');
+	$amount = GETPOST('amount', 'alpha');
+	$id_doc = GETPOST('id_doc');
+    echo '<div class="center">'.GenerateDocuments().'</div>';
+}
+else{
+	print '<form name="add" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="add">';  
+	print '<div class="div-table-responsive-no-min">'; 
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td>';
+	print '<td class="right">'.$langs->trans("Amount").'</td>';
+	print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
+	print '</tr>';
+	print '<tr class="oddeven"><td>';
+	print img_picto('', 'bank_account', 'class="paddingright"');
+	$form->select_comptes($account_from, 'account_from', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
+	print "</td>";
+	print "<td>\n"; 
+	print img_picto('', 'bank_account', 'class="paddingright"');
+	$form->select_comptes($account_to, 'account_to', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
+	print "</td>\n";
+	print "<td>";
+	print $form->selectDate((!empty($dateo) ? $dateo : ''), '', '', '', '', 'add');
+	print "</td>\n";
+	print '<input name="id_doc" type="hidden" value="'.dol_escape_htmltag($id_doc).'">';
+	print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.dol_escape_htmltag($label).'"></td>';
+	print '<td class="right"><input name="amount" class="flat right" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
+	print '<td style="display:none" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
+	print "</table>";
+	print '</div>';
+	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"   ></div>';
+	print "</form>";
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td>';
-print '<td class="right">'.$langs->trans("Amount").'</td>';
-print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
-print '</tr>';
+	ShowDocuments();
+}
 
-print '<tr class="oddeven"><td>';
-print img_picto('', 'bank_account', 'class="paddingright"');
-$form->select_comptes($account_from, 'account_from', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
-print "</td>";
 
-print "<td>\n";
-print img_picto('', 'bank_account', 'class="paddingright"');
-$form->select_comptes($account_to, 'account_to', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
-print "</td>\n";
 
-print "<td>";
-print $form->selectDate((!empty($dateo) ? $dateo : ''), '', '', '', '', 'add');
-print "</td>\n";
-print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.dol_escape_htmltag($label).'"></td>';
-print '<td class="right"><input name="amount" class="flat right" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
-print '<td style="display:none" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
-
-print "</table>";
-print '</div>';
-
-print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
-
-print "</form>";
+// onclick="'.GenerateDocuments().'"
 
 // End of page
 llxFooter();
 $db->close();
+
+
+
+
+?>
+
+
+

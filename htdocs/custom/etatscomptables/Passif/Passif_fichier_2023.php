@@ -1,5 +1,4 @@
-<?php 
-$capitauxPropres = 0;
+<?php $capitauxPropres = 0;
 $capitauxPropresN1 = 0;
 $capitauxPropresN2 = 0;
 $CapitalSocialPersonnel = 0;

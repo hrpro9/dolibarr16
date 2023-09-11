@@ -526,7 +526,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column0 style15 s">Augmentation des dettes de financement</td>
             <td class="column1 style46 null"><?php readMontant($augDetFinc_B)?></td>
             <td class="column2 style45 null"></td>
-            <td class="column3 style44 null"><?php readMontant($augDetFinc_B-0)?></td>
+            <td class="column3 style44 null"><?php readMontant($augDetFinc_B)?></td>
             <td class="column4 style13 null"><?php readMontant($augDetFinc_EP)?></td>
             <td class="column5 style12 null"></td>
             <td class="column6 style11 null"><?php readMontant($augDetFinc_E2)?></td>

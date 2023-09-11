@@ -1,9 +1,9 @@
 <?php $IENV_CDEx = 0;
-$IENV_DDLEx = 19;
+$IENV_DDLEx = 0;
 $II_CDFEx = 0;
 $FP_CDEx = 0;
-$FP_DDLEx = 19;
-$FP_CDFEx = -19;
+$FP_DDLEx = 0;
+$FP_CDFEx = 0;
 $CARSPE_DDLEx = 0;
 $CARSPE_ASISo = 0;
 $CARSPE_CDFEx = 0;
@@ -50,6 +50,6 @@ $ICEC_CDEx = 0;
 $ICEC_DDLEx = 0;
 $ICEC_CDFEx = 0;
 $TOTAl_CDEx = 0;
-$TOTAl_DDLEx = -19;
+$TOTAl_DDLEx = 0;
 $TOTAl_CDFEx = 0;
 ?>

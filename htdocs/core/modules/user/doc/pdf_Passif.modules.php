@@ -199,8 +199,10 @@ class pdf_Passif extends ModelePDFUser
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : '';
 				$dir = DOL_DATA_ROOT . '/billanLaisse/billan_Passif/';
+
+				$year=GETPOST('valeurdatechoise');
 			
-				$file = $dir . "/Billan Passif.pdf";
+				$file = $dir . "/Billan Passif".$year.".pdf";
 				// $file = $dir . "/Passif.pdf";
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
@@ -327,18 +329,7 @@ class pdf_Passif extends ModelePDFUser
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($aCapitaN1,2).'</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($aCapitaN2,2).'</td>
 				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">Moins : Capital appelé</td>
-				<td style="border: 1px solid #ddd;padding: 8px;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;"></td>
-				</tr>
-				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
-				<td style="border: 1px solid #ddd;padding: 8px;">Moins : Dont versé</td>
-				<td style="border: 1px solid #ddd;padding: 8px;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;"></td>
-				<td style="border: 1px solid #ddd;padding: 8px;"></td>
-				</tr>
+				
 				<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 				<td style="border: 1px solid #ddd;padding: 8px;">Prime d emission, de fusion, d apport</td>
 				<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">'.number_format($PrimeDFD*-1*-1,2).'</td>

@@ -72,14 +72,17 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 <body>
 <center>
 <form method="POST" >
-    <select name="date_select"><?php affichageAnnees()?></select>
+<select name="date_select" required>
+     <option value="">Choisis date</option>
+      <?php affichageAnnees()?>
+    </select>
     <button type="submit" name="chargement" 
     style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;">Chargement</button><br>  
-  </form>
+ 
     <br>
     <?php
 
-    $date=(!empty($dateChoisis))?$dateChoisis:date('Y');
+    $date=(!empty($dateChoisis))?$dateChoisis:'?';
     
     echo'<input type="text" style="text-align:center;font-weight:bold;" value="Année chargé : '.$date.'"disabled/>';
    
@@ -534,14 +537,44 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><?php readmontant($CAF_E2)?></font></b></td>
 	</tr>
 	<tr>
-		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="18" align="left" valign=middle sdnum="1033;0;0"><font face="Calibri"><br></font></td>
+		<td  style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="18" align="left" valign=middle sdnum="1033;0;0"><font face="Calibri"><br></font></td>
 		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="10" sdnum="1033;0;0"><font face="Calibri">10</font></td>
 		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="center" valign=middle sdnum="1033;0;0"><b><font face="Calibri"> -</font></b></td>
 		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000" align="left" valign=middle sdnum="1033;0;#,##0.00"><font face="Calibri">Distributions de bénéfices</font></td>
-		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 2px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri"><br></font></td>
-		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri"><br></font></td>
+		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 2px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri">
+		<?php
+            for ($i = 1; $i <=1; $i++) {
+                echo '<input required min="0" type="text" required style="width: 125px;" name="esg' . $i . '" id="esg' . $i . '" value="';
+                if (isset(${"esg" . $i})) {
+                    echo ${"esg" . $i};
+                }
+                echo '" />' . "\n";
+            }                 
+        ?>
+		<br></font></td>
+		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri">
+		<?php
+            for ($i = 2; $i <=2; $i++) {
+                echo '<input required min="0" type="text" required style="width: 125px;" name="esg' . $i . '" id="esg' . $i . '" value="';
+                if (isset(${"esg" . $i})) {
+                    echo ${"esg" . $i};
+                }
+                echo '" />' . "\n";
+            }                 
+        ?>
+		<br></font></td>
 		<td align="left" valign=middle><font face="Arial"><br></font></td>
-		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri"><br></font></td>
+		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri">
+		<?php
+            for ($i =3; $i <=3; $i++) {
+                echo '<input required min="0" type="text" required style="width: 125px;" name="esg' . $i . '" id="esg' . $i . '" value="';
+                if (isset(${"esg" . $i})) {
+                    echo ${"esg" . $i};
+                }
+                echo '" />' . "\n";
+            }                 
+        ?>
+		<br></font></td>
 	</tr>
 	<tr>
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="21" align="left" valign=middle sdnum="1033;0;0"><font face="Calibri">II</font></td>
@@ -554,6 +587,8 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><?php readmontant($autofin_E2)?></font></b></td>
 	</tr>
 </table>
+
+</form>
 
 <div style="width: 650px; margin: 0 auto; text-align: center;">
   <div style="margin-top: 10px;margin-right : 80px;">

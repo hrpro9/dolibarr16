@@ -92,7 +92,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     for ($i = 0; $i <= 108; $i++) {
         ${'RDimmobilisation' . $i} = $_POST['RDimmobilisation' . $i];
-        $data .= '$RDimmobilisation' . $i . ' = ' . ${'RDimmobilisation' . $i} . ";\n";   
+ 
+
+        if (is_string(${'RDimmobilisation' . $i})) {
+          // If the value is a string, add double quotes around it
+          $data .= '$RDimmobilisation' . $i . ' = "' . ${'RDimmobilisation' . $i} . "\";\n";
+        }
+        else {
+            $data .= '$RDimmobilisation' . $i . ' = ' . ${'RDimmobilisation' . $i} . ";\n";
+        }
     }
     for ($i = 1; $i <= 18; $i++) {
       

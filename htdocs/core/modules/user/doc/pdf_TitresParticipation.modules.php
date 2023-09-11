@@ -276,6 +276,9 @@ class pdf_TitresParticipation extends ModelePDFUser
 				$year=GETPOST('year');
 
 				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/TitresParticipation/TitresParticipation_fichier_'.$year.'.php';
+			
+
+				
 
 				$table =
 				'
@@ -515,6 +518,10 @@ class pdf_TitresParticipation extends ModelePDFUser
 			
 			</tbody>
 		</table>
+		
+
+			
+
 		
 
 			

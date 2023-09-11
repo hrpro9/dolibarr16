@@ -358,8 +358,8 @@ $total2_B=$total2_AP=$total2_net=$total2_EP=$total2_E2=0;//---------------------
       $totalGen_E2=$total1_E2+$total2_E2+$total3_E2;
     
    }
-  // if(isset($_POST['chargement']))
-  // {
+  if(isset($_POST['chargement']))
+  {
     
     $data = "<?php ";
     $data .= '$immNonVal_B = ' . $immNonVal_B . ";\n";
@@ -418,8 +418,8 @@ $total2_B=$total2_AP=$total2_net=$total2_EP=$total2_E2=0;//---------------------
     $data .= '$terrains_B_terrains_AP = ' .($terrains_B-$terrains_AP) . ";\n";
     $data .= '$terrains_EP = ' .$terrains_EP . ";\n"; 
     $data .= '$terrains_E2 = ' .$terrains_E2 . ";\n"; 
-    $data .= '$terrains_B = ' .$cons_B . ";\n"; 
-    $data .= '$terrains_AP = ' . $cons_AP . ";\n";
+    $data .= '$cons_B = ' .$cons_B . ";\n"; 
+    $data .= '$cons_AP = ' . $cons_AP . ";\n";
     $data .= '$cons_B_cons_AP = ' .($cons_B-$cons_AP). ";\n";
     $data .= '$cons_EP = ' .$cons_EP . ";\n"; 
     $data .= '$cons_E2 = ' .$cons_E2 . ";\n"; 
@@ -443,8 +443,8 @@ $total2_B=$total2_AP=$total2_net=$total2_EP=$total2_E2=0;//---------------------
     $data .= '$autresImmoCor_B_autresImmoCor_AP = ' .($autresImmoCor_B-$autresImmoCor_AP). ";\n";
     $data .= '$autresImmoCor_EP = ' .$autresImmoCor_EP . ";\n"; 
     $data .= '$autresImmoCor_E2 = ' .$autresImmoCor_E2 . ";\n"; 
-    $data .= '$autresImmoCor_B = ' .$immCorEnCours_B . ";\n"; 
-    $data .= '$autresImmoCor_AP = ' . $immCorEnCours_AP . ";\n";
+    $data .= '$immCorEnCours_B = ' .$immCorEnCours_B . ";\n"; 
+    $data .= '$immCorEnCours_AP = ' . $immCorEnCours_AP . ";\n";
     $data .= '$immCorEnCours_B_immCorEnCours_AP = ' .($immCorEnCours_B-$immCorEnCours_AP). ";\n";
     $data .= '$immCorEnCours_EP = ' .$immCorEnCours_EP . ";\n"; 
     $data .= '$immCorEnCours_E2 = ' .$immCorEnCours_E2 . ";\n"; 
@@ -490,11 +490,11 @@ $total2_B=$total2_AP=$total2_net=$total2_EP=$total2_E2=0;//---------------------
     $data .= '$total1_net = ' .$total1_net. ";\n";
     $data .= '$total1_EP = ' .$total1_EP . ";\n"; 
     $data .= '$total1_E2 = ' .$total1_E2 . ";\n";
-    $data .= '$total1_B = ' .$stocks_B . ";\n";
-    $data .= '$total1_AP = ' .$stocks_AP . ";\n";
-    $data .= '$total1_net = ' .$stocks_net. ";\n";
-    $data .= '$total1_EP = ' .$stocks_EP . ";\n"; 
-    $data .= '$total1_E2 = ' .$stocks_E2 . ";\n";
+    $data .= '$stocks_B = ' .$stocks_B . ";\n";
+    $data .= '$stocks_AP = ' .$stocks_AP . ";\n";
+    $data .= '$stocks_net = ' .$stocks_net. ";\n";
+    $data .= '$stocks_EP = ' .$stocks_EP . ";\n"; 
+    $data .= '$stocks_E2 = ' .$stocks_E2 . ";\n";
     $data .= '$march_B = ' .$march_B . ";\n";
     $data .= '$march_AP = ' .($march_AP*-1) . ";\n";
     $data .= '$march_B_march_AP = ' .($march_B-($march_AP*-1)). ";\n";
@@ -579,7 +579,7 @@ $total2_B=$total2_AP=$total2_net=$total2_EP=$total2_E2=0;//---------------------
     $data .= '$tresorAct_net = ' .$tresorAct_net. ";\n";
     $data .= '$tresorAct_EP = ' .$tresorAct_EP . ";\n"; 
     $data .= '$tresorAct_E2 = ' .$tresorAct_E2 . ";\n";
-    $data .= '$tresorAct_B = ' .$chqValEnc_B . ";\n";
+    $data .= '$chqValEnc_B = ' .$chqValEnc_B . ";\n";
     $data .= '$chqValEnc_AP = ' .($chqValEnc_AP*-1) . ";\n";
     $data .= '$chqValEnc_B_chqValEnc_AP = ' .($chqValEnc_B-($chqValEnc_AP*-1)). ";\n";
     $data .= '$chqValEnc_EP = ' .$chqValEnc_EP . ";\n"; 
@@ -617,5 +617,5 @@ $total2_B=$total2_AP=$total2_net=$total2_EP=$total2_E2=0;//---------------------
    // Écrire les données dans le nouveau fichier
    file_put_contents($nomFichier, $data);
 
-  // }
+  }
 ?>

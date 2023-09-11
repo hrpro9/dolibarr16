@@ -8,18 +8,12 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 llxHeader("", "");
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      // Retrieve the form data
-     for ($i = 0; $i <= 247; $i++) {
-        ${'autrecreditBail' . $i} = $_POST['autrecreditBail' . $i];
+     for ($i = 0; $i <= 372; $i++) {
+        ${'dotationimobilisation' . $i} = $_POST['dotationimobilisation' . $i];
     }
-
-   
-    
-    
-}
-
-
+ }
 
 $object = new User($db);
 $id=$user->id;
@@ -31,7 +25,7 @@ function GenerateDocuments()
   print '<form id="frmgen" name="builddoc" method="post">';
   print '<input type="hidden" name="token" value="' . newToken() . '">';
   print '<input type="hidden" name="action" value="builddoc">';
-  print '<input type="hidden" name="model" value="Autrecreditbail">';
+  print '<input type="hidden" name="model" value="Dotationimobilisation">';
   print '<div class="right"  style="margin-bottom: 100px; margin-right: 20%;">
   <input type="submit" id="btngen" class="button" name="save" value="génerer">';
   print '</form>';
@@ -41,32 +35,32 @@ function GenerateDocuments()
 
 
 
-function ShowDocuments()
-{
-  global $db, $object, $conf, $month, $prev_year, $societe, $showAll, $prev_month, $prev_year, $start;
-  print '<div class="fichecenter"><divclass="fichehalfleft">';
-  $formfile = new FormFile($db);
-  $subdir ='';
-  $filedir = DOL_DATA_ROOT . '/billanLaisse/Autrecreditbail/';
-  $urlsource = $_SERVER['PHP_SELF'] . '';
-  $genallowed = 0;
-  $delallowed = 1;
-  $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
+  function ShowDocuments()
+  {
+    global $db, $object, $conf, $month, $prev_year, $societe, $showAll, $prev_month, $prev_year, $start;
+    print '<div class="fichecenter"><divclass="fichehalfleft">';
+    $formfile = new FormFile($db);
+    $subdir ='';
+    $filedir = DOL_DATA_ROOT . '/billanLaisse/Dotationimobilisation/';
+    $urlsource = $_SERVER['PHP_SELF'] . '';
+    $genallowed = 0;
+    $delallowed = 1;
+    $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
 
- 
+  
 
-  if ($societe !== null && isset($societe->default_lang)) {
-    print $formfile->showdocuments('Autrecreditbail', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
-  } else {
-    print $formfile->showdocuments('Autrecreditbail', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
+    if ($societe !== null && isset($societe->default_lang)) {
+      print $formfile->showdocuments('Dotationimobilisation', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+    } else {
+      print $formfile->showdocuments('Dotationimobilisation', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
+    }
+
   }
 
-}
 
-
-// Actions to build doc
+// Actions to build doc        
 $action = GETPOST('action', 'aZ09');
-$upload_dir = DOL_DATA_ROOT . '/billanLaisse/Autrecreditbail/';
+$upload_dir = DOL_DATA_ROOT . '/billanLaisse/Dotationimobilisation/';
 $permissiontoadd = 1;
 $donotredirect = 1;
 
@@ -613,8 +607,9 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
   <body>
 
-    <center>
-    <table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0">
+<center>
+    <form method="POST" action="confirmDotationImobilisation.php">
+    <table  border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0">
         <col class="col0">
         <col class="col1">
         <col class="col2">
@@ -673,6 +668,13 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
         <col class="col55">
         <col class="col56">
         <col class="col57">
+
+        <center>
+        <input type="date" name="dotationimobilisation248"  id="dotationimobilisation248" value="<?php if(isset($dotationimobilisation248)){ echo $dotationimobilisation248;} ?>"  placeholder ="Année" required style="margin-top: 18px;font-size:95%; background: #ededed; font-weight:bolder; padding: 8px 15px 8px 15px; border: block; ">
+        <input type="hidden" name="check"  value="true">
+        </center>
+
+
         <tbody>
           <tr class="row0">
             <td class="column0 style1 s style3" colspan="10">ETAT DE DOTATIONS AUX AMORTISSEMENTS RELATIFS AUX IMMOBILISATIONS</td>
@@ -712,7 +714,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column25 style19 null"></td>
 
           </tr>
-          <tr class="row7">
+          <!-- <tr class="row7">
             <td class="column0 style28 s">Total</td>
             <td class="column1 style29 null"></td>
             <td class="column2 style30 f">0.00</td>
@@ -736,7 +738,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column24 style38 null"></td>
             <td class="column25 style38 null"></td>
 
-          </tr>
+          </tr> -->
           <tr class="row8">
             <td class="column0 style39 s style41" rowspan="5">Immobilisations concernées</td>
             <td class="column1 style39 s style41" rowspan="5">Date d'entrée (1)</td>
@@ -746,24 +748,15 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column5 style39 s style41" rowspan="5">Taux en %</td>
             <td class="column6 style39 s style41" rowspan="5">Durée en années (4)</td>
             <td class="column7 style39 s style41" rowspan="5">Amortissements de l'exercice</td>
-            <td class="column8 style39 s style41" rowspan="5">Cumul amortissements (col. 4 + col. 7)</td>
+            <!-- <td class="column8 style39 s style41" rowspan="5">Cumul amortissements (col. 4 + col. 7)</td> -->
             <td class="column9 style39 s style41" rowspan="5">Observations (5)</td>
-            <td class="column10 style4 null"></td>
-           
-            
+            <td class="column10 style4 null"></td>       
             <td class="column22 style7 null"></td>
             <td class="column23 style7 null"></td>
             <td class="column24 style7 null"></td>
             <td class="column25 style7 null"></td>
-
           </tr>
-         
-       
           <tr class="row186">
-          
-        
-            
-    
             <td class="column11 style77 null"></td>
             <td class="column12 style53 null"></td>
             <td class="column13 style53 null"></td>
@@ -772,15 +765,10 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column16 style53 null"></td>
             <td class="column17 style107 null"></td>
             <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
+            <td class="column22 style7 f"></td>
             <td class="column23 style7 f">0</td>
-         
-
           </tr>
           <tr class="row187">
-          
-    
             <td class="column11 style77 null"></td>
             <td class="column12 style53 null"></td>
             <td class="column13 style53 null"></td>
@@ -789,15 +777,10 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column16 style53 null"></td>
             <td class="column17 style107 null"></td>
             <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
+            <td class="column22 style7 f"></td>
             <td class="column23 style7 f">0</td>
-         
-
           </tr>
           <tr class="row188">
-           
-
             <td class="column11 style77 null"></td>
             <td class="column12 style53 null"></td>
             <td class="column13 style53 null"></td>
@@ -806,14 +789,10 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column16 style53 null"></td>
             <td class="column17 style107 null"></td>
             <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
+            <td class="column22 style7 f"></td>
             <td class="column23 style7 f">0</td>
-         
           </tr>
           <tr class="row189">
-   
-     
             <td class="column11 style77 null"></td>
             <td class="column12 style53 null"></td>
             <td class="column13 style53 null"></td>
@@ -822,50 +801,679 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column16 style53 null"></td>
             <td class="column17 style107 null"></td>
             <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
+            <td class="column22 style7 f"></td>
             <td class="column23 style7 f">0</td>
-
-
           </tr>
           <tr class="row190">
-            <td class="column0 style46 null"></td>
-            <td class="column1 style47 null"></td>
-            <td class="column2 style48 null"></td>
-            <td class="column3 style49 null"></td>
-            <td class="column4 style50 f"></td>
-            <td class="column5 style51 null"></td>
-            <td class="column6 style52 f">#VALUE!</td>
-            <td class="column7 style50 f">0.00</td>
-            <td class="column8 style50 f">0.00</td>
-            <td class="column9 style48 null"></td>
-         
-            <td class="column11 style77 null"></td>
-            <td class="column12 style53 null"></td>
-            <td class="column13 style53 null"></td>
-            <td class="column14 style53 null"></td>
-            <td class="column15 style53 null"></td>
-            <td class="column16 style53 null"></td>
-            <td class="column17 style107 null"></td>
-            <td class="column18 style107 null"></td>
+            <td class="column0 style46 null">Frais de constitution</td>
+            <?php
+              for ($i = 0; $i <= 7; $i++) {
+                  if ($i === 0) {
+                      echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                      if (isset(${"dotationimobilisation" . $i})) {
+                          echo ${"dotationimobilisation" . $i};
+                      }
+                      echo '" /></td>' . "\n";
+                  }  else {
+                    echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                  }     
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Frais prealables au demarrage</td>
+            <?php
+              for ($i = 8; $i <= 15; $i++) {
+                  if ($i === 8) {
+                      echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                      if (isset(${"dotationimobilisation" . $i})) {
+                          echo ${"dotationimobilisation" . $i};
+                      }
+                      echo '" /></td>' . "\n";
+                  }  else {
+                    echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                  }     
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Frais d'augmentation du capital</td>
+            <?php
+              for ($i = 16; $i <= 23; $i++) {
+                if ($i === 16) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
             
-            <td class="column22 style7 f">#DIV/0!</td>
-            <td class="column23 style7 f">0</td>
-         
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Frais operations de fusions, scissions</td>
+            <?php
+              for ($i = 24; $i <= 31; $i++) {
+                if ($i === 24) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Frais de prospection</td>
+            <?php
+              for ($i = 32; $i <= 39; $i++) {
+                if ($i === 32) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Frais de publicite</td>
+            <?php
+              for ($i = 40; $i <= 47; $i++) {
+                if ($i === 40) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Autres frais preliminaires</td>
+            <?php
+              for ($i = 48; $i <= 55; $i++) {
+                if ($i === 48) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Frais d'acquisition des immobilisations</td>
+            <?php
+              for ($i = 56; $i <= 63; $i++) {
+                if ($i === 56) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Frais d'emission des emprunts</td>
+            <?php
+              for ($i = 64; $i <= 71; $i++) {
+                if ($i === 64) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Autres charges à repartir</td>
+            <?php
+              for ($i = 72; $i <= 79; $i++) {
+                if ($i === 72) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Primes de remboursement des obligations</td>
+            <?php
+              for ($i = 80; $i <= 87; $i++) {
+                if ($i === 80) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Immob en recherche et developpement</td>
+            <?php
+              for ($i = 88; $i <= 95; $i++) {
+                if ($i === 88) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Terrains nus</td>
+            <?php
+              for ($i = 96; $i <= 103; $i++) {
+                if ($i === 96) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Terrains amenages</td>
+            <?php
+              for ($i = 104; $i <= 111; $i++) {
+                if ($i === 104) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Terrains batis</td>
+            <?php
+              for ($i = 112; $i <= 119; $i++) {
+                if ($i ===112) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Agencements et amenagements de terrains </td>
+            <?php
+              for ($i = 120; $i <= 127; $i++) {
+                if ($i ===120) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Batiments</td>
+            <?php
+              for ($i = 128; $i <= 135; $i++) {
+                if ($i ===128) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr>
+          <tr class="row190">
+            <td class="column0 style46 null">Constructions sur terrains d'autrui</td>
+            <?php
+              for ($i = 136; $i <= 143; $i++) {
+                if ($i ===136) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Ouvrages d'infrastructure</td>
+            <?php
+              for ($i = 144; $i <= 151; $i++) {
+                if ($i ===144) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+      
+          <tr class="row190">
+            <td class="column0 style46 null">Agencements et amenag des constructions</td>
+            <?php
+              for ($i = 152; $i <= 159; $i++) {
+                if ($i ===152) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Autres constructions</td>
+            <?php
+              for ($i = 160; $i <=167; $i++) {
+                if ($i ===160) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Installations techniques</td>
+            <?php
+              for ($i = 168; $i <= 175; $i++) {
+                if ($i ===168) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Materiel et outillage</td>
+            <?php
+              for ($i = 176; $i <= 183; $i++) {
+                if ($i ===176) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Emballages recuperables identifiables</td>
+            <?php
+              for ($i = 184; $i <=191; $i++) {
+                if ($i ===184) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null"> Autres instal techniques, mat. et outillage</td>
+            <?php
+              for ($i =192; $i <= 199; $i++) {
+                if ($i ===192) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Materiel de transport </td>
+            <?php
+              for ($i = 200; $i <=207; $i++) {
+                if ($i ===200) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Mobilier de bureau </td>
+            <?php
+              for ($i = 208; $i <= 215; $i++) {
+                if ($i ===208) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null"> Materiel de bureau</td>
+            <?php
+              for ($i = 216; $i <= 223; $i++) {
+                if ($i ===216) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null">Materiel informatique </td>
+            <?php
+              for ($i = 224; $i <= 231; $i++) {
+                if ($i ===224) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+          <tr class="row190">
+            <td class="column0 style46 null"> Agencements installations et aménagements divers </td>
+            <?php
+              for ($i = 232; $i <= 239; $i++) {
+                if ($i ===232) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+
+          <tr class="row190">
+            <td class="column0 style46 null">Autres immobilisations corporelles </td>
+            <?php
+              for ($i = 240; $i <= 247 ; $i++) {
+                if ($i ===240) {
+                    echo '<td class="column0 style46 null"><input min="0" type="date" style="width: 52px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";
+                }  else {
+                  echo '<td class="column0 style46 null"><input min="0" type="text" required style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                  if (isset(${"dotationimobilisation" . $i})) {
+                      echo ${"dotationimobilisation" . $i};
+                  }
+                  echo '" /></td>' . "\n";
+                }     
+              } 
+            ?>   
+          </tr> 
+
+
+
+
+          <tr class="row6">
+            <td class="column0 style8 null"></td>
+            <td class="column1 style9 null"></td>
+            <td class="column2 style9 null"></td>
+            <td class="column3 style26 null"></td>
+            <td class="column4 style27 null"></td>
+            <td class="column5 style22 null"></td>
+            <td class="column6 style13 null"></td>
+            <td class="column7 style14 null"></td>
+            <td class="column8 style10 null"></td>
+            <td class="column9 style15 null"></td>
+            <td class="column10 style16 null"></td>
+            <td class="column11 style17 null"></td>
+            <td class="column12 style16 null"></td>
+            <td class="column13 style16 null"></td>
+            <td class="column14 style16 null"></td>
+            <td class="column15 style16 null"></td>
+            <td class="column16 style16 null"></td>      
+            <td class="column22 style19 null"></td>
+            <td class="column23 style19 null"></td>
+            <td class="column24 style19 null"></td>
+            <td class="column25 style19 null"></td>
 
           </tr>
-          <tr class="row191">
-            <td class="column0 style46 null"></td>
-            <td class="column1 style47 null"></td>
-            <td class="column2 style48 null"></td>
-            <td class="column3 style49 null"></td>
-            <td class="column4 style50 f"></td>
-            <td class="column5 style51 null"></td>
-            <td class="column6 style52 f">#VALUE!</td>
-            <td class="column7 style50 f">0.00</td>
-            <td class="column8 style50 f">0.00</td>
-            <td class="column9 style48 null"></td>
-            
+
+
+
+          <tr class="row8" style="margin-top: 50px;">
+            <td class="column1 style39 s style41" rowspan="5">Compte Actif</td>
+            <td class="column2 style39 s style41" rowspan="5">Compte Amort</td>
+            <td class="column3 style39 s style41" rowspan="5">Compte Charge</td>
+            <td class="column0 style39 s style41" rowspan="5">Immobilisations</td>
+            <td class="column1 style39 s style41" rowspan="5">Total Immob</td>
+            <td class="column2 style39 s style41" rowspan="5">Total Amort Anterieur</td>
+            <td class="column3 style39 s style41" rowspan="5">Total Amort exercice</td>
+            <td class="column4 style39 s style41" rowspan="5">Total Cumul amort</td>
+            <td class="column10 style4 null"></td>       
+            <td class="column22 style7 null"></td>
+            <td class="column23 style7 null"></td>
+            <td class="column24 style7 null"></td>
+            <td class="column25 style7 null"></td>
+          </tr>
+          <tr class="row186">
             <td class="column11 style77 null"></td>
             <td class="column12 style53 null"></td>
             <td class="column13 style53 null"></td>
@@ -874,228 +1482,578 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column16 style53 null"></td>
             <td class="column17 style107 null"></td>
             <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
+            <td class="column22 style7 f"></td>
             <td class="column23 style7 f">0</td>
+          </tr>
+          <tr class="row187">
+            <td class="column11 style77 null"></td>
+            <td class="column12 style53 null"></td>
+            <td class="column13 style53 null"></td>
+            <td class="column14 style53 null"></td>
+            <td class="column15 style53 null"></td>
+            <td class="column16 style53 null"></td>
+            <td class="column17 style107 null"></td>
+            <td class="column18 style107 null"></td>
+            <td class="column22 style7 f"></td>
+            <td class="column23 style7 f">0</td>
+          </tr>
+          <tr class="row188">
+            <td class="column11 style77 null"></td>
+            <td class="column12 style53 null"></td>
+            <td class="column13 style53 null"></td>
+            <td class="column14 style53 null"></td>
+            <td class="column15 style53 null"></td>
+            <td class="column16 style53 null"></td>
+            <td class="column17 style107 null"></td>
+            <td class="column18 style107 null"></td>
+            <td class="column22 style7 f"></td>
+            <td class="column23 style7 f">0</td>
+          </tr>
+          <tr class="row189">
+            <td class="column11 style77 null"></td>
+            <td class="column12 style53 null"></td>
+            <td class="column13 style53 null"></td>
+            <td class="column14 style53 null"></td>
+            <td class="column15 style53 null"></td>
+            <td class="column16 style53 null"></td>
+            <td class="column17 style107 null"></td>
+            <td class="column18 style107 null"></td>
+            <td class="column22 style7 f"></td>
+            <td class="column23 style7 f">0</td>
+          </tr>
+          <tr class="row190">
+          <td class="column0 style46 null">21110000</td>
+          <td class="column0 style46 null">28111000</td>
+          <td class="column0 style46 null">61911000</td>
+            <td class="column0 style46 null">Frais de constitution</td>
+            <?php
+              for ($i = 249; $i <= 252; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">21120000</td>
+          <td class="column0 style46 null">28112000</td>
+          <td class="column0 style46 null">61911000</td>
+            <td class="column0 style46 null">Frais prealables au demarrage</td>
+            <?php
+              for ($i = 253; $i <= 256; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">21130000</td>
+          <td class="column0 style46 null">28113000</td>
+          <td class="column0 style46 null">61911000</td>
+            <td class="column0 style46 null">Frais d'augmentation du capital</td>
+            <?php
+              for ($i = 257; $i <= 260; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">21140000</td>
+          <td class="column0 style46 null">28114000</td>
+          <td class="column0 style46 null">61911000</td>
+            <td class="column0 style46 null">Frais operations de fusions, scissions</td>
+            <?php
+              for ($i = 261; $i <= 264; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">21160000</td>
+          <td class="column0 style46 null">28116000</td>
+          <td class="column0 style46 null">61911000</td>
+            <td class="column0 style46 null">Frais de prospection</td>
+            <?php
+              for ($i = 265; $i <= 268; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">21170000</td>
+          <td class="column0 style46 null">28117000</td>
+          <td class="column0 style46 null">61911000</td>
+            <td class="column0 style46 null">Frais de publicite</td>
+            <?php
+              for ($i = 269; $i <= 272; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">21180000</td>
+          <td class="column0 style46 null">28118000</td>
+          <td class="column0 style46 null">61911000</td>
+            <td class="column0 style46 null">Autres frais preliminaires</td>
+            <?php
+              for ($i = 273; $i <= 276; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">21210000</td>
+          <td class="column0 style46 null">28121000</td>
+          <td class="column0 style46 null">61912000</td>
+            <td class="column0 style46 null">Frais d'acquisition des immobilisations</td>
+            <?php
+              for ($i = 277; $i <= 280; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">21250000</td>
+          <td class="column0 style46 null">28125000</td>
+          <td class="column0 style46 null">61912000</td>
+            <td class="column0 style46 null">Frais d'emission des emprunts</td>
+            <?php
+              for ($i = 281; $i <= 284; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">21280000</td>
+          <td class="column0 style46 null">28128000</td>
+          <td class="column0 style46 null">61912000</td>
+            <td class="column0 style46 null">Autres charges à repartir</td>
+            <?php
+              for ($i = 285; $i <= 288; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr>
+          <tr class="row190">
+          <td class="column0 style46 null">21300000</td>
+          <td class="column0 style46 null">28130000</td>
+          <td class="column0 style46 null">63910000</td>
+            <td class="column0 style46 null">Primes de remboursement des obligations</td>
+            <?php
+              for ($i = 289; $i <= 292; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr>  
+          <tr class="row190">
+          <td class="column0 style46 null">22100000</td>
+          <td class="column0 style46 null">28210000</td>
+          <td class="column0 style46 null">61921000</td>
+            <td class="column0 style46 null">Immob en recherche et developpement</td>
+            <?php
+              for ($i = 293; $i <= 296; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr>  
+          <tr class="row190">
+          <td class="column0 style46 null">23110000</td>
+          <td class="column0 style46 null">28311000</td>
+          <td class="column0 style46 null">61931000</td>
+            <td class="column0 style46 null">Terrains nus</td>
+            <?php
+              for ($i = 297; $i <= 300; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr>  
+          <tr class="row190">
+          <td class="column0 style46 null">23120000</td>
+          <td class="column0 style46 null">28312000</td>
+          <td class="column0 style46 null">61931000</td>
+            <td class="column0 style46 null">Terrains amenages</td>
+            <?php
+              for ($i = 301; $i <= 304; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr>
+          <tr class="row190">
+          <td class="column0 style46 null">23130000</td>
+          <td class="column0 style46 null">28313000</td>
+          <td class="column0 style46 null">61931000</td>
+            <td class="column0 style46 null">Terrains batis</td>
+            <?php
+              for ($i = 305; $i <= 308; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr>  
+          <tr class="row190">
+          <td class="column0 style46 null">23160000</td>
+          <td class="column0 style46 null">28316000</td>
+          <td class="column0 style46 null">61932000</td>
+            <td class="column0 style46 null">Agencements et amenagements de terrains</td>
+            <?php
+              for ($i = 309; $i <= 312; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr>  
+          <tr class="row190">
+          <td class="column0 style46 null">23210000</td>
+          <td class="column0 style46 null">28321000</td>
+          <td class="column0 style46 null">61932000</td>
+            <td class="column0 style46 null">Batiments</td>
+            <?php
+              for ($i = 313; $i <= 316; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr>  
+          <tr class="row190">
+          <td class="column0 style46 null">23230000</td>
+          <td class="column0 style46 null">28323000</td>
+          <td class="column0 style46 null">61932000</td>
+            <td class="column0 style46 null">Constructions sur terrains d'autrui</td>
+            <?php
+              for ($i = 317; $i <= 320; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr>  
+          <tr class="row190">
+          <td class="column0 style46 null">23250000</td>
+          <td class="column0 style46 null">28325000</td>
+          <td class="column0 style46 null">61932000</td>
+            <td class="column0 style46 null">Ouvrages d'infrastructure</td>
+            <?php
+              for ($i = 321; $i <= 324; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23270000</td>
+          <td class="column0 style46 null">28327000</td>
+          <td class="column0 style46 null">61932000</td>
+            <td class="column0 style46 null">Agencements et amenag des constructions</td>
+            <?php
+              for ($i = 325; $i <= 328; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23280000</td>
+          <td class="column0 style46 null">28328000</td>
+          <td class="column0 style46 null">61932000</td>
+            <td class="column0 style46 null">Autres constructions</td>
+            <?php
+              for ($i = 329; $i <= 332; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23310000</td>
+          <td class="column0 style46 null">28331000</td>
+          <td class="column0 style46 null">61933000</td>
+            <td class="column0 style46 null">Installations techniques</td>
+            <?php
+              for ($i = 333; $i <= 336; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23320000</td>
+          <td class="column0 style46 null">28332000</td>
+          <td class="column0 style46 null">61933000</td>
+            <td class="column0 style46 null">Materiel et outillage</td>
+            <?php
+              for ($i = 337; $i <= 340; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23330000</td>
+          <td class="column0 style46 null">28333000</td>
+          <td class="column0 style46 null">61933000</td>
+            <td class="column0 style46 null">Emballages recuperables identifiables</td>
+            <?php
+              for ($i = 341; $i <= 344; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23380000</td>
+          <td class="column0 style46 null">28338000</td>
+          <td class="column0 style46 null">61933000</td>
+            <td class="column0 style46 null">Autres instal techniques, mat. et outillage</td>
+            <?php
+              for ($i = 345; $i <= 348; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23400000</td>
+          <td class="column0 style46 null">28340000</td>
+          <td class="column0 style46 null">61934000</td>
+            <td class="column0 style46 null">Materiel de transport </td>
+            <?php
+              for ($i = 349; $i <= 352; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23510000</td>
+          <td class="column0 style46 null">28351000</td>
+          <td class="column0 style46 null">61935000</td>
+            <td class="column0 style46 null">Mobilier de bureau </td>
+            <?php
+              for ($i = 353; $i <= 356; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23520000</td>
+          <td class="column0 style46 null">28352000</td>
+          <td class="column0 style46 null">61935000</td>
+            <td class="column0 style46 null">Materiel de bureau</td>
+            <?php
+              for ($i = 357; $i <= 360; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23550000</td>
+          <td class="column0 style46 null">28355000</td>
+          <td class="column0 style46 null">61935000</td>
+            <td class="column0 style46 null">Materiel informatique</td>
+            <?php
+              for ($i = 361; $i <= 364; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23560000</td>
+          <td class="column0 style46 null">28358000</td>
+          <td class="column0 style46 null">61935000</td>
+            <td class="column0 style46 null">Agencements installations et aménagements divers</td>
+            <?php
+              for ($i = 365; $i <= 368; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+          <tr class="row190">
+          <td class="column0 style46 null">23800000</td>
+          <td class="column0 style46 null">28380000</td>
+          <td class="column0 style46 null">61938000</td>
+            <td class="column0 style46 null">Autres immobilisations corporelles</td>
+            <?php
+              for ($i = 369; $i <= 372; $i++) {
+                  
+                    echo '<td class="column0 style46 null"><input min="0" type="text" style="width: 115px;" name="dotationimobilisation' . $i . '" id="dotationimobilisation' . $i . '" value="';
+                    if (isset(${"dotationimobilisation" . $i})) {
+                        echo ${"dotationimobilisation" . $i};
+                    }
+                    echo '" /></td>' . "\n";  
+              }  
+            ?>   
+          </tr> 
+         
+         
+
+
+          
        
-          </tr>
-        
-      
-          <tr class="row194">
-            <td class="column0 style46 null"></td>
-            <td class="column1 style47 null"></td>
-            <td class="column2 style48 null"></td>
-            <td class="column3 style49 null"></td>
-            <td class="column4 style50 f"></td>
-            <td class="column5 style51 null"></td>
-            <td class="column6 style52 f">#VALUE!</td>
-            <td class="column7 style50 f">0.00</td>
-            <td class="column8 style50 f">0.00</td>
-            <td class="column9 style48 null"></td>
-    
-            <td class="column11 style77 null"></td>
-            <td class="column12 style53 null"></td>
-            <td class="column13 style53 null"></td>
-            <td class="column14 style53 null"></td>
-            <td class="column15 style53 null"></td>
-            <td class="column16 style53 null"></td>
-            <td class="column17 style107 null"></td>
-            <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
-            <td class="column23 style7 f">0</td>
-      
-
-          </tr>
-          <tr class="row195">
-            <td class="column0 style46 null"></td>
-            <td class="column1 style47 null"></td>
-            <td class="column2 style48 null"></td>
-            <td class="column3 style49 null"></td>
-            <td class="column4 style50 f"></td>
-            <td class="column5 style51 null"></td>
-            <td class="column6 style52 f">#VALUE!</td>
-            <td class="column7 style50 f">0.00</td>
-            <td class="column8 style50 f">0.00</td>
-            <td class="column9 style48 null"></td>
-   
-            <td class="column11 style77 null"></td>
-            <td class="column12 style53 null"></td>
-            <td class="column13 style53 null"></td>
-            <td class="column14 style53 null"></td>
-            <td class="column15 style53 null"></td>
-            <td class="column16 style53 null"></td>
-            <td class="column17 style107 null"></td>
-            <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
-            <td class="column23 style7 f">0</td>
-          
-
-          </tr>
-          <tr class="row196">
-            <td class="column0 style46 null"></td>
-            <td class="column1 style47 null"></td>
-            <td class="column2 style48 null"></td>
-            <td class="column3 style49 null"></td>
-            <td class="column4 style50 f"></td>
-            <td class="column5 style51 null"></td>
-            <td class="column6 style52 f">#VALUE!</td>
-            <td class="column7 style50 f">0.00</td>
-            <td class="column8 style50 f">0.00</td>
-            <td class="column9 style48 null"></td>
-     
-            <td class="column11 style77 null"></td>
-            <td class="column12 style53 null"></td>
-            <td class="column13 style53 null"></td>
-            <td class="column14 style53 null"></td>
-            <td class="column15 style53 null"></td>
-            <td class="column16 style53 null"></td>
-            <td class="column17 style107 null"></td>
-            <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
-            <td class="column23 style7 f">0</td>
-            
-
-          </tr>
-          <tr class="row197">
-            <td class="column0 style46 null"></td>
-            <td class="column1 style47 null"></td>
-            <td class="column2 style48 null"></td>
-            <td class="column3 style49 null"></td>
-            <td class="column4 style50 f"></td>
-            <td class="column5 style51 null"></td>
-            <td class="column6 style52 f">#VALUE!</td>
-            <td class="column7 style50 f">0.00</td>
-            <td class="column8 style50 f">0.00</td>
-            <td class="column9 style48 null"></td>
-        
-            <td class="column11 style77 null"></td>
-            <td class="column12 style53 null"></td>
-            <td class="column13 style53 null"></td>
-            <td class="column14 style53 null"></td>
-            <td class="column15 style53 null"></td>
-            <td class="column16 style53 null"></td>
-            <td class="column17 style107 null"></td>
-            <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
-            <td class="column23 style7 f">0</td>
-           
-
-          </tr>
-          <tr class="row198">
-            <td class="column0 style46 null"></td>
-            <td class="column1 style47 null"></td>
-            <td class="column2 style48 null"></td>
-            <td class="column3 style49 null"></td>
-            <td class="column4 style50 f"></td>
-            <td class="column5 style51 null"></td>
-            <td class="column6 style52 f">#VALUE!</td>
-            <td class="column7 style50 f">0.00</td>
-            <td class="column8 style50 f">0.00</td>
-            <td class="column9 style48 null"></td>
-    
-            <td class="column11 style77 null"></td>
-            <td class="column12 style53 null"></td>
-            <td class="column13 style53 null"></td>
-            <td class="column14 style53 null"></td>
-            <td class="column15 style53 null"></td>
-            <td class="column16 style53 null"></td>
-            <td class="column17 style107 null"></td>
-            <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
-            <td class="column23 style7 f">0</td>
-        
-
-          </tr>
-          <tr class="row199">
-            <td class="column0 style46 null"></td>
-            <td class="column1 style47 null"></td>
-            <td class="column2 style48 null"></td>
-            <td class="column3 style49 null"></td>
-            <td class="column4 style50 f"></td>
-            <td class="column5 style51 null"></td>
-            <td class="column6 style52 f">#VALUE!</td>
-            <td class="column7 style50 f">0.00</td>
-            <td class="column8 style50 f">0.00</td>
-            <td class="column9 style48 null"></td>
-          
-            <td class="column11 style77 null"></td>
-            <td class="column12 style53 null"></td>
-            <td class="column13 style53 null"></td>
-            <td class="column14 style53 null"></td>
-            <td class="column15 style53 null"></td>
-            <td class="column16 style53 null"></td>
-            <td class="column17 style107 null"></td>
-            <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
-            <td class="column23 style7 f">0</td>
-      
-
-          </tr>
-          <tr class="row200">
-            <td class="column0 style46 null"></td>
-            <td class="column1 style47 null"></td>
-            <td class="column2 style48 null"></td>
-            <td class="column3 style49 null"></td>
-            <td class="column4 style50 f"></td>
-            <td class="column5 style51 null"></td>
-            <td class="column6 style52 f">#VALUE!</td>
-            <td class="column7 style50 f">0.00</td>
-            <td class="column8 style50 f">0.00</td>
-            <td class="column9 style48 null"></td>
-           
-            <td class="column11 style77 null"></td>
-            <td class="column12 style53 null"></td>
-            <td class="column13 style53 null"></td>
-            <td class="column14 style53 null"></td>
-            <td class="column15 style53 null"></td>
-            <td class="column16 style53 null"></td>
-            <td class="column17 style107 null"></td>
-            <td class="column18 style107 null"></td>
-            
-            <td class="column22 style7 f">#DIV/0!</td>
-            <td class="column23 style7 f">0</td>
          
-
-          </tr>
-          <tr class="row201">
-            <td class="column0 style109 null"></td>
-            <td class="column1 style110 null"></td>
-            <td class="column2 style111 null"></td>
-            <td class="column3 style112 null"></td>
-            <td class="column4 style112 null"></td>
-            <td class="column5 style110 null"></td>
-            <td class="column6 style110 null"></td>
-            <td class="column7 style112 null"></td>
-            <td class="column8 style112 null"></td>
-            <td class="column9 style110 null"></td>
-            <td class="column10 style113 null"></td>
-            <td class="column11 style77 null"></td>
-            <td class="column12 style53 null"></td>
-            <td class="column13 style53 null"></td>
-            <td class="column14 style53 null"></td>
-            <td class="column15 style53 null"></td>
-            <td class="column16 style53 null"></td>
-            <td class="column17 style107 null"></td>
-            <td class="column18 style107 null"></td>
-            
-            <td class="column22 style80 null"></td>
-            <td class="column23 style80 null"></td>
-            <td class="column24 style80 null"></td>
-            <td class="column25 style80 null"></td>
-
-          </tr>
-          
+         
         
+        
+         
+         
+          
+
+
+
         </tbody>
     </table>
-    </center>
-
+   
+    <button type="submit" name="chargement" 
+    style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;">Chargement</button><br> 
+   
     
+    </form>
+
+
+
+    <div style="width: 650px; margin: 0 auto; text-align: center;">
+        <!-- <div style="margin-top: 10px;margin-right : 80px;">
+        <?php  GenerateDocuments(); ?>
+        </div> -->
+
+        <div style="margin-top: 10px;margin-left : 80px;">
+        <?php   ShowDocuments(); ?>
+        </div>
+    </div>
+
+    </center>
   </body>
 </html>

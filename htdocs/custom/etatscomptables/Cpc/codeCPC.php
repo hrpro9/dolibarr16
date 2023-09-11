@@ -619,8 +619,8 @@ $restePosteIntert_E2=+$total13_E2-($interetProd_E2+$revenuCrean_E2+$produitNet_E
 	$data .= '$jetoPre_EP = ' .(-($jetoPre_EP)). ";\n";
 	$data .= '$jetoPre_E2 = ' .(-($jetoPre_E2)). ";\n";
 	$data .= '$restePoste_E = ' .$restePoste_E. ";\n";
-	$data .= '$jetoPre_EP = ' .$jetoPre_EP. ";\n";
-	$data .= '$jetoPre_E2 = ' .$jetoPre_E2. ";\n";
+	$data .= '$restePoste_EP = ' .$restePoste_EP. ";\n";
+	$data .= '$restePoste_E2 = ' .$restePoste_E2. ";\n";
 	$data .= '$total11_E = ' .$total11_E. ";\n";
 	$data .= '$total11_EP = ' .$total11_EP. ";\n";
 	$data .= '$total11_E2 = ' .$total11_E2. ";\n";

@@ -66,13 +66,25 @@ $IERED_CDEx=$IERED_DDLEx=$IERED_ASISo=$IERED_CDFEx=0;
 
 
 
-$dateChoisis=0;
+
+  $dateChoisis=0;
   $dateChoisis=(isset($_POST['chargement']))?$_POST['date_select']:0;
 
-   if(!isset($_POST['chargement']))
+  if(!isset($_POST['chargement']))
   {
     $dateChoisis=GETPOST('valeurdatechoise');
   }
+
+  if(isset($_POST['chargement']))
+  {
+    for ($i = 1; $i <= 14; $i++) {
+      ${'amortismon' . $i} = $_POST['amortismon' . $i];
+  }
+  }
+
+ 
+
+  
 
    $sql ="SELECT * FROM llx_accounting_bookkeeping";
    $result =$db->query($sql);
@@ -145,10 +157,18 @@ $dateChoisis=0;
     $AIC_DDLEx=($AIC_CDFEx-$AIC_CDEx);
     $ICEC_DDLEx=($ICEC_CDFEx-$ICEC_CDEx);
 
+    $IENV_ASISo=(isset($amortismon1)?$amortismon1:0)+(isset($amortismon2)?$amortismon2:0)+(isset($amortismon3)?$amortismon3:0);
+    $II_ASISo=(isset($amortismon4)?$amortismon4:0)+(isset($amortismon5)?$amortismon5:0)+(isset($amortismon6)?$amortismon6:0)+(isset($amortismon7)?$amortismon7:0);
+    $IC_ASISo=(isset($amortismon8)?$amortismon8:0)+(isset($amortismon9)?$amortismon9:0)+(isset($amortismon10)?$amortismon10:0)+(isset($amortismon11)?$amortismon11:0)+(isset($amortismon12)?$amortismon12:0)
+    +(isset($amortismon13)?$amortismon13:0)+(isset($amortismon14)?$amortismon14:0);
+
+    $TOTAl_ASISo=$IENV_ASISo+$II_ASISo+$IC_ASISo;
+
 }
 
 
-
+if(isset($_POST['chargement']))
+  {
   $data = "<?php ";
   $data .= '$IENV_CDEx = ' . $IENV_CDEx . ";\n";
   $data .= '$IENV_DDLEx = ' . $IENV_DDLEx . ";\n";
@@ -204,11 +224,27 @@ $dateChoisis=0;
   $data .= '$TOTAl_CDEx = ' . (-$TOTAl_CDEx) . ";\n";
   $data .= '$TOTAl_DDLEx = ' . (-$TOTAl_DDLEx) . ";\n";
   $data .= '$TOTAl_CDFEx = ' . (-$TOTAl_CDFEx) . ";\n";
+
+  
+    for ($i = 1; $i <= 14; $i++) {
+      ${'amortismon' . $i} = $_POST['amortismon' . $i];
+
+      $data .= '$amortismon' . $i . ' = ' . ${'amortismon' . $i} . ";\n";  
+    }
+  
+
+
+  $data .= '$IENV_ASISo = ' . ($IENV_ASISo) . ";\n";
+  $data .= '$II_ASISo = ' . ($II_ASISo) . ";\n";
+  $data .= '$IC_ASISo = ' . ($IC_ASISo) . ";\n";
+  $data .= '$TOTAl_ASISo = ' . ($TOTAl_ASISo) . ";\n";
   $data .= "?>";
   // Now, the variable $year will contain the year value "2023"
   $nomFichier = 'Amortisement_fichier_'. $dateChoisis.'.php';
   // Écrire les données dans le nouveau fichier
   file_put_contents($nomFichier, $data);
+
+  }
 
 
 ?>

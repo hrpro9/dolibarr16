@@ -26,17 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if( $check == 'true')
   {
         // Retrieve the form data
-        for ($i = 0; $i <= 75; $i++) {
+        for ($i = 0; $i <= 82; $i++) {
           ${'fusion' . $i} = $_POST['fusion' . $i];
       }
 
-      $sum1=$fusion0+$fusion9+$fusion17+$fusion25+$fusion32+$fusion39+$fusion46+$fusion53+$fusion60+$fusion67;
-      $sum2=$fusion1+$fusion10+$fusion18+$fusion26+$fusion33+$fusion40+$fusion47+$fusion54+$fusion61+$fusion68;
-      $sum3=$fusion2+$fusion11+$fusion19+$fusion27+$fusion34+$fusion41+$fusion48+$fusion55+$fusion62+$fusion69;
-      $sum4=$fusion3+$fusion12+$fusion20+$fusion28+$fusion35+$fusion42+$fusion49+$fusion56+$fusion63+$fusion70;
-      $sum5=$fusion4+$fusion13+$fusion21+$fusion29+$fusion36+$fusion43+$fusion50+$fusion57+$fusion64+$fusion71;
-      $sum6=$fusion5+$fusion14+$fusion22+$fusion30+$fusion37+$fusion44+$fusion51+$fusion58+$fusion65+$fusion72;
-      $sum7=$fusion6+$fusion15+$fusion23+$fusion31+$fusion38+$fusion45+$fusion52+$fusion59+$fusion66+$fusion73;
+      $sum1=$fusion0+$fusion9+$fusion17+$fusion25+$fusion33+$fusion41+$fusion49+$fusion57+$fusion65+$fusion73;
+      $sum2=$fusion1+$fusion10+$fusion18+$fusion26+$fusion34+$fusion42+$fusion50+$fusion58+$fusion66+$fusion74;
+      $sum3=$fusion2+$fusion11+$fusion19+$fusion27+$fusion35+$fusion43+$fusion51+$fusion59+$fusion67+$fusion75;
+      $sum4=$fusion3+$fusion12+$fusion20+$fusion28+$fusion36+$fusion44+$fusion52+$fusion60+$fusion68+$fusion76;
+      $sum5=$fusion4+$fusion13+$fusion21+$fusion29+$fusion37+$fusion45+$fusion53+$fusion61+$fusion69+$fusion77;
+      $sum6=$fusion5+$fusion14+$fusion22+$fusion30+$fusion38+$fusion46+$fusion54+$fusion62+$fusion70+$fusion78;
+      $sum7=$fusion6+$fusion15+$fusion23+$fusion31+$fusion39+$fusion47+$fusion55+$fusion63+$fusion71+$fusion79;
       
 
 
@@ -44,21 +44,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $data = "<?php ";
 
-  for ($i = 0; $i <= 75; $i++) {
+  for ($i = 0; $i <= 82; $i++) {
       ${'fusion' . $i} = $_POST['fusion' . $i];
-      if(${'fusion' . $i}==$fusion75)
+      if(${'fusion' . $i}==$fusion82)
       {
 
-        $selectedDate = new DateTime($fusion75);
+        $selectedDate = new DateTime($fusion82);
         $year = $selectedDate->format('Y');
         $data .= '$fusion' . $i . ' = ' . $year . ";\n";   
 
       }else if(${'fusion' . $i}==$fusion8){
+      }
 
+      else if (is_string(${'fusion' . $i})) {
+        // If the value is a string, add double quotes around it
+        $data .= '$fusion' . $i . ' = "' . ${'fusion' . $i} . "\";\n";
       }
-      else{
-        $data .= '$fusion' . $i . ' = ' . ${'fusion' . $i} . ";\n";   
+      else {
+          $data .= '$fusion' . $i . ' = ' . ${'fusion' . $i} . ";\n";
       }
+
   
   }
 
@@ -70,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data .= '$sum6 = ' . $sum6 . ";\n"; 
   $data .= '$sum7 = ' . $sum7 . ";\n"; 
   $data .= "?>";
-  $selectedDate = new DateTime($fusion75);
+  $selectedDate = new DateTime($fusion82);
   $year = $selectedDate->format('Y'); // Extract the year value
   // Now, the variable $year will contain the year value "2023"
   $nomFichier = 'Fusion_fichier_'. $year.'.php';
@@ -262,7 +267,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <form method="POST" action="declarationFusion.php">
     <?php
     // Loop to create the hidden input fields
-    for ($i = 0; $i <= 75; $i++) {
+    for ($i = 0; $i <= 82; $i++) {
         $fusion = ${'fusion' . $i};
       echo '<input type="hidden" name="fusion' . $i . '" value="' . $fusion . '" />';
     }
@@ -400,7 +405,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <td class="column0 style19 n">5</td>
             <td class="column1 style19 s">Agencements-Installations</td>
             <?php
-                for ($i = 32; $i < 40; $i++) {
+                for ($i = 33; $i < 41; $i++) {
                     echo '<td class="column' . ($i + 2) . ' style16 null">'.${'fusion' . $i}.'</td>' . "\n";
                 }
             ?>
@@ -410,7 +415,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <td class="column0 style19 n">6</td>
             <td class="column1 style19 s">Brevets</td>
             <?php
-                for ($i = 39; $i < 47; $i++) {
+                for ($i = 41; $i < 49; $i++) {
                     echo '<td class="column' . ($i + 2) . ' style16 null">'.${'fusion' . $i}.'</td>' . "\n";
                 }
             ?>
@@ -420,7 +425,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <td class="column0 style19 n">7</td>
             <td class="column1 style19 s">Autres éléments amortissables</td>
             <?php
-                for ($i = 46; $i < 54; $i++) {
+                for ($i = 49; $i < 57; $i++) {
                     echo '<td class="column' . ($i + 2) . ' style16 null">'.${'fusion' . $i}.'</td>' . "\n";
                 }
             ?>
@@ -431,7 +436,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <td class="column0 style19 n">8</td>
             <td class="column1 style19 s">Titres de participation</td>
             <?php
-                for ($i = 53; $i < 61; $i++) {
+                for ($i = 57; $i < 65; $i++) {
                     echo '<td class="column' . ($i + 2) . ' style16 null">'.${'fusion' . $i}.'</td>' . "\n";
                 }
             ?>
@@ -441,7 +446,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <td class="column0 style19 n">9</td>
             <td class="column1 style19 s">Fonds de commerce</td>
             <?php
-                for ($i = 60; $i < 68; $i++) {
+                for ($i = 65; $i < 73; $i++) {
                     echo '<td class="column' . ($i + 2) . ' style16 null">'.${'fusion' . $i}.'</td>' . "\n";
                 }
             ?>
@@ -451,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <td class="column0 style21 n">10</td>
             <td class="column1 style21 s">Autres éléments non amortissables</td>
             <?php
-                for ($i = 67; $i < 75; $i++) {
+                for ($i = 73; $i < 81; $i++) {
                   echo '<td class="column' . ($i + 2) . ' style16 null">'.${'fusion' . $i}.'</td>' . "\n";
                 }
             ?>

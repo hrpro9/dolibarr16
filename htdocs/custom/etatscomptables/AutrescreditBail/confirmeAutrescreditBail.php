@@ -25,12 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     for ($i = 0; $i <= 248; $i++) {
         ${'autrecreditBail' . $i} = $_POST['autrecreditBail' . $i];
     }
-    $sum1=$autrecreditBail9+$autrecreditBail23+$autrecreditBail36+$autrecreditBail49+$autrecreditBail62+$autrecreditBail75+$autrecreditBail88+$autrecreditBail101+$autrecreditBail114
-    +$autrecreditBail127+$autrecreditBail140+$autrecreditBail153+$autrecreditBail166+$autrecreditBail179+$autrecreditBail192+$autrecreditBail205+$autrecreditBail218+$autrecreditBail231
-    +$autrecreditBail244;
-    $sum2=$autrecreditBail10+$autrecreditBail24+$autrecreditBail37+$autrecreditBail50+$autrecreditBail63+$autrecreditBail76+$autrecreditBail89+$autrecreditBail102+$autrecreditBail115
-    +$autrecreditBail128+$autrecreditBail141+$autrecreditBail154+$autrecreditBail167+$autrecreditBail180+$autrecreditBail193+$autrecreditBail206+$autrecreditBail219+$autrecreditBail232
-    +$autrecreditBail245;
+    $sum1=intval($autrecreditBail9)+intval($autrecreditBail23)+intval($autrecreditBail36)+intval($autrecreditBail49)+intval($autrecreditBail62)+intval($autrecreditBail75)+intval($autrecreditBail88)+intval($autrecreditBail101)+intval($autrecreditBail114)
+    +intval($autrecreditBail127)+intval($autrecreditBail140)+intval($autrecreditBail153)+intval($autrecreditBail166)+intval($autrecreditBail179)+intval($autrecreditBail192)+intval($autrecreditBail205)+intval($autrecreditBail218)+intval($autrecreditBail231)
+    +intval($autrecreditBail244);
+    $sum2=intval($autrecreditBail10)+intval($autrecreditBail24)+intval($autrecreditBail37)+intval($autrecreditBail50)+intval($autrecreditBail63)+intval($autrecreditBail76)+intval($autrecreditBail89)+intval($autrecreditBail102)+intval($autrecreditBail115)
+    +intval($autrecreditBail128)+intval($autrecreditBail141)+intval($autrecreditBail154)+intval($autrecreditBail167)+intval($autrecreditBail180)+intval($autrecreditBail193)+intval($autrecreditBail206)+intval($autrecreditBail219)+intval($autrecreditBail232)
+    +intval($autrecreditBail245);
 
     $data = "<?php ";
 

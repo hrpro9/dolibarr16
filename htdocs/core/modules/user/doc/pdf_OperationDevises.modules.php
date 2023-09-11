@@ -275,101 +275,179 @@ class pdf_OperationDevises extends ModelePDFUser
 
 				$year=GETPOST('year');
 
-				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/OperatinDevises/Operationdevises_fichier_'.$year.'.php';
+				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/EtatDesInterets/etatDesInterets_fichier_'.$year.'.php';
+
 				$table =
-			'
-			<style >			
+				'
+				<style >			
 				.gridlines td { border:1px dotted black }
 				.gridlines th { border:1px dotted black }
 			</style>
-			
+									
+		
 			<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
 				<col class="col0">
 				<col class="col1">
 				<col class="col2">
 				<col class="col3">
+				<col class="col4">
+				<col class="col5">
+				<col class="col6">
+				<col class="col7">
+				<col class="col8">
+				<col class="col9">
+				<col class="col10">
 				<tbody>
-					
+			<tr class="row0">
+				<td class="column0 style1 s style3" colspan="10">TABLEAU DES LOCATIONS ET BAUX AUTRES QUE LE CREDIT-BAIL</td>
+			</tr>
+			<tr class="row1">
+			    <td class="column0 style6 f"></td>
+				<td class="column1 style7 null"></td>
+				<td class="column2 style7 null"></td>
+				<td class="column0 style6 f"></td>
+				<td class="column1 style7 null"></td>
+				<td class="column2 style7 null"></td>
+				<td class="column3 style7 null"></td>
+				<td class="column4 style7 null"></td>
+				<td class="column5 style7 null"></td>
+				<td class="column6 style8 null"></td>
+				<td class="column7 style9 null"></td>
+				<td class="column8 style9 null"></td>
+				<td class="column9 style10 f"></td>
+			</tr>				
+								
 			<tr class="row2">
-				<td class="column0 style11 s">Nature</td>
-				<td class="column2 style12 s">Entrée Contre-valeur en DH</td>
-				<td class="column3 style12 s">Sortie Contre-valeur en DH</td>
+				<td class="column0 style11 s">Nom et prénoms</td>
+				<td class="column2 style12 s">Raison sociale</td>
+				<td class="column3 style12 s">Adresse</td>
+				<td class="column4 style12 s">IF</td>
+				<td class="column5 style12 s">N° CIN</td>
+				<td class="column6 style12 s">Montant du prêt</td>
+				<td class="column7 style12 s">Date du prêt</td>
+				<td class="column8 style12 s">Durée du prêt en mois</td>
+				<td class="column9 style12 s">Taux d intérêt annuel</td>
+				<td class="column6 style12 s">Charge financière globale</td>
+				<td class="column8 style12 s">Remboursement exercices antérieurs Principal</td>	
+				<td class="column9 style12 s">Remboursement exercices antérieurs Intérêt</td>
+				<td class="column8 style12 s">Remboursement exercice actuel Principal</td>	
+				<td class="column9 style12 s">Remboursement exercice actuel Intérêt</td>
+				<td class="column9 style12 s">RObservations</td>
 			</tr>';
 			
-			$table .= '<tr class="row3">
-			<td class="column0 style14 null">Financement permanent</td>
-			';
-			for ($i = 0; $i <= 1; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Operationdevises' . $i}.'</td>' . "\n";
+			$table .= '<tr class="row3">';
+			for ($i = 0; $i <= 15; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
 			}
 			$table .= '</tr>';
 			
-			$table .= '<tr class="row4">
-			<td class="column0 style14 null">Immobilisations brutes</td>
-			';
-			for ($i = 2; $i <= 3; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Operationdevises' . $i}.'</td>' . "\n";
+			$table .= '<tr class="row4">';
+			for ($i = 16; $i <= 30; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
 			}
 			$table .= '</tr>';
 			
-			$table .= '<tr class="row5">
-			<td class="column0 style14 null">Rentrées sur immobilisations</td>
-			';
-			for ($i = 4; $i <= 5; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Operationdevises' . $i}.'</td>' . "\n";
+			$table .= '<tr class="row5">';
+			for ($i = 31; $i <= 45; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
 			}
 			$table .= '</tr>';
 			
 
-			$table .= '<tr class="row8">
-			<td class="column0 style14 null">Remboursement des dettes de financement</td>
-			';
-			for ($i = 6; $i <= 7; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Operationdevises' . $i}.'</td>' . "\n";
+			$table .= '<tr class="row8">';
+			for ($i = 46; $i <= 60; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
 			}
 			$table .= '</tr>';
 
-			$table .= '<tr class="row9">
-			  <td class="column0 style14 null">Produits</td>
-			';
-			for ($i = 8; $i <= 9; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Operationdevises' . $i}.'</td>' . "\n";
+			$table .= '<tr class="row9">';
+			for ($i = 61; $i <= 75; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
 			}
 			$table .= '</tr>';
 
-			$table .= '<tr class="row10">
-			<td class="column0 style14 null">Charges</td>
+			$table .= '<tr class="row10">';
+			for ($i = 76; $i <= 90; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
+			}
+			$table .= '</tr>';
+
+			$table .= '<tr class="row11">';
+			for ($i = 91; $i <= 105; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
+			}
+			$table .= '</tr>';
+
+			$table .= '<tr class="row12">';
+			for ($i = 106; $i <= 120; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
+			}
+			$table .= '</tr>';
+
+			$table .= '<tr class="row13">';
+			for ($i = 121; $i <= 135; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
+			}
+			$table .= '</tr>';
+			$table .= '
+			<tr class="row2">
+							<td class="column0 style11 s">Nom et prénoms</td>
+							<td class="column2 style12 s">Raison sociale</td>
+							<td class="column3 style12 s">Adresse</td>
+							<td class="column4 style12 s">IF</td>
+							<td class="column5 style12 s">N° CIN</td>
+							<td class="column6 style12 s">Montant du prêt</td>
+							<td class="column7 style12 s">Date du prêt</td>
+							<td class="column8 style12 s">Durée du prêt en mois</td>
+							<td class="column9 style12 s">Taux d intérêt annuel</td>
+							<td class="column6 style12 s">Charge financière globale</td>
+							<td class="column8 style12 s">Remboursement exercices antérieurs Principal</td>	
+							<td class="column9 style12 s">Remboursement exercices antérieurs Intérêt</td>
+							<td class="column8 style12 s">Remboursement exercice actuel Principal</td>	
+							<td class="column9 style12 s">Remboursement exercice actuel Intérêt</td>
+							<td class="column9 style12 s">RObservations</td>
+						</tr>
 			';
-			for ($i = 10; $i <= 11; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Operationdevises' . $i}.'</td>' . "\n";
+			$table .= '<tr class="row14">';
+			for ($i = 136; $i <= 150; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
+			}
+			$table .= '</tr>';
+
+			$table .= '<tr class="row15">';
+			for ($i = 151; $i <= 165; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
+			}
+			$table .= '</tr>';
+
+			$table .= '<tr class="row16">';
+			for ($i = 166; $i <= 180; $i++) {
+				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'etatDesInterets' . $i}.'</td>' . "\n";
 			}
 			$table .= '</tr>';
 
 			$table .= '
 			<tr class="row24">
-			<td class="column0 style17 s">Total Des Entrées</td>
-            <td class="column1 style18 null">'.number_format( $sum1,2).'</td>
-            <td class="column2 style18 null">0.00</td>
-          </tr>
-          <tr class="row11">
-            <td class="column0 style17 s">Total Des Sorties</td>
-            <td class="column1 style18 null">0.00</td>
-            <td class="column2 style18 null">'.number_format( $sum2,2).'</td>
-          </tr>
-          <tr class="row11">
-            <td class="column0 style17 s">Balance Devises</td>
-            <td class="column1 style18 null">'.number_format( $sum3,2).'</td>
-            <td class="column2 style18 null">'.number_format( $sum4,2).'</td>
-          </tr>
-          <tr class="row11">
-            <td class="column0 style17 s">Total</td>
-            <td class="column1 style18 null">'.number_format( $sum5,2).'</td>
-            <td class="column2 style18 null">'.number_format( $sum6,2).'</td>
-
+			<td class="column1 style37 null"></td>
+				<td class="column1 style37 null"></td>
+				<td class="column2 style38 s">Total</td>
+				<td class="column3 style39 null"></td>
+				<td class="column4 style39 null"></td>
+				<td class="column5 style40 f">'.number_format( $sum6,2).'</td>
+				<td class="column6 style41 null"></td>
+				<td class="column7 style41 null"></td>
+				<td class="column8 style41 null"></td>
+				<td class="column9 style40 f">'.number_format( $sum1,2).'</td>
+				<td class="column10 style40 f">'.number_format( $sum2,2).'</td>
+				<td class="column11 style40 f">'.number_format( $sum3,2).'</td>
+				<td class="column12 style40 f">'.number_format( $sum4,2).'</td>
+				<td class="column13 style40 f">'.number_format( $sum5,2).'</td>
+				<td class="column14 style41 null"></td>
 			</tr>
 			</tbody>
-			</table>';
-            // Replace with your actual table HTML
+			</table>
+				'
+				; // Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
 				$pdf->SetY($pdf->GetY() + 6);

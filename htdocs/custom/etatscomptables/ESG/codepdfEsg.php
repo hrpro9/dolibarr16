@@ -202,8 +202,10 @@ class pdf_Esg extends ModelePDFUser
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : \'\';
 				$dir = DOL_DATA_ROOT . \'/billanLaisse/Esg/\';
+
+				$year=GETPOST(\'valeurdatechoise\');
 			
-				$file = $dir . "/Esg" . ".pdf";
+				$file = $dir . "/Esg".$year . ".pdf";
 				
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
@@ -274,9 +276,8 @@ class pdf_Esg extends ModelePDFUser
 		
 				// body
 
-
-
-				include DOL_DOCUMENT_ROOT . \'/custom/etatscomptables/ESG/codeESG.php\';
+				$year=GETPOST(\'valeurdatechoise\');
+				include DOL_DOCUMENT_ROOT . \'/custom/etatscomptables/ESG/ESG_fichier_\'.$year.\'.php\';
 
 				$table =
 				\'
@@ -537,6 +538,12 @@ class pdf_Esg extends ModelePDFUser
 			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($CAF_E,2).\'</td>
 			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($CAF_EP,2).\'</td>
 			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($CAF_E2,2).\'</td>
+			</tr>
+			<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
+			<td style="border: 1px solid #ddd;padding: 8px;">Distributions de bénéfices</td>
+			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($esg1,2).\'</td>
+			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($esg2,2).\'</td>
+			<td style="border: 1px solid #ddd;padding: 8px;text-align:center;">\'.number_format($esg3,2).\'</td>
 			</tr>
 			<tr style="background-color: #f2f2f2;border: 1px solid #ddd;padding: 8px;">
 			<td style="border: 1px solid #ddd;padding: 8px;">AUTOFINANCEMENT</td>

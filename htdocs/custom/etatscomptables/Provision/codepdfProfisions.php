@@ -202,8 +202,10 @@ class pdf_Provision extends ModelePDFUser
 				$objectref = dol_sanitizeFileName($object->ref);
 				$objectrefsupplier = isset($object->ref_supplier) ? dol_sanitizeFileName($object->ref_supplier) : \'\';
 				$dir = DOL_DATA_ROOT . \'/billanLaisse/Provision/\';
+
+				$year=GETPOST(\'valeurdatechoise\');
 			
-				$file = $dir . "/PROVISIONS" . ".pdf";
+				$file = $dir . "/PROVISIONS". $year . ".pdf";
 			
 				if (!empty($conf->global->SUPPLIER_REF_IN_NAME)) $file = $dir . "/" . $objectref . ($objectrefsupplier ? "_" . $objectrefsupplier : "") . ".pdf";
 			}
@@ -214,6 +216,8 @@ class pdf_Provision extends ModelePDFUser
 					return 0;
 				}
 			}
+
+			
 
 			
 

@@ -42,6 +42,12 @@
             $sum3=$detatTaxe2+$detatTaxe6+$detatTaxe10+$detatTaxe14+$detatTaxe18+$detatTaxe22+$detatTaxe26+$detatTaxe30+$detatTaxe34+$detatTaxe38+$detatTaxe42+$detatTaxe46;
             $sum4=$detatTaxe3+$detatTaxe7+$detatTaxe11+$detatTaxe15+$detatTaxe19+$detatTaxe23+$detatTaxe27+$detatTaxe31+$detatTaxe35+$detatTaxe39+$detatTaxe43+$detatTaxe47;
             $sum5=$Solde1+$Solde2 +$Solde3+ $Solde4+ $Solde5+$Solde6+ $Solde7+ $Solde8+$Solde9+$Solde10+$Solde11+ $Solde12;
+
+            $detatTaxeValeur1=$_POST['detatTaxeValeur1'];
+            $detatTaxeValeur2=$_POST['detatTaxeValeur2'];
+            $detatTaxeValeur3=$_POST['detatTaxeValeur3'];
+            $detatTaxeValeur4=$_POST['detatTaxeValeur4'];
+
             
              // ... continue for other $Solde variables
 
@@ -80,6 +86,11 @@
             $data .= '$sum3 = ' . $sum3 . ";\n";
             $data .= '$sum4 = ' . $sum4 . ";\n";
             $data .= '$sum5 = ' . $sum5 . ";\n";
+
+            $data .= '$detatTaxeValeur1 = ' . $detatTaxeValeur1 . ";\n";
+            $data .= '$detatTaxeValeur2 = ' . $detatTaxeValeur2 . ";\n";
+            $data .= '$detatTaxeValeur3 = ' . $detatTaxeValeur3 . ";\n";
+            $data .= '$detatTaxeValeur4 = ' . $detatTaxeValeur4 . ";\n";
 
             
 
@@ -314,8 +325,8 @@
 	<tr>
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="33" align="left" valign=middle><b><font face="Calibri">A. T.V.A. Facturée</font></b></td>
 		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><?php readMontant($TF_SADDL*-1);?></font></b></td>
-		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><br></font></b></td>
-		<td align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><br></font></b></td>
+		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><?php readMontant($detatTaxeValeur1);?><br></font></b></td>
+		<td align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><?php readMontant($detatTaxeValeur2);?><br></font></b></td>
 		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><b><font face="Calibri"><?php echo( $TF_SFDE *-1);?></font></b></td>
 		<td align="left" valign=middle><font face="Arial Narrow" color="#FFFFFF">GrasGauche</font></td>
 	</tr>
@@ -331,7 +342,7 @@
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="33" align="left" valign=middle><font face="Calibri">- sur charges</font></td> 
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri"><?php readMontant($SC_SADDL);?></font></td>
 		<td style="border-top: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri"><?php readMontant($SC_OCDL);?></font></td>
-		<td align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri"><br></font></td>
+		<td align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri"><?php readMontant($detatTaxeValeur3);?><br></font></td>
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri"><?php readMontant($SC_SFDE);?></font></td>
 		<td align="left" valign=middle><font face="Arial Narrow" color="#FFFFFF"><br></font></td>
 	</tr>
@@ -339,7 +350,7 @@
     <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" height="33" align="left" valign=middle><font face="Calibri">- sur immobilisations</font></td> 
 		<td style="border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri"><?php readMontant($SIM_SADDL);?></font></td>
         <td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri"><?php readMontant($SIM_OCDL);?></font></td>
-		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri"><br></font></td>
+		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="left" valign=middle bgcolor="#DAE3F3" sdnum="1033;0;#,##0.00"><font face="Calibri"><?php readMontant($detatTaxeValeur4);?><br></font></td>
 		<td style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000" align="right" valign=middle sdval="0" sdnum="1033;0;#,##0.00"><font face="Calibri"><?php readMontant($SIM_SFDE);?></font></td>
 		<td align="left" valign=middle><font face="Arial Narrow" color="#FFFFFF"><br></font></td>
 	</tr>

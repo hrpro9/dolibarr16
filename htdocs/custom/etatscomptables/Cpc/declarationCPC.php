@@ -18,7 +18,7 @@ function GenerateDocuments($dateChoisist)
  print '</form>';
 }
 
-
+    
 function ShowDocuments()
 {
    global $db, $object, $conf, $month, $prev_year, $societe, $showAll, $prev_month, $prev_year, $start;

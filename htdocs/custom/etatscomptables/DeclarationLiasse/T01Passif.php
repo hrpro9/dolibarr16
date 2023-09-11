@@ -1,0 +1,101 @@
+<?php
+
+  $filename = DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Passif/Passif_fichier_'.$annee_du.'.php';
+
+  
+  if (file_exists($filename)) {
+      include $filename;
+  $ValeursTableau = $dom->createElement('ValeursTableau');
+  $groupeValeursTableau->appendChild($ValeursTableau);
+  $tableau = $dom->createElement('tableau');
+  $ValeursTableau->appendChild($tableau);
+  $id = $dom->createElement('id','1');
+  $tableau->appendChild($id);
+  $groupeValeurs = $dom->createElement('groupeValeurs');
+  $ValeursTableau->appendChild($groupeValeurs);
+  CodeEdiValeurCellule('13400',$CapitalSocialPersonnel);
+  CodeEdiValeurCellule('13411',$CapitalSocialPersonnelN1);
+  CodeEdiValeurCellule('13401',$aCapita);
+  CodeEdiValeurCellule('13412',$aCapitaN1);
+  CodeEdiValeurCellule('13404',$PrimeDFD);
+  CodeEdiValeurCellule('13415',$PrimeDFDN1);
+  CodeEdiValeurCellule('13405',$EcartsR);
+  CodeEdiValeurCellule('13416',$EcartsRN1);
+  CodeEdiValeurCellule('13406',$reserveL);
+  CodeEdiValeurCellule('13417',$reserveLN1);
+  CodeEdiValeurCellule('13407',$autresR);
+  CodeEdiValeurCellule('13418',$autresRN1);
+  CodeEdiValeurCellule('13408',$ReportN);
+  CodeEdiValeurCellule('13419',$ReportNN1);
+  CodeEdiValeurCellule('14001',$resultatNID);
+  CodeEdiValeurCellule('14002',$resultatNIDN1);
+  CodeEdiValeurCellule('13409',$resultatNL);
+  CodeEdiValeurCellule('13420',$resultatNLN1);
+  CodeEdiValeurCellule('13410',$totalCP);
+  CodeEdiValeurCellule('13421',$totalCPN1);
+  CodeEdiValeurCellule('13397',$capitauxPA);
+  CodeEdiValeurCellule('13422',$capitauxPAN1);
+  CodeEdiValeurCellule('13398',$SubventionsD);
+  CodeEdiValeurCellule('13423',$SubventionsDN1);
+  CodeEdiValeurCellule('13399',$provisionsR);
+  CodeEdiValeurCellule('13424',$provisionsRN1);
+  CodeEdiValeurCellule('13393',$dettesDF);
+  CodeEdiValeurCellule('13426',$dettesDFN1);
+  CodeEdiValeurCellule('13394',$empruntsO);
+  CodeEdiValeurCellule('13427',$empruntsON1);
+  CodeEdiValeurCellule('13395',$autresDF);
+  CodeEdiValeurCellule('13428',$autresDFN1);
+  CodeEdiValeurCellule('13389',$provisionsDPREC);
+  CodeEdiValeurCellule('13430',$provisionsDPRECN1);
+  CodeEdiValeurCellule('13390',$provisionsPR);
+  CodeEdiValeurCellule('13431',$provisionsPRN1);
+  CodeEdiValeurCellule('13391',$provisionsPC);
+  CodeEdiValeurCellule('13432',$provisionsPCN1);
+  CodeEdiValeurCellule('13386',$ecartsDCP);
+  CodeEdiValeurCellule('13433',$ecartsDCPN1);
+  CodeEdiValeurCellule('13387',$augmentationDCI);
+  CodeEdiValeurCellule('13434',$augmentationDCIN1);
+  CodeEdiValeurCellule('13388',$diminutionDF);
+  CodeEdiValeurCellule('13435',$diminutionDFN1);
+  CodeEdiValeurCellule('13385',$totalABCDE);
+  CodeEdiValeurCellule('13436',$totalABCDEN1);
+  CodeEdiValeurCellule('13376',$dettesDPC);
+  CodeEdiValeurCellule('13437',$dettesDPCN1);
+  CodeEdiValeurCellule('13377',$fournisseursECR);
+  CodeEdiValeurCellule('13438',$fournisseursECRN1);
+  CodeEdiValeurCellule('13378',$ClientsCAVA);
+  CodeEdiValeurCellule('13439',$ClientsCAVAN1);
+  CodeEdiValeurCellule('13379',$personnel);
+  CodeEdiValeurCellule('13440',$personnelN1);
+  CodeEdiValeurCellule('13380',$organismesS);
+  CodeEdiValeurCellule('13441',$organismesSN1);
+  CodeEdiValeurCellule('13381',$etat);
+  CodeEdiValeurCellule('13442',$etatN1);
+  CodeEdiValeurCellule('13382',$comptesD);
+  CodeEdiValeurCellule('13443',$comptesDN1);
+  CodeEdiValeurCellule('13383',$autresCr);
+  CodeEdiValeurCellule('13444',$autresCrN1);
+  CodeEdiValeurCellule('13384',$comptesDRP);
+  CodeEdiValeurCellule('13445',$comptesDRPN1);
+  CodeEdiValeurCellule('13375',$autresPPREC);
+  CodeEdiValeurCellule('13446',$autresPPRECN1);
+  CodeEdiValeurCellule('13374',$ecartsDCP);
+  CodeEdiValeurCellule('13447',$ecartsDCPN1);
+  CodeEdiValeurCellule('13373',$totalFGH);
+  CodeEdiValeurCellule('13448',$totalFGHN1);
+  CodeEdiValeurCellule('13370',$creditsDE);
+  CodeEdiValeurCellule('13449',$creditsDEN1);
+  CodeEdiValeurCellule('13371',$creditDT);
+  CodeEdiValeurCellule('13450',$creditDTN1);
+  CodeEdiValeurCellule('13372',$banquesSC);
+  CodeEdiValeurCellule('13451',$banquesSCN1);
+  CodeEdiValeurCellule('13369',$totalIII);
+  CodeEdiValeurCellule('13452',$totalIIIN1);
+  CodeEdiValeurCellule('13368',$total_I_II_III);
+  CodeEdiValeurCellule('13453',$total_I_II_IIIN1);
+
+  $extraFieldvaleurs = $dom->createElement('extraFieldvaleurs',' ');
+  $ValeursTableau->appendChild($extraFieldvaleurs);
+}
+?>
+  

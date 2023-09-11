@@ -136,7 +136,8 @@ $dateChoisis=0;
     $TAB_MFX=$ST_MFX+$STB_MFX;
 }
 
-
+  if(isset($_POST['chargement']))
+  {
 
   $data = "<?php ";
   $data .= '$PPDDLI_MDE = ' . $PPDDLI_MDE . ";\n";
@@ -226,5 +227,5 @@ $dateChoisis=0;
   // Écrire les données dans le nouveau fichier
   file_put_contents($nomFichier, $data);
 
-
+  }
 ?>

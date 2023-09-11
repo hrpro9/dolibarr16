@@ -302,7 +302,7 @@ class pdf_Autrecreditbail extends ModelePDFUser
 			<col class="col10">
 			<tbody>
 		<tr class="row0">
-			<td class="column0 style1 s style3" colspan="10">TABLEAU DES LOCATIONS ET BAUX AUTRES QUE LE CREDIT-BAIL</td>
+			<td class="column0 style1 s style3" colspan="13">TABLEAU DES LOCATIONS ET BAUX AUTRES QUE LE CREDIT-BAIL</td>
 		</tr>
 		<tr class="row1">
 			<td class="column0 style6 f"></td>
@@ -388,24 +388,6 @@ class pdf_Autrecreditbail extends ModelePDFUser
 			$table .= \'<td class="column\' . ($i + 2) . \' style16 null">\' . ${\'autrecreditBail\' . $i} . \'</td>\' . "\n";
 		}
 		$table .= \'</tr>\';
-
-		$table .= \'
-		<tr class="row2">
-			<td class="column0 style11 s">Nature du bien loué</td>
-			<td class="column2 style12 s">Lieu de situation</td>
-			<td class="column3 style12 s">Nom et prénoms</td>
-			<td class="column4 style12 s">Raison sociale</td>
-			<td class="column5 style12 s">Adresse du propriétaire</td>
-			<td class="column6 style12 s">N° IF du propriétaire</td>
-			<td class="column7 style12 s">CIN du propriétaire</td>
-			<td class="column8 style12 s">CE du propriétaire	</td>
-			<td class="column9 style12 s">Date de conclusion de l acte de location</td>
-			<td class="column6 style12 s">Montant annuel de location</td>
-			<td class="column7 style12 s">Montant du loyer compris dans les charges de l exercice</td>
-			<td class="column8 style12 s">Bail ordinaire</td>	
-			<td class="column9 style12 s">Leasing(Nème période) (1)</td>
-		</tr>
-		\';
 
 		$table .= \'<tr class="row14">\';
 		for ($i = 118; $i <= 130; $i++) {

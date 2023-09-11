@@ -195,7 +195,7 @@ llxHeader("", "");
             <td class="column0 style14 null">I. Dérogations aux principes comptables fondamentaux</td>
             <?php
             for ($i = 0; $i <=1; $i++) {
-                echo '<td class="column1 style15 null"><input min="0" type="number" style="width: 125px;" name="Etatderogations' . $i . '" id="Etatderogations' . $i . '" value="';
+                echo '<td class="column1 style15 null"><input min="0" type="text" required style="width: 125px;" name="Etatderogations' . $i . '" id="Etatderogations' . $i . '" value="';
                 if (isset(${"Etatderogations" . $i})) {
                     echo ${"Etatderogations" . $i};
                 }
@@ -208,7 +208,7 @@ llxHeader("", "");
             <td class="column0 style14 null">II. Dérogations aux méthodes d'évaluation</td>
             <?php
             for ($i = 2; $i <=3; $i++) {
-                echo '<td class="column1 style15 null"><input min="0" type="number" style="width: 125px;" name="Etatderogations' . $i . '" id="Etatderogations' . $i . '" value="';
+                echo '<td class="column1 style15 null"><input min="0" type="text" required style="width: 125px;" name="Etatderogations' . $i . '" id="Etatderogations' . $i . '" value="';
                 if (isset(${"Etatderogations" . $i})) {
                     echo ${"Etatderogations" . $i};
                 }
@@ -220,7 +220,7 @@ llxHeader("", "");
             <td class="column0 style14 null">III. Dérogations aux règles d'établissement et de présentation des états de synthèse</td>
             <?php
             for ($i = 4; $i <=5; $i++) {
-                echo '<td class="column1 style15 null"><input min="0" type="number" style="width: 125px;" name="Etatderogations' . $i . '" id="Etatderogations' . $i . '" value="';
+                echo '<td class="column1 style15 null"><input min="0" type="text" required style="width: 125px;" name="Etatderogations' . $i . '" id="Etatderogations' . $i . '" value="';
                 if (isset(${"Etatderogations" . $i})) {
                     echo ${"Etatderogations" . $i};
                 }

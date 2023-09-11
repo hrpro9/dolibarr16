@@ -251,7 +251,7 @@ class pdf_Fusion extends ModelePDFUser
 				$pagenb = 0;
 				$pdf->SetDrawColor(128, 128, 128);
 
-				$pdf->SetTitle($outputlangs->convToOutputCharset('FUSION'));
+				$pdf->SetTitle($outputlangs->convToOutputCharset('CreditBail'));
 				$pdf->SetSubject($outputlangs->transnoentities(""));
 				$pdf->SetCreator("Dolibarr " . DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
@@ -278,144 +278,151 @@ class pdf_Fusion extends ModelePDFUser
 				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/Fusion/Fusion_fichier_'.$year.'.php';
 
 				$table =
-	'
-	<style >			
-		.gridlines td { border:1px dotted black }
-		.gridlines th { border:1px dotted black }
-	</style>
-	
-	<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
-		<col class="col0">
-		<col class="col1">
-		<col class="col2">
-		<col class="col3">
-		<col class="col4">
-		<col class="col5">
-		<col class="col6">
-		<col class="col7">
-		<col class="col8">
-		<col class="col9">
-		<col class="col10">
-		<tbody>
-			<tr class="row0">
-				<td class="column0 style1 s style3" colspan="10">ETAT DES PLUS-VALUES CONSTATEES EN CAS DE FUSION</td>
-			</tr>
-			<tr class="row1">
-				<td class="column0 style6 f"></td>
-				<td class="column1 style7 null"></td>
-				<td class="column2 style7 null"></td>
-				<td class="column3 style7 null"></td>
-				<td class="column4 style7 null"></td>
-				<td class="column5 style7 null"></td>
-				<td class="column6 style8 null"></td>
-				<td class="column7 style9 null"></td>
-				<td class="column8 style9 null"></td>
-				<td class="column9 style10 f"></td>
-			</tr>
-			<tr class="row2">
-				<td class="column0 style11 s style11" colspan="2">Eléments</td>
-				<td class="column2 style12 s">Valeur d apport</td>
-				<td class="column3 style12 s">Valeur nette comptable</td>
-				<td class="column4 style12 s">Plus-value constatée et différée</td>
-				<td class="column5 style12 s">Fraction de la plus-value rapportée aux exercices antérieurs (cumul) (2)</td>
-				<td class="column6 style12 s">Fraction de la plus-value rapportée à l exercice actuel</td>
-				<td class="column7 style12 s">Cumul des plus-values rapportées</td>
-				<td class="column8 style12 s">Solde des plus-values non imputées</td>
-				<td class="column9 style12 s">Observations</td>
-			</tr>
-			<tr class="row3">
+				'
+				<style >			
+				.gridlines td { border:1px dotted black }
+				.gridlines th { border:1px dotted black }
+			</style>
+									
+		
+			<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
+			<col class="col0">
+			<col class="col1">
+			<col class="col2">
+			<col class="col3">
+			<col class="col4">
+			<col class="col5">
+			<col class="col6">
+			<col class="col7">
+			<col class="col8">
+			<col class="col9">
+			<col class="col10">
+			<tbody>
+				<tr class="row0">
+					<td class="column0 style1 s style3" colspan="10">ETAT DES PLUS-VALUES CONSTATEES EN CAS DE FUSION</td>
+				</tr>
+				<tr class="row1">
+					<td class="column0 style6 f"></td>
+					<td class="column1 style7 null"></td>
+					<td class="column2 style7 null"></td>
+					<td class="column3 style7 null"></td>
+					<td class="column4 style7 null"></td>
+					<td class="column5 style7 null"></td>
+					<td class="column6 style8 null"></td>
+					<td class="column7 style9 null"></td>
+					<td class="column8 style9 null"></td>
+					<td class="column9 style10 f"></td>
+				</tr>
+				<tr class="row2">
+					<td class="column0 style11 s style11" colspan="2">Eléments</td>
+					<td class="column2 style12 s">Valeur d apport</td>
+					<td class="column3 style12 s">Valeur nette comptable</td>
+					<td class="column4 style12 s">Plus-value constatée et différée</td>
+					<td class="column5 style12 s">Fraction de la plus-value rapportée aux exercices antérieurs (cumul) (2)</td>
+					<td class="column6 style12 s">Fraction de la plus-value rapportée à l exercice actuel</td>
+					<td class="column7 style12 s">Cumul des plus-values rapportées</td>
+					<td class="column8 style12 s">Solde des plus-values non imputées</td>
+					<td class="column9 style12 s">Observations</td>
+				</tr>
+				<tr class="row3">
 				<td class="column0 style15 n">1</td>
 				<td class="column1 style15 s">Terrain (1)</td>';
 				for ($i = 0; $i < 9; $i++) {
 					$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
 				}
-			$table .= '	</tr>
-			<tr class="row4">
+				$table .= '	</tr>
+				<tr class="row4">
+					<td class="column0 style15 n">1</td>
+					<td class="column1 style15 s">Constructions</td>';
+					for ($i = 9; $i < 17; $i++) {
+						$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
+					}
+					$table .= '	</tr>
+				<tr class="row4">
+					<td class="column0 style15 n">1</td>
+					<td class="column1 style15 s">atériel et outillage</td>';
+					for ($i = 17; $i < 25; $i++) {
+						$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
+					}
+					$table .= '	</tr>
+				<tr class="row4">
+					<td class="column0 style15 n">1</td>
+					<td class="column1 style15 s">Matériel et outillage</td>';
+					for ($i = 25; $i < 33; $i++) {
+						$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
+					}
+					$table .= '	</tr>
+				<tr class="row4">
+					<td class="column0 style15 n">1</td>
+					<td class="column1 style15 s">Matériel de transport</td>';
+					for ($i = 25; $i < 33; $i++) {
+						$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
+					}
+					$table .= '	</tr>
+				<tr class="row4">
 				<td class="column0 style15 n">1</td>
-				<td class="column1 style15 s">Constructions</td>';
-				for ($i = 9; $i < 17; $i++) {
+				<td class="column1 style15 s">Agencements-Installations</td>';
+				for ($i = 33; $i < 41; $i++) {
 					$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
 				}
-			$table .= '	</tr>
-			<tr class="row4">
+					$table .= '	</tr>
+				<tr class="row4">
 				<td class="column0 style15 n">1</td>
-				<td class="column1 style15 s">atériel et outillage</td>';
-				for ($i = 17; $i < 25; $i++) {
+				<td class="column1 style15 s">Brevets</td>';
+				for ($i = 41; $i < 49; $i++) {
 					$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
 				}
-			$table .= '	</tr>
-			<tr class="row4">
+					$table .= '	</tr>
+				<tr class="row4">
 				<td class="column0 style15 n">1</td>
-				<td class="column1 style15 s">Matériel et outillage</td>';
-				for ($i = 25; $i < 33; $i++) {
+				<td class="column1 style15 s">Autres éléments amortissables</td>';
+				for ($i = 49; $i < 57; $i++) {
 					$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
 				}
-			$table .= '	</tr>
-			<tr class="row4">
+					$table .= '	</tr>
+				<tr class="row4">
 				<td class="column0 style15 n">1</td>
-				<td class="column1 style15 s">Matériel de transport</td>';
-				for ($i = 25; $i < 33; $i++) {
+				<td class="column1 style15 s">Titres de participation</td>';
+				for ($i = 57; $i < 65; $i++) {
 					$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
 				}
-			$table .= '	</tr>
-			<tr class="row4">
-			<td class="column0 style15 n">1</td>
-			<td class="column1 style15 s">Agencements-Installations</td>';
-			for ($i = 32; $i < 40; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
-			}
-	    	$table .= '	</tr>
-			<tr class="row4">
-			<td class="column0 style15 n">1</td>
-			<td class="column1 style15 s">Brevets</td>';
-			for ($i = 39; $i < 47; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
-			}
-	    	$table .= '	</tr>
-			<tr class="row4">
-			<td class="column0 style15 n">1</td>
-			<td class="column1 style15 s">Autres éléments amortissables</td>';
-			for ($i = 46; $i < 54; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
-			}
-	    	$table .= '	</tr>
-			<tr class="row4">
-			<td class="column0 style15 n">1</td>
-			<td class="column1 style15 s">Titres de participation</td>';
-			for ($i = 53; $i < 61; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
-			}
-	    	$table .= '	</tr>
-			<tr class="row4">
-			<td class="column0 style15 n">1</td>
-			<td class="column1 style15 s">Fonds de commerce</td>';
-			for ($i = 60; $i < 68; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
-			}
-	    	$table .= '	</tr>
-			<tr class="row4">
-			<td class="column0 style15 n">1</td>
-			<td class="column1 style15 s">Autres éléments non amortissables</td>';
-			for ($i = 67; $i < 75; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
-			}
-	    	$table .= '	</tr>
+					$table .= '	</tr>
+				<tr class="row4">
+				<td class="column0 style15 n">1</td>
+				<td class="column1 style15 s">Fonds de commerce</td>';
+				for ($i = 65; $i < 73; $i++) {
+					$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
+				}
+					$table .= '	</tr>
+				<tr class="row4">
+				<td class="column0 style15 n">1</td>
+				<td class="column1 style15 s">Autres éléments non amortissables</td>';
+				for ($i = 73; $i < 81; $i++) {
+					$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'fusion' . $i} . '</td>' . "\n";
+				}
+					$table .= '	</tr>
+	
+			  <tr class="row13">
+				<td class="column0 style23 null"></td>
+				<td class="column1 style24 s">Total</td>
+				<td class="column2 style25 f">'.number_format( $sum1,2).'</td>
+				<td class="column3 style25 f">'.number_format( $sum2,2).'</td>
+				<td class="column4 style25 f">'.number_format( $sum3,2).'</td>
+				<td class="column5 style25 f">'.number_format( $sum4,2).'</td>
+				<td class="column6 style25 f">'.number_format( $sum5,2).'</td>
+				<td class="column7 style25 f">'.number_format( $sum6,2).'</td>
+				<td class="column8 style25 f">'.number_format( $sum7,2).'</td>
+				<td class="column9 style26 s">-</td>
+			  </tr>
 
-            <tr class="row13">
-            <td class="column0 style23 null"></td>
-            <td class="column1 style24 s">Total</td>
-            <td class="column2 style25 f">'.number_format( $sum1,2).'</td>
-            <td class="column3 style25 f">'.number_format( $sum2,2).'</td>
-            <td class="column4 style25 f">'.number_format( $sum3,2).'</td>
-            <td class="column5 style25 f">'.number_format( $sum4,2).'</td>
-            <td class="column6 style25 f">'.number_format( $sum5,2).'</td>
-            <td class="column7 style25 f">'.number_format( $sum6,2).'</td>
-            <td class="column8 style25 f">'.number_format( $sum7,2).'</td>
-            <td class="column9 style26 s">-</td>
-			</tr>
-			</tbody>
-			</table>';
-            // Replace with your actual table HTML
+	</tbody>
+</table>
+		
+
+			
+
+				'
+				; // Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
 				$pdf->SetY($pdf->GetY() + 6);
@@ -520,7 +527,7 @@ class pdf_Fusion extends ModelePDFUser
 		$year = GETPOST('year');
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
-		$pdf->MultiCell(200, 2, "ETAT DES PLUS-VALUES CONSTATEES EN CAS DE FUSION ".$year, 0, "C");
+		$pdf->MultiCell(200, 2, "TABLEAU DES PLUS OU MOINS VALUES SUR CESSIONS OU RETRAITS D IMMOBILISATIONS ".$year, 0, "C");
 		$pdf->SetFont('', '', $default_font_size + 3);
 		$pdf->MultiCell(200, 30, $periode, 0, "C");
 

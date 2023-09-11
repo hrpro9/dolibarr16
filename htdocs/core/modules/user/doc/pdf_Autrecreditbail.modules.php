@@ -278,212 +278,197 @@ class pdf_Autrecreditbail extends ModelePDFUser
 				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/AutrescreditBail/autrecreditBail_fichier_'.$year.'.php';
 
 				$table =
-			'
-			<style >			
+				'
+				<style >			
 				.gridlines td { border:1px dotted black }
 				.gridlines th { border:1px dotted black }
 			</style>
-			
-			<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
-				<col class="col0">
-				<col class="col1">
-				<col class="col2">
-				<col class="col3">
-				<col class="col4">
-				<col class="col5">
-				<col class="col6">
-				<col class="col7">
-				<col class="col8">
-				<col class="col9">
-				<col class="col10">
-				<tbody>
-			<tr class="row0">
-				<td class="column0 style1 s style3" colspan="10">TABLEAU DES LOCATIONS ET BAUX AUTRES QUE LE CREDIT-BAIL</td>
-			</tr>
-			<tr class="row1">
-			    <td class="column0 style6 f"></td>
-				<td class="column1 style7 null"></td>
-				<td class="column2 style7 null"></td>
-				<td class="column0 style6 f"></td>
-				<td class="column1 style7 null"></td>
-				<td class="column2 style7 null"></td>
-				<td class="column3 style7 null"></td>
-				<td class="column4 style7 null"></td>
-				<td class="column5 style7 null"></td>
-				<td class="column6 style8 null"></td>
-				<td class="column7 style9 null"></td>
-				<td class="column8 style9 null"></td>
-				<td class="column9 style10 f"></td>
-			</tr>								
-			<tr class="row2">
-				<td class="column0 style11 s">Nature du bien loué</td>
-				<td class="column2 style12 s">Lieu de situation</td>
-				<td class="column3 style12 s">Nom et prénoms</td>
-				<td class="column4 style12 s">Raison sociale</td>
-				<td class="column5 style12 s">Adresse du propriétaire</td>
-				<td class="column6 style12 s">N° IF du propriétaire</td>
-				<td class="column7 style12 s">CIN du propriétaire</td>
-				<td class="column8 style12 s">CE du propriétaire	</td>
-				<td class="column9 style12 s">Date de conclusion de l acte de location</td>
-				<td class="column6 style12 s">Montant annuel de location</td>
-				<td class="column7 style12 s">Montant du loyer compris dans les charges de l exercice</td>
-				<td class="column8 style12 s">Bail ordinaire</td>	
-				<td class="column9 style12 s">Leasing(Nème période) (1)</td>
-			</tr>
-			
-			<tr class="row3">';
-			for ($i = 0; $i <= 13; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row4">';
-			for ($i = 14; $i <= 26; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row5">';
-			for ($i = 27; $i <= 39; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row8">';
-			for ($i = 40; $i <= 52; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row9">';
-			for ($i = 53; $i <= 65; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row10">';
-			for ($i = 66; $i <= 78; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-            $table .= '<tr class="row11">';
-			for ($i = 79; $i <= 91; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row12">';
-			for ($i = 92; $i <= 104; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row13">';
-			for ($i = 105; $i <= 117; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '
-			<tr class="row2">
-				<td class="column0 style11 s">Nature du bien loué</td>
-				<td class="column2 style12 s">Lieu de situation</td>
-				<td class="column3 style12 s">Nom et prénoms</td>
-				<td class="column4 style12 s">Raison sociale</td>
-				<td class="column5 style12 s">Adresse du propriétaire</td>
-				<td class="column6 style12 s">N° IF du propriétaire</td>
-				<td class="column7 style12 s">CIN du propriétaire</td>
-				<td class="column8 style12 s">CE du propriétaire	</td>
-				<td class="column9 style12 s">Date de conclusion de l acte de location</td>
-				<td class="column6 style12 s">Montant annuel de location</td>
-				<td class="column7 style12 s">Montant du loyer compris dans les charges de l exercice</td>
-				<td class="column8 style12 s">Bail ordinaire</td>	
-				<td class="column9 style12 s">Leasing(Nème période) (1)</td>
-			</tr>
-			';
-
-			$table .= '<tr class="row14">';
-			for ($i = 118; $i <= 130; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row15">';
-			for ($i = 131; $i <= 143; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row16">';
-			for ($i = 144; $i <= 156; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row17">';
-			for ($i = 157; $i <= 169; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-
-			$table .= '<tr class="row18">';
-			for ($i = 170; $i <= 182; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-			
-			$table .= '<tr class="row19">';
-			for ($i = 183; $i <= 195; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-			
-			$table .= '<tr class="row20">';
-			for ($i = 196; $i <= 208; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-			
-			$table .= '<tr class="row21">';
-			for ($i = 209; $i <= 221; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-			
-			$table .= '<tr class="row22">';
-			for ($i = 222; $i <= 234; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>';
-			
-			$table .= '<tr class="row23">';
-			for ($i = 235; $i <= 247; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
-			}
-			$table .= '</tr>
-			
-          <tr class="row24">
-            <td class="column0 style41 null"></td>
-            <td class="column1 style42 null"></td>
-            <td class="column2 style43 s">Total</td>
-            <td class="column3 style44 null"></td>
-            <td class="column4 style44 null"></td>
-            <td class="column5 style44 null"></td>
-            <td class="column6 style44 null"></td>
-            <td class="column7 style45 null"></td>
-            <td class="column8 style46 s">-</td>
-            <td class="column9 style47 f">'.number_format( $sum1,2).'</td>
-            <td class="column10 style47 f">'.number_format( $sum1,2).'</td>
-            <td class="column11 style46 s">-</td>
-            <td class="column12 style46 s">-</td>
-            <td class="column13 style48 s">GrasDroite</td> 
-           
-          </tr>
+									
 		
-			</tbody>
-			</table>';
-            // Replace with your actual table HTML
+			<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
+			<col class="col0">
+			<col class="col1">
+			<col class="col2">
+			<col class="col3">
+			<col class="col4">
+			<col class="col5">
+			<col class="col6">
+			<col class="col7">
+			<col class="col8">
+			<col class="col9">
+			<col class="col10">
+			<tbody>
+		<tr class="row0">
+			<td class="column0 style1 s style3" colspan="13">TABLEAU DES LOCATIONS ET BAUX AUTRES QUE LE CREDIT-BAIL</td>
+		</tr>
+		<tr class="row1">
+			<td class="column0 style6 f"></td>
+			<td class="column1 style7 null"></td>
+			<td class="column2 style7 null"></td>
+			<td class="column0 style6 f"></td>
+			<td class="column1 style7 null"></td>
+			<td class="column2 style7 null"></td>
+			<td class="column3 style7 null"></td>
+			<td class="column4 style7 null"></td>
+			<td class="column5 style7 null"></td>
+			<td class="column6 style8 null"></td>
+			<td class="column7 style9 null"></td>
+			<td class="column8 style9 null"></td>
+			<td class="column9 style10 f"></td>
+		</tr>								
+		<tr class="row2">
+			<td class="column0 style11 s">Nature du bien loué</td>
+			<td class="column2 style12 s">Lieu de situation</td>
+			<td class="column3 style12 s">Nom et prénoms</td>
+			<td class="column4 style12 s">Raison sociale</td>
+			<td class="column5 style12 s">Adresse du propriétaire</td>
+			<td class="column6 style12 s">N° IF du propriétaire</td>
+			<td class="column7 style12 s">CIN du propriétaire</td>
+			<td class="column8 style12 s">CE du propriétaire	</td>
+			<td class="column9 style12 s">Date de conclusion de l acte de location</td>
+			<td class="column6 style12 s">Montant annuel de location</td>
+			<td class="column7 style12 s">Montant du loyer compris dans les charges de l exercice</td>
+			<td class="column8 style12 s">Bail ordinaire</td>	
+			<td class="column9 style12 s">Leasing(Nème période) (1)</td>
+		</tr>
+		
+		<tr class="row3">';
+		for ($i = 0; $i <= 13; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row4">';
+		for ($i = 14; $i <= 26; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row5">';
+		for ($i = 27; $i <= 39; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row8">';
+		for ($i = 40; $i <= 52; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row9">';
+		for ($i = 53; $i <= 65; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row10">';
+		for ($i = 66; $i <= 78; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row11">';
+		for ($i = 79; $i <= 91; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row12">';
+		for ($i = 92; $i <= 104; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row13">';
+		for ($i = 105; $i <= 117; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row14">';
+		for ($i = 118; $i <= 130; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row15">';
+		for ($i = 131; $i <= 143; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row16">';
+		for ($i = 144; $i <= 156; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row17">';
+		for ($i = 157; $i <= 169; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+
+		$table .= '<tr class="row18">';
+		for ($i = 170; $i <= 182; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+		
+		$table .= '<tr class="row19">';
+		for ($i = 183; $i <= 195; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+		
+		$table .= '<tr class="row20">';
+		for ($i = 196; $i <= 208; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+		
+		$table .= '<tr class="row21">';
+		for ($i = 209; $i <= 221; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+		
+		$table .= '<tr class="row22">';
+		for ($i = 222; $i <= 234; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>';
+		
+		$table .= '<tr class="row23">';
+		for ($i = 235; $i <= 247; $i++) {
+			$table .= '<td class="column' . ($i + 2) . ' style16 null">' . ${'autrecreditBail' . $i} . '</td>' . "\n";
+		}
+		$table .= '</tr>
+		
+	  <tr class="row24">
+		<td class="column0 style41 null"></td>
+		<td class="column1 style42 null"></td>
+		<td class="column2 style43 s">Total</td>
+		<td class="column3 style44 null"></td>
+		<td class="column4 style44 null"></td>
+		<td class="column5 style44 null"></td>
+		<td class="column6 style44 null"></td>
+		<td class="column7 style45 null"></td>
+		<td class="column8 style46 s">-</td>
+		<td class="column9 style47 f">'.number_format( $sum1,2).'</td>
+		<td class="column10 style47 f">'.number_format( $sum1,2).'</td>
+		<td class="column11 style46 s">-</td>
+		<td class="column12 style46 s">-</td>
+		<td class="column13 style48 s">GrasDroite</td> 
+	   
+	  </tr>
+	
+		</tbody>
+		</table>
+
+				'
+				; // Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
 				$pdf->SetY($pdf->GetY() + 6);

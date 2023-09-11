@@ -44,8 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       ${'Valeur' . $i} = $_POST['valeur' . $i];
       if(${'Valeur' . $i}==$Valeur45){
         $data .= '$Valeurajouter' . $i . ' = \'' . ${'Valeur' . $i} . "';\n";
-      }else{
-        $data .= '$Valeurajouter' . $i . ' = ' . ${'Valeur' . $i} . ";\n";
+      }
+      else if (is_string(${'Valeur' . $i})) {
+        // If the value is a string, add double quotes around it
+        $data .= '$Valeurajouter' . $i . ' = "' . ${'Valeur' . $i} . "\";\n";
+      }
+      else {
+          $data .= '$Valeurajouter' . $i . ' = ' . ${'Valeur' . $i} . ";\n";
       }
     
     }

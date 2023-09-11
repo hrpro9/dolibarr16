@@ -26,19 +26,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ${'etatDesInterets' . $i} = $_POST['etatDesInterets' . $i];
     }
 
-    $sum1=$etatDesInterets9+$etatDesInterets25+$etatDesInterets40+$etatDesInterets55+$etatDesInterets70+$etatDesInterets85+$etatDesInterets100
-    +$etatDesInterets115+$etatDesInterets130+$etatDesInterets145+$etatDesInterets160+$etatDesInterets175;
-    $sum2=$etatDesInterets10+$etatDesInterets26+$etatDesInterets41+$etatDesInterets56+$etatDesInterets71+$etatDesInterets86+$etatDesInterets101
-    +$etatDesInterets116+$etatDesInterets131+$etatDesInterets146+$etatDesInterets161+$etatDesInterets176;
-    $sum3=$etatDesInterets11+$etatDesInterets27+$etatDesInterets42+$etatDesInterets57+$etatDesInterets72+$etatDesInterets87+$etatDesInterets102
-    +$etatDesInterets117+$etatDesInterets132+$etatDesInterets147+$etatDesInterets162+$etatDesInterets177;
-    $sum4=$etatDesInterets12+$etatDesInterets28+$etatDesInterets43+$etatDesInterets58+$etatDesInterets73+$etatDesInterets88+$etatDesInterets103
-    +$etatDesInterets118+$etatDesInterets133+$etatDesInterets148+$etatDesInterets163+$etatDesInterets178;
-    $sum5=$etatDesInterets14+$etatDesInterets29+$etatDesInterets44+$etatDesInterets59+$etatDesInterets74+$etatDesInterets89+$etatDesInterets104
-    +$etatDesInterets119+$etatDesInterets134+$etatDesInterets149+$etatDesInterets164+$etatDesInterets179;
+    // $sum1=$etatDesInterets9+$etatDesInterets25+$etatDesInterets40+$etatDesInterets55+$etatDesInterets70+$etatDesInterets85+$etatDesInterets100
+    // +$etatDesInterets115+$etatDesInterets130+$etatDesInterets145+$etatDesInterets160+$etatDesInterets175;
+    // $sum2=$etatDesInterets10+$etatDesInterets26+$etatDesInterets41+$etatDesInterets56+$etatDesInterets71+$etatDesInterets86+$etatDesInterets101
+    // +$etatDesInterets116+$etatDesInterets131+$etatDesInterets146+$etatDesInterets161+$etatDesInterets176;
+    // $sum3=$etatDesInterets11+$etatDesInterets27+$etatDesInterets42+$etatDesInterets57+$etatDesInterets72+$etatDesInterets87+$etatDesInterets102
+    // +$etatDesInterets117+$etatDesInterets132+$etatDesInterets147+$etatDesInterets162+$etatDesInterets177;
+    // $sum4=$etatDesInterets12+$etatDesInterets28+$etatDesInterets43+$etatDesInterets58+$etatDesInterets73+$etatDesInterets88+$etatDesInterets103
+    // +$etatDesInterets118+$etatDesInterets133+$etatDesInterets148+$etatDesInterets163+$etatDesInterets178;
+    // $sum5=$etatDesInterets14+$etatDesInterets29+$etatDesInterets44+$etatDesInterets59+$etatDesInterets74+$etatDesInterets89+$etatDesInterets104
+    // +$etatDesInterets119+$etatDesInterets134+$etatDesInterets149+$etatDesInterets164+$etatDesInterets179;
 
-    $sum6=$etatDesInterets5+$etatDesInterets21+$etatDesInterets36+$etatDesInterets51+$etatDesInterets66+$etatDesInterets81+$etatDesInterets96
-    +$etatDesInterets111+$etatDesInterets126+$etatDesInterets141+$etatDesInterets156+$etatDesInterets171;
+    // $sum6=$etatDesInterets5+$etatDesInterets21+$etatDesInterets36+$etatDesInterets51+$etatDesInterets66+$etatDesInterets81+$etatDesInterets96
+    // +$etatDesInterets111+$etatDesInterets126+$etatDesInterets141+$etatDesInterets156+$etatDesInterets171;
+
+    $sum1=INTVAL($etatDesInterets9) +INTVAL($etatDesInterets25) +INTVAL($etatDesInterets40) +INTVAL($etatDesInterets55) +INTVAL($etatDesInterets70) +INTVAL($etatDesInterets85) +INTVAL($etatDesInterets100
+    ) +INTVAL($etatDesInterets115) +INTVAL($etatDesInterets130) +INTVAL($etatDesInterets145) +INTVAL($etatDesInterets160) +INTVAL($etatDesInterets175);
+   $sum2=INTVAL($etatDesInterets10) +INTVAL($etatDesInterets26) +INTVAL($etatDesInterets41) +INTVAL($etatDesInterets56) +INTVAL($etatDesInterets71) +INTVAL($etatDesInterets86) +INTVAL($etatDesInterets101
+    ) +INTVAL($etatDesInterets116) +INTVAL($etatDesInterets131) +INTVAL($etatDesInterets146) +INTVAL($etatDesInterets161) +INTVAL($etatDesInterets176);
+    $sum3=INTVAL($etatDesInterets11) +INTVAL($etatDesInterets27) +INTVAL($etatDesInterets42) +INTVAL($etatDesInterets57) +INTVAL($etatDesInterets72) +INTVAL($etatDesInterets87) +INTVAL($etatDesInterets102
+    ) +INTVAL($etatDesInterets117) +INTVAL($etatDesInterets132) +INTVAL($etatDesInterets147) +INTVAL($etatDesInterets162) +INTVAL($etatDesInterets177);
+    $sum4=INTVAL($etatDesInterets12) +INTVAL($etatDesInterets28) +INTVAL($etatDesInterets43) +INTVAL($etatDesInterets58) +INTVAL($etatDesInterets73) +INTVAL($etatDesInterets88) +INTVAL($etatDesInterets103
+    ) +INTVAL($etatDesInterets118) +INTVAL($etatDesInterets133) +INTVAL($etatDesInterets148) +INTVAL($etatDesInterets163) +INTVAL($etatDesInterets178);
+    $sum5=INTVAL($etatDesInterets14) +INTVAL($etatDesInterets29) +INTVAL($etatDesInterets44) +INTVAL($etatDesInterets59) +INTVAL($etatDesInterets74) +INTVAL($etatDesInterets89) +INTVAL($etatDesInterets104
+    ) +INTVAL($etatDesInterets119) +INTVAL($etatDesInterets134) +INTVAL($etatDesInterets149) +INTVAL($etatDesInterets164) +INTVAL($etatDesInterets179);
+
+   $sum6=INTVAL($etatDesInterets5) +INTVAL($etatDesInterets21) +INTVAL($etatDesInterets36) +INTVAL($etatDesInterets51) +INTVAL($etatDesInterets66) +INTVAL($etatDesInterets81) +INTVAL($etatDesInterets96
+    ) +INTVAL($etatDesInterets111) +INTVAL($etatDesInterets126) +INTVAL($etatDesInterets141) +INTVAL($etatDesInterets156) +INTVAL($etatDesInterets171);
 
 
     $data = "<?php ";

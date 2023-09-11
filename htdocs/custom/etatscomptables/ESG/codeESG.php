@@ -40,6 +40,7 @@
   $prodImmb_E=$prodImmb_EP=$prodImmb_E2=0; // Produits des cession des immobilisations
   $valNetImmb_E=$valNetImmb_EP=$valNetImmb_E2=0;// Valeurs nettes des immobilisations cédées
 
+
   
 
 
@@ -49,6 +50,13 @@
    if(!isset($_POST['chargement']))
   {
     $dateChoisis=GETPOST('valeurdatechoise');
+  }
+
+  if(isset($_POST['chargement']))
+  {
+    $esg1=$_POST['esg1'];
+    $esg2=$_POST['esg2'];
+    $esg3=$_POST['esg3'];
   }
 
 
@@ -209,139 +217,133 @@
   $CAF_E2=$benefice_E2-$perte_E2+$datatExpl_E2+$dotationfin_E2+$dotationNonCour_E2-$reprExpl_E2-$repriseFin_E2-$repNonCour_E2-$prodImmb_E2+$valNetImmb_E2;
 
   // Calcule AUTOFINANCEMENT
-  $autofin_E=$CAF_E-0;
-  $autofin_EP=$CAF_EP-0;
-  $autofin_E2=$CAF_E2-0;
+  $autofin_E=$CAF_E-isset($esg1)?$esg1:0;
+  $autofin_EP=$CAF_EP-isset($esg2)?$esg2:0;
+  $autofin_E2=$CAF_E2-isset($esg3)?$esg3:0;
 
+  if(isset($_POST['chargement']))
+  {
+    $data = "<?php ";
+    $data .= '$venteMarch_E = ' . $venteMarch_E . ";\n";
+    $data .= '$venteMarch_EP = ' . $venteMarch_EP . ";\n";
+    $data .= '$venteMarch_E2 = ' . $venteMarch_E2 . ";\n";
+    $data .= '$achatReMarch_E = ' . $achatReMarch_E . ";\n";
+    $data .= '$achatReMarch_EP = ' . $achatReMarch_EP . ";\n";
+    $data .= '$achatReMarch_E2 = ' . $achatReMarch_E2 . ";\n";
+    $data .= '$marchB_E = ' . $marchB_E . ";\n";
+    $data .= '$marchB_EP = ' . $marchB_EP . ";\n";
+    $data .= '$marchB_E2 = ' . $marchB_E2 . ";\n";
+    $data .= '$prodExe_E = ' . $prodExe_E . ";\n";
+    $data .= '$prodExe_EP = ' . $prodExe_EP . ";\n";
+    $data .= '$prodExe_E2 = ' . $prodExe_E2 . ";\n";
+    $data .= '$venteServ_E = ' . $venteServ_E . ";\n";
+    $data .= '$venteServ_EP = ' . $venteServ_EP . ";\n";
+    $data .= '$venteServ_E2 = ' . $venteServ_E2 . ";\n";
+    $data .= '$varStock_E = ' . $varStock_E . ";\n";
+    $data .= '$varStock_EP = ' . $varStock_EP . ";\n";
+    $data .= '$varStock_E2 = ' . $varStock_E2 . ";\n";
+    $data .= '$immobiProd_E = ' . $immobiProd_E . ";\n";
+    $data .= '$immobiProd_EP = ' . $immobiProd_EP . ";\n";
+    $data .= '$immobiProd_E2 = ' . $immobiProd_E2 . ";\n";
+    $data .= '$ConsExe_E = ' . $ConsExe_E . ";\n";
+    $data .= '$ConsExe_EP = ' . $ConsExe_EP . ";\n";
+    $data .= '$ConsExe_E2 = ' . $ConsExe_E2 . ";\n";
+    $data .= '$achatCons_E = ' . $achatCons_E . ";\n";
+    $data .= '$achatCons_EP = ' . $achatCons_EP . ";\n";
+    $data .= '$achatCons_E2 = ' . $achatCons_E2 . ";\n";
+    $data .= '$autreCharge_E = ' . $autreCharge_E . ";\n";
+    $data .= '$autreCharge_EP = ' . $autreCharge_EP . ";\n";
+    $data .= '$autreCharge_E2 = ' . $autreCharge_E2 . ";\n";
+    $data .= '$valAjout_E = ' . $valAjout_E . ";\n";
+    $data .= '$valAjout_EP = ' . $valAjout_EP . ";\n";
+    $data .= '$valAjout_E2 = ' . $valAjout_E2 . ";\n";
+    $data .= '$subExp_E = ' . $subExp_E . ";\n";
+    $data .= '$subExp_EP = ' . $subExp_EP . ";\n";
+    $data .= '$subExp_E2 = ' . $subExp_E2 . ";\n";
+    $data .= '$impotTaxe_E = ' . $impotTaxe_E . ";\n";
+    $data .= '$impotTaxe_EP = ' . $impotTaxe_EP . ";\n";
+    $data .= '$impotTaxe_E2 = ' . $impotTaxe_E2 . ";\n";
+    $data .= '$chargePers_E = ' . $chargePers_E . ";\n";
+    $data .= '$chargePers_EP = ' . $chargePers_EP . ";\n";
+    $data .= '$chargePers_E2 = ' . $chargePers_E2 . ";\n";
+    $data .= '$ExcedentB_E = ' . $ExcedentB_E . ";\n";
+    $data .= '$ExcedentB_EP = ' . $ExcedentB_EP . ";\n";
+    $data .= '$ExcedentB_E2 = ' . $ExcedentB_E2 . ";\n";
+    $data .= '$autresProd_E = ' . $autresProd_E . ";\n";
+    $data .= '$autresProd_EP = ' . $autresProd_EP . ";\n";
+    $data .= '$autresProd_E2 = ' . $autresProd_E2 . ";\n";
+    $data .= '$autresCharg_E = ' . $autresCharg_E . ";\n";
+    $data .= '$autresCharg_EP = ' . $autresCharg_EP . ";\n";
+    $data .= '$autresCharg_E2 = ' . $autresCharg_E2 . ";\n";
+    $data .= '$reprisesExpl_E = ' . $reprisesExpl_E . ";\n";
+    $data .= '$reprisesExpl_EP = ' . $reprisesExpl_EP . ";\n";
+    $data .= '$reprisesExpl_E2 = ' . $reprisesExpl_E2 . ";\n";
+    $data .= '$dotationExpl_E = ' . $dotationExpl_E . ";\n";
+    $data .= '$dotationExpl_EP = ' . $dotationExpl_EP . ";\n";
+    $data .= '$dotationExpl_E2 = ' . $dotationExpl_E2 . ";\n";
+    $data .= '$resultatExpl_E = ' . $resultatExpl_E . ";\n";
+    $data .= '$resultatExpl_EP = ' . $resultatExpl_EP . ";\n";
+    $data .= '$resultatExpl_E2 = ' . $resultatExpl_E2 . ";\n";
+    $data .= '$resultatFin_E = ' . $resultatFin_E . ";\n";
+    $data .= '$resultatFin_EP = ' . $resultatFin_EP . ";\n";
+    $data .= '$resultatFin_E2 = ' . $resultatFin_E2 . ";\n";
+    $data .= '$resultatCrt_E = ' . $resultatCrt_E . ";\n";
+    $data .= '$resultatCrt_EP = ' . $resultatCrt_EP . ";\n";
+    $data .= '$resultatCrt_E2 = ' . $resultatCrt_E2 . ";\n";
+    $data .= '$resultatNonCrt_E = ' . $resultatNonCrt_E . ";\n";
+    $data .= '$resultatNonCrt_EP = ' . $resultatNonCrt_EP . ";\n";
+    $data .= '$resultatNonCrt_E2 = ' . $resultatNonCrt_E2 . ";\n";
+    $data .= '$impotRest_E = ' . $impotRest_E . ";\n";
+    $data .= '$impotRest_EP = ' . $impotRest_EP . ";\n";
+    $data .= '$impotRest_E2 = ' . $impotRest_E2 . ";\n";
+    $data .= '$resultatNetExe_E = ' . $resultatNetExe_E . ";\n";
+    $data .= '$resultatNetExe_EP = ' . $resultatNetExe_EP . ";\n";
+    $data .= '$resultatNetExe_E2 = ' . $resultatNetExe_E2 . ";\n";
+    $data .= '$benefice_E = ' . $benefice_E . ";\n";
+    $data .= '$benefice_EP = ' . $benefice_EP . ";\n";
+    $data .= '$benefice_E2 = ' . $benefice_E2 . ";\n";
+    $data .= '$perte_E = ' . $perte_E . ";\n";
+    $data .= '$perte_EP = ' . $perte_EP . ";\n";
+    $data .= '$perte_E2 = ' . $perte_E2 . ";\n";
+    $data .= '$datatExpl_E = ' . $datatExpl_E . ";\n";
+    $data .= '$datatExpl_EP = ' . $datatExpl_EP . ";\n";
+    $data .= '$datatExpl_E2 = ' . $datatExpl_E2 . ";\n";
+    $data .= '$dotationfin_E = ' . $dotationfin_E . ";\n";
+    $data .= '$dotationfin_EP = ' . $dotationfin_EP . ";\n";
+    $data .= '$dotationfin_E2 = ' . $dotationfin_E2 . ";\n";
+    $data .= '$dotationNonCour_E = ' . $dotationNonCour_E . ";\n";
+    $data .= '$dotationNonCour_EP = ' . $dotationNonCour_EP . ";\n";
+    $data .= '$dotationNonCour_E2 = ' . $dotationNonCour_E2 . ";\n";
+    $data .= '$reprExpl_E = ' . $reprExpl_E . ";\n";
+    $data .= '$reprExpl_EP = ' . $reprExpl_EP . ";\n";
+    $data .= '$reprExpl_E2 = ' . $reprExpl_E2 . ";\n";
+    $data .= '$repriseFin_E = ' . $repriseFin_E . ";\n";
+    $data .= '$repriseFin_EP = ' . $repriseFin_EP . ";\n";
+    $data .= '$repriseFin_E2 = ' . $repriseFin_E2 . ";\n";
+    $data .= '$repNonCour_E = ' . $repNonCour_E . ";\n";
+    $data .= '$repNonCour_EP = ' . $repNonCour_EP . ";\n";
+    $data .= '$repNonCour_E2 = ' . $repNonCour_E2 . ";\n";
+    $data .= '$prodImmb_E = ' . $prodImmb_E . ";\n";
+    $data .= '$prodImmb_EP = ' . $prodImmb_EP . ";\n";
+    $data .= '$prodImmb_E2 = ' . $prodImmb_E2 . ";\n";
+    $data .= '$valNetImmb_E = ' . $valNetImmb_E . ";\n";
+    $data .= '$valNetImmb_EP = ' . $valNetImmb_EP . ";\n";
+    $data .= '$valNetImmb_E2 = ' . $valNetImmb_E2 . ";\n";
+    $data .= '$CAF_E = ' . $CAF_E . ";\n";
+    $data .= '$CAF_EP = ' . $CAF_EP . ";\n";
+    $data .= '$CAF_E2 = ' . $CAF_E2 . ";\n";
+    $data .= '$autofin_E = ' . $autofin_E . ";\n";
+    $data .= '$autofin_EP = ' . $autofin_EP . ";\n";
+    $data .= '$autofin_E2 = ' . $autofin_E2 . ";\n";
+    $data .= '$esg1 = ' .(isset($esg1)?$esg1:0) . ";\n";
+    $data .= '$esg2 = ' .(isset($esg2)?$esg2:0 ). ";\n";
+    $data .= '$esg3 = ' . (isset($esg3)?$esg3:0 ). ";\n";
+    $data .= "?>";
+    // Now, the variable $year will contain the year value "2023"
+    $nomFichier = 'ESG_fichier_'. $dateChoisis.'.php';
+    // Écrire les données dans le nouveau fichier
+    file_put_contents($nomFichier, $data);
 
-   
-  $data = "<?php ";
-
-
-  $data .= '$venteMarch_E = ' . $venteMarch_E . ";\n";
-  $data .= '$venteMarch_EP = ' . $venteMarch_EP . ";\n";
-  $data .= '$venteMarch_E2 = ' . $venteMarch_E2 . ";\n";
-  $data .= '$achatReMarch_E = ' . $achatReMarch_E . ";\n";
-  $data .= '$achatReMarch_EP = ' . $achatReMarch_EP . ";\n";
-  $data .= '$achatReMarch_E2 = ' . $achatReMarch_E2 . ";\n";
-  $data .= '$marchB_E = ' . $marchB_E . ";\n";
-  $data .= '$marchB_EP = ' . $marchB_EP . ";\n";
-  $data .= '$marchB_E2 = ' . $marchB_E2 . ";\n";
-  $data .= '$prodExe_E = ' . $prodExe_E . ";\n";
-  $data .= '$prodExe_EP = ' . $prodExe_EP . ";\n";
-  $data .= '$prodExe_E2 = ' . $prodExe_E2 . ";\n";
-  $data .= '$venteServ_E = ' . $venteServ_E . ";\n";
-  $data .= '$prodExe_EP = ' . $venteServ_EP . ";\n";
-  $data .= '$prodExe_E2 = ' . $venteServ_E2 . ";\n";
-  $data .= '$varStock_E = ' . $varStock_E . ";\n";
-  $data .= '$varStock_EP = ' . $varStock_EP . ";\n";
-  $data .= '$varStock_E2 = ' . $varStock_E2 . ";\n";
-  $data .= '$immobiProd_E = ' . $immobiProd_E . ";\n";
-  $data .= '$immobiProd_EP = ' . $immobiProd_EP . ";\n";
-  $data .= '$immobiProd_E2 = ' . $immobiProd_E2 . ";\n";
-  $data .= '$ConsExe_E = ' . $ConsExe_E . ";\n";
-  $data .= '$ConsExe_EP = ' . $ConsExe_EP . ";\n";
-  $data .= '$ConsExe_E2 = ' . $ConsExe_E2 . ";\n";
-  $data .= '$achatCons_E = ' . $achatCons_E . ";\n";
-  $data .= '$achatCons_EP = ' . $achatCons_EP . ";\n";
-  $data .= '$achatCons_E2 = ' . $achatCons_E2 . ";\n";
-  $data .= '$autreCharge_E = ' . $autreCharge_E . ";\n";
-  $data .= '$autreCharge_EP = ' . $autreCharge_EP . ";\n";
-  $data .= '$autreCharge_E2 = ' . $autreCharge_E2 . ";\n";
-  $data .= '$valAjout_E = ' . $valAjout_E . ";\n";
-  $data .= '$valAjout_EP = ' . $valAjout_EP . ";\n";
-  $data .= '$valAjout_E2 = ' . $valAjout_E2 . ";\n";
-  $data .= '$subExp_E = ' . $subExp_E . ";\n";
-  $data .= '$subExp_EP = ' . $subExp_EP . ";\n";
-  $data .= '$subExp_E2 = ' . $subExp_E2 . ";\n";
-  $data .= '$impotTaxe_E = ' . $impotTaxe_E . ";\n";
-  $data .= '$impotTaxe_EP = ' . $impotTaxe_EP . ";\n";
-  $data .= '$impotTaxe_E2 = ' . $impotTaxe_E2 . ";\n";
-  $data .= '$chargePers_E = ' . $chargePers_E . ";\n";
-  $data .= '$chargePers_EP = ' . $chargePers_EP . ";\n";
-  $data .= '$chargePers_E2 = ' . $chargePers_E2 . ";\n";
-  $data .= '$ExcedentB_E = ' . $ExcedentB_E . ";\n";
-  $data .= '$ExcedentB_EP = ' . $ExcedentB_EP . ";\n";
-  $data .= '$ExcedentB_E2 = ' . $ExcedentB_E2 . ";\n";
-  $data .= '$autresProd_E = ' . $autresProd_E . ";\n";
-  $data .= '$autresProd_EP = ' . $autresProd_EP . ";\n";
-  $data .= '$autresProd_E2 = ' . $autresProd_E2 . ";\n";
-  $data .= '$autresCharg_E = ' . $autresCharg_E . ";\n";
-  $data .= '$autresCharg_EP = ' . $autresCharg_EP . ";\n";
-  $data .= '$autresCharg_E2 = ' . $autresCharg_E2 . ";\n";
-  $data .= '$reprisesExpl_E = ' . $reprisesExpl_E . ";\n";
-  $data .= '$reprisesExpl_EP = ' . $reprisesExpl_EP . ";\n";
-  $data .= '$reprisesExpl_E2 = ' . $reprisesExpl_E2 . ";\n";
-  $data .= '$dotationExpl_E = ' . $dotationExpl_E . ";\n";
-  $data .= '$dotationExpl_EP = ' . $dotationExpl_EP . ";\n";
-  $data .= '$dotationExpl_E2 = ' . $dotationExpl_E2 . ";\n";
-  $data .= '$resultatExpl_E = ' . $resultatExpl_E . ";\n";
-  $data .= '$resultatExpl_EP = ' . $resultatExpl_EP . ";\n";
-  $data .= '$resultatExpl_E2 = ' . $resultatExpl_E2 . ";\n";
-  $data .= '$resultatFin_E = ' . $resultatFin_E . ";\n";
-  $data .= '$resultatFin_EP = ' . $resultatFin_EP . ";\n";
-  $data .= '$resultatFin_E2 = ' . $resultatFin_E2 . ";\n";
-  $data .= '$resultatCrt_E = ' . $resultatCrt_E . ";\n";
-  $data .= '$resultatCrt_EP = ' . $resultatCrt_EP . ";\n";
-  $data .= '$resultatCrt_E2 = ' . $resultatCrt_E2 . ";\n";
-  $data .= '$resultatCrt_E = ' . $resultatNonCrt_E . ";\n";
-  $data .= '$resultatCrt_EP = ' . $resultatNonCrt_EP . ";\n";
-  $data .= '$resultatCrt_E2 = ' . $resultatNonCrt_E2 . ";\n";
-  $data .= '$impotRest_E = ' . $impotRest_E . ";\n";
-  $data .= '$impotRest_EP = ' . $impotRest_EP . ";\n";
-  $data .= '$impotRest_E2 = ' . $impotRest_E2 . ";\n";
-  $data .= '$resultatNetExe_E = ' . $resultatNetExe_E . ";\n";
-  $data .= '$resultatNetExe_EP = ' . $resultatNetExe_EP . ";\n";
-  $data .= '$resultatNetExe_E2 = ' . $resultatNetExe_E2 . ";\n";
-  $data .= '$benefice_E = ' . $benefice_E . ";\n";
-  $data .= '$benefice_EP = ' . $benefice_EP . ";\n";
-  $data .= '$resultatNetExe_E2 = ' . $benefice_E2 . ";\n";
-  $data .= '$perte_E = ' . $perte_E . ";\n";
-  $data .= '$perte_EP = ' . $perte_EP . ";\n";
-  $data .= '$perte_E2 = ' . $perte_E2 . ";\n";
-  $data .= '$datatExpl_E = ' . $datatExpl_E . ";\n";
-  $data .= '$datatExpl_EP = ' . $datatExpl_EP . ";\n";
-  $data .= '$datatExpl_E2 = ' . $datatExpl_E2 . ";\n";
-  $data .= '$dotationfin_E = ' . $dotationfin_E . ";\n";
-  $data .= '$dotationfin_E = ' . $dotationfin_E . ";\n";
-  $data .= '$dotationfin_E2 = ' . $dotationfin_E2 . ";\n";
-  $data .= '$dotationNonCour_E = ' . $dotationNonCour_E . ";\n";
-  $data .= '$dotationNonCour_EP = ' . $dotationNonCour_EP . ";\n";
-  $data .= '$dotationNonCour_E2 = ' . $dotationNonCour_E2 . ";\n";
-  $data .= '$reprExpl_E = ' . $reprExpl_E . ";\n";
-  $data .= '$reprExpl_EP = ' . $reprExpl_EP . ";\n";
-  $data .= '$reprExpl_E2 = ' . $reprExpl_E2 . ";\n";
-  $data .= '$repriseFin_E = ' . $repriseFin_E . ";\n";
-  $data .= '$repriseFin_EP = ' . $repriseFin_EP . ";\n";
-  $data .= '$repriseFin_E2 = ' . $repriseFin_E2 . ";\n";
-  $data .= '$repNonCour_E = ' . $repNonCour_E . ";\n";
-  $data .= '$repNonCour_EP = ' . $repNonCour_EP . ";\n";
-  $data .= '$repNonCour_E2 = ' . $repNonCour_E2 . ";\n";
-  $data .= '$prodImmb_E = ' . $prodImmb_E . ";\n";
-  $data .= '$prodImmb_EP = ' . $prodImmb_EP . ";\n";
-  $data .= '$prodImmb_E2 = ' . $prodImmb_E2 . ";\n";
-  $data .= '$valNetImmb_E = ' . $valNetImmb_E . ";\n";
-  $data .= '$valNetImmb_EP = ' . $valNetImmb_EP . ";\n";
-  $data .= '$valNetImmb_E2 = ' . $valNetImmb_E2 . ";\n";
-  $data .= '$CAF_E = ' . $CAF_E . ";\n";
-  $data .= '$CAF_EP = ' . $CAF_EP . ";\n";
-  $data .= '$CAF_E2 = ' . $CAF_E2 . ";\n";
-  $data .= '$autofin_E = ' . $autofin_E . ";\n";
-  $data .= '$autofin_EP = ' . $autofin_EP . ";\n";
-  $data .= '$autofin_E2 = ' . $autofin_E2 . ";\n";
- 
-
-
-
-
-
-
-$data .= "?>";
- // Now, the variable $year will contain the year value "2023"
- $nomFichier = 'ESG_fichier_'. $dateChoisis.'.php';
- // Écrire les données dans le nouveau fichier
- file_put_contents($nomFichier, $data);
-
-
+  }
 
 ?>

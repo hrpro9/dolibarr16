@@ -276,59 +276,57 @@ class pdf_Etatderogations extends ModelePDFUser
 				$year=GETPOST('year');
 
 				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/EtatDerogations/Etatderogations_fichier_'.$year.'.php';
+
 				$table =
-			'
-			<style >			
+				'
+				<style >			
 				.gridlines td { border:1px dotted black }
 				.gridlines th { border:1px dotted black }
-			</style>
+				</style>
+										
 			
-			<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
-				<col class="col0">
-				<col class="col1">
-				<col class="col2">
-				<col class="col3">
-				<tbody>
-					
-			<tr class="row2">
-				<td class="column0 style11 s">Indication des Dérogations</td>
-				<td class="column2 style12 s">Justification des Dérogations</td>
-				<td class="column3 style12 s">Influence des Dérogations sur le Patrimoine, la Situation Financière et les Résultats</td>
-			</tr>';
+				<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
+					<col class="col0">
+					<col class="col1">
+					<col class="col2">
+					<col class="col3">
+					<tbody>
+						
+				<tr class="row2">
+					<td class="column0 style11 s">Indication des Dérogations</td>
+					<td class="column2 style12 s">Justification des Dérogations</td>
+					<td class="column3 style12 s">Influence des Dérogations sur le Patrimoine, la Situation Financière et les Résultats</td>
+				</tr>';
 			
 			
-			$table .= '<tr class="row3">
-			<td class="column0 style14 null">I. Dérogations aux principes comptables fondamentaux</td>
-			';
-			for ($i = 0; $i <= 1; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Etatderogations' . $i}.'</td>' . "\n";
-			}
-			$table .= '</tr>';
-			
-			$table .= '<tr class="row4">
-			<td class="column0 style14 null">II. Dérogations aux méthodes d évaluation</td>
-			';
-			for ($i = 2; $i <= 3; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Etatderogations' . $i}.'</td>' . "\n";
-			}
-			$table .= '</tr>';
-			
-			$table .= '<tr class="row5">
-			<td class="column0 style14 null">III. Dérogations aux règles d établissement et de présentation des états de synthèse</td>
-			';
-			for ($i = 4; $i <= 5; $i++) {
-				$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Etatderogations' . $i}.'</td>' . "\n";
-			}
-			$table .= '</tr>';
-			
-
-			
-
-			$table .= '
-			
-			</tbody>
-			</table>';
-            // Replace with your actual table HTML
+				$table .= '<tr class="row3">
+				<td class="column0 style14 null">I. Dérogations aux principes comptables fondamentaux</td>
+				';
+				for ($i = 0; $i <= 1; $i++) {
+					$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Etatderogations' . $i}.'</td>' . "\n";
+				}
+				$table .= '</tr>';
+				
+				$table .= '<tr class="row4">
+				<td class="column0 style14 null">II. Dérogations aux méthodes d évaluation</td>
+				';
+				for ($i = 2; $i <= 3; $i++) {
+					$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Etatderogations' . $i}.'</td>' . "\n";
+				}
+				$table .= '</tr>';
+				
+				$table .= '<tr class="row5">
+				<td class="column0 style14 null">III. Dérogations aux règles d établissement et de présentation des états de synthèse</td>
+				';
+				for ($i = 4; $i <= 5; $i++) {
+					$table .= '<td class="column' . ($i + 2) . ' style16 null">'.${'Etatderogations' . $i}.'</td>' . "\n";
+				}
+				$table .= '</tr>';
+				$table .= '		
+				</tbody>
+			    </table>
+				'
+				; // Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
 				$pdf->SetY($pdf->GetY() + 6);

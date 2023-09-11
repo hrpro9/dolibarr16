@@ -245,7 +245,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
         <col class="col16">
         <center>
         
-        <input type="date" name="etatDesInterets181"  id="etatDesInterets181" value="<?php if(isset($etatDesInterets181)){ echo $etatDesInterets181;} ?>"  placeholder ="Année" required style="margin-top: 18px;font-size:95%; background: #ededed; font-weight:bolder; padding: 8px 15px 8px 15px; border: block; ">
+        <input type="date" required name="etatDesInterets181"  id="etatDesInterets181" value="<?php if(isset($etatDesInterets181)){ echo $etatDesInterets181;} ?>"  placeholder ="Année" required style="margin-top: 18px;font-size:95%; background: #ededed; font-weight:bolder; padding: 8px 15px 8px 15px; border: block; ">
         <input type="hidden" name="check"  value="true">
         </center>
         <tbody>
@@ -302,20 +302,22 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
           <tr class="row4">
             <?php
                 for ($i = 0; $i <= 15; $i++) {
-                    if ($i === 6) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                    if($i===0){
+                      echo ' <td class="column10 style22 s">A.ASSociés <input type="hidden" name="etatDesInterets0" value="A.ASSociés"></td>';
+                    }else if ($i === 6) {
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===5 || $i === 9 || $i === 10 || $i === 11 || $i === 12 || $i === 14) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -328,19 +330,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
           <?php
                 for ($i = 16; $i <= 30; $i++) {
                     if ($i === 22) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===21 ||$i === 25 || $i === 26 || $i === 27 || $i === 28 || $i === 29) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -353,19 +355,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
           <?php
                 for ($i = 31; $i <= 45; $i++) {
                     if ($i ===37) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===36 || $i ===40 || $i === 41 || $i === 42 || $i === 43 || $i === 44) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -378,19 +380,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
          <?php
                 for ($i = 46; $i <= 60; $i++) {
                     if ($i ===52) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===51 || $i ===55 || $i === 56 || $i === 57 || $i === 58 || $i === 59) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -403,19 +405,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
           <?php
                 for ($i = 61; $i <= 75; $i++) {
                     if ($i ===67) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===66 || $i ===70 || $i === 71 || $i === 72 || $i === 73 || $i === 74) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -428,19 +430,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
           <?php
                 for ($i = 76; $i <= 90; $i++) {
                     if ($i ===82) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===81 || $i ===85 || $i === 86 || $i === 87 || $i === 88 || $i === 89) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -452,20 +454,22 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
            <tr class="row10">
            <?php
                 for ($i = 91; $i <= 105; $i++) {
-                    if ($i ===97) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                    if($i===91){
+                        echo ' <td class="column10 style22 s">B.Tiers <input type="hidden" name="etatDesInterets91" value="B.Tiers"></td>';
+                      }elseif ($i ===97) {
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===96 || $i ===100 || $i === 101 || $i === 102 || $i === 103 || $i === 104) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -478,19 +482,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
           <?php
                 for ($i = 106; $i <= 120; $i++) {
                     if ($i ===112) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===111 || $i ===115 || $i === 116 || $i === 117 || $i === 118 || $i === 119) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -503,19 +507,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
           <?php
                 for ($i = 121; $i <= 135; $i++) {
                     if ($i ===127) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===126 || $i ===130 || $i === 131 || $i === 132 || $i === 133 || $i === 134) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -528,19 +532,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
          <?php
                 for ($i = 136; $i <= 150; $i++) {
                     if ($i ===142) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===141 || $i ===145 || $i === 146 || $i === 147 || $i === 148 || $i === 149) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -553,19 +557,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
           <?php
                 for ($i = 151; $i <= 165; $i++) {
                     if ($i ===157) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===156 || $i ===160 || $i === 161 || $i === 162 || $i === 163 || $i === 164) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
@@ -578,19 +582,19 @@ AUTRES QUE LES ORGANISMES DE BANQUE OU DE CREDIT</td>
           <?php
                 for ($i = 166; $i <= 180; $i++) {
                     if ($i ===172) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="date" required style="width: 82px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else if ($i===171 || $i ===175 || $i === 176 || $i === 177 || $i === 178 || $i === 179) {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="number" required style="width: 80px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }
                         echo '" /></td>' . "\n";
                     } else {
-                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
+                        echo '<td class="column' . ($i + 2) . ' style22 null"><input min="0" type="text" required style="width: 90px;" name="etatDesInterets' . $i . '" id="etatDesInterets' . $i . '" value="';
                         if (isset(${"etatDesInterets" . $i})) {
                             echo ${"etatDesInterets" . $i};
                         }

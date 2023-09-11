@@ -1,5 +1,4 @@
 
-
 <?php
 
 
@@ -277,126 +276,129 @@ class pdf_Etatlimpot extends ModelePDFUser
 				$year=GETPOST('year');
 
 				include DOL_DOCUMENT_ROOT . '/custom/etatscomptables/EtatLimpot/Etatlimpot_fichier_'.$year.'.php';
+
 				$table =
-			'
-			<style >			
+				'
+				<style >			
 				.gridlines td { border:1px dotted black }
 				.gridlines th { border:1px dotted black }
-			</style>	
-			
-			<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
-				<col class="col0">
-				<col class="col1">
-				<col class="col2">
-				<col class="col3">
-				<tbody>
-					
-			<tr class="row2">
-				<td class="column0 style11 s">Nature des Produits</td>
-				<td class="column2 style12 s">Taux</td>
-				<td class="column3 style12 s">Montant</td>
-			</tr>
-            <tr class="row3">
-			<td class="column0 style14 null">CA taxable</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot0.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">CA exonéré à 100%</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot1.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">CA soumis au taux réduit</td>
-			<td class="column0 style14 null">'.$Etatlimpot2.'</td>
-			<td class="column0 style14 null">'.$Etatlimpot3.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot4.'</td>
-			<td class="column0 style14 null">'.$Etatlimpot5.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot6.'</td>
-			<td class="column0 style14 null">'.$Etatlimpot7.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot8.'</td>
-			<td class="column0 style14 null">'.$Etatlimpot9.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot10.'</td>
-			<td class="column0 style14 null">'.$Etatlimpot11.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot12.'</td>
-			<td class="column0 style14 null">'.$Etatlimpot13.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">Autres produits taxables</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot14.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">Autres produits d exploitation</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot15.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">Produits financiers</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot16.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">Subventions</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot17.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">'.$Etatlimpot18.'</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot19.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">'.$Etatlimpot20.'</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot21.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">'.$Etatlimpot22.'</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot23.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">'.$Etatlimpot24.'</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot25.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">'.$Etatlimpot26.'</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot27.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null"> Dénominateur (1 + 2 + 3 + 4) </td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$sum1.'</td>
-			</tr>
-			<tr class="row3">
-			<td class="column0 style14 null">Montant de l impôt sur les sociétés (IS) dû</td>
-			<td class="column0 style14 null"></td>
-			<td class="column0 style14 null">'.$Etatlimpot28.'</td>
-			</tr>
-			
-			
+			</style>
+									
 		
-			</tbody>
-			</table>';
-            // Replace with your actual table HTML
+			<table border="0" cellpadding="0" cellspacing="0" id="sheet0" class="sheet0 gridlines">
+			<col class="col0">
+			<col class="col1">
+			<col class="col2">
+			<col class="col3">
+			<tbody>
+				
+		<tr class="row2">
+			<td class="column0 style11 s">Nature des Produits</td>
+			<td class="column2 style12 s">Taux</td>
+			<td class="column3 style12 s">Montant</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">CA taxable</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot0.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">CA exonéré à 100%</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot1.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">CA soumis au taux réduit</td>
+		<td class="column0 style14 null">'.$Etatlimpot2.'</td>
+		<td class="column0 style14 null">'.$Etatlimpot3.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot4.'</td>
+		<td class="column0 style14 null">'.$Etatlimpot5.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot6.'</td>
+		<td class="column0 style14 null">'.$Etatlimpot7.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot8.'</td>
+		<td class="column0 style14 null">'.$Etatlimpot9.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot10.'</td>
+		<td class="column0 style14 null">'.$Etatlimpot11.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot12.'</td>
+		<td class="column0 style14 null">'.$Etatlimpot13.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">Autres produits taxables</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot14.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">Autres produits d exploitation</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot15.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">Produits financiers</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot16.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">Subventions</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot17.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">'.$Etatlimpot18.'</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot19.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">'.$Etatlimpot20.'</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot21.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">'.$Etatlimpot22.'</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot23.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">'.$Etatlimpot24.'</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot25.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">'.$Etatlimpot26.'</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot27.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null"> Dénominateur (1 + 2 + 3 + 4) </td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$sum1.'</td>
+		</tr>
+		<tr class="row3">
+		<td class="column0 style14 null">Montant de l impôt sur les sociétés (IS) dû</td>
+		<td class="column0 style14 null"></td>
+		<td class="column0 style14 null">'.$Etatlimpot28.'</td>
+		</tr>
+		
+		
+	
+		</tbody>
+		</table>
+				'
+				; // Replace with your actual table HTML
 
 				$pdf->SetFont('', '', $default_font_size);
 				$pdf->SetY($pdf->GetY() + 6);

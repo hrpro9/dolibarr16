@@ -33,9 +33,15 @@
                     $year = $selectedDate->format('Y');
                     $data .= '$EtatChangment' . $i . ' = ' . $year . ";\n";   
                 }
+                else   if (is_string(${'EtatChangment' . $i})) {
+                  // If the value is a string, add double quotes around it
+                 $data .= '$EtatChangment' . $i . ' = "' . ${'EtatChangment' . $i} . "\";\n";
+                }
                 else {
-                    $data .= '$EtatChangment' . $i . ' = ' . ${'EtatChangment' . $i} . ";\n";  
-                } 
+                  $data .= '$EtatChangment' . $i . ' = ' . ${'EtatChangment' . $i} . ";\n"; 
+                }
+
+                 
             }
             $data .= "?>";
             $selectedDate = new DateTime($EtatChangment46);

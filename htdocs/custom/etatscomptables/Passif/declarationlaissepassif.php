@@ -278,7 +278,10 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
      <option value="">Choisis date</option>
       <?php affichageAnnees()?>
     </select>
-     <button type="submit" name="chargement" style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;">Chargement</button><br>  
+    <button type="submit" name="chargement" 
+    style="margin-top: 18px;background: #4B99AD;padding: 8px 15px 8px 15px;border: none;color: #fff;">Chargement</button><br>  
+  
+
     </form>
     <br>
       <?php
@@ -342,24 +345,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column5 style15 null"></td>
             <td class="column6 style21 null"><?php readMontant(($aCapitaN2*-1*-1))?></td>
           </tr>
-          <tr class="row6">
-            <td class="column0 style26 s">Moins : Capital appelé </td>
-            <td class="column1 style25 null"></td>
-            <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
-            <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
-          </tr>
-          <tr class="row7">
-            <td class="column0 style26 s">Moins : Dont versé </td>
-            <td class="column1 style25 null"></td>
-            <td class="column2 style24 null"></td>
-            <td class="column3 style23 null"></td>
-            <td class="column4 style22 null"></td>
-            <td class="column5 style15 null"></td>
-            <td class="column6 style21 null"></td>
-          </tr>
+          
           <tr class="row8">
             <td class="column0 style26 s">Prime d'emission, de fusion, d'apport</td>
             <td class="column1 style25 null"></td>

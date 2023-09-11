@@ -9,7 +9,7 @@ llxHeader("", "");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve the form data
-    for ($i = 0; $i <= 75; $i++) {
+    for ($i = 0; $i <= 82; $i++) {
         ${'fusion' . $i} = $_POST['fusion' . $i];
     }
     
@@ -203,7 +203,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
         <col class="col10">
         <col class="col11">
         <center>
-        <input type="date" name="fusion75"  id="fusion75" value="<?php if(isset($fusion75)){ echo $fusion75;} ?>"  placeholder ="Année" required style="margin-top: 18px;font-size:95%; background: #ededed; font-weight:bolder; padding: 8px 15px 8px 15px; border: block; ">
+        <input type="date" name="fusion82"  id="fusion82" value="<?php if(isset($fusion82)){ echo $fusion82;} ?>"  placeholder ="Année" required style="margin-top: 18px;font-size:95%; background: #ededed; font-weight:bolder; padding: 8px 15px 8px 15px; border: block; ">
         <input type="hidden" name="check"  value="true">
         </center>
         <tbody>
@@ -244,7 +244,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column1 style15 s">Terrain (1)</td>
             <?php
             for ($i =0; $i < 9; $i++) {
-                echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                 if (isset(${"fusion" . $i})) {
                     echo ${"fusion" . $i};
                 }
@@ -262,7 +262,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column1 style19 s">Constructions</td>
             <?php
                 for ($i = 9; $i < 17; $i++) {
-                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                     if (isset(${"fusion" . $i})) {
                         echo ${"fusion" . $i};
                     }
@@ -276,7 +276,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column1 style19 s">Matériel et outillage</td>
             <?php
                 for ($i = 17; $i < 25; $i++) {
-                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                     if (isset(${"fusion" . $i})) {
                         echo ${"fusion" . $i};
                     }
@@ -290,7 +290,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column1 style19 s">Matériel de transport</td>
             <?php
                 for ($i = 25; $i < 33; $i++) {
-                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                     if (isset(${"fusion" . $i})) {
                         echo ${"fusion" . $i};
                     }
@@ -303,8 +303,8 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column0 style19 n">5</td>
             <td class="column1 style19 s">Agencements-Installations</td>
             <?php
-                for ($i = 32; $i < 40; $i++) {
-                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                for ($i = 33; $i < 41; $i++) {
+                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                     if (isset(${"fusion" . $i})) {
                         echo ${"fusion" . $i};
                     }
@@ -317,8 +317,8 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column0 style19 n">6</td>
             <td class="column1 style19 s">Brevets</td>
             <?php
-                for ($i = 39; $i < 47; $i++) {
-                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                for ($i = 41; $i < 49; $i++) {
+                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                     if (isset(${"fusion" . $i})) {
                         echo ${"fusion" . $i};
                     }
@@ -331,8 +331,8 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column0 style19 n">7</td>
             <td class="column1 style19 s">Autres éléments amortissables</td>
             <?php
-                for ($i = 46; $i < 54; $i++) {
-                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                for ($i = 49; $i < 57; $i++) {
+                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                     if (isset(${"fusion" . $i})) {
                         echo ${"fusion" . $i};
                     }
@@ -345,8 +345,8 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column0 style19 n">8</td>
             <td class="column1 style19 s">Titres de participation</td>
             <?php
-                for ($i = 53; $i < 61; $i++) {
-                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                for ($i = 57; $i < 65; $i++) {
+                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                     if (isset(${"fusion" . $i})) {
                         echo ${"fusion" . $i};
                     }
@@ -359,8 +359,8 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column0 style19 n">9</td>
             <td class="column1 style19 s">Fonds de commerce</td>
             <?php
-                for ($i = 60; $i < 68; $i++) {
-                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                for ($i = 65; $i < 73; $i++) {
+                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                     if (isset(${"fusion" . $i})) {
                         echo ${"fusion" . $i};
                     }
@@ -373,8 +373,8 @@ include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
             <td class="column0 style21 n">10</td>
             <td class="column1 style21 s">Autres éléments non amortissables</td>
             <?php
-                for ($i = 67; $i < 75; $i++) {
-                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="number" style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
+                for ($i = 73; $i < 81; $i++) {
+                    echo '<td class="column' . ($i + 2) . ' style16 null"><input min="0" type="text" required style="width: 100px;" name="fusion' . $i . '" id="fusion' . $i . '" value="';
                     if (isset(${"fusion" . $i})) {
                         echo ${"fusion" . $i};
                     }
