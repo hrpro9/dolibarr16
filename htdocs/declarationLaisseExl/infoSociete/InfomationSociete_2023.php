@@ -1,0 +1,20 @@
+<?php $nom_societe = "i-gouvenancia";
+$ifSoc = "100";
+$ice = "100";
+$rc = "100";
+$cnss = "1000";
+$tp = "100";
+$telephone = "0725369841";
+$fax = "5868548785";
+$email = "i-gouvenancia@gmail.com";
+$adresse = "fdggdf";
+$ville = "dsdfd";
+$dateActivite = "2023-10-25";
+$annee = "2023";
+$typeAnnee = "position";
+$anneeDu = "01/01/2023";
+$anneeAu = "31/12/2023";
+$balanceN = "BILAN - ACTIF.xlsx";
+$balanceN1 = "BILAN - PASSIF.xlsx";
+$balanceN2 = "";
+?>

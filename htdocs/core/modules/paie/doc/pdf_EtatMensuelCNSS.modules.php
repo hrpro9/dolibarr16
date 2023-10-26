@@ -203,6 +203,8 @@ class pdf_EtatMensuelCNSS extends ModelePDFUser
 	 */
 	public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams)
 	{
+
+		
 		// phpcs:enable
 		global $object, $user, $langs, $conf, $mysoc, $hookmanager, $nblines, $action, $prev_month, $prev_year, $periode, $year, $db, $cnssSalariale, $cnssPatronale;
 		error_log("work?");
@@ -432,6 +434,8 @@ class pdf_EtatMensuelCNSS extends ModelePDFUser
 					<td class="center-td">' . price(array_sum(array_column($salarais, 'cnssPatronale'))) . '</td>
 					<td class="center-td">' . price($total) . '</td>
 				</tr>';
+
+
 
 				$table .= "</tbody>
 				</table></div>";

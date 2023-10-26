@@ -33,6 +33,68 @@ if (!empty($permissioncreate) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissioncreate; // For backward compatibility
 }
 
+
+
+// builddocTest
+if ($action == 'builddoc2' && $permissiontoadd) {
+	if (is_numeric(GETPOST('model', 'alpha'))) {
+		$error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
+	} else {
+		// Reload to get all modified line records and be ready for hooks
+		$ret = $object->fetch($id);
+		$ret = $object->fetch_thirdparty();
+
+		$outputlangs = $langs;
+
+		if (!empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+
+		// To be sure vars is defined
+		if (empty($hidedetails)) {
+			$hidedetails = 0;
+		}
+		if (empty($hidedesc)) {
+			$hidedesc = 0;
+		}
+		if (empty($hideref)) {
+			$hideref = 0; 
+		}
+		if (empty($moreparams)) {
+			$moreparams = null;
+		}
+
+        $model_pdf=(GETPOST('model', 'alpha'));
+
+		$result = $object->generateDocument($model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if ($result <= 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		} else {
+			if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
+				setEventMessages($langs->trans("FileGenerated"), null);
+
+				/*$urltoredirect = $_SERVER['REQUEST_URI'];
+				$urltoredirect = preg_replace('/#builddoc$/', '', $urltoredirect);
+				$urltoredirect = preg_replace('/action=builddoc&?/', '', $urltoredirect); // To avoid infinite loop
+
+				header('Location: '.$urltoredirect.'#builddoc');
+				exit;*/
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
 // Build doc
 if ($action == 'builddoc' && $permissiontoadd) {
 	if (is_numeric(GETPOST('model', 'alpha'))) {
@@ -170,7 +232,7 @@ if ($action == 'remove_file' && $permissiontoadd) {
         $id = GETPOST('id');
         $file = GETPOST('file');
 
-        if( empty($id) )
+        if(empty($id))
         {
             global $db;
             $file = GETPOST('file');
@@ -182,14 +244,11 @@ if ($action == 'remove_file' && $permissiontoadd) {
             {
                 $param=$rest->fetch_assoc();
                 $rowid=$param['rowid'];  
-
                 $urltoredirect = DOL_URL_ROOT.'/commande/dispatch.php?id='.$rowid;
                 echo "<script>window.location.href = '$urltoredirect';</script>";
             }else{
                 echo "<script>window.location.href = '$urltoredirect ';</script>";
             }
-                
-         
         }else{
             echo "<script>window.location.href = '$urltoredirect ';</script>";
         }

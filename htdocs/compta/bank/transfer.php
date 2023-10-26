@@ -341,12 +341,10 @@ if ($error) {
 }
 
 print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'bank_account');
-
 print '<span class="opacitymedium">'.$langs->trans("TransferDesc").'</span>';
 print "<br><br>";
 
 if ($action == 'add') {
-
 	$account_from = GETPOST('account_from', 'int');
 	$account_to = GETPOST('account_to', 'int');
 	$label = GETPOST('label', 'alpha');
@@ -384,7 +382,6 @@ else{
 	print '</div>';
 	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"   ></div>';
 	print "</form>";
-
 	ShowDocuments();
 }
 

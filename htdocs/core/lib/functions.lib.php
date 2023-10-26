@@ -482,13 +482,14 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  @return string|array         Value found (string or array), or '' if check fails
  */
 function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
-{
+{                      
 	global $mysoc, $user, $conf;
 
 	if (empty($paramname)) {
 		return 'BadFirstParameterForGETPOST';
 	}
-	if (empty($check)) {
+
+	if (empty($check)) {  
 		dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and 2nd param is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Enable this line to know who call the GETPOST with '' $check parameter.
 		//var_dump(debug_backtrace()[0]);
@@ -506,7 +507,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		return 'BadThirdParameterForGETPOST';
 	}
 
-	if (empty($method) || $method == 3 || $method == 4) {
+	if (empty($method) || $method == 3 || $method == 4) { 
 		$relativepathstring = $_SERVER["PHP_SELF"];
 		// Clean $relativepathstring
 		if (constant('DOL_URL_ROOT')) {
@@ -1935,7 +1936,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$outmore .= '</div>';
 	}
 
-	if ($popuptab) {	// If there is some tabs not shown
+	if ($popuptab) {// If there is some tabs not shown
 		$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 		$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 		$widthofpopup = 200;

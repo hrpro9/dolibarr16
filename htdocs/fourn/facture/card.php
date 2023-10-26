@@ -45,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
 if (!empty($conf->product->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -79,6 +80,9 @@ $origin		= GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $fac_recid = GETPOST('fac_rec', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+
+$id_doc=(GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
+
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -132,9 +136,9 @@ $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatede
 $error = 0;
 
 
-/*
+/*  
  * Actions
- */
+*/
 
 $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -3788,12 +3792,116 @@ if ($action == 'create') {
 				}
 				print '</div>';
 
+				$object_value=$object;
+
+				$object = new User($db);
+				$id=$user->id;
+				
+			  function GenerateDocuments()
+			  {
+				$id_doc=(GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
+
+				print '<form id="frmgen" name="builddoc2" method="post">';
+				print '<input type="hidden" name="token" value="' . newToken() . '">';
+				print '<input type="hidden" name="id_doc" value="' . $id_doc . '">';
+				print '<input type="hidden" name="action" value="builddoc2">';
+				print '<input type="hidden" name="model" value="AWOV">';
+				print '<div class="center"  >';
+				print '
+				<center>
+					<table style="display: flex;justify-content: center;align-items: center;margin-left:150px;"  >
+						<tr>
+							<td>
+								<div class="center" style="border: 3px solid black;text-align: left;padding-bottom:56px;padding-right:8px;padding-left:8px;">
+									<h4 > <span style="border-bottom: 2px solid black;text-align: center;"> FRAIS </span> </h4>
+									  <label>A la charge du :</label><br>
+									<label><input type="radio" name="option" value="donnneurOrdre" required> Donneur d\'ordre</label><br>
+									<label><input type="radio" name="option" value="Beneficiaire" required> Bénéficiaire</label>
+								</div>
+							</td>
+							<td>
+								<div class="center" style="border: 3px solid black;padding: 8px;text-align: left;">
+									<h4 ><span style="border-bottom: 2px solid black;text-align: center;"> RETENUE A LA SOURCE </span> </h4>
+									<label><input type="radio"  name="option2" id="Attijariwafa" onclick="toggleRadioButtons()"> A verser par Attijariwafa bank à la charge du :</label><br>
+									<label><input type="radio" name="option2" id="donnneurOrdre2" style="display: none;" value="donnneurOrdre2" required> Donneur d\'ordre</label><br>
+									<label><input type="radio" name="option2" id="Beneficiaire2" style="display: none;" value="Beneficiaire2" required> Bénéficiaire</label><br>
+									<label><input type="radio" name="option2" value="VerserClient" required> A Verser par le client</label><br>
+									<label><input type="radio" name="option2" value="RegleeClient" required> Déjà réglée par le client</label>
+								</div>
+							</td>
+							<td>
+								<div class="center" style="border: 3px solid black;text-align: left;padding-bottom:56px;padding-right:8px;padding-left:8px;">
+									<h4 ><span style="border-bottom: 2px solid black;"> COURS DEJA NEOCIE </span> </h4>
+									 <label> Nature contrat commercial  :</label>
+									<input type="text" name="NCommercial" required style="border: 1px solid black;"><br>
+									<label> Pays d\'origine marchandise : </label>
+									<input type="text" name="PMarchandise" required style="border: 1px solid black;"><br>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<script>
+						function toggleRadioButtons() {
+							const checkbox =  document.getElementById(\'Attijariwafa\');
+							const donneurOrdre2 = document.getElementById(\'donnneurOrdre2\');
+							const Beneficiaire2 = document.getElementById(\'Beneficiaire2\');
+							if (checkbox.checked) {
+								donneurOrdre2.style.display = \'inline\';
+								Beneficiaire2.style.display = \'inline\';
+							} else {
+								donneurOrdre2.style.display = \'none\';
+								Beneficiaire2.style.display = \'none\';
+							}
+						}
+					</script>
+					</center>
+				';
+				print '<input type="submit" id="btngen" class="button" name="save" value="Generate">';
+				print '</form>';
+			  }
+			 
+			 
+			   function ShowDocuments()
+			   {
+			       $id_doc=(GETPOST('facid', 'int') ? GETPOST('facid', 'int') : GETPOST('id', 'int'));
+
+				   global $db, $object, $conf, $month, $prev_year, $societe, $showAll, $prev_month, $prev_year, $start;
+				   print '<div class="fichecenter"><divclass="fichehalfleft">';
+				   $formfile = new FormFile($db);
+				   $subdir ='/'.$id_doc.'/';
+				   $filedir = DOL_DATA_ROOT . '/AWOV/'.$id_doc;
+				   $urlsource = $_SERVER['PHP_SELF'] . '';
+				   $genallowed = 0;
+				   $delallowed = 1;
+				   $modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->RH_ADDON_PDF) ? '' : $conf->global->RH_ADDON_PDF));
+
+				   
+
+
+				 if ($societe !== null && isset($societe->default_lang)) {
+				   print $formfile->showdocuments('AWOV', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+				 } else {
+					 print $formfile->showdocuments('AWOV', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0);
+				 }
+			   }
+				$action = GETPOST('action', 'aZ09');
+				$upload_dir = DOL_DATA_ROOT . '/AWOV/'.$id_doc;
+				$permissiontoadd = 1;
+				$donotredirect = 1;
+				include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
+
+				GenerateDocuments(); 
+				ShowDocuments(); 
+
+
 				if ($action != 'confirm_edit') {
 					print '<div class="fichecenter"><div class="fichehalfleft">';
 
 					/*
 					 * Generated documents
 					 */
+					$object=$object_value;
+					
 					$ref = dol_sanitizeFileName($object->ref);
 					$subdir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;
 					$filedir = $conf->fournisseur->facture->dir_output.'/'.$subdir;
@@ -3803,6 +3911,8 @@ if ($action == 'create') {
 					$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF) ? '' : $conf->global->INVOICE_SUPPLIER_ADDON_PDF));
 
 					print $formfile->showdocuments('facture_fournisseur', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+				
+				
 					$somethingshown = $formfile->numoffiles;
 
 					// Show links to link elements
@@ -3831,7 +3941,7 @@ if ($action == 'create') {
 		$defaulttopic = 'SendBillRef';
 		$diroutput = $conf->fournisseur->facture->dir_output;
 		$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
-		$trackid = 'sinv'.$object->id;
+		$trackid = 'sinv'.$object_value->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}

@@ -5437,6 +5437,7 @@ abstract class CommonObject
 				global $db; // Required to solve a conception default making an include of code using $db instead of $this->db just after.
 				require_once $file;
 				
+				
 				$obj = new $classname($this->db);
 				
 
@@ -5491,10 +5492,20 @@ abstract class CommonObject
 				// output format that does not support UTF8.
 				$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
 
+
+			
+
 				if (in_array(get_class($this), array('Adherent'))) {
+					
 					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
 				} else {
+
+					
+					
+
 					 $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+
+					 
 				}
 				// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 

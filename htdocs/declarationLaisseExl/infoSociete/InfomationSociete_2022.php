@@ -1,0 +1,20 @@
+<?php $nom_societe = "i-gou";
+$ifSoc = "100";
+$ice = "100";
+$rc = "100";
+$cnss = "123";
+$tp = "100";
+$telephone = "0725369841";
+$fax = "5868548785";
+$email = "i-gou@gmail.com";
+$adresse = "casa";
+$ville = "casa";
+$dateActivite = "2016-06-25";
+$annee = "2022";
+$typeAnnee = "position";
+$anneeDu = "01/01/2022";
+$anneeAu = "31/12/2022";
+$balanceN = "Etat_mutuelle_2023_1 (1).xlsx";
+$balanceN1 = "BILAN - PASSIF.xlsx";
+$balanceN2 = "BILAN - PASSIF.xlsx";
+?>

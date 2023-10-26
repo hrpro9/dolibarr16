@@ -715,6 +715,8 @@ class FormFile
 
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
+			
+
 			// Model
 			if (!empty($modellist)) {
 				asort($modellist);
@@ -734,6 +736,9 @@ class FormFile
 			} else {
 				$out .= '<div class="float">'.$langs->trans("Files").'</div>';
 			}
+
+		
+			
 
 			// Language code (if multilang)
 			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && !empty($conf->global->MAIN_MULTILANGS) && !$forcenomultilang && (!empty($modellist) || $showempty)) {
@@ -817,9 +822,12 @@ class FormFile
 					$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
 				}
 
+			
 				// Get list of files stored into database for same relative directory
 				if ($relativedir) {
 					completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+				
 
 					//var_dump($sortfield.' - '.$sortorder);
 					if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)

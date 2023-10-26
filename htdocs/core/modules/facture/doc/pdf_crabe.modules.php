@@ -844,6 +844,11 @@ class pdf_crabe extends ModelePDFFactures
 					$posy = $this->_tableau_versements($pdf, $object, $posy, $outputlangs, $heightforfooter);
 				}
 
+				// DATAMATRIX (ISO/IEC 16022:2006)
+				$pdf->write2DBarcode($info, 'DATAMATRIX', 150, 235, 35, 35, $style, 'N');
+
+				
+
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {

@@ -5683,28 +5683,7 @@ if ($action == 'create') {
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments(
-			'facture',
-			$filename,
-			$filedir,
-			$urlsource,
-			$genallowed,
-			$delallowed,
-			$object->model_pdf,
-			1,
-			0,
-			0,
-			28,
-			0,
-			'',
-			'',
-			'',
-			$soc->default_lang,
-			'',
-			$object,
-			0,
-			'remove_file_comfirm'
-		);
+		print $formfile->showdocuments('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->model_pdf,1,0,0,28,0,'','','',$soc->default_lang,'',$object,0,'remove_file_comfirm');
 
 		$somethingshown = $formfile->numoffiles;
 

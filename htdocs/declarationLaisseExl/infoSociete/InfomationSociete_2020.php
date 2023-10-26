@@ -1,0 +1,20 @@
+<?php $nom_societe = "ez";
+$ifSoc = "ez";
+$ice = "dsfq";
+$rc = "dsf";
+$cnss = "ez";
+$tp = "dsf";
+$telephone = "ez";
+$fax = "fds";
+$email = "slhhoub@gmail.com";
+$adresse = "ezffds";
+$ville = "fds";
+$dateActivite = "2023-10-25";
+$annee = "2020";
+$typeAnnee = "position";
+$anneeDu = "01/01/2020";
+$anneeAu = "31/12/2020";
+$balanceN = "BILAN - ACTIF (1).xlsx";
+$balanceN1 = "BILAN-PASSIF.html";
+$balanceN2 = "";
+?>

@@ -444,7 +444,7 @@ class pdf_OrderVirement extends ModelePDFUser
 	 *  @param  Translate           $outputlangs    Object lang for output
 	 *  @return void
 	 */
-	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $totalNet, $periode)
+	 protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $totalNet, $periode)
 	{
 		global $langs, $conf, $mysoc, $prev_month, $prev_year;
 
@@ -505,10 +505,10 @@ class pdf_OrderVirement extends ModelePDFUser
 		);
 
 
-		// $info = "Nom: " . $object->firstname . " " . $object->lastname . ". Periode: " . $periode . ". Salaire Net: " . price($totalNet, 0);
+		$info = "Nom: " . $object->firstname . " " . $object->lastname . ". Periode: " . $periode . ". Salaire Net: " . price($totalNet, 0);
 
 		// // // QRCODE,L : QR-CODE Low error correction
-		// $pdf->write2DBarcode($info, 'QRCODE,L', 160, 6, 30, 30, $style, 'N');
+		$pdf->write2DBarcode($info, 'QRCODE,L', 160, 242, 30, 30, $style, 'N');
 
 		//Date
 		$posy += 2;
@@ -597,7 +597,7 @@ class pdf_OrderVirement extends ModelePDFUser
 			$mode =  'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
 
-			// Show recipient
+			// Show recipient       
 			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format

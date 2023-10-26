@@ -299,6 +299,8 @@ function pdf_getPDFFontSize($outputlangs)
 		$size = $conf->global->MAIN_PDF_FORCE_FONT_SIZE;
 	}
 
+
+
 	return $size;
 }
 

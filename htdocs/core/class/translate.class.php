@@ -723,12 +723,15 @@ class Translate
 			}
 
 			return $str;
-		} else {
-			if ($key[0] == '$') {
+		}else {
+			if (!empty($key) && $key[0] == '$') {
 				return dol_eval($key, 1, 1, '1');
+			} elseif (!empty($key)) {
+				return $this->getTradFromKey($key);
 			}
-			return $this->getTradFromKey($key);
 		}
+		
+
 	}
 
 
