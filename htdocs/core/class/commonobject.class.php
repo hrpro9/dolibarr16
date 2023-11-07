@@ -5400,6 +5400,7 @@ abstract class CommonObject
 				$modele = $tmp[0];
 				$srctemplatepath = $tmp[1];
 			}
+		
 
 			// Search template files
 			$file = '';

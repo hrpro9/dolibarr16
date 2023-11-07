@@ -17,7 +17,6 @@
         $typeAnnee=$_POST['typeAnnee'];
         $anneeDu=$_POST['anneeDu'];
         $anneeAu=$_POST['anneeAu'];
-
         $nomFichier = 'infoBalance_'. $annee.'.php';
         $checkFile= DOL_DOCUMENT_ROOT.'/custom/etatscomptables/declarationLaisseExl/infoBalance/'.$nomFichier;
         if (!file_exists($checkFile)) {
@@ -28,7 +27,6 @@
                 $tempName = $_FILES['balanceN']['tmp_name'];
                 $newFileName = $uploadDirectory . basename($_FILES['balanceN']['name']);
                 move_uploaded_file($tempName, $newFileName);
-                //   echo 'File "balanceN" has been uploaded successfully.<br>';
                 // Read the Excel file
                 $excelFile = $newFileName ; // Replace with the correct path
                 $spreadsheet = IOFactory::load($excelFile);
@@ -36,7 +34,7 @@
                 $data = $worksheet->toArray();
                 // Write the data to a PHP file
                 $phpFileContent = '<?php' . PHP_EOL;
-                $phpFileContent .= '$data = ' . var_export($data, true) . ';' . PHP_EOL;
+                $phpFileContent .= '$databalanceN1 = ' . var_export($data, true) . ';' . PHP_EOL;
                 $phpFileContent .= '?>';
                 file_put_contents($newFileExcel.'balanceN-'.$annee.'.php', $phpFileContent);
             }
@@ -45,7 +43,6 @@
                 $tempName = $_FILES['balanceN1']['tmp_name'];
                 $newFileName = $uploadDirectory . basename($_FILES['balanceN1']['name']);
                 move_uploaded_file($tempName, $newFileName);
-                //  echo 'File "balanceN1" has been uploaded successfully.<br>';
                 // Read the Excel file
                 $excelFile = $newFileName ; // Replace with the correct path
                 $spreadsheet = IOFactory::load($excelFile);
@@ -53,7 +50,7 @@
                 $data = $worksheet->toArray();
                 // Write the data to a PHP file
                 $phpFileContent = '<?php' . PHP_EOL;
-                $phpFileContent .= '$data = ' . var_export($data, true) . ';' . PHP_EOL;
+                $phpFileContent .= '$databalanceN1 = ' . var_export($data, true) . ';' . PHP_EOL;
                 $phpFileContent .= '?>';
                 file_put_contents($newFileExcel.'balanceN1-'.$annee.'.php', $phpFileContent);
             }
@@ -62,7 +59,6 @@
                 $tempName = $_FILES['balanceN2']['tmp_name'];
                 $newFileName = $uploadDirectory . basename($_FILES['balanceN2']['name']);
                 move_uploaded_file($tempName, $newFileName);
-                //    echo 'File "balanceN2" has been uploaded successfully.<br>';
                 // Read the Excel file
                 $excelFile = $newFileName ; // Replace with the correct path
                 $spreadsheet = IOFactory::load($excelFile);
@@ -70,7 +66,7 @@
                 $data = $worksheet->toArray();
                 // Write the data to a PHP file
                 $phpFileContent = '<?php' . PHP_EOL;
-                $phpFileContent .= '$data = ' . var_export($data, true) . ';' . PHP_EOL;
+                $phpFileContent .= '$databalanceN2 = ' . var_export($data, true) . ';' . PHP_EOL;
                 $phpFileContent .= '?>';
                 file_put_contents($newFileExcel.'balanceN2-'.$annee.'.php', $phpFileContent);
             }
@@ -83,7 +79,6 @@
             $data .= '$balanceN1 = "' . $_FILES['balanceN1']['name']. "\";\n";
             $data .= '$balanceN2 = "' . $_FILES['balanceN2']['name']. "\";\n";
             $data .= "?>";
-            // Now, the variable $year will contain the year value "2023"
             // Écrire les données dans le nouveau fichier
             file_put_contents($nomFichier, $data);
             // The file was successfully added
@@ -95,16 +90,16 @@
                 </div>
             </label>';
         } else {
-         $pageList = DOL_URL_ROOT.'\custom\etatscomptables\declarationLaisseExl\infoBalance\Liste.php';
-        // Handle the case where the file was not added
-        echo '<label>
-            <input type="checkbox" class="alertCheckbox" autocomplete="off" />
-            <div class="alert error">
-            <span class="alertClose">X</span>
-            <span class="alertText">Échec de l\'ajout des informations car elles existent déjà pour cette année. Pour les modifier, veuillez vous rendre sur la page de liste <a href="'.$pageList.'">click ici</a><br class="clear"/></span>
-            </div>
-        </label>';
-    }   
+            $pageList = DOL_URL_ROOT.'\custom\etatscomptables\declarationLaisseExl\infoBalance\Liste.php';
+            // Handle the case where the file was not added
+            echo '<label>
+                <input type="checkbox" class="alertCheckbox" autocomplete="off" />
+                <div class="alert error">
+                <span class="alertClose">X</span>
+                <span class="alertText">Échec de l\'ajout des informations car elles existent déjà pour cette année. Pour les modifier, veuillez vous rendre sur la page de liste <a href="'.$pageList.'">click ici</a><br class="clear"/></span>
+                </div>
+            </label>';
+        }   
   }
 ?>
  

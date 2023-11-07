@@ -1940,7 +1940,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			//$logouthtmltext=$appli.'<br>';
 			if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http') {
 				$logouthtmltext .= $langs->trans("Logout").'<br>';
-
 				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php?token='.newToken().'">';
 				$logouttext .= img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin');
 				$logouttext .= '</a>';

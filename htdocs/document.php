@@ -81,6 +81,7 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
  */
 function llxHeader()
 {
+
 }
 /**
  * Footer empty
@@ -90,6 +91,7 @@ function llxHeader()
  */
 function llxFooter()
 {
+	
 }
 
 require 'main.inc.php'; // Load $user and permissions

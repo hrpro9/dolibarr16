@@ -1,7 +1,7 @@
 <?php
   // Load Dolibarr environment
-  require_once '../../../../main.inc.php';
-  //require_once '../../../../vendor/autoload.php';
+  require_once '../../main.inc.php';
+  require_once '../../vendor/autoload.php';
   require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
   require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
   require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -11,8 +11,13 @@
    if ($action != 'generate')
     llxHeader("", "");
 
+    echo DOL_DOCUMENT_ROOT;
+    exit;
+
+    $typeInfo='affiche';
+
   
-    if(isset($_POST['date_select'])  )
+    if(isset($_POST['date_select']))
     {
         $date_select=$_POST['date_select'];
         $typeInfo=$_POST['typeInfo']??"affiche";
@@ -52,57 +57,33 @@
         
         $uploadDirectory = './uploads/';  // The directory where you want to upload the files
         $newFileExcel='./balance/';
-        // Handle file upload for $balanceN
-        if (isset($_FILES['balanceN']) && $_FILES['balanceN']['error'] === UPLOAD_ERR_OK) {
-            $tempName = $_FILES['balanceN']['tmp_name'];
-            $newFileName = $uploadDirectory . basename($_FILES['balanceN']['name']);
-            move_uploaded_file($tempName, $newFileName);
-            //   echo 'File "balanceN" has been uploaded successfully.<br>';
-            // Read the Excel file
-            $excelFile = $newFileName ; // Replace with the correct path
-            $spreadsheet = IOFactory::load($excelFile);
-            $worksheet = $spreadsheet->getActiveSheet();
-            $data = $worksheet->toArray();
-            // Write the data to a PHP file
-            $phpFileContent = '<?php' . PHP_EOL;
-            $phpFileContent .= '$data = ' . var_export($data, true) . ';' . PHP_EOL;
-            $phpFileContent .= '?>';
-            file_put_contents($newFileExcel.'balanceN-'.$annee.'.php', $phpFileContent);
+
+
+
+        function GenerateExcel($annee,$balanceName){
+            $uploadDirectory = './uploads/';  // The directory where you want to upload the files
+            $newFileExcel='./balance/';
+                // Handle file upload for $balanceN
+            if (isset($_FILES[$balanceName]) && $_FILES[$balanceName]['error'] === UPLOAD_ERR_OK) {
+                $tempName = $_FILES[$balanceName]['tmp_name'];
+                $newFileName = $uploadDirectory . basename($_FILES[$balanceName]['name']);
+                move_uploaded_file($tempName, $newFileName);
+                //   echo 'File "balanceN" has been uploaded successfully.<br>';
+                // Read the Excel file
+                $excelFile = $newFileName ; // Replace with the correct path
+                $spreadsheet = IOFactory::load($excelFile);
+                $worksheet = $spreadsheet->getActiveSheet();
+                $data = $worksheet->toArray();
+                // Write the data to a PHP file
+                $phpFileContent = '<?php' . PHP_EOL;
+                $phpFileContent .= '$data'.$balanceName.' = ' . var_export($data, true) . ';' . PHP_EOL;
+                $phpFileContent .= '?>';
+                file_put_contents($newFileExcel.$balanceName.'-'.$annee.'.php', $phpFileContent);
+            }
         }
-         // Handle file upload for $balanceN1
-         if (isset($_FILES['balanceN1']) && $_FILES['balanceN1']['error'] === UPLOAD_ERR_OK) {
-            $tempName = $_FILES['balanceN1']['tmp_name'];
-            $newFileName = $uploadDirectory . basename($_FILES['balanceN1']['name']);
-            move_uploaded_file($tempName, $newFileName);
-            //  echo 'File "balanceN1" has been uploaded successfully.<br>';
-            // Read the Excel file
-            $excelFile = $newFileName ; // Replace with the correct path
-            $spreadsheet = IOFactory::load($excelFile);
-            $worksheet = $spreadsheet->getActiveSheet();
-            $data = $worksheet->toArray();
-            // Write the data to a PHP file
-            $phpFileContent = '<?php' . PHP_EOL;
-            $phpFileContent .= '$data = ' . var_export($data, true) . ';' . PHP_EOL;
-            $phpFileContent .= '?>';
-            file_put_contents($newFileExcel.'balanceN1-'.$annee.'.php', $phpFileContent);
-        }
-        // Handle file upload for $balanceN2 (if it exists and is not empty)
-        if (!empty($_FILES['balanceN2']) && $_FILES['balanceN2']['error'] === UPLOAD_ERR_OK) {
-            $tempName = $_FILES['balanceN2']['tmp_name'];
-            $newFileName = $uploadDirectory . basename($_FILES['balanceN2']['name']);
-            move_uploaded_file($tempName, $newFileName);
-            //    echo 'File "balanceN2" has been uploaded successfully.<br>';
-            // Read the Excel file
-            $excelFile = $newFileName ; // Replace with the correct path
-            $spreadsheet = IOFactory::load($excelFile);
-            $worksheet = $spreadsheet->getActiveSheet();
-            $data = $worksheet->toArray();
-            // Write the data to a PHP file
-            $phpFileContent = '<?php' . PHP_EOL;
-            $phpFileContent .= '$data = ' . var_export($data, true) . ';' . PHP_EOL;
-            $phpFileContent .= '?>';
-            file_put_contents($newFileExcel.'balanceN2-'.$annee.'.php', $phpFileContent);
-        }
+        GenerateExcel($annee,'balanceN');
+        GenerateExcel($annee,'balanceN1');
+        GenerateExcel($annee,'balanceN2');
         $data = "<?php ";
         $data .= '$annee = "' . $annee. "\";\n";
         $data .= '$typeAnnee = "' . $typeAnnee. "\";\n";
@@ -173,7 +154,7 @@
             </form>
        </center>
 
-       <form action="<?php $_SERVER['PHP_SELF']  ?>"  method="post"  enctype="multipart/form-data">
+        <form action="<?php $_SERVER['PHP_SELF'] ?>"  method="post"  enctype="multipart/form-data">
             <h1 style="color: #666;font-size: 25px;text-align:center;margin:20px 0px">Période de la déclaration et Fiche Balance</h1>     
             <div class="table">
                 <div class="table-header">
