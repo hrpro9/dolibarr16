@@ -4003,7 +4003,7 @@ class User extends CommonObject
 			} else {
 				$modele = 'bluesky';
 			}
-		}
+		}                                                 
 
 		$modelpath = "core/modules/user/doc/";
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);

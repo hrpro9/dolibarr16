@@ -1,6 +1,6 @@
 <?php
 // ini_set('display_errors', '1');
-// ini_set('error_reporting', E_ALL);
+ini_set('error_reporting', E_ALL);
 
 
 // Load Dolibarr environment
@@ -114,15 +114,18 @@ function getUsers()
         "uid" => "zk",
         "pwd" => "Rayane@25031971+Roma"
     );
-
-   
-
     // Establishes the connection
     $conn = sqlsrv_connect($serverName, $connectionOptions);
-    if ($conn === false) {
+
+    if (!$conn) {
         die(formatErrors(sqlsrv_errors()));
+    } else {
+        echo "Connected successfully!";
     }
+    
     echo 'test';
+   
+    
 
     // Select Query
     $tsql = "SELECT userid, name FROM userinfo";
@@ -134,6 +137,8 @@ function getUsers()
     if ($stmt === false) {
         die(formatErrors(sqlsrv_errors()));
     }
+
+       
 
 
     $sql = "CREATE TABLE IF NOT EXISTS P_USER(userid int(10) PRIMARY KEY, name nvarchar(100));";
@@ -206,6 +211,7 @@ function getInData()
             }
         }
     }
+
 
 
     $checks = "";
